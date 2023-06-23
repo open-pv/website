@@ -26,7 +26,6 @@
     "@babel/preset-env": "^7.21.4",
     "@babel/preset-react": "^7.18.6",
     "babel-jest": "^29.5.0",
-    "react-snap": "^1.23.0",
     "rimraf": "^5.0.0",
     "sass": "^1.62.1",
     "source-map-explorer": "^2.5.3"
