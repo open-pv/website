@@ -27,7 +27,7 @@
     "@babel/preset-react": "^7.22.5",
     "babel-jest": "^29.5.0",
     "rimraf": "^5.0.0",
-    "sass": "^1.62.1",
+    "sass": "^1.63.6",
     "source-map-explorer": "^2.5.3"
   },
   "browserslist": {
