@@ -6,7 +6,7 @@
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "0.2.0",
-    "@react-three/drei": "^9.71.0",
+    "@react-three/drei": "^9.77.10",
     "gl-matrix": "^3.4.3",
     "jszip": "^3.10.1",
     "markdown-to-jsx": "^7.2.1",
