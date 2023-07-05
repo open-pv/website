@@ -1,7 +1,8 @@
 {
   "scripts": {
     "build": "rimraf ./build && react-scripts build",
-    "start": "react-scripts start"
+    "start": "react-scripts start",
+    "deploy": "gh-pages -d build -b build"
   },
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
@@ -19,7 +20,8 @@
     "react-spinners": "^0.13.8",
     "react-three-fiber": "^6.0.13",
     "suncalc": "^1.9.0",
-    "three": "^0.154.0"
+    "three": "^0.154.0",
+    "gh-pages": "^5.0.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.21.8",
