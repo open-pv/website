@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[904],{5904:function(e,s,a){e.exports=a.p+"static/media/impressum.6beade3fdc67a9393845.md"}}]);
