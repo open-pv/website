@@ -1,34 +1,38 @@
 import { calc_webgl, createMeshes } from "./pv_simulation";
 import JSZip from "jszip";
 import proj4 from "proj4";
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
-import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
+import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
 export var loc_utm;
-export var stlDataCached = null;
 
-var state = "WaitForAddr"; // States are "WaitForAddr", "AddrDataLoaded", "Inspect"
+// var state = "WaitForAddr"; // States are "WaitForAddr", "AddrDataLoaded", "Inspect"
 
 async function getLocationFromInput(locationText) {
   let loc;
-  const coordinatePattern = /^[-]?(\d+(\.\d+)?),\s*[-]?(\d+(\.\d+)?)$/;    
-  
+  const coordinatePattern = /^[-]?(\d+(\.\d+)?),\s*[-]?(\d+(\.\d+)?)$/;
+
   // Check if the string matches the coordinate pattern
   if (coordinatePattern.test(locationText)) {
-    const [latitude, longitude] = locationText.split(",").map((value) => parseFloat(value.trim()));
+    const [latitude, longitude] = locationText
+      .split(",")
+      .map((value) => parseFloat(value.trim()));
 
     // Create the "loc" object with latitude and longitude attributes
     loc = {
       lat: latitude,
-      lon: longitude
+      lon: longitude,
     };
     return loc;
   } else {
-      
-    let url = "https://nominatim.openstreetmap.org/search?format=json&q=".concat(locationText).concat("+Germany+Bavaria");
+    let url = "https://nominatim.openstreetmap.org/search?format=json&q="
+      .concat(locationText)
+      .concat("+Germany+Bavaria");
     let response = await fetchLocation(url);
     if (!response) {
       let locationTextModified = locationText.split(" ").join("+");
-      url = "https://nominatim.openstreetmap.org/search?format=json&q=".concat(locationTextModified);
+      url = "https://nominatim.openstreetmap.org/search?format=json&q=".concat(
+        locationTextModified
+      );
       response = await fetchLocation(url);
     }
     return response;
@@ -37,156 +41,196 @@ async function getLocationFromInput(locationText) {
 
 async function fetchLocation(url) {
   let loc;
-  const statuselem = document.getElementById('status');
+  const statuselem = document.getElementById("status");
   try {
     let response = await fetch(url);
     if (!response.ok) {
-      console.error('Check connection to Nominatim geocoder');
+      console.error("Check connection to Nominatim geocoder");
       statuselem.textContent = "Connection to Adress Server failed";
-      throw new Error('Request failed with status ' + response.status);
+      throw new Error("Request failed with status " + response.status);
     }
-    
+
     let responseData = await response.json();
     if (responseData.length === 0) {
-      return null; 
+      return null;
     }
 
     loc = responseData[0];
     return loc;
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return null;
   }
 }
 
-
-
-export async function setLocation(inputValue){
-  
-
-  const loc = await getLocationFromInput(inputValue);
-  if (typeof loc !== 'undefined') {
-    retrieveData(loc);
+export async function setLocation(
+  inputValue,
+  inputChanged,
+  simulationParamChanged,
+  loc,
+  directionAngle,
+  distanceStep
+) {
+  let newloc;
+  if (inputChanged) {
+    newloc = await getLocationFromInput(inputValue);
+    window.mapLocation = newloc;
+  } else if (simulationParamChanged) {
+    newloc = loc;
+  } else if (distanceStep > 0) {
+    newloc = { lon: parseFloat(loc.lon), lat: parseFloat(loc.lat) };
+    console.log(
+      "Old location: ",
+      newloc.lon,
+      newloc.lat,
+      ((Math.sin((directionAngle * Math.PI) / 180) * distanceStep) / 40000000) *
+        360,
+      Math.cos((newloc.lat / 180) * Math.PI)
+    );
+    newloc.lon +=
+      (Math.sin((directionAngle * Math.PI) / 180) * distanceStep * 360) /
+      40000000 /
+      Math.cos((newloc.lat / 180) * Math.PI);
+    newloc.lat +=
+      (Math.cos((directionAngle * Math.PI) / 180) * distanceStep * 360) /
+      40000000;
+    console.log("Update location: ", loc, newloc);
+    newloc = { lat: newloc.lat.toString(), lon: newloc.lon.toString() };
+    window.mapLocation = newloc;
+  } else {
+    window.setLoading(false);
   }
-  else {
+  if (typeof newloc !== "undefined") {
+    retrieveData(newloc);
+  } else {
     window.setLoading(false);
     window.setShowThreeViewer(false);
     window.setShowErrorMessage(true);
   }
 }
 
-
-
 function get_file_names(x, y) {
-    const DIVISOR = 2000;
-    const BUFFER_ZONE = 100;
-    const IN_PROJ = 'EPSG:4326';
-    const OUT_PROJ = 'EPSG:25832';
-  
-    proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs");
-  
-    const transformer = proj4(IN_PROJ, OUT_PROJ);
+  const DIVISOR = 2000;
+  const BUFFER_ZONE = 100;
+  const IN_PROJ = "EPSG:4326";
+  const OUT_PROJ = "EPSG:25832";
 
-  
-    const [x_utm32, y_utm32] = transformer.forward([x, y]);
-    loc_utm = [x_utm32, y_utm32];
+  proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs");
 
-  
-    const x_rounded = Math.floor(x_utm32 / DIVISOR) * 2;
-    const y_rounded = Math.floor(y_utm32 / DIVISOR) * 2;
+  const transformer = proj4(IN_PROJ, OUT_PROJ);
 
-    const load_tile_left = x_utm32 % DIVISOR < BUFFER_ZONE;
-    const load_tile_right = x_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE;
-    const load_tile_lower = y_utm32 % DIVISOR < BUFFER_ZONE;
-    const load_tile_upper = y_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE;
-  
-    const file_list = [`${x_rounded}_${y_rounded}.zip`];
-  
-    if (load_tile_left) {
-        file_list.push(`${x_rounded - 2}_${y_rounded}.zip`);
-    }
-    if (load_tile_right) {
-        file_list.push(`${x_rounded + 2}_${y_rounded}.zip`);
-    }
-    if (load_tile_lower) {
-        file_list.push(`${x_rounded}_${y_rounded - 2}.zip`);
-    }
-    if (load_tile_upper) {
-        file_list.push(`${x_rounded}_${y_rounded + 2}.zip`);
-    }
-    if (load_tile_left && load_tile_lower) {
-        file_list.push(`${x_rounded - 2}_${y_rounded - 2}.zip`);
-    }
-    if (load_tile_left && load_tile_upper) {
-        file_list.push(`${x_rounded - 2}_${y_rounded + 2}.zip`);
-    }
-    if (load_tile_right && load_tile_lower) {
-        file_list.push(`${x_rounded + 2}_${y_rounded - 2}.zip`);
-    }
-    if (load_tile_right && load_tile_upper) {
-        file_list.push(`${x_rounded + 2}_${y_rounded + 2}.zip`);
-    }
-    return file_list;
+  const [x_utm32, y_utm32] = transformer.forward([x, y]);
+  loc_utm = [x_utm32, y_utm32];
+
+  const x_rounded = Math.floor(x_utm32 / DIVISOR) * 2;
+  const y_rounded = Math.floor(y_utm32 / DIVISOR) * 2;
+
+  const load_tile_left = x_utm32 % DIVISOR < BUFFER_ZONE;
+  const load_tile_right = x_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE;
+  const load_tile_lower = y_utm32 % DIVISOR < BUFFER_ZONE;
+  const load_tile_upper = y_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE;
+
+  const file_list = [`${x_rounded}_${y_rounded}.zip`];
+
+  if (load_tile_left) {
+    file_list.push(`${x_rounded - 2}_${y_rounded}.zip`);
   }
-  
-  async function retrieveData(loc) {
-    const baseurl = "https://www.openpv.de/data/";
-    var filenames = get_file_names(Number(loc.lon), Number(loc.lat));
-    if (filenames.length == 0) {
-      return;
+  if (load_tile_right) {
+    file_list.push(`${x_rounded + 2}_${y_rounded}.zip`);
+  }
+  if (load_tile_lower) {
+    file_list.push(`${x_rounded}_${y_rounded - 2}.zip`);
+  }
+  if (load_tile_upper) {
+    file_list.push(`${x_rounded}_${y_rounded + 2}.zip`);
+  }
+  if (load_tile_left && load_tile_lower) {
+    file_list.push(`${x_rounded - 2}_${y_rounded - 2}.zip`);
+  }
+  if (load_tile_left && load_tile_upper) {
+    file_list.push(`${x_rounded - 2}_${y_rounded + 2}.zip`);
+  }
+  if (load_tile_right && load_tile_lower) {
+    file_list.push(`${x_rounded + 2}_${y_rounded - 2}.zip`);
+  }
+  if (load_tile_right && load_tile_upper) {
+    file_list.push(`${x_rounded + 2}_${y_rounded + 2}.zip`);
+  }
+  return file_list;
+}
+
+async function retrieveData(loc) {
+  const baseurl = "https://www.openpv.de/data/";
+  var filenames = get_file_names(Number(loc.lon), Number(loc.lat));
+  if (filenames.length == 0) {
+    return;
+  }
+
+  const status_elem = document.getElementById("status");
+
+  // Create an array to store individual geometries
+  let geometries = [];
+  let zipData = null;
+  var cached_file_found = false;
+  // Iterate through all filenames
+  for (const filename of filenames) {
+    let filename_idx;
+    if (window.stlFile != null) {
+      filename_idx = window.stlFiles.indexOf(filename);
+    } else {
+      filename_idx = -1;
     }
-  
-    const status_elem = document.getElementById("status");
-  
-    // Create an array to store individual geometries
-    let geometries = [];
-  
-    // Iterate through all filenames
-    for (const filename of filenames) {
+    if (filename_idx != -1) {
+      zipData = window.stlDataCached[filename_idx];
+      cached_file_found = true;
+      console.log("Use cached file!!");
+    } else {
       let url = baseurl + filename;
       status_elem.textContent = "Loading from " + url;
-  
+
       try {
         // Download the zipped STL file
         const response = await fetch(url);
-        const zipData = await response.arrayBuffer();
-        if (!response.ok) {
-          throw new Error('Request failed with status ' + response.status);
-        }
-
-  
-        // Unzip the zipped STL file
-        const zip = new JSZip();
-        await zip.loadAsync(zipData);
-  
-        // Get the STL file from the unzipped contents
-        const stlFile = zip.file(Object.keys(zip.files)[0]);
-        if (stlFile) {
-          // Load the STL file
-          const stlData = await stlFile.async("arraybuffer");
-          stlDataCached = stlData;
-  
-          // Parse the STL data and add the geometry to the geometries array
-          let geometry = new STLLoader().parse(stlData);
-          geometries.push(geometry);
-          // Merge geometries using BufferGeometryUtils
-          const combinedGeometry = BufferGeometryUtils.mergeGeometries(geometries);
-        
-          // Create and display the combined mesh
-          createMeshes(combinedGeometry);
-          //showMeshOrig();
-          calc_webgl(loc);
+        zipData = await response.arrayBuffer();
+        if (!cached_file_found) {
+          window.stlDataCached = [zipData];
+          window.stlFiles = [filename];
         } else {
-          console.error("STL file not found in ZIP archive");
+          window.stlDataCached.append(zipData);
+          window.stlFiles.append(filename);
+        }
+        if (!response.ok) {
+          throw new Error("Request failed with status " + response.status);
         }
       } catch (error) {
         window.setLoading(false);
         window.setShowErrorMessage(true);
       }
     }
-  
-    
-    
+
+    // Unzip the zipped STL file
+    const zip = new JSZip();
+    await zip.loadAsync(zipData);
+
+    // Get the STL file from the unzipped contents
+    const stlFile = zip.file(Object.keys(zip.files)[0]);
+    if (stlFile) {
+      // Load the STL file
+      const stlData = await stlFile.async("arraybuffer");
+      stlDataCached = stlData;
+
+      // Parse the STL data and add the geometry to the geometries array
+      let geometry = new STLLoader().parse(stlData);
+      geometries.push(geometry);
+      // Merge geometries using BufferGeometryUtils
+      const combinedGeometry = BufferGeometryUtils.mergeGeometries(geometries);
+
+      // Create and display the combined mesh
+      createMeshes(combinedGeometry);
+      //showMeshOrig();
+      calc_webgl(loc);
+    } else {
+      console.error("STL file not found in ZIP archive");
+    }
   }
-  
-  
+}
