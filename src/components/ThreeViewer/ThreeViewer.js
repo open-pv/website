@@ -1,9 +1,11 @@
 import { Canvas } from "react-three-fiber";
 import { camera, scene, controls, renderer } from "../../simulation/stlviewer";
 import { useState } from "react";
+import { setLocation } from "../../simulation/download";
 
 export default function ThreeViewer() {
   const [offsetPosition, setOffsetPosition] = useState([0, 0]); // initial camera position
+  const [loading, setLoading] = useState(false);
 
   const movePosition = (x, y) => {
     var offset = [0, 0];
@@ -68,6 +70,27 @@ export default function ThreeViewer() {
     }
   };
 
+  const resimulate = () => {
+    setLoading(!loading);
+    if (
+      window.numRadiusSimulationChanged ||
+      window.numSimulationsChanged ||
+      window.mapLocationChanged
+    ) {
+      window.setShowViridisLegend(false);
+      window.setShowThreeViewer(true);
+      setLocation(
+        "",
+        false,
+        window.numRadiusSimulationChanged || window.numSimulationsChanged,
+        window.mapLocation
+      );
+      window.numRadiusSimulationChanged = false;
+      window.numSimulationsChanged = false;
+      window.mapLocationChanged = false;
+    }
+  };
+
   return (
     <div className="viewer-container" style={{ position: "relative" }}>
       <Canvas className="three-viewer" flat linear></Canvas>
@@ -94,6 +117,25 @@ export default function ThreeViewer() {
         >
           <line x1="12" y1="19" x2="12" y2="5"></line>
           <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+      </button>
+      <button
+        className="arrowButton"
+        onClick={resimulate}
+        style={{ right: "1em", bottom: "1em" }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="50"
+          height="50"
+          viewBox="0 0 50 50"
+        >
+          <polyline
+            points="10,25 20,35 40,15"
+            stroke="#000000"
+            strokeWidth="0.5em"
+            fill="none"
+          />
         </svg>
       </button>
       <button
