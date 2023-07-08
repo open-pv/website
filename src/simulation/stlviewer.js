@@ -19,11 +19,11 @@ export function STLViewer(resetCamera = true) {
 
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 
-  if (camera != null) {
-    console.log("ResetCamera", resetCamera);
-    console.log("CameraPos", camera.position);
-    console.log("CameraRotation", camera.rotation);
-  }
+  //   if (camera != null) {
+  //     console.log("ResetCamera", resetCamera);
+  //     console.log("CameraPos", camera.position);
+  //     console.log("CameraRotation", camera.rotation);
+  //   }
   if (resetCamera == false || camera == null) {
     camera = new THREE.PerspectiveCamera(
       45,

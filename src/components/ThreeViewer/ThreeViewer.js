@@ -52,8 +52,8 @@ export default function ThreeViewer() {
 
   const movePosition = (x, y) => {
     var offset = [0, 0];
-    console.log("MapBaseChanged: ", window.mapLocationBaseChanged);
-    console.log("MapChanged: ", window.mapLocationChanged);
+    // console.log("MapBaseChanged: ", window.mapLocationBaseChanged);
+    // console.log("MapChanged: ", window.mapLocationChanged);
     if (window.mapLocationBaseChanged) {
       setOffsetPosition(0, 0);
       offset = [-offsetPosition[0], -offsetPosition[1]];
@@ -82,13 +82,13 @@ export default function ThreeViewer() {
       setOffsetPosition([newPos[0], newPos[1]]);
       const loc = { lon: window.mapLocation.lon, lat: window.mapLocation.lat };
       var newloc = { lon: parseFloat(loc.lon), lat: parseFloat(loc.lat) };
-      console.log(direction, step, offset);
-      console.log(newPos);
-      console.log("Old location: ", newloc.lon, newloc.lat);
+      // console.log(direction, step, offset);
+      // console.log(newPos);
+      // console.log("Old location: ", newloc.lon, newloc.lat);
       newloc.lon +=
         (step.x * 360) / 40000000 / Math.cos((newloc.lat / 180) * Math.PI);
       newloc.lat += (step.y * 360) / 40000000;
-      console.log("Update location: ", loc, newloc);
+      // console.log("Update location: ", loc, newloc);
       newloc = { lat: newloc.lat.toString(), lon: newloc.lon.toString() };
       window.mapLocation = newloc;
       window.mapLocationChanged = true;
@@ -101,8 +101,8 @@ export default function ThreeViewer() {
       camera.lookAt(newPos[0], newPos[1], 0);
       controls.target.set(newPos[0], newPos[1], 0);
 
-      console.log("PostMove Camera Position", camera.position);
-      console.log("Camera Rot", camera.rotation);
+      // console.log("PostMove Camera Position", camera.position);
+      // console.log("Camera Rot", camera.rotation);
 
       var animate = function () {
         requestAnimationFrame(animate);

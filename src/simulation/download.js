@@ -79,7 +79,7 @@ export async function setLocation(
   } else {
     window.setLoading(false);
   }
-  console.log(newloc);
+  // console.log(newloc);
   if (typeof newloc !== "undefined" && newloc != null) {
     retrieveData(newloc, inputChanged);
   } else {

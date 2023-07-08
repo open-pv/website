@@ -474,14 +474,14 @@ export async function showMeshIntensities(intensities, resetCamera) {
     camera.position.set(0, -20, 100);
     camera.position.z = 40;
   } else {
-    console.log("Camera Rot", camera.rotation);
+    // console.log("Camera Rot", camera.rotation);
 
     camera.position.set(
       oldCameraPosition.x - window.offsetPos[0],
       oldCameraPosition.y - window.offsetPos[1],
       oldCameraPosition.z
     );
-    console.log("New Camera Pos", camera.position);
+    // console.log("New Camera Pos", camera.position);
   }
 
   var animate = function () {
