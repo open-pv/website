@@ -39,6 +39,7 @@ function SearchField() {
       );
       window.numRadiusSimulationChanged = false;
       window.numSimulationsChanged = false;
+      window.mapLocationChanged = false;
       setShowErrorMessage(false);
       setShowTooManyUniformsError(false);
       setInputChanged(false);

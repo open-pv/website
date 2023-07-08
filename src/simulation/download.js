@@ -74,18 +74,21 @@ export async function setLocation(
   if (inputChanged) {
     newloc = await getLocationFromInput(inputValue);
     window.mapLocation = newloc;
-    window.mapLocationChanged = false;
   } else if (simulationParamChanged || window.mapLocationChanged) {
     newloc = loc;
   } else {
     window.setLoading(false);
   }
   if (typeof newloc !== "undefined") {
-    retrieveData(newloc);
+    retrieveData(newloc, inputChanged);
   } else {
     window.setLoading(false);
     window.setShowThreeViewer(false);
     window.setShowErrorMessage(true);
+  }
+
+  if (inputChanged) {
+    window.mapLocationChanged = false;
   }
 }
 
@@ -139,7 +142,7 @@ function get_file_names(x, y) {
   return file_list;
 }
 
-async function retrieveData(loc) {
+async function retrieveData(loc, resetCamera = false) {
   const baseurl = "https://www.openpv.de/data/";
   var filenames = get_file_names(Number(loc.lon), Number(loc.lat));
   if (filenames.length == 0) {
@@ -208,7 +211,7 @@ async function retrieveData(loc) {
       // Create and display the combined mesh
       createMeshes(combinedGeometry);
       //showMeshOrig();
-      calc_webgl(loc);
+      calc_webgl(loc, resetCamera);
     } else {
       console.error("STL file not found in ZIP archive");
     }

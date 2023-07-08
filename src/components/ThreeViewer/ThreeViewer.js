@@ -6,7 +6,7 @@ export default function ThreeViewer() {
   const [offsetPosition, setOffsetPosition] = useState([0, 0]); // initial camera position
 
   const movePosition = (x, y) => {
-    var offset;
+    var offset = [0, 0];
     console.log("MapBaseChanged: ", window.mapLocationBaseChanged);
     console.log("MapChanged: ", window.mapLocationChanged);
     if (window.mapLocationBaseChanged) {
@@ -19,34 +19,45 @@ export default function ThreeViewer() {
 
     if (window.mapLocation != null) {
       const distanceStep = window.distanceStep;
-      setOffsetPosition([
-        offsetPosition[0] + x * distanceStep + offset[0],
-        offsetPosition[1] + y * distanceStep + offset[1],
-      ]);
+
+      const direction = Math.atan2(camera.rotation.y, camera.rotation.x);
+      const step = {
+        x:
+          x * distanceStep * Math.cos(direction) -
+          y * distanceStep * Math.sin(direction),
+        y:
+          y * distanceStep * Math.cos(direction) +
+          x * distanceStep * Math.sin(direction),
+      };
       const newPos = [
-        offsetPosition[0] + x * distanceStep + offset[0],
-        offsetPosition[1] + y * distanceStep + offset[1],
+        offsetPosition[0] + step.x + offset[0],
+        offsetPosition[1] + step.y + offset[1],
       ];
+      window.offsetPos = newPos;
+      setOffsetPosition([newPos[0], newPos[1]]);
       const loc = { lon: window.mapLocation.lon, lat: window.mapLocation.lat };
       var newloc = { lon: parseFloat(loc.lon), lat: parseFloat(loc.lat) };
+      console.log(direction, step, offset);
+      console.log(newPos);
       console.log("Old location: ", newloc.lon, newloc.lat);
       newloc.lon +=
-        (x * distanceStep * 360) /
-        40000000 /
-        Math.cos((newloc.lat / 180) * Math.PI);
-      newloc.lat += (y * distanceStep * 360) / 40000000;
+        (step.x * 360) / 40000000 / Math.cos((newloc.lat / 180) * Math.PI);
+      newloc.lat += (step.y * 360) / 40000000;
       console.log("Update location: ", loc, newloc);
       newloc = { lat: newloc.lat.toString(), lon: newloc.lon.toString() };
       window.mapLocation = newloc;
       window.mapLocationChanged = true;
 
       camera.position.set(
-        camera.position.x + x * distanceStep,
-        camera.position.y + y * distanceStep,
+        camera.position.x + step.x,
+        camera.position.y + step.y,
         camera.position.z
       );
       camera.lookAt(newPos[0], newPos[1], 0);
       controls.target.set(newPos[0], newPos[1], 0);
+
+      console.log("PostMove Camera Position", camera.position);
+      console.log("Camera Rot", camera.rotation);
 
       var animate = function () {
         requestAnimationFrame(animate);
