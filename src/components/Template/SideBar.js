@@ -21,9 +21,8 @@ const SideBar = () => (
       <p>Der Service funktioniert aktuell nur für Gebäude in Bayern.</p>
       <DatesSlider></DatesSlider>
       <RadiusSlider></RadiusSlider>
-      <div>Bewegung zum Zentrieren des Gebäudes</div>
       <DistanceSlider></DistanceSlider>
-      <DraggableCircle></DraggableCircle>
+      {/* <DraggableCircle></DraggableCircle> */}
       <p id="status">Warte auf Adresseingabe</p>
     </section>
 

@@ -25,7 +25,7 @@ function SearchField() {
       inputChanged ||
       window.numRadiusSimulationChanged ||
       window.numSimulationsChanged ||
-      window.numDistanceStep > 0
+      window.mapLocationChanged
     ) {
       setLoading(!loading);
       window.setShowViridisLegend(false);
@@ -35,9 +35,7 @@ function SearchField() {
         inputValue,
         inputChanged,
         window.numRadiusSimulationChanged || window.numSimulationsChanged,
-        window.mapLocation,
-        window.directionAngle,
-        window.numDistanceStep
+        window.mapLocation
       );
       window.numRadiusSimulationChanged = false;
       window.numSimulationsChanged = false;

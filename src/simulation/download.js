@@ -67,36 +67,16 @@ export async function setLocation(
   inputValue,
   inputChanged,
   simulationParamChanged,
-  loc,
-  directionAngle,
-  distanceStep
+  loc
 ) {
   let newloc;
+  window.mapLocationBaseChanged = true;
   if (inputChanged) {
     newloc = await getLocationFromInput(inputValue);
     window.mapLocation = newloc;
-  } else if (simulationParamChanged) {
+    window.mapLocationChanged = false;
+  } else if (simulationParamChanged || window.mapLocationChanged) {
     newloc = loc;
-  } else if (distanceStep > 0) {
-    newloc = { lon: parseFloat(loc.lon), lat: parseFloat(loc.lat) };
-    console.log(
-      "Old location: ",
-      newloc.lon,
-      newloc.lat,
-      ((Math.sin((directionAngle * Math.PI) / 180) * distanceStep) / 40000000) *
-        360,
-      Math.cos((newloc.lat / 180) * Math.PI)
-    );
-    newloc.lon +=
-      (Math.sin((directionAngle * Math.PI) / 180) * distanceStep * 360) /
-      40000000 /
-      Math.cos((newloc.lat / 180) * Math.PI);
-    newloc.lat +=
-      (Math.cos((directionAngle * Math.PI) / 180) * distanceStep * 360) /
-      40000000;
-    console.log("Update location: ", loc, newloc);
-    newloc = { lat: newloc.lat.toString(), lon: newloc.lon.toString() };
-    window.mapLocation = newloc;
   } else {
     window.setLoading(false);
   }

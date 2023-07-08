@@ -1,16 +1,118 @@
 import { Canvas } from "react-three-fiber";
+import { camera, scene, controls, renderer } from "../../simulation/stlviewer";
+import { useState } from "react";
 
+export default function ThreeViewer() {
+  const [offsetPosition, setOffsetPosition] = useState([0, 0]); // initial camera position
 
+  const movePosition = (x, y) => {
+    var offset;
+    console.log("MapBaseChanged: ", window.mapLocationBaseChanged);
+    console.log("MapChanged: ", window.mapLocationChanged);
+    if (window.mapLocationBaseChanged) {
+      setOffsetPosition(0, 0);
+      offset = [-offsetPosition[0], -offsetPosition[1]];
+      window.mapLocationBaseChanged = false;
+    } else {
+      offset = [0, 0];
+    }
 
-export default function ThreeViewer () {
-    return (
-    <>
-      <Canvas 
-        className="three-viewer" 
-        flat 
-        linear>
-      </Canvas>
+    if (window.mapLocation != null) {
+      const distanceStep = window.distanceStep;
+      setOffsetPosition([
+        offsetPosition[0] + x * distanceStep + offset[0],
+        offsetPosition[1] + y * distanceStep + offset[1],
+      ]);
+      const newPos = [
+        offsetPosition[0] + x * distanceStep + offset[0],
+        offsetPosition[1] + y * distanceStep + offset[1],
+      ];
+      const loc = { lon: window.mapLocation.lon, lat: window.mapLocation.lat };
+      var newloc = { lon: parseFloat(loc.lon), lat: parseFloat(loc.lat) };
+      console.log("Old location: ", newloc.lon, newloc.lat);
+      newloc.lon +=
+        (x * distanceStep * 360) /
+        40000000 /
+        Math.cos((newloc.lat / 180) * Math.PI);
+      newloc.lat += (y * distanceStep * 360) / 40000000;
+      console.log("Update location: ", loc, newloc);
+      newloc = { lat: newloc.lat.toString(), lon: newloc.lon.toString() };
+      window.mapLocation = newloc;
+      window.mapLocationChanged = true;
+
+      camera.position.set(
+        camera.position.x + x * distanceStep,
+        camera.position.y + y * distanceStep,
+        camera.position.z
+      );
+      camera.lookAt(newPos[0], newPos[1], 0);
+      controls.target.set(newPos[0], newPos[1], 0);
+
+      var animate = function () {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      };
+      animate();
+    }
+  };
+
+  return (
+    <div className="viewer-container" style={{ position: "relative" }}>
+      <Canvas className="three-viewer" flat linear></Canvas>
       <canvas id="canvas" width={0} height={0}></canvas>
-    </>
+      <button
+        className="arrowButton"
+        onClick={() => movePosition(0, 1)}
+        style={{ right: "1em", bottom: "2em" }}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <line x1="12" y1="19" x2="12" y2="5"></line>
+          <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+      </button>
+      <button
+        className="arrowButton"
+        onClick={() => movePosition(0, -1)}
+        style={{ right: "1em", bottom: "0em" }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          style={{ transform: "rotate(180deg)" }}
+        >
+          <line x1="12" y1="19" x2="12" y2="5"></line>
+          <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+      </button>
+      <button
+        className="arrowButton"
+        onClick={() => movePosition(-1, 0)}
+        style={{ right: "2em", bottom: "1em" }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          style={{ transform: "rotate(270deg)" }}
+        >
+          <line x1="12" y1="19" x2="12" y2="5"></line>
+          <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+      </button>
+      <button
+        className="arrowButton"
+        onClick={() => movePosition(1, 0)}
+        style={{ right: "0em", bottom: "1em" }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          style={{ transform: "rotate(90deg)" }}
+        >
+          <line x1="12" y1="19" x2="12" y2="5"></line>
+          <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+      </button>
+    </div>
   );
 }

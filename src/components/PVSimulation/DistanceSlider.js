@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import Slider from "../Template/Slider";
 
 const DistanceSlider = () => {
-  const [numDistance, setNumDistance] = useState(0);
-  window.numDistanceStep = numDistance;
+  const [numDistance, setNumDistance] = useState(10);
+  window.distanceStep = numDistance;
 
   const handleDistanceChange = (newValue) => {
     setNumDistance(newValue);
-    window.numDistanceStep = newValue;
+    window.distanceStep = newValue;
   };
 
   return (
