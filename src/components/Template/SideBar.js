@@ -9,13 +9,13 @@ const SideBar = () => (
   <section id="sidebar">
     <section id="intro">
       <header>
-        <h2>Anleitung</h2>
+        <h2>Ziel des Tools</h2>
       </header>
     </section>
     <section className="blurb">
       <p>
-        Im Suchfeld einfach deine Adresse oder deine Koordinaten eingeben. Wir berechnen 
-        dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche.
+        Im Suchfeld Ihre Adresse oder Koordinaten eingeben. Das Tool berechnet 
+        dann das Potential für eine Solaranlage auf Ihrer Dach- und Fassadenfläche.
       </p>
       <p>
         Der Service funktioniert aktuell nur für Gebäude in Bayern.
@@ -27,7 +27,7 @@ const SideBar = () => (
 
     <section id="footer">
       <ContactIcons />
-      <p className="copyright">&copy; Erstellt von Flo, Martin und Korbi, <a href='/Impressum'>Impressum</a>.</p>
+      <p className="copyright">&copy; Erstellt von Florian, Martin und Korbinian, <a href='/Impressum'>Impressum</a>.</p>
     </section>
   </section>
 );
