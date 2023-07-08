@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Slider from "../Template/Slider";
 
 const DatesSlider = () => {
-  const [numSimulations, setNumSimulations] = useState(50);
+  const [numSimulations, setNumSimulations] = useState(80);
   window.numSimulations = numSimulations;
 
   const handleNumSimulationsChange = (newValue) => {

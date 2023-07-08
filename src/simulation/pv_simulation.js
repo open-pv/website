@@ -471,8 +471,7 @@ export async function showMeshIntensities(intensities, resetCamera) {
   );
 
   if (resetCamera) {
-    camera.position.set(0, -20, 100);
-    camera.position.z = 40;
+    camera.position.set(0, -40, 80);
   } else {
     // console.log("Camera Rot", camera.rotation);
 
