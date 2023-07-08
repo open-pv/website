@@ -2,10 +2,53 @@ import { Canvas } from "react-three-fiber";
 import { camera, scene, controls, renderer } from "../../simulation/stlviewer";
 import { useState } from "react";
 import { setLocation } from "../../simulation/download";
+import * as THREE from "three";
 
 export default function ThreeViewer() {
   const [offsetPosition, setOffsetPosition] = useState([0, 0]); // initial camera position
   const [loading, setLoading] = useState(false);
+
+  const addLocationCylinder = (newPos) => {
+    const cylinderHeight = 100;
+    const geometry = new THREE.CylinderGeometry(0.25, 0.25, cylinderHeight, 32);
+    const material = new THREE.MeshBasicMaterial({ color: 0x888888 });
+    const cylinder = new THREE.Mesh(geometry, material);
+    cylinder.position.set(newPos[0], newPos[1], cylinderHeight / 2);
+    cylinder.rotation.set(Math.PI / 2, 0, 0);
+    scene.add(cylinder);
+
+    // setTimeout(() => {
+    //   scene.remove(cylinder);
+    //   cylinder.geometry.dispose();
+    //   cylinder.material.dispose();
+    //   renderer.render(scene, camera);
+    // }, 2000);
+
+    // Create a function to gradually reduce the opacity
+    function fade() {
+      if (cylinder.scale.y > 0.1) {
+        // Reduce the scale by a small amount
+        cylinder.scale.y *= 0.95;
+        cylinder.position.z = (cylinder.scale.y * cylinderHeight) / 2;
+        // Increase the color brightness by a small amount
+        material.color.lerp(new THREE.Color(0xbbbbbb), 0.04); // Bright green
+
+        // renderer.render(scene, camera);
+        // Call this function again after a small delay
+        setTimeout(fade, 20);
+      } else {
+        // Once the opacity reaches 0, remove the cylinder from the scene
+        scene.remove(cylinder);
+
+        // Dispose of the geometry and the material
+        cylinder.geometry.dispose();
+        cylinder.material.dispose();
+      }
+    }
+
+    // Start the fading process
+    fade();
+  };
 
   const movePosition = (x, y) => {
     var offset = [0, 0];
@@ -67,6 +110,8 @@ export default function ThreeViewer() {
         renderer.render(scene, camera);
       };
       animate();
+
+      addLocationCylinder(newPos);
     }
   };
 
