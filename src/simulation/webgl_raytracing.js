@@ -133,17 +133,38 @@ export function rayTracingWebGL(
 
   var maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
 
-  console.log("Max Texture Size", maxTextureSize);
-  var textureWidth = Math.min(3 * N_TRIANGLES, maxTextureSize);
+  var textureWidth = Math.min(
+    3 * N_TRIANGLES,
+    Math.floor(maxTextureSize / 9) * 9
+  );
   var textureHeight = Math.ceil((3 * N_TRIANGLES) / textureWidth);
+  console.log("Max Texture Size", maxTextureSize, textureWidth, textureHeight);
 
   const colorBuffer = makeBuffer(gl, N_POINTS * 16);
   const tf = makeTransformFeedback(gl, colorBuffer);
+  // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+  // gl.pixelStorei(gl.PACK_ALIGNMENT, 1);
 
   gl.useProgram(program);
 
   var texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  var alignedTrianglesArray;
+  if (textureHeight == 1) {
+    alignedTrianglesArray = trianglesArray;
+  } else {
+    alignedTrianglesArray = new Float32Array(textureWidth * textureHeight * 3);
+
+    for (var i = 0; i < N_TRIANGLES; i++) {
+      var x = (3 * i) % textureWidth;
+      var y = Math.floor((3 * i) / textureWidth);
+      var index = y * textureWidth + x;
+      for (var j = 0; j < 3; j++) {
+        alignedTrianglesArray[index + j] = trianglesArray[3 * i + j];
+      }
+    }
+  }
 
   gl.texImage2D(
     gl.TEXTURE_2D,
@@ -154,7 +175,7 @@ export function rayTracingWebGL(
     0,
     gl.RGB,
     gl.FLOAT,
-    trianglesArray
+    alignedTrianglesArray
   );
 
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
