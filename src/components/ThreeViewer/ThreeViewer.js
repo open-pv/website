@@ -7,6 +7,7 @@ import * as THREE from "three";
 export default function ThreeViewer() {
   const [offsetPosition, setOffsetPosition] = useState([0, 0]); // initial camera position
   const [loading, setLoading] = useState(false);
+  window.offsetPos = [0, 0];
 
   const addLocationCylinder = (newPos) => {
     const cylinderHeight = 100;
