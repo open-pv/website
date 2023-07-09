@@ -140,77 +140,80 @@ export default function ThreeViewer() {
     <div className="viewer-container" style={{ position: "relative" }}>
       <Canvas className="three-viewer" flat linear></Canvas>
       <canvas id="canvas" width={0} height={0}></canvas>
-      <button
-        className="arrowButton"
-        onClick={() => movePosition(0, 1)}
-        style={{ right: "1em", bottom: "2em" }}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <line x1="12" y1="19" x2="12" y2="5"></line>
-          <polyline points="5 12 12 5 19 12"></polyline>
-        </svg>
-      </button>
-      <button
-        className="arrowButton"
-        onClick={() => movePosition(0, -1)}
-        style={{ right: "1em", bottom: "0em" }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          style={{ transform: "rotate(180deg)" }}
+      {window.showViridisLegend && <>
+        <button
+          className="arrowButton"
+          onClick={() => movePosition(0, 1)}
+          style={{ right: "1em", bottom: "2em" }}
         >
-          <line x1="12" y1="19" x2="12" y2="5"></line>
-          <polyline points="5 12 12 5 19 12"></polyline>
-        </svg>
-      </button>
-      <button
-        className="arrowButton"
-        onClick={resimulate}
-        style={{ right: "1em", bottom: "1em" }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="50"
-          height="50"
-          viewBox="0 0 50 50"
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+          </svg>
+        </button>
+        <button
+          className="arrowButton"
+          onClick={() => movePosition(0, -1)}
+          style={{ right: "1em", bottom: "0em" }}
         >
-          <polyline
-            points="10,25 20,35 40,15"
-            stroke="#000000"
-            strokeWidth="0.5em"
-            fill="none"
-          />
-        </svg>
-      </button>
-      <button
-        className="arrowButton"
-        onClick={() => movePosition(-1, 0)}
-        style={{ right: "2em", bottom: "1em" }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          style={{ transform: "rotate(270deg)" }}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            style={{ transform: "rotate(180deg)" }}
+          >
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+          </svg>
+        </button>
+        <button
+          className="arrowButton"
+          onClick={resimulate}
+          style={{ right: "1em", bottom: "1em" }}
         >
-          <line x1="12" y1="19" x2="12" y2="5"></line>
-          <polyline points="5 12 12 5 19 12"></polyline>
-        </svg>
-      </button>
-      <button
-        className="arrowButton"
-        onClick={() => movePosition(1, 0)}
-        style={{ right: "0em", bottom: "1em" }}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          style={{ transform: "rotate(90deg)" }}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="50"
+            height="50"
+            viewBox="0 0 50 50"
+          >
+            <polyline
+              points="10,25 20,35 40,15"
+              stroke="#000000"
+              strokeWidth="0.5em"
+              fill="none"
+            />
+          </svg>
+        </button>
+        <button
+          className="arrowButton"
+          onClick={() => movePosition(-1, 0)}
+          style={{ right: "2em", bottom: "1em" }}
         >
-          <line x1="12" y1="19" x2="12" y2="5"></line>
-          <polyline points="5 12 12 5 19 12"></polyline>
-        </svg>
-      </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            style={{ transform: "rotate(270deg)" }}
+          >
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+          </svg>
+        </button>
+        <button
+          className="arrowButton"
+          onClick={() => movePosition(1, 0)}
+          style={{ right: "0em", bottom: "1em" }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            style={{ transform: "rotate(90deg)" }}
+          >
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+          </svg>
+        </button>
+      </>
+      }
     </div>
   );
 }
