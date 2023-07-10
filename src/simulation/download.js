@@ -143,6 +143,56 @@ function get_file_names(x, y) {
   return file_list;
 }
 
+function getCommentLine(stlData) {
+  // Convert the ArrayBuffer to a Uint8Array
+  var uint8Array = new Uint8Array(stlData);
+
+  // Create an empty array to store the characters
+  var commentChars = [];
+
+  // Iterate over the Uint8Array in reverse order
+  for (var i = uint8Array.length - 2; i >= 0; i--) {
+    // Check if the current character is a newline character
+    if (uint8Array[i] === 10 || uint8Array[i] === 13) {
+      // Stop iterating if a newline character is encountered
+      break;
+    }
+
+    // Add the current character to the commentChars array
+    commentChars.unshift(String.fromCharCode(uint8Array[i]));
+  }
+
+  // Convert the array of characters to a string
+  var commentLine = commentChars.join("");
+
+  // Remove any leading or trailing whitespace
+  commentLine = commentLine.trim();
+  return commentLine;
+}
+
+function parseCommentLine(comment) {
+  // Regular expression pattern to match the comment line format
+  var pattern =
+    /^;\s*offset\s*(-?\d+(?:\.\d+)?(?:e[-+]?\d+)?)\s*(-?\d+(?:\.\d+)?(?:e[-+]?\d+)?)\s*(-?\d+(?:\.\d+)?(?:e[-+]?\d+)?)\s*$/i;
+
+  // Match the comment line against the pattern
+  var match = comment.match(pattern);
+
+  var offset = [0, 0, 0];
+  // Check if the comment line matches the expected format
+  if (match) {
+    // Extract the offsets from the matched groups
+    console.log("Matches", match);
+    offset = [parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3])];
+
+    // Print the offsets
+    console.log("Offsets:", offset[0], offset[1], offset[2]);
+  } else {
+    console.log("Invalid comment format");
+  }
+  return offset;
+}
+
 async function retrieveData(loc, resetCamera = false) {
   const baseurl = "https://www.openpv.de/data/";
   var filenames = get_file_names(Number(loc.lon), Number(loc.lat));
@@ -156,6 +206,7 @@ async function retrieveData(loc, resetCamera = false) {
   let geometries = [];
   let zipData = null;
   var cached_file_found = false;
+  var main_offset = null;
   // Iterate through all filenames
   for (const filename of filenames) {
     let filename_idx;
@@ -174,7 +225,11 @@ async function retrieveData(loc, resetCamera = false) {
 
       try {
         // Download the zipped STL file
-        const response = await fetch(url);
+        let response;
+        response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Request failed with status " + response.status);
+        }
         zipData = await response.arrayBuffer();
         if (!cached_file_found) {
           window.stlDataCached = [zipData];
@@ -183,12 +238,10 @@ async function retrieveData(loc, resetCamera = false) {
           window.stlDataCached.append(zipData);
           window.stlFiles.append(filename);
         }
-        if (!response.ok) {
-          throw new Error("Request failed with status " + response.status);
-        }
       } catch (error) {
         window.setLoading(false);
         window.setShowErrorMessage(true);
+        return;
       }
     }
 
@@ -205,12 +258,30 @@ async function retrieveData(loc, resetCamera = false) {
 
       // Parse the STL data and add the geometry to the geometries array
       let geometry = new STLLoader().parse(stlData);
+
+      // Create and display the combined mesh
+      const comment = getCommentLine(stlData);
+      var local_offset = parseCommentLine(comment);
+
+      if (main_offset == null) {
+        main_offset = local_offset;
+        local_offset = [0, 0, 0];
+      } else {
+        local_offset = [
+          local_offset[0] - main_offset[0],
+          local_offset[1] - main_offset[1],
+          local_offset[2] - main_offset[2],
+        ];
+        geometry.translate(local_offset[0], local_offset[1], local_offset[2]);
+      }
+
       geometries.push(geometry);
       // Merge geometries using BufferGeometryUtils
       const combinedGeometry = BufferGeometryUtils.mergeGeometries(geometries);
 
-      // Create and display the combined mesh
-      createMeshes(combinedGeometry);
+      // console.log("Comments:", comment);
+
+      createMeshes(combinedGeometry, main_offset);
       //showMeshOrig();
       calc_webgl(loc, resetCamera);
     } else {

@@ -324,6 +324,7 @@ function splitCutoffRefineMesh(
 
 export function createMeshes(
   big_geometry,
+  offset,
   cutoffRaytracing = window.numRadiusSimulation + 20,
   outerCutoff = window.numRadiusSimulation + 70,
   refinementCutoff = window.numRadiusSimulation,
@@ -331,7 +332,7 @@ export function createMeshes(
 ) {
   intensities = null;
   //center the big mesh around the building coordinates from OSM
-  centerMesh(big_geometry, [loc_utm[0], loc_utm[1]]);
+  centerMesh(big_geometry, [loc_utm[0] - offset[0], loc_utm[1] - offset[1]]);
 
   raytracingGeometry = cutoffMesh(big_geometry, cutoffRaytracing);
 
