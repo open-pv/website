@@ -24,7 +24,7 @@
     "gh-pages": "^5.0.0"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.21.8",
+    "@babel/eslint-parser": "^7.22.7",
     "@babel/preset-env": "^7.21.4",
     "@babel/preset-react": "^7.22.5",
     "babel-jest": "^29.5.0",
