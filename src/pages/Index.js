@@ -10,6 +10,7 @@ function Index () {
   const [showViridisLegend, setShowViridisLegend] = useState(false);
   window.setShowThreeViewer = setShowThreeViewer;
   window.setShowViridisLegend = setShowViridisLegend;
+  window.showViridisLegend = showViridisLegend;
   return (
   <Main
     description={'Berechne das Potential deiner Solaranlage.'}
