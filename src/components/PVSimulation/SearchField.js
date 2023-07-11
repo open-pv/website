@@ -61,7 +61,7 @@ function SearchField() {
       >
         <input
           type="text"
-          placeholder="Geben Sie Ihre Addresse oder Koordinaten ein"
+          placeholder="Geben Sie Ihre Adresse oder Koordinaten ein"
           value={inputValue}
           onChange={handleChange}
         />
