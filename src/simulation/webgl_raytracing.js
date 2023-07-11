@@ -210,8 +210,8 @@ export function rayTracingWebGL(
     normalAttributeLocation
   );
 
-  let colorCodedArray;
-  let isShadowedArray;
+  var colorCodedArray = null;
+  var isShadowedArray = null;
   for (var i = 0; i < num_dates; i++) {
     let sunDirectionUniformLocation = gl.getUniformLocation(
       program,
