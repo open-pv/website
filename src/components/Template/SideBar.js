@@ -1,11 +1,12 @@
-import React, { useRef } from "react";
+import React, { useState } from "react";
 import ContactIcons from "../Contact/ContactIcons";
 import DatesSlider from "../PVSimulation/DatesSlider";
 import RadiusSlider from "../PVSimulation/RadiusSlider";
 import DistanceSlider from "../PVSimulation/DistanceSlider";
-import DraggableCircle from "../PVSimulation/DirectionSlider";
 
-const SideBar = () => (
+const SideBar = () => {
+  const [isAdvancedOptionsVisible, setIsAdvancedOptionsVisible] = useState(false);
+  return (
   <section id="sidebar">
     <section id="intro">
       <header>
@@ -19,10 +20,14 @@ const SideBar = () => (
         Fassadenfläche.
       </p>
       <p>Der Service funktioniert aktuell nur für Gebäude in Bayern.</p>
-      <DatesSlider></DatesSlider>
-      <RadiusSlider></RadiusSlider>
-      <DistanceSlider></DistanceSlider>
-      {/* <DraggableCircle></DraggableCircle> */}
+      <button onClick={() => setIsAdvancedOptionsVisible(!isAdvancedOptionsVisible)}>Weitere Optionen</button>
+      {isAdvancedOptionsVisible && 
+      <>
+      <DatesSlider/>
+      <RadiusSlider/>
+      <DistanceSlider/>
+      </>
+      }
       <p id="status">Warte auf Adresseingabe</p>
     </section>
 
@@ -34,6 +39,7 @@ const SideBar = () => (
       </p>
     </section>
   </section>
-);
+)
+};
 
 export default SideBar;
