@@ -131,6 +131,9 @@ export function rayTracingWebGL(
     return null;
   }
 
+  const vao = gl.createVertexArray();
+  gl.bindVertexArray(vao);
+
   var maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
 
   var textureWidth = Math.min(
@@ -156,7 +159,7 @@ export function rayTracingWebGL(
   } else {
     alignedTrianglesArray = new Float32Array(textureWidth * textureHeight * 3);
 
-    for (var i = 0; i < N_TRIANGLES; i++) {
+    for (var i = 0; i < 3 * N_TRIANGLES; i++) {
       var x = (3 * i) % textureWidth;
       var y = Math.floor((3 * i) / textureWidth);
       var index = y * textureWidth + x;
@@ -190,14 +193,8 @@ export function rayTracingWebGL(
   var u_textureWidth = gl.getUniformLocation(program, "textureWidth");
   gl.uniform1i(u_textureWidth, textureWidth);
 
-  //   const vao = gl.createVertexArray();
-  //   gl.bindVertexArray(vao);
-
   const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
   const normalAttributeLocation = gl.getAttribLocation(program, "a_normal");
-
-  const vao = gl.createVertexArray();
-  gl.bindVertexArray(vao);
 
   const positionBuffer = makeBufferAndSetAttribute(
     gl,
@@ -235,6 +232,14 @@ export function rayTracingWebGL(
       );
     }
   }
+  gl.deleteTexture(texture);
+  gl.deleteShader(vertexShader);
+  gl.deleteShader(fragmentShader);
+  gl.deleteProgram(program);
+  gl.deleteBuffer(positionBuffer);
+  gl.deleteBuffer(normalBuffer);
+  gl.deleteTransformFeedback(tf);
+  gl.deleteBuffer(colorBuffer);
   return isShadowedArray;
 }
 
