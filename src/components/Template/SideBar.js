@@ -14,8 +14,8 @@ const SideBar = () => (
     </section>
     <section className="blurb">
       <p>
-        Im Suchfeld Ihre Adresse oder Koordinaten eingeben. Das Tool berechnet 
-        dann das Potential für eine Solaranlage auf Ihrer Dach- und Fassadenfläche.
+        Im Suchfeld deine Adresse oder Koordinaten eingeben. Das Tool berechnet 
+        dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche.
       </p>
       <p>Der Service funktioniert aktuell nur für Gebäude in Bayern.</p>
       <DatesSlider></DatesSlider>
