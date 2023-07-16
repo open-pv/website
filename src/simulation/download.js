@@ -5,6 +5,8 @@ import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
 export var loc_utm;
 
+import { loadLAZ } from "./lazimport";
+
 // var state = "WaitForAddr"; // States are "WaitForAddr", "AddrDataLoaded", "Inspect"
 
 async function getLocationFromInput(locationText) {
@@ -274,16 +276,18 @@ async function retrieveData(loc, resetCamera = false) {
         ];
         geometry.translate(local_offset[0], local_offset[1], local_offset[2]);
       }
-
+      console.log("OFFSETS", main_offset, local_offset);
       geometries.push(geometry);
       // Merge geometries using BufferGeometryUtils
       const combinedGeometry = BufferGeometryUtils.mergeGeometries(geometries);
 
       // console.log("Comments:", comment);
+      const laser_points = await loadLAZ(100, main_offset);
+      console.log(`Finished loading points ${laser_points.length}`);
 
       createMeshes(combinedGeometry, main_offset);
       //showMeshOrig();
-      calc_webgl(loc, resetCamera);
+      calc_webgl(loc, laser_points, resetCamera);
     } else {
       console.error("STL file not found in ZIP archive");
     }

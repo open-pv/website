@@ -52,7 +52,7 @@ export function retrieveRandomSunDirections(Ndates, lat, lon) {
   return directions;
 }
 
-export async function calc_webgl(loc, resetCamera) {
+export async function calc_webgl(loc, laser_points, resetCamera) {
   const mesh_vectors = raytracingGeometry.attributes.position.array;
   const points = innerGeometry.attributes.position.array;
   const normals = innerGeometry.attributes.normal.array;
@@ -130,7 +130,7 @@ export async function calc_webgl(loc, resetCamera) {
   status_elem.textContent = "Simulation Done";
   status_elem.hasChanged = true;
   window.setLoading(false);
-  showMeshIntensities(intensities, resetCamera);
+  showMeshIntensities(intensities, laser_points, resetCamera);
 }
 
 function refine_triangles(triangle_array, threshold) {
@@ -405,7 +405,11 @@ export async function replot() {
   showMeshIntensities();
 }
 
-export async function showMeshIntensities(intensities, resetCamera) {
+export async function showMeshIntensities(
+  intensities,
+  laser_points,
+  resetCamera
+) {
   var oldCameraPosition;
   if (resetCamera || camera == null) {
     oldCameraPosition = { x: 0, y: 0, z: 0 };
@@ -459,17 +463,33 @@ export async function showMeshIntensities(intensities, resetCamera) {
 
   scene.add(outerMesh);
 
+  // Create a geometry for the spheres
+  const sphereGeometry = new THREE.SphereGeometry(0.1); // Adjust the radius as needed
+
+  // Create a material for the spheres
+  const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Adjust the color as needed
+
+  // Create and add a sphere for each point
+  for (var i = 0; i < laser_points.length; i++) {
+    if (i % 5 == 0) {
+      let point = laser_points[i];
+      const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      sphere.position.set(point[0], point[1], point[2]);
+      scene.add(sphere);
+    }
+  }
+
   // Compute the middle
   var middle = new THREE.Vector3();
   innerGeometry.computeBoundingBox();
   innerGeometry.boundingBox.getCenter(middle);
 
   // Pull the camera away as needed
-  var largestDimension = Math.max(
-    innerGeometry.boundingBox.max.x,
-    innerGeometry.boundingBox.max.y,
-    innerGeometry.boundingBox.max.z
-  );
+  // var largestDimension = Math.max(
+  //   innerGeometry.boundingBox.max.x,
+  //   innerGeometry.boundingBox.max.y,
+  //   innerGeometry.boundingBox.max.z
+  // );
 
   if (resetCamera) {
     camera.position.set(0, -40, 80);

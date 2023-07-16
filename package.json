@@ -8,8 +8,10 @@
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "0.2.0",
     "@react-three/drei": "^9.77.10",
+    "gh-pages": "^5.0.0",
     "gl-matrix": "^3.4.3",
     "jszip": "^3.10.1",
+    "laz-perf": "^0.0.6",
     "markdown-to-jsx": "^7.2.1",
     "proj4": "^2.9.0",
     "react": "^18.2.0",
@@ -20,8 +22,7 @@
     "react-spinners": "^0.13.8",
     "react-three-fiber": "^6.0.13",
     "suncalc": "^1.9.0",
-    "three": "^0.154.0",
-    "gh-pages": "^5.0.0"
+    "three": "^0.154.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.7",

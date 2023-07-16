@@ -53,6 +53,7 @@ function SearchField() {
       setInputChanged(true);
     }
   };
+
   return (
     <>
       <form
