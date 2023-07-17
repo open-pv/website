@@ -151,16 +151,22 @@ function refine_triangles(triangle_array, threshold) {
   return newpos_update;
 }
 
-function centerMesh(geometry, xytranslate) {
+function centerMesh(geometry, xytranslate, minZ) {
   // centralize mesh to main point
-  var minZ = Number.POSITIVE_INFINITY;
+  var newMinZ;
 
-  // Iterate over vertices and find the minimum z value
-  for (var i = 0; i < geometry.attributes.position.array.length; i++) {
-    const zcoord = geometry.attributes.position.getZ(i);
-    if (zcoord < minZ) {
-      minZ = zcoord;
+  if (minZ == null) {
+    newMinZ = Number.POSITIVE_INFINITY;
+
+    // Iterate over vertices and find the minimum z value
+    for (var i = 0; i < geometry.attributes.position.array.length; i++) {
+      const zcoord = geometry.attributes.position.getZ(i);
+      if (zcoord < newMinZ) {
+        newMinZ = zcoord;
+      }
     }
+  } else {
+    newMinZ = minZ;
   }
 
   var posarray = geometry.attributes.position.array;
@@ -168,9 +174,11 @@ function centerMesh(geometry, xytranslate) {
     for (var j = 0; j < 9; j += 3) {
       posarray[i + j] = posarray[i + j] - xytranslate[0];
       posarray[i + j + 1] = posarray[i + j + 1] - xytranslate[1];
-      posarray[i + j + 2] = posarray[i + j + 2] - minZ;
+      posarray[i + j + 2] = posarray[i + j + 2] - newMinZ;
     }
   }
+  console.log("NEWMINZ", newMinZ);
+  return newMinZ;
 }
 
 function cutoffMesh(geometry, cutoff) {
@@ -325,6 +333,7 @@ function splitCutoffRefineMesh(
 export function createMeshes(
   big_geometry,
   offset,
+  minZ = null,
   cutoffRaytracing = window.numRadiusSimulation + 20,
   outerCutoff = window.numRadiusSimulation + 70,
   refinementCutoff = window.numRadiusSimulation,
@@ -332,7 +341,11 @@ export function createMeshes(
 ) {
   intensities = null;
   //center the big mesh around the building coordinates from OSM
-  centerMesh(big_geometry, [loc_utm[0] - offset[0], loc_utm[1] - offset[1]]);
+  const newMinZ = centerMesh(
+    big_geometry,
+    [loc_utm[0] - offset[0], loc_utm[1] - offset[1]],
+    minZ
+  );
 
   raytracingGeometry = cutoffMesh(big_geometry, cutoffRaytracing);
 
@@ -350,6 +363,7 @@ export function createMeshes(
     window.setShowErrorMessage(true);
     window.setShowThreeViewer(false);
   }
+  return newMinZ;
 }
 
 export function showMeshOrig() {
@@ -471,7 +485,7 @@ export async function showMeshIntensities(
 
   // Create and add a sphere for each point
   for (var i = 0; i < laser_points.length; i++) {
-    if (i % 5 == 0) {
+    if (i % 2 == 1) {
       let point = laser_points[i];
       const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
       sphere.position.set(point[0], point[1], point[2]);

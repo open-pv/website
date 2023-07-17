@@ -95,9 +95,7 @@ export async function setLocation(
   }
 }
 
-function get_file_names(x, y) {
-  const DIVISOR = 2000;
-  const BUFFER_ZONE = 100;
+function get_utm32(x, y) {
   const IN_PROJ = "EPSG:4326";
   const OUT_PROJ = "EPSG:25832";
 
@@ -107,6 +105,15 @@ function get_file_names(x, y) {
 
   const [x_utm32, y_utm32] = transformer.forward([x, y]);
   loc_utm = [x_utm32, y_utm32];
+  return loc_utm;
+}
+
+function get_file_names(x, y) {
+  const DIVISOR = 2000;
+  const BUFFER_ZONE = 100;
+  const loc_utm = get_utm32(x, y);
+  const x_utm32 = loc_utm[0];
+  const y_utm32 = loc_utm[1];
 
   const x_rounded = Math.floor(x_utm32 / DIVISOR) * 2;
   const y_rounded = Math.floor(y_utm32 / DIVISOR) * 2;
@@ -209,6 +216,8 @@ async function retrieveData(loc, resetCamera = false) {
   let zipData = null;
   var cached_file_found = false;
   var main_offset = null;
+  console.log("Location", loc);
+  const loc_utm32 = get_utm32(Number(loc.lon), Number(loc.lat));
   // Iterate through all filenames
   for (const filename of filenames) {
     let filename_idx;
@@ -223,6 +232,11 @@ async function retrieveData(loc, resetCamera = false) {
       console.log("Use cached file!!");
     } else {
       let url = baseurl + filename;
+
+      if (url == "https://www.openpv.de/data/688_5388.zip") {
+        url = "./688_5388.zip";
+      }
+
       status_elem.textContent = "Loading from " + url;
 
       try {
@@ -281,11 +295,13 @@ async function retrieveData(loc, resetCamera = false) {
       // Merge geometries using BufferGeometryUtils
       const combinedGeometry = BufferGeometryUtils.mergeGeometries(geometries);
 
-      // console.log("Comments:", comment);
-      const laser_points = await loadLAZ(100, main_offset);
+      const minZ = createMeshes(combinedGeometry, main_offset);
+      const offsetUTM32 = [loc_utm32[0], loc_utm32[1], minZ + main_offset[2]];
+
+      console.log("OffsetUTM32:", offsetUTM32);
+      const laser_points = await loadLAZ(100, offsetUTM32);
       console.log(`Finished loading points ${laser_points.length}`);
 
-      createMeshes(combinedGeometry, main_offset);
       //showMeshOrig();
       calc_webgl(loc, laser_points, resetCamera);
     } else {

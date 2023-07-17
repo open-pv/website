@@ -45,7 +45,7 @@ export function parseHeader(arrayBuffer) {
 
 export async function loadLAZ(radius, offsetPos) {
   console.log("LOADING!!!");
-  const response = await fetch("/688_5388.laz");
+  const response = await fetch("/689_5389.laz");
   // use later  	https://geodaten.bayern.de/odd_data/laser/
   const arrayBuffer = await response.arrayBuffer();
   const fileUint8Array = new Uint8Array(arrayBuffer);
@@ -83,7 +83,7 @@ export async function loadLAZ(radius, offsetPos) {
   max[2] -= offsetPos[2];
 
   console.log("Mesh minmax", min, max);
-  console.log("Offset", offsetPos);
+  console.log("Offset Pos", offsetPos);
 
   var points = [];
 
