@@ -18,7 +18,7 @@ const DatesSlider = () => {
       <Slider
         onChange={handleNumSimulationsChange}
         min={0}
-        max={2.2}
+        max={3}
         stepSize={0.01}
       />
     </div>

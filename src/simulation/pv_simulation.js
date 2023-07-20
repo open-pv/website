@@ -85,7 +85,7 @@ export async function calc_webgl(loc, laserPoints, resetCamera) {
   const uniqueNormalsArray = new Float32Array(uniqueNormals.slice());
 
   const laserPointsRadius = 0.5;
-  const laserPointsMinDistance = 1;
+  const laserPointsMinDistance = 1.0;
 
   // Compute unique intensities
   const uniqueIntensities = await rayTracingPointsWebGL(
@@ -184,7 +184,6 @@ function centerMesh(geometry, xytranslate, minZ) {
       posarray[i + j + 2] = posarray[i + j + 2] - newMinZ;
     }
   }
-  console.log("NEWMINZ", newMinZ);
   return newMinZ;
 }
 
@@ -492,7 +491,7 @@ export async function showMeshIntensities(
 
   // Create and add a sphere for each point
   for (var i = 0; i < laserPoints.length; i++) {
-    if (i % 2 == 1) {
+    if (i % 10 == 0) {
       let point = laserPoints[i];
       const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
       sphere.position.set(point[0], point[1], point[2]);
