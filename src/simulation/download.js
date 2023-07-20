@@ -299,7 +299,7 @@ async function retrieveData(loc, resetCamera = false) {
       const offsetUTM32 = [loc_utm32[0], loc_utm32[1], minZ + main_offset[2]];
 
       console.log("OffsetUTM32:", offsetUTM32);
-      const laser_points = await loadLAZ(100, offsetUTM32);
+      const laser_points = await loadLAZ(50, offsetUTM32);
       console.log(`Finished loading points ${laser_points.length}`);
 
       //showMeshOrig();

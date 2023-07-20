@@ -9,6 +9,7 @@ import SunCalc from "suncalc";
 import { loc_utm } from "./download.js";
 import { intensity_colormap } from "./utils.js";
 import { rayTracingWebGL } from "./webgl_raytracing.js";
+import { rayTracingPointsWebGL } from "./webgl_raytracing_points.js";
 //import { triangleIntersectText, Calculate_Shading_at_Point_text } from "./webgl_raytracing.js";
 import DatesSlider from "../components/PVSimulation/DatesSlider.js";
 
@@ -52,7 +53,7 @@ export function retrieveRandomSunDirections(Ndates, lat, lon) {
   return directions;
 }
 
-export async function calc_webgl(loc, laser_points, resetCamera) {
+export async function calc_webgl(loc, laserPoints, resetCamera) {
   const mesh_vectors = raytracingGeometry.attributes.position.array;
   const points = innerGeometry.attributes.position.array;
   const normals = innerGeometry.attributes.normal.array;
@@ -83,11 +84,17 @@ export async function calc_webgl(loc, laser_points, resetCamera) {
   const uniquePointsArray = new Float32Array(uniquePoints.slice());
   const uniqueNormalsArray = new Float32Array(uniqueNormals.slice());
 
+  const laserPointsRadius = 0.5;
+  const laserPointsMinDistance = 1;
+
   // Compute unique intensities
-  const uniqueIntensities = await rayTracingWebGL(
+  const uniqueIntensities = await rayTracingPointsWebGL(
     uniquePointsArray,
     mesh_vectors,
     uniqueNormalsArray,
+    laserPoints,
+    laserPointsRadius,
+    laserPointsMinDistance,
     window.numSimulations,
     loc
   );
@@ -130,7 +137,7 @@ export async function calc_webgl(loc, laser_points, resetCamera) {
   status_elem.textContent = "Simulation Done";
   status_elem.hasChanged = true;
   window.setLoading(false);
-  showMeshIntensities(intensities, laser_points, resetCamera);
+  showMeshIntensities(intensities, laserPoints, resetCamera);
 }
 
 function refine_triangles(triangle_array, threshold) {
@@ -421,7 +428,7 @@ export async function replot() {
 
 export async function showMeshIntensities(
   intensities,
-  laser_points,
+  laserPoints,
   resetCamera
 ) {
   var oldCameraPosition;
@@ -481,12 +488,12 @@ export async function showMeshIntensities(
   const sphereGeometry = new THREE.SphereGeometry(0.1); // Adjust the radius as needed
 
   // Create a material for the spheres
-  const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Adjust the color as needed
+  const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x992222 }); // Adjust the color as needed
 
   // Create and add a sphere for each point
-  for (var i = 0; i < laser_points.length; i++) {
+  for (var i = 0; i < laserPoints.length; i++) {
     if (i % 2 == 1) {
-      let point = laser_points[i];
+      let point = laserPoints[i];
       const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
       sphere.position.set(point[0], point[1], point[2]);
       scene.add(sphere);
