@@ -1,9 +1,10 @@
-import React, { useRef } from "react";
+import React from "react";
 import ContactIcons from "../Contact/ContactIcons";
 import DatesSlider from "../PVSimulation/DatesSlider";
 import RadiusSlider from "../PVSimulation/RadiusSlider";
 import DistanceSlider from "../PVSimulation/DistanceSlider";
-import DraggableCircle from "../PVSimulation/DirectionSlider";
+import EnableLaserPointsSlider from "../PVSimulation/EnableLaserPointsSlider";
+import VisualizeLaserPointsSlider from "../PVSimulation/VisualizeLaserPointsSlider";
 
 const SideBar = () => (
   <section id="sidebar">
@@ -22,6 +23,8 @@ const SideBar = () => (
       <DatesSlider></DatesSlider>
       <RadiusSlider></RadiusSlider>
       <DistanceSlider></DistanceSlider>
+      <EnableLaserPointsSlider></EnableLaserPointsSlider>
+      <VisualizeLaserPointsSlider></VisualizeLaserPointsSlider>
       {/* <DraggableCircle></DraggableCircle> */}
       <p id="status">Warte auf Adresseingabe</p>
     </section>

@@ -45,12 +45,30 @@ export function parseHeader(arrayBuffer) {
 
 export async function loadLAZ(radius, offsetPos, filenames) {
   console.log("LOADING!!!");
-  var points = [];
+  const BUFFERED_POINTS_COUNT = 20000;
+  var points = []; // new Float32Array(BUFFERED_POINTS_COUNT * 3);
+  var pointsIdx = 0;
 
   for (var filename of filenames) {
-    const response = await fetch(`https://www.openpv.de/laser/${filename}`);
-    // use later  	https://geodaten.bayern.de/odd_data/laser/
-    const arrayBuffer = await response.arrayBuffer();
+    var filenameIdx;
+    if (window.lazFiles != null) {
+      filenameIdx = window.lazFiles.indexOf(filename);
+    } else {
+      filenameIdx = -1;
+    }
+    var arrayBuffer;
+    if (filenameIdx != -1) {
+      arrayBuffer = window.lazCache[filenameIdx];
+    } else {
+      const response = await fetch(`https://www.openpv.de/laser/${filename}`);
+      arrayBuffer = await response.arrayBuffer();
+      if (window.lazFiles == null) {
+        window.lazFiles = [];
+        window.lazCache = [];
+      }
+      window.lazFiles.push(filename);
+      window.lazCache.push(arrayBuffer);
+    }
     const fileUint8Array = new Uint8Array(arrayBuffer);
 
     const {
@@ -88,20 +106,38 @@ export async function loadLAZ(radius, offsetPos, filenames) {
     console.log("Mesh minmax", min, max);
     console.log("Offset Pos", offsetPos);
 
+    const pointbuffer = new Uint8Array(
+      LazPerf.HEAPU8.buffer,
+      LazPerf.HEAPU8.byteOffset,
+      pointDataRecordLength
+    );
+    const dataview = new DataView(
+      pointbuffer.buffer,
+      pointbuffer.byteOffset,
+      pointDataRecordLength
+    );
+
     try {
       laszip.open(filePtr, fileUint8Array.byteLength);
 
       for (let i = 0; i < pointCount; ++i) {
         laszip.getPoint(dataPtr);
 
-        // Now our dataPtr (in the Emscripten heap) contains our point data, copy
-        // it out into our own Buffer.
+        // // Create a new Uint8Array for each point
+        // const pointbuffer = new Uint8Array(
+        //   LazPerf.HEAPU8.buffer,
+        //   LazPerf.HEAPU8.byteOffset + dataPtr,
+        //   pointDataRecordLength
+        // );
+
+        // Create a new Uint8Array for each point
         const pointbuffer = new Uint8Array(
           LazPerf.HEAPU8.buffer,
           LazPerf.HEAPU8.byteOffset + dataPtr,
           pointDataRecordLength
         );
 
+        // The dataview needs to be recreated since its properties are read-only
         const dataview = new DataView(
           pointbuffer.buffer,
           pointbuffer.byteOffset,
@@ -118,18 +154,15 @@ export async function loadLAZ(radius, offsetPos, filenames) {
           dataview.getInt32(8, true),
         ].map((v, i) => v * scale[i] + offset[i] - offsetPos[i]);
 
-        // if (i % 10000 == 0) {
-        //   console.log(point);
-        // }
-
-        // Doing 6 expect(point[n]).toBeGreaterThanOrEqual(min[n]) style checks in
-        // this tight loop slows down the test by 50x, so do a quicker check.
-        if (point.some((v, i) => v < min[i] || v > max[i])) {
-          console.error(i, point, min, max);
-          throw new Error(`Point ${i} out of expected range ${min} ${max}`);
-          continue;
-        }
         if (point.every((v, i) => (v > -radius && v < radius) || i == 2)) {
+          // if (pointsIdx == points.length) {
+          //   let new_points = new Float32Array(pointsIdx * 2);
+          //   new_points.set(points);
+          //   points = new_points;
+          // } else {
+          //   points.set(point, pointsIdx);
+          //   pointsIdx += 3;
+          // }
           points.push(point);
         }
       }
@@ -139,5 +172,7 @@ export async function loadLAZ(radius, offsetPos, filenames) {
       laszip.delete();
     }
   }
+  // points.length = pointsIdx;
+  console.log("Points loaded");
   return points;
 }

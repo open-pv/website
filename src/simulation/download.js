@@ -257,7 +257,7 @@ async function retrieveData(loc, resetCamera = false) {
 
   // Create an array to store individual geometries
   let geometries = [];
-  let zipData = null;
+  let stlData = null;
   var cached_file_found = false;
   var main_offset = null;
   console.log("Location", loc);
@@ -265,18 +265,18 @@ async function retrieveData(loc, resetCamera = false) {
   // Iterate through all filenames
   for (const filename of filenames) {
     let filename_idx;
-    if (window.stlFile != null) {
+    if (window.stlFiles != null) {
       filename_idx = window.stlFiles.indexOf(filename);
     } else {
       filename_idx = -1;
     }
     if (filename_idx != -1) {
-      zipData = window.stlDataCached[filename_idx];
+      stlData = window.stlDataCached[filename_idx];
       cached_file_found = true;
       console.log("Use cached file!!");
     } else {
       let url = baseurl + filename;
-
+      cached_file_found = false;
       status_elem.textContent = "Loading from " + url;
 
       try {
@@ -286,14 +286,22 @@ async function retrieveData(loc, resetCamera = false) {
         if (!response.ok) {
           throw new Error("Request failed with status " + response.status);
         }
-        zipData = await response.arrayBuffer();
-        if (!cached_file_found) {
-          window.stlDataCached = [zipData];
-          window.stlFiles = [filename];
-        } else {
-          window.stlDataCached.append(zipData);
-          window.stlFiles.append(filename);
+        const zipData = await response.arrayBuffer();
+
+        // Unzip the zipped STL file
+        const zip = new JSZip();
+        await zip.loadAsync(zipData);
+
+        // Get the STL file from the unzipped contents
+        const stlFile = zip.file(Object.keys(zip.files)[0]);
+        // Load the STL file
+        stlData = await stlFile.async("arraybuffer");
+        if (window.stlFiles == null) {
+          window.stlFiles = [];
+          window.stlDataCached = [];
         }
+        window.stlFiles.push(filename);
+        window.stlDataCached.push(stlData);
       } catch (error) {
         window.setLoading(false);
         window.setShowErrorMessage(true);
@@ -301,17 +309,7 @@ async function retrieveData(loc, resetCamera = false) {
       }
     }
 
-    // Unzip the zipped STL file
-    const zip = new JSZip();
-    await zip.loadAsync(zipData);
-
-    // Get the STL file from the unzipped contents
-    const stlFile = zip.file(Object.keys(zip.files)[0]);
-    if (stlFile) {
-      // Load the STL file
-      const stlData = await stlFile.async("arraybuffer");
-      stlDataCached = stlData;
-
+    if (stlData) {
       // Parse the STL data and add the geometry to the geometries array
       let geometry = new STLLoader().parse(stlData);
 
@@ -339,11 +337,14 @@ async function retrieveData(loc, resetCamera = false) {
       const offsetUTM32 = [loc_utm32[0], loc_utm32[1], minZ + main_offset[2]];
 
       console.log("OffsetUTM32:", offsetUTM32);
-      const laser_points = await loadLAZ(
-        50,
-        offsetUTM32,
-        get_file_names_laz(Number(loc.lon), Number(loc.lat))
-      );
+      let laser_points = null;
+      if (window.enableLaserPoints == 1) {
+        laser_points = await loadLAZ(
+          50,
+          offsetUTM32,
+          get_file_names_laz(Number(loc.lon), Number(loc.lat))
+        );
+      }
       if (laser_points != null) {
         console.log(`Finished loading points ${laser_points.length}`);
       }

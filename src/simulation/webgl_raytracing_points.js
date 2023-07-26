@@ -1,6 +1,5 @@
 import { addToArray } from "./utils";
 import { retrieveRandomSunDirections } from "./pv_simulation";
-import { Vector3 } from "three";
 
 function max_subdim(array, index) {
   var max = -1000000;

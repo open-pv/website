@@ -492,7 +492,7 @@ export async function showMeshIntensities(
     const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x992222 }); // Adjust the color as needed
 
     for (var i = 0; i < laserPoints.length; i++) {
-      if (i % 10 == 0) {
+      if ((i % 100) / 100 < window.pointsVisualizationRatio) {
         let point = laserPoints[i];
         const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
         sphere.position.set(point[0], point[1], point[2]);

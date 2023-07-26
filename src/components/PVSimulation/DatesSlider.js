@@ -16,6 +16,7 @@ const DatesSlider = () => {
     <div>
       <div>Anzahl Simulations: {numSimulations}</div>
       <Slider
+        value={Math.log(numSimulations) / Math.log(10)}
         onChange={handleNumSimulationsChange}
         min={0}
         max={3}
