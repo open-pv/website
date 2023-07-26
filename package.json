@@ -14,7 +14,6 @@
     "i18next-browser-languagedetector": "^7.1.0",
     "i18next-http-backend": "^2.2.1",
     "jszip": "^3.10.1",
-    "markdown-to-jsx": "^7.2.1",
     "proj4": "^2.9.0",
     "react": "^18.2.0",
     "react-burger-menu": "^3.0.9",
