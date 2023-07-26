@@ -483,22 +483,23 @@ export async function showMeshIntensities(
 
   scene.add(outerMesh);
 
-  // Create a geometry for the spheres
-  const sphereGeometry = new THREE.SphereGeometry(0.1); // Adjust the radius as needed
-
-  // Create a material for the spheres
-  const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x992222 }); // Adjust the color as needed
-
   // Create and add a sphere for each point
-  for (var i = 0; i < laserPoints.length; i++) {
-    if (i % 10 == 0) {
-      let point = laserPoints[i];
-      const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-      sphere.position.set(point[0], point[1], point[2]);
-      scene.add(sphere);
+  if (laserPoints != null) {
+    // Create a geometry for the spheres
+    const sphereGeometry = new THREE.SphereGeometry(0.1); // Adjust the radius as needed
+
+    // Create a material for the spheres
+    const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x992222 }); // Adjust the color as needed
+
+    for (var i = 0; i < laserPoints.length; i++) {
+      if (i % 10 == 0) {
+        let point = laserPoints[i];
+        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        sphere.position.set(point[0], point[1], point[2]);
+        scene.add(sphere);
+      }
     }
   }
-
   // Compute the middle
   var middle = new THREE.Vector3();
   innerGeometry.computeBoundingBox();

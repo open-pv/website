@@ -152,6 +152,50 @@ function get_file_names(x, y) {
   return file_list;
 }
 
+function get_file_names_laz(x, y) {
+  const DIVISOR = 1000;
+  const BUFFER_ZONE = 100;
+  const loc_utm = get_utm32(x, y);
+  const x_utm32 = loc_utm[0];
+  const y_utm32 = loc_utm[1];
+
+  const x_rounded = Math.floor(x_utm32 / DIVISOR);
+  const y_rounded = Math.floor(y_utm32 / DIVISOR);
+
+  const load_tile_left = x_utm32 % DIVISOR < BUFFER_ZONE;
+  const load_tile_right = x_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE;
+  const load_tile_lower = y_utm32 % DIVISOR < BUFFER_ZONE;
+  const load_tile_upper = y_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE;
+
+  const file_list = [`${x_rounded}_${y_rounded}.laz`];
+
+  if (load_tile_left) {
+    file_list.push(`${x_rounded - 2}_${y_rounded}.laz`);
+  }
+  if (load_tile_right) {
+    file_list.push(`${x_rounded + 2}_${y_rounded}.laz`);
+  }
+  if (load_tile_lower) {
+    file_list.push(`${x_rounded}_${y_rounded - 2}.laz`);
+  }
+  if (load_tile_upper) {
+    file_list.push(`${x_rounded}_${y_rounded + 2}.laz`);
+  }
+  if (load_tile_left && load_tile_lower) {
+    file_list.push(`${x_rounded - 2}_${y_rounded - 2}.laz`);
+  }
+  if (load_tile_left && load_tile_upper) {
+    file_list.push(`${x_rounded - 2}_${y_rounded + 2}.laz`);
+  }
+  if (load_tile_right && load_tile_lower) {
+    file_list.push(`${x_rounded + 2}_${y_rounded - 2}.laz`);
+  }
+  if (load_tile_right && load_tile_upper) {
+    file_list.push(`${x_rounded + 2}_${y_rounded + 2}.laz`);
+  }
+  return file_list;
+}
+
 function getCommentLine(stlData) {
   // Convert the ArrayBuffer to a Uint8Array
   var uint8Array = new Uint8Array(stlData);
@@ -233,10 +277,6 @@ async function retrieveData(loc, resetCamera = false) {
     } else {
       let url = baseurl + filename;
 
-      if (url == "https://www.openpv.de/data/688_5388.zip") {
-        url = "./688_5388.zip";
-      }
-
       status_elem.textContent = "Loading from " + url;
 
       try {
@@ -299,8 +339,14 @@ async function retrieveData(loc, resetCamera = false) {
       const offsetUTM32 = [loc_utm32[0], loc_utm32[1], minZ + main_offset[2]];
 
       console.log("OffsetUTM32:", offsetUTM32);
-      const laser_points = await loadLAZ(50, offsetUTM32);
-      console.log(`Finished loading points ${laser_points.length}`);
+      const laser_points = await loadLAZ(
+        50,
+        offsetUTM32,
+        get_file_names_laz(Number(loc.lon), Number(loc.lat))
+      );
+      if (laser_points != null) {
+        console.log(`Finished loading points ${laser_points.length}`);
+      }
 
       //showMeshOrig();
       calc_webgl(loc, laser_points, resetCamera);

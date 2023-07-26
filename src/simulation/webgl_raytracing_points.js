@@ -59,6 +59,7 @@ export function rayTracingPointsWebGL(
     uniform vec3 origin_offset;
     uniform sampler3D u_grid;
     uniform float scaleDown;
+    uniform int pointcloudShading;
 
     uniform sampler2D u_triangles;
 	uniform int textureWidthTris;
@@ -180,7 +181,10 @@ export function rayTracingPointsWebGL(
     }
 
 	void main() {
-		float shadow_value = Calculate_Shading_at_Point_Triangles(a_position.xyz, u_sun_direction) + Calculate_Shading_at_Point(a_position.xyz, u_sun_direction);
+		float shadow_value = Calculate_Shading_at_Point_Triangles(a_position.xyz, u_sun_direction);
+    if (pointcloudShading > 0){
+      shadow_value += Calculate_Shading_at_Point(a_position.xyz, u_sun_direction);
+    }
 		float intensity = dot(a_normal.xyz, u_sun_direction)*((shadow_value > 1.)?0.:(1.-shadow_value));
     intensity = (intensity < 0.)?0.:intensity;
     outColor = vec4(intensity, intensity, intensity, intensity); // Not shadowed
@@ -196,70 +200,81 @@ export function rayTracingPointsWebGL(
   let max3DTextureSize = gl.getParameter(gl.MAX_3D_TEXTURE_SIZE);
   console.log("Max 3D texture size: ", max3DTextureSize);
 
-  const numLaserPoints = laserPoints.length;
-  const laserPointAreaBounds = [
-    min_subdim(laserPoints, 0),
-    min_subdim(laserPoints, 1),
-    max_subdim(laserPoints, 0),
-    max_subdim(laserPoints, 1),
-  ];
-  const laserPointZBound = [
-    min_subdim(laserPoints, 2),
-    max_subdim(laserPoints, 2),
-  ];
+  const numLaserPoints = laserPoints != null ? laserPoints.length : 1;
+  var textureWidth = 1;
+  var textureDepth = 1;
+  var textureHeight = 1;
+  let texturePointsGrid = new Float32Array(1);
+  var scaleDown = 1;
+  var laserPointAreaBounds = [];
+  var laserPointZBound = [];
+  var laserPointAreaWidth = 0;
+  var laserPointAreaHeight = 0;
+  var gridCellSize = 0;
 
-  console.log(laserPointAreaBounds);
-  const laserPointAreaWidth = laserPointAreaBounds[2] - laserPointAreaBounds[0];
-  const laserPointAreaHeight =
-    laserPointAreaBounds[3] - laserPointAreaBounds[1];
-  const gridCellSize = Math.sqrt(
-    (10 * laserPointAreaHeight * laserPointAreaWidth) / numLaserPoints
-  );
-  console.log("GRID CELL SIZE:", gridCellSize);
-  const textureWidth = Math.ceil(laserPointAreaWidth / gridCellSize);
-  const textureHeight = Math.ceil(laserPointAreaHeight / gridCellSize);
+  if (laserPoints != null) {
+    laserPointAreaBounds = [
+      min_subdim(laserPoints, 0),
+      min_subdim(laserPoints, 1),
+      max_subdim(laserPoints, 0),
+      max_subdim(laserPoints, 1),
+    ];
+    laserPointZBound = [min_subdim(laserPoints, 2), max_subdim(laserPoints, 2)];
 
-  let nPointsGrid = new Int32Array(textureWidth * textureHeight);
-  for (let i = 0; i < laserPoints.length; i++) {
-    let point = laserPoints[i];
-    let x = Math.floor((point[0] - laserPointAreaBounds[0]) / gridCellSize);
-    let y = Math.floor((point[1] - laserPointAreaBounds[1]) / gridCellSize);
-    let index = (y * textureWidth + x) * 4;
-    nPointsGrid[index] += 1;
-  }
-  const maxNPoints = Math.max(...nPointsGrid);
-  console.log(`Maximal depth of texture: ${maxNPoints}`);
-  const textureDepth = maxNPoints;
-
-  let texturePointsGrid = new Float32Array(
-    textureWidth * textureHeight * maxNPoints * 4
-  );
-  for (var i = 0; i < texturePointsGrid.length; i++) {
-    texturePointsGrid[i] = -100.0;
-  }
-
-  const scaleDown =
-    1.2 *
-    Math.max(
-      laserPointZBound[1] - laserPointZBound[0],
-      laserPointAreaHeight,
-      laserPointAreaWidth
+    console.log(laserPointAreaBounds);
+    laserPointAreaWidth = laserPointAreaBounds[2] - laserPointAreaBounds[0];
+    laserPointAreaHeight = laserPointAreaBounds[3] - laserPointAreaBounds[1];
+    gridCellSize = Math.sqrt(
+      (10 * laserPointAreaHeight * laserPointAreaWidth) / numLaserPoints
     );
 
-  for (var i = 0; i < laserPoints.length; i++) {
-    let point = laserPoints[i];
-    let x = Math.floor((point[0] - laserPointAreaBounds[0]) / gridCellSize);
-    let y = Math.floor((point[1] - laserPointAreaBounds[1]) / gridCellSize);
-    for (var j = 0; j < textureDepth; j++) {
-      let index = (y * textureWidth + x + j * textureHeight * textureWidth) * 4;
-      if (texturePointsGrid[index + 2] < 0) {
-        texturePointsGrid[index + 0] =
-          (point[0] - laserPointAreaBounds[0]) / scaleDown;
-        texturePointsGrid[index + 1] =
-          (point[1] - laserPointAreaBounds[1]) / scaleDown;
-        texturePointsGrid[index + 2] = (point[2] - 0) / scaleDown;
-        texturePointsGrid[index + 3] = 1;
-        break;
+    console.log("GRID CELL SIZE:", gridCellSize);
+    textureWidth = Math.ceil(laserPointAreaWidth / gridCellSize);
+    textureHeight = Math.ceil(laserPointAreaHeight / gridCellSize);
+
+    let nPointsGrid = new Int32Array(textureWidth * textureHeight);
+    for (let i = 0; i < laserPoints.length; i++) {
+      let point = laserPoints[i];
+      let x = Math.floor((point[0] - laserPointAreaBounds[0]) / gridCellSize);
+      let y = Math.floor((point[1] - laserPointAreaBounds[1]) / gridCellSize);
+      let index = (y * textureWidth + x) * 4;
+      nPointsGrid[index] += 1;
+    }
+    const maxNPoints = Math.max(...nPointsGrid);
+    console.log(`Maximal depth of texture: ${maxNPoints}`);
+    textureDepth = maxNPoints;
+
+    texturePointsGrid = new Float32Array(
+      textureWidth * textureHeight * maxNPoints * 4
+    );
+    for (var i = 0; i < texturePointsGrid.length; i++) {
+      texturePointsGrid[i] = -100.0;
+    }
+
+    scaleDown =
+      1.2 *
+      Math.max(
+        laserPointZBound[1] - laserPointZBound[0],
+        laserPointAreaHeight,
+        laserPointAreaWidth
+      );
+
+    for (var i = 0; i < laserPoints.length; i++) {
+      let point = laserPoints[i];
+      let x = Math.floor((point[0] - laserPointAreaBounds[0]) / gridCellSize);
+      let y = Math.floor((point[1] - laserPointAreaBounds[1]) / gridCellSize);
+      for (var j = 0; j < textureDepth; j++) {
+        let index =
+          (y * textureWidth + x + j * textureHeight * textureWidth) * 4;
+        if (texturePointsGrid[index + 2] < 0) {
+          texturePointsGrid[index + 0] =
+            (point[0] - laserPointAreaBounds[0]) / scaleDown;
+          texturePointsGrid[index + 1] =
+            (point[1] - laserPointAreaBounds[1]) / scaleDown;
+          texturePointsGrid[index + 2] = (point[2] - 0) / scaleDown;
+          texturePointsGrid[index + 3] = 1;
+          break;
+        }
       }
     }
   }
@@ -287,12 +302,12 @@ export function rayTracingPointsWebGL(
     3 * N_TRIANGLES,
     Math.floor(maxTextureSize / 9) * 9
   );
-  var textureHeightTris = Math.ceil((3 * N_TRIANGLES) / textureWidth);
+  var textureHeightTris = Math.ceil((3 * N_TRIANGLES) / textureWidthTris);
 
   gl.useProgram(program);
 
   var alignedTrianglesArray;
-  if (textureHeight == 1) {
+  if (textureHeightTris == 1) {
     alignedTrianglesArray = trianglesArray;
   } else {
     alignedTrianglesArray = new Float32Array(
@@ -309,30 +324,33 @@ export function rayTracingPointsWebGL(
     }
   }
 
-  // Create a new texture
-  let texture = gl.createTexture();
-  gl.activeTexture(gl.TEXTURE0);
-  gl.bindTexture(gl.TEXTURE_3D, texture);
-  // Upload the buffer to the GPU and configure the 3D texture
-  gl.texImage3D(
-    gl.TEXTURE_3D, // target
-    0, // level
-    gl.RGBA32F, // internalFormat
-    textureWidth, // width
-    textureHeight, // height
-    textureDepth, // depth
-    0, // border
-    gl.RGBA, // format
-    gl.FLOAT, // type
-    texturePointsGrid // pixel data
-  );
+  var texture;
+  if (laserPoints != null) {
+    // Create a new texture
+    texture = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_3D, texture);
+    // Upload the buffer to the GPU and configure the 3D texture
+    gl.texImage3D(
+      gl.TEXTURE_3D, // target
+      0, // level
+      gl.RGBA32F, // internalFormat
+      textureWidth, // width
+      textureHeight, // height
+      textureDepth, // depth
+      0, // border
+      gl.RGBA, // format
+      gl.FLOAT, // type
+      texturePointsGrid // pixel data
+    );
 
-  // Set up texture parameters for the 3D texture
-  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
+    // Set up texture parameters for the 3D texture
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
+  }
 
   let textureTri = gl.createTexture();
   gl.activeTexture(gl.TEXTURE1);
@@ -356,38 +374,42 @@ export function rayTracingPointsWebGL(
   var u_trianglesLocation = gl.getUniformLocation(program, "u_triangles");
   gl.uniform1i(u_trianglesLocation, 1);
 
-  var u_textureWidth = gl.getUniformLocation(program, "textureWidth");
-  gl.uniform1i(u_textureWidth, textureWidth);
-  var u_textureHeight = gl.getUniformLocation(program, "textureHeight");
-  gl.uniform1i(u_textureHeight, textureHeight);
-  var u_textureDepth = gl.getUniformLocation(program, "textureDepth");
-  gl.uniform1i(u_textureDepth, textureDepth);
-  var u_POINT_RADIUS = gl.getUniformLocation(program, "u_POINT_RADIUS");
-  gl.uniform1f(u_POINT_RADIUS, laserPointsRadius);
-  var u_MIN_DISTANCE = gl.getUniformLocation(program, "u_MIN_DISTANCE");
-  gl.uniform1f(u_MIN_DISTANCE, laserPointsMinDistance);
-  var u_scaleDown = gl.getUniformLocation(program, "scaleDown");
-  gl.uniform1f(u_scaleDown, scaleDown);
-  var u_MAX_STEPS = gl.getUniformLocation(program, "MAX_STEPS");
-  gl.uniform1i(u_MAX_STEPS, 10000);
-  var u_gridCellSizes = gl.getUniformLocation(program, "gridCellSizes");
-  gl.uniform3f(u_gridCellSizes, gridCellSize, gridCellSize, 10);
+  var u_pointcloudShading = gl.getUniformLocation(program, "pointcloudShading");
+  gl.uniform1i(u_pointcloudShading, laserPoints != null ? 1 : 0);
+  if (laserPoints != null) {
+    var u_textureWidth = gl.getUniformLocation(program, "textureWidth");
+    gl.uniform1i(u_textureWidth, textureWidth);
+    var u_textureHeight = gl.getUniformLocation(program, "textureHeight");
+    gl.uniform1i(u_textureHeight, textureHeight);
+    var u_textureDepth = gl.getUniformLocation(program, "textureDepth");
+    gl.uniform1i(u_textureDepth, textureDepth);
+    var u_POINT_RADIUS = gl.getUniformLocation(program, "u_POINT_RADIUS");
+    gl.uniform1f(u_POINT_RADIUS, laserPointsRadius);
+    var u_MIN_DISTANCE = gl.getUniformLocation(program, "u_MIN_DISTANCE");
+    gl.uniform1f(u_MIN_DISTANCE, laserPointsMinDistance);
+    var u_scaleDown = gl.getUniformLocation(program, "scaleDown");
+    gl.uniform1f(u_scaleDown, scaleDown);
+    var u_MAX_STEPS = gl.getUniformLocation(program, "MAX_STEPS");
+    gl.uniform1i(u_MAX_STEPS, 10000);
+    var u_gridCellSizes = gl.getUniformLocation(program, "gridCellSizes");
+    gl.uniform3f(u_gridCellSizes, gridCellSize, gridCellSize, 10);
+
+    var u_originOffset = gl.getUniformLocation(program, "origin_offset");
+    gl.uniform3f(
+      u_originOffset,
+      laserPointAreaBounds[0],
+      laserPointAreaBounds[1],
+      0
+    );
+
+    var u_gridLocation = gl.getUniformLocation(program, "u_grid");
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_3D, texture);
+    gl.uniform1i(u_gridLocation, 0);
+  }
 
   var u_textureWidthTris = gl.getUniformLocation(program, "textureWidthTris");
   gl.uniform1i(u_textureWidthTris, textureWidthTris);
-
-  var u_originOffset = gl.getUniformLocation(program, "origin_offset");
-  gl.uniform3f(
-    u_originOffset,
-    laserPointAreaBounds[0],
-    laserPointAreaBounds[1],
-    0
-  );
-
-  var u_gridLocation = gl.getUniformLocation(program, "u_grid");
-  gl.activeTexture(gl.TEXTURE0);
-  gl.bindTexture(gl.TEXTURE_3D, texture);
-  gl.uniform1i(u_gridLocation, 0);
 
   const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
   const normalAttributeLocation = gl.getAttribLocation(program, "a_normal");
