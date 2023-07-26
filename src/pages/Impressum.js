@@ -14,7 +14,12 @@ const Impressum = () => {
             </h2>
           </div>
         </header>
-        <h3>ADRESSE EMAIL</h3>
+        <p>
+          Florian Kotthoff <br />
+          Arnulfstraße 138 <br />
+          80634 München <br />
+          info@openpv.de <br />
+        </p>
         <h3>Haftung für Inhalte</h3>
         <p>
           Alle Inhalte unseres Internetauftritts wurden mit größter Sorgfalt und
