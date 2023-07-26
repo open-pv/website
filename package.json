@@ -8,6 +8,7 @@
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "0.2.0",
     "@react-three/drei": "^9.77.10",
+    "driver.js": "^1.1.0",
     "gh-pages": "^5.0.0",
     "gl-matrix": "^3.4.3",
     "i18next": "^23.2.11",

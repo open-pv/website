@@ -4,6 +4,7 @@ import ContactIcons from "../Contact/ContactIcons"
 import DatesSlider from "../PVSimulation/DatesSlider"
 import DistanceSlider from "../PVSimulation/DistanceSlider"
 import RadiusSlider from "../PVSimulation/RadiusSlider"
+import { Driver } from "./Driver"
 import SidebarFooter from "./SideBarFooter"
 
 const SideBar = () => {
@@ -12,15 +13,16 @@ const SideBar = () => {
   return (
     <section id="sidebar">
       <section id="intro">
-        <header>
-          <h2>{t("sidebar.header")}</h2>
-        </header>
+        <Driver />
       </section>
       <section className="blurb">
         <p>{t("sidebar.mainText")}</p>
-        <DatesSlider></DatesSlider>
-        <RadiusSlider></RadiusSlider>
-        <DistanceSlider></DistanceSlider>
+
+        <div id="sidebar-slider">
+          <DatesSlider></DatesSlider>
+          <RadiusSlider></RadiusSlider>
+          <DistanceSlider></DistanceSlider>
+        </div>
         <p id="status">{t("simulationStatus.waitingForAdress")}</p>
       </section>
 

@@ -60,6 +60,7 @@ function SearchField() {
       <form
         onSubmit={handleSubmit}
         style={{ display: "flex", alignItems: "center" }}
+        id="search-field"
       >
         <input
           type="text"

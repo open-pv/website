@@ -4,13 +4,13 @@
     "mainText": "Enter your address or coordinates in the search field. The tool will then calculate the potential for a solar system on your roof and facade area. Currently, the service is only available for buildings in the German state of Bavaria."
   },
   "datesSlider": {
-    "text": "Number of simulations:"
+    "text": "Number of Simulations:"
   },
   "distanceSlider": {
-    "text": "Step size on map [m]:"
+    "text": "Step Size on Map [m]:"
   },
   "radiusSlider": {
-    "text": "Simulation radius [m]:"
+    "text": "Simulation Radius [m]:"
   },
   "searchField": {
     "placeholder": "Enter your address or coordinates"
@@ -31,5 +31,14 @@
   },
   "simulationStatus": {
     "waitingForAdress": "Waiting for address input"
+  },
+  "driver": {
+    "button": "Instructions",
+    "searchfieldTitle": "Insert your adress",
+    "searchFieldDescription": "Here you enter an address. Try 'Hauptstrasse 7, Erlangen' or 'Gasteig München'. Then click on 'START'.",
+    "moreInformationTitle": "More information",
+    "moreInformationDescription": "How does this tool work? We answer that here!",
+    "sliderTitle": "Change simulation parameters",
+    "sliderDescription": "Here you can adjust the parameters of the simulation. A larger 'Number of Simulations' will provide more accurate results, while a larger 'Simulation Radius' will show the potential in a broader area. You can change the movement on the map using the 'Step Size on Map' with the arrow keys."
   }
 }
