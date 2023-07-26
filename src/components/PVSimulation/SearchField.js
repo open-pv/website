@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import { useTranslation } from "react-i18next"
 import DotLoader from "react-spinners/DotLoader"
 import { setLocation } from "../../simulation/download"
 import TooManyUniforms from "../ErrorMessages/TooManyUniforms"
@@ -15,6 +16,7 @@ function SearchField() {
   const [loading, setLoading] = useState(false)
   const [showErrorMessage, setShowErrorMessage] = useState(false)
   const [inputChanged, setInputChanged] = useState(false)
+  const { t, i18n } = useTranslation()
   const [showTooManyUniformsError, setShowTooManyUniformsError] =
     useState(false)
   window.setShowErrorMessage = setShowErrorMessage
@@ -61,7 +63,7 @@ function SearchField() {
       >
         <input
           type="text"
-          placeholder="Geben Sie Ihre Adresse oder Koordinaten ein"
+          placeholder={t("searchField.placeholder")}
           value={inputValue}
           onChange={handleChange}
         />

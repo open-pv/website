@@ -1,13 +1,13 @@
 const routes = [
   {
     index: true,
-    label: 'OpenPV',
-    path: '/',
+    label: "OpenPV",
+    path: "/",
   },
   {
-    label: 'Anleitung',
-    path: '/anleitung',
+    label: "More information",
+    path: "/about",
   },
-];
+]
 
-export default routes;
+export default routes

@@ -1,19 +1,23 @@
-import React, { useState } from "react";
-import Slider from "../Template/Slider";
+import React, { useState } from "react"
+import { useTranslation } from "react-i18next"
+import Slider from "../Template/Slider"
 
 const RadiusSlider = () => {
-  const [numRadius, setNumRadius] = useState(30);
-  window.numRadiusSimulation = numRadius;
+  const [numRadius, setNumRadius] = useState(30)
+  window.numRadiusSimulation = numRadius
+  const { t, i18n } = useTranslation()
 
   const handleNumSimulationsChange = (newValue) => {
-    setNumRadius(newValue);
-    window.numRadiusSimulation = newValue;
-    window.numRadiusSimulationChanged = true;
-  };
+    setNumRadius(newValue)
+    window.numRadiusSimulation = newValue
+    window.numRadiusSimulationChanged = true
+  }
 
   return (
     <div>
-      <div>Radius Gebäude: {numRadius} m</div>
+      <div>
+        {t("radiusSlider.text")} {numRadius} m
+      </div>
       <Slider
         value={numRadius}
         onChange={handleNumSimulationsChange}
@@ -22,7 +26,7 @@ const RadiusSlider = () => {
         stepSize={1}
       />
     </div>
-  );
-};
+  )
+}
 
-export default RadiusSlider;
+export default RadiusSlider
