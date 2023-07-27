@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react"
 
 const Slider = ({ value, onChange, min, max, stepSize }) => {
   const handleSliderChange = (event) => {
-    const { value } = event.target;
-    onChange(Number(value));
-  };
+    const { value } = event.target
+    onChange(Number(value))
+  }
 
   return (
     <div>
@@ -17,7 +17,7 @@ const Slider = ({ value, onChange, min, max, stepSize }) => {
         onChange={handleSliderChange}
       />
     </div>
-  );
-};
+  )
+}
 
-export default Slider;
+export default Slider

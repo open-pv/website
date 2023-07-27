@@ -1,39 +1,37 @@
-import React, { useRef } from "react";
-import ContactIcons from "../Contact/ContactIcons";
-import DatesSlider from "../PVSimulation/DatesSlider";
-import RadiusSlider from "../PVSimulation/RadiusSlider";
-import DistanceSlider from "../PVSimulation/DistanceSlider";
-import DraggableCircle from "../PVSimulation/DirectionSlider";
+import React from "react"
+import { useTranslation } from "react-i18next"
+import ContactIcons from "../Contact/ContactIcons"
+import DatesSlider from "../PVSimulation/DatesSlider"
+import DistanceSlider from "../PVSimulation/DistanceSlider"
+import RadiusSlider from "../PVSimulation/RadiusSlider"
+import { Driver } from "./Driver"
+import SidebarFooter from "./SideBarFooter"
 
-const SideBar = () => (
-  <section id="sidebar">
-    <section id="intro">
-      <header>
-        <h2>Anleitung</h2>
-      </header>
-    </section>
-    <section className="blurb">
-      <p>
-        Im Suchfeld einfach deine Adresse oder deine Koordinaten eingeben. Wir
-        berechnen dann das Potential für eine Solaranlage auf deiner Dach- und
-        Fassadenfläche.
-      </p>
-      <p>Der Service funktioniert aktuell nur für Gebäude in Bayern.</p>
-      <DatesSlider></DatesSlider>
-      <RadiusSlider></RadiusSlider>
-      <DistanceSlider></DistanceSlider>
-      {/* <DraggableCircle></DraggableCircle> */}
-      <p id="status">Warte auf Adresseingabe</p>
-    </section>
+const SideBar = () => {
+  const { t, i18n } = useTranslation()
 
-    <section id="footer">
-      <ContactIcons />
-      <p className="copyright">
-        &copy; Erstellt von Flo, Martin und Korbi,{" "}
-        <a href="/Impressum">Impressum</a>.
-      </p>
-    </section>
-  </section>
-);
+  return (
+    <section id="sidebar">
+      <section id="intro">
+        <Driver />
+      </section>
+      <section className="blurb">
+        <p>{t("sidebar.mainText")}</p>
 
-export default SideBar;
+        <div id="sidebar-slider">
+          <DatesSlider></DatesSlider>
+          <RadiusSlider></RadiusSlider>
+          <DistanceSlider></DistanceSlider>
+        </div>
+        <p id="status">{t("simulationStatus.waitingForAdress")}</p>
+      </section>
+
+      <section id="footer">
+        <ContactIcons />
+        <SidebarFooter />
+      </section>
+    </section>
+  )
+}
+
+export default SideBar
