@@ -12,6 +12,14 @@
   "radiusSlider": {
     "text": "Simulation Radius [m]:"
   },
+  "visualizeLaserPointsSlider": {
+    "text": "Shown Laserpoints [%]:"
+  },
+  "enableLaserPointsSlider": {
+    "text": "Tree Shades [yes/no]:"
+  },
+  "yes": "yes",
+  "no": "no",
   "searchField": {
     "placeholder": "Enter your address or coordinates"
   },
@@ -39,6 +47,6 @@
     "moreInformationTitle": "More information",
     "moreInformationDescription": "How does this tool work? We answer that here!",
     "sliderTitle": "Change simulation parameters",
-    "sliderDescription": "Here you can adjust the parameters of the simulation. A larger 'Number of Simulations' will provide more accurate results, while a larger 'Simulation Radius' will show the potential in a broader area. You can change the movement on the map using the 'Step Size on Map' with the arrow keys."
+    "sliderDescription": "Here you can adjust the parameters of the simulation. A larger 'Number of Simulations' will provide more accurate results, while a larger 'Simulation Radius' will show the potential in a broader area. You can change the movement on the map using the 'Step Size on Map' with the arrow keys. With 'Enable Tree Shades' you can include shades from non-buildings like trees via laser point data. This data can also be visualized by increasing 'Shown Laserpoints'."
   }
 }

@@ -5,7 +5,8 @@ const routes = [
     path: "/",
   },
   {
-    label: "More information",
+    labelKey: "about.title",
+    label: "about",
     path: "/about",
   },
 ]

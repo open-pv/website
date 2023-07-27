@@ -12,6 +12,14 @@
   "radiusSlider": {
     "text": "Simulationsradius [m]:"
   },
+  "visualizeLaserPointsSlider": {
+    "text": "Gezeigte Laserpunkte [%]:"
+  },
+  "enableLaserPointsSlider": {
+    "text": "Baumverschattung einbeziehen [ja/nein]:"
+  },
+  "yes": "ja",
+  "no": "nein",
   "searchField": {
     "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein"
   },
@@ -39,6 +47,6 @@
     "moreInformationTitle": "Weitere Informationen",
     "moreInformationDescription": "Wie funktioniert dieses Tool? Das beantworten wir hier!",
     "sliderTitle": "Ändere die Simulation",
-    "sliderDescription": "Hier kannst du die Parameter der Simulation anpassen. Mit einer größeren 'Anzahl Simulationen' wird das Ergebnis genauer, ein größerer 'Simulationsradius' zeigt das Potential auf einem größeren Gebiet. Mit der 'Schrittweite auf Karte' kannst du die Bewegung durch die Pfeiltasten in der Karte verändern. "
+    "sliderDescription": "Hier kannst du die Parameter der Simulation anpassen. Mit einer größeren 'Anzahl Simulationen' wird das Ergebnis genauer, ein größerer 'Simulationsradius' zeigt das Potential auf einem größeren Gebiet. Mit der 'Schrittweite auf Karte' kannst du die Bewegung durch die Pfeiltasten in der Karte verändern. Mit 'Baumverschattung einbeziehen' werden zusätzliche Laserdaten geladen, durch die Verschattung durch Bäume und andere Objekte außerhalb der Pläne mit simuliert. Diese Laserpunkte können durch erhöhen von 'Gezeigte Laserpunkte' auch anzeigt werden."
   }
 }

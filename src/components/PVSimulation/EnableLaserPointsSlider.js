@@ -1,20 +1,23 @@
-import React, { useState } from "react";
-import Slider from "../Template/Slider";
+import React, { useState } from "react"
+import { useTranslation } from "react-i18next"
+import Slider from "../Template/Slider"
 
 const EnableLaserPointsSlider = () => {
-  const [enableLaserPoints, setEnableLaserPoints] = useState(1);
-  window.enableLaserPoints = enableLaserPoints;
+  const [enableLaserPoints, setEnableLaserPoints] = useState(1)
+  window.enableLaserPoints = enableLaserPoints
+  const { t, i18n } = useTranslation()
 
   const handleEnableLaserPointsChange = (newValue) => {
-    let enableLaserPointsNew = newValue;
-    setEnableLaserPoints(enableLaserPointsNew);
-    window.enableLaserPoints = enableLaserPoints;
-  };
+    let enableLaserPointsNew = newValue
+    setEnableLaserPoints(enableLaserPointsNew)
+    window.enableLaserPoints = enableLaserPoints
+  }
 
   return (
     <div>
       <div>
-        Laserpunktdaten einbeziehen: {enableLaserPoints == 0 ? "nein" : "ja"}
+        {t("enableLaserPointsSlider.text")}{" "}
+        {enableLaserPoints == 0 ? t("no") : t("yes")}
       </div>
       <Slider
         value={enableLaserPoints}
@@ -23,7 +26,7 @@ const EnableLaserPointsSlider = () => {
         max={1}
       />
     </div>
-  );
-};
+  )
+}
 
-export default EnableLaserPointsSlider;
+export default EnableLaserPointsSlider
