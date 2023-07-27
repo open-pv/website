@@ -1,25 +1,27 @@
-import React, { useState } from "react";
-import { setLocation } from "../../simulation/download";
-import DotLoader from "react-spinners/DotLoader";
-import WrongAdress from "../ErrorMessages/WrongAdress";
-import TooManyUniforms from "../ErrorMessages/TooManyUniforms";
+import React, { useState } from "react"
+import { useTranslation } from "react-i18next"
+import DotLoader from "react-spinners/DotLoader"
+import { setLocation } from "../../simulation/download"
+import TooManyUniforms from "../ErrorMessages/TooManyUniforms"
+import WrongAdress from "../ErrorMessages/WrongAdress"
 
 const override = {
   display: "block",
   margin: "auto",
   borderColor: "red",
-};
+}
 
 function SearchField() {
-  const [inputValue, setInputValue] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showErrorMessage, setShowErrorMessage] = useState(false);
-  const [inputChanged, setInputChanged] = useState(false);
+  const [inputValue, setInputValue] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [showErrorMessage, setShowErrorMessage] = useState(false)
+  const [inputChanged, setInputChanged] = useState(false)
+  const { t, i18n } = useTranslation()
   const [showTooManyUniformsError, setShowTooManyUniformsError] =
-    useState(false);
-  window.setShowErrorMessage = setShowErrorMessage;
-  window.setShowTooManyUniformsError = setShowTooManyUniformsError;
-  window.setLoading = setLoading;
+    useState(false)
+  window.setShowErrorMessage = setShowErrorMessage
+  window.setShowTooManyUniformsError = setShowTooManyUniformsError
+  window.setLoading = setLoading
   const handleSubmit = (event) => {
     setLoading(!loading);
     window.setShowViridisLegend(false);
@@ -35,8 +37,8 @@ function SearchField() {
   };
   const handleChange = (event) => {
     if (inputValue != event.target.value) {
-      setInputValue(event.target.value);
-      setInputChanged(true);
+      setInputValue(event.target.value)
+      setInputChanged(true)
     }
   };
 
@@ -45,10 +47,11 @@ function SearchField() {
       <form
         onSubmit={handleSubmit}
         style={{ display: "flex", alignItems: "center" }}
+        id="search-field"
       >
         <input
           type="text"
-          placeholder="Geben Sie Ihre Addresse oder Koordinaten ein"
+          placeholder={t("searchField.placeholder")}
           value={inputValue}
           onChange={handleChange}
         />
@@ -63,7 +66,7 @@ function SearchField() {
         size={60}
       />
     </>
-  );
+  )
 }
 
-export default SearchField;
+export default SearchField
