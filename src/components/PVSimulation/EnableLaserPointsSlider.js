@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Slider from "../Template/Slider";
 
 const EnableLaserPointsSlider = () => {
-  const [enableLaserPoints, setEnableLaserPoints] = useState(0);
+  const [enableLaserPoints, setEnableLaserPoints] = useState(1);
   window.enableLaserPoints = enableLaserPoints;
 
   const handleEnableLaserPointsChange = (newValue) => {

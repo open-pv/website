@@ -65,21 +65,14 @@ async function fetchLocation(url) {
   }
 }
 
-export async function setLocation(
-  inputValue,
-  inputChanged,
-  simulationParamChanged,
-  loc
-) {
+export async function setLocation(inputValue, inputChanged, loc) {
   let newloc;
   window.mapLocationBaseChanged = true;
   if (inputChanged) {
     newloc = await getLocationFromInput(inputValue);
     window.mapLocation = newloc;
-  } else if (simulationParamChanged || window.mapLocationChanged) {
-    newloc = loc;
   } else {
-    window.setLoading(false);
+    newloc = loc;
   }
   // console.log(newloc);
   if (typeof newloc !== "undefined" && newloc != null) {
