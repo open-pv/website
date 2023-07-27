@@ -1,12 +1,16 @@
-import { driver } from "driver.js"
-import "driver.js/dist/driver.css"
-import React from "react"
-import { useTranslation } from "react-i18next"
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+import React from "react";
+import { useTranslation } from "react-i18next";
 
 export const Driver = () => {
-  const { t, i18n } = useTranslation()
+  const { t, i18n } = useTranslation();
   const startTour = () => {
     const driverObj = driver({
+      showProgress: true,
+      nextBtnText: "—›",
+      prevBtnText: "‹—",
+      doneBtnText: "✕",
       showProgress: true,
       steps: [
         {
@@ -37,8 +41,8 @@ export const Driver = () => {
           },
         },
       ],
-    })
-    driverObj.drive()
-  }
-  return <button onClick={startTour}>{t("driver.button")}</button>
-}
+    });
+    driverObj.drive();
+  };
+  return <button onClick={startTour}>{t("driver.button")}</button>;
+};
