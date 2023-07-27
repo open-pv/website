@@ -1,0 +1,44 @@
+{
+  "sidebar": {
+    "header": "Ziel des Tools",
+    "mainText": "Im Suchfeld deine Adresse oder Koordinaten eingeben. Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche. Der Service funktioniert aktuell nur für Gebäude in Bayern."
+  },
+  "datesSlider": {
+    "text": "Anzahl Simulationen: "
+  },
+  "distanceSlider": {
+    "text": "Schrittweite auf Karte [m]:"
+  },
+  "radiusSlider": {
+    "text": "Simulationsradius [m]:"
+  },
+  "searchField": {
+    "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein"
+  },
+  "about": {
+    "title": "Informationen",
+    "description": "Weitere Informationen zu openpv.de",
+    "h2": "Weitere Informationen zu openpv.de",
+    "p-1": "Die folgende Anleitung zeigt dir, wie du die Website bedienen können, um das Potenzial für eine Solaranlage zu berechnen.",
+    "h3-2": "1. Eingabe deiner Adresse oder Koordinaten",
+    "p-2": "Auf der Startseite findest du ein Suchfeld. Gebe entweder die Adresse des gewünschten Ortes oder die entsprechenden Koordinaten in das Suchfeld ein. Leider haben wir nicht alle Adressen in Bayern hinterlegt, dann müssen die Koordinaten verwendet werden. Die Koordinaten kannst du zum Beispiel in Google Maps herausfinden. Mit Enter bestätigst du die Eingabe und startest die Simulation.",
+    "h3-3": "2. Herunterladen der 3D-Gebäudedaten",
+    "p-3": "Die Website lädt automatisch die 3D-Gebäudedaten für den angegebenen Ort herunter. Anschließend startet die Simulation. Dieser Vorgang kann je nach Leistung deines Gerätes und Größe der Gebäudeaten einige Sekunden dauern. Bitte habe etwas Geduld. Falls es zu lange dauert, verringere die Anzahl der Simulationen oder den Gebäuderadius auf der linken Seite.",
+    "h3-4": "3. Ergebnisse ansehen",
+    "p-4": "Nach Abschluss der Solaranlagen-Potenzialberechnung werden das Dach und die Fassade des Gebäudes eingefärbt. Gelb steht für ein sehr gutes Potenzial für eine Solaranlage, während Blau ein schlechtes Potenzial anzeigt. Du kannst in der dargestellten 3D-Ansicht mit Hilfe von linker und rechter Maustaste sowie deinem Mausrad navigieren.",
+    "h3-5": "Weitere Details",
+    "p-5": "Sobald die 3D-Gebäudedaten heruntergeladen wurden, beginnt die Website mit der Berechnung des Potenzials für eine Solaranlage. Dies geschieht durch Raytracing, um den Einfallswinkel des Sonnenlichts auf das Dach und die Fassade zu bestimmen. Die in diesem Projekt verwendeten Daten stammen aus dem OpenData Portal der Bayerischen Vermessungsverwaltung1 und stehen unter der CC BY 4.0 Lizenz: https://geodaten.bayern.de/opengeodata/OpenDataDetail.html?pn=lod2. Dabei wurden die LOD2 Daten vom Stand März 2023 verwendet. Wir danken der Quelle für die Bereitstellung dieser Daten, die zur Realisierung dieses Projekts beigetragen haben."
+  },
+  "simulationStatus": {
+    "waitingForAdress": "Warte auf Adresseeingabe"
+  },
+  "driver": {
+    "button": "Anleitung",
+    "searchfieldTitle": "Eingabe der Adresse",
+    "searchFieldDescription": "Hier gibst du eine Adresse ein. Versuche doch mal 'Hauptstrasse 7, Erlangen' oder 'Gasteig München'. Klicke anschließend auf 'START'.",
+    "moreInformationTitle": "Weitere Informationen",
+    "moreInformationDescription": "Wie funktioniert dieses Tool? Das beantworten wir hier!",
+    "sliderTitle": "Ändere die Simulation",
+    "sliderDescription": "Hier kannst du die Parameter der Simulation anpassen. Mit einer größeren 'Anzahl Simulationen' wird das Ergebnis genauer, ein größerer 'Simulationsradius' zeigt das Potential auf einem größeren Gebiet. Mit der 'Schrittweite auf Karte' kannst du die Bewegung durch die Pfeiltasten in der Karte verändern. "
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "sidebar": {
+    "header": "Goal of this website",
+    "mainText": "Enter your address or coordinates in the search field. The tool will then calculate the potential for a solar system on your roof and facade area. Currently, the service is only available for buildings in the German state of Bavaria."
+  },
+  "datesSlider": {
+    "text": "Number of Simulations:"
+  },
+  "distanceSlider": {
+    "text": "Step Size on Map [m]:"
+  },
+  "radiusSlider": {
+    "text": "Simulation Radius [m]:"
+  },
+  "searchField": {
+    "placeholder": "Enter your address or coordinates"
+  },
+  "about": {
+    "title": "Information",
+    "description": "More information on openpv.de",
+    "h2": "More information on openpv.de",
+    "p-1": "The following instructions will show you how to use the website to calculate the potential for a solar system.",
+    "h3-2": "1. Insert your adress or coordinates",
+    "p-2": "On the homepage, you will find a search field. Enter either the address of the desired location or the corresponding coordinates in the search field. If we do not have all addresses in Bavaria stored, you can use the coordinates instead. You can find the coordinates, for example, in Google Maps. Press Enter to confirm the input and start the simulation.",
+    "h3-3": "Download the 3D buildings dataset",
+    "p-3": "The website automatically downloads the 3D building data for the specified location and then initiates the simulation. Depending on the performance of your device and the size of the building data, this process may take a few seconds. Please be patient. If it takes too long, you can reduce the number of simulations or the building radius on the left side.",
+    "h3-4": "Visualize the simulation results",
+    "p-4": "After completing the solar potential calculation, the roof and facade of the building will be colored. Yellow indicates a very high potential for a solar system, while blue indicates a lower potential. In the displayed 3D view, you can navigate using the left and right mouse buttons, as well as your mouse wheel.",
+    "h3-5": "More details",
+    "p-5": "Once the 3D building data has been downloaded, the website begins the calculation of the solar potential. This is achieved through ray tracing to determine the angle of sunlight incidence on the roof and facade. The data used in this project is sourced from the OpenData Portal of the Bavarian Surveying Authority and is available under the CC BY 4.0 license: https://geodaten.bayern.de/opengeodata/OpenDataDetail.html?pn=lod2. The LOD2 data from March 2023 was used for this purpose. We express our gratitude to the source for providing these data, which have contributed to the realization of this project."
+  },
+  "simulationStatus": {
+    "waitingForAdress": "Waiting for address input"
+  },
+  "driver": {
+    "button": "Instructions",
+    "searchfieldTitle": "Insert your adress",
+    "searchFieldDescription": "Here you enter an address. Try 'Hauptstrasse 7, Erlangen' or 'Gasteig München'. Then click on 'START'.",
+    "moreInformationTitle": "More information",
+    "moreInformationDescription": "How does this tool work? We answer that here!",
+    "sliderTitle": "Change simulation parameters",
+    "sliderDescription": "Here you can adjust the parameters of the simulation. A larger 'Number of Simulations' will provide more accurate results, while a larger 'Simulation Radius' will show the potential in a broader area. You can change the movement on the map using the 'Step Size on Map' with the arrow keys."
+  }
+}
