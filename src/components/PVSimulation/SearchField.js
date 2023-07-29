@@ -23,24 +23,24 @@ function SearchField() {
   window.setShowTooManyUniformsError = setShowTooManyUniformsError
   window.setLoading = setLoading
   const handleSubmit = (event) => {
-    setLoading(!loading);
-    window.setShowViridisLegend(false);
-    event.preventDefault();
-    window.setShowThreeViewer(true);
-    setLocation(inputValue, inputChanged, window.mapLocation);
-    window.numRadiusSimulationChanged = false;
-    window.numSimulationsChanged = false;
-    window.mapLocationChanged = false;
-    setShowErrorMessage(false);
-    setShowTooManyUniformsError(false);
-    setInputChanged(false);
-  };
+    setLoading(!loading)
+    window.setShowViridisLegend(false)
+    event.preventDefault()
+    window.setShowThreeViewer(true)
+    setLocation(inputValue, inputChanged, window.mapLocation)
+    window.numRadiusSimulationChanged = false
+    window.numSimulationsChanged = false
+    window.mapLocationChanged = false
+    setShowErrorMessage(false)
+    setShowTooManyUniformsError(false)
+    setInputChanged(false)
+  }
   const handleChange = (event) => {
     if (inputValue != event.target.value) {
       setInputValue(event.target.value)
       setInputChanged(true)
     }
-  };
+  }
 
   return (
     <>

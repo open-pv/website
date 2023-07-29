@@ -1,20 +1,20 @@
-import { addToArray } from "./utils";
-import { retrieveRandomSunDirections } from "./pv_simulation";
+import { retrieveRandomSunDirections } from "./pv_simulation"
+import { addToArray } from "./utils"
 
 function max_subdim(array, index) {
-  var max = -1000000;
+  var max = -1000000
   for (var ar of array) {
-    max = Math.max(ar[index], max);
+    max = Math.max(ar[index], max)
   }
-  return max;
+  return max
 }
 
 function min_subdim(array, index) {
-  var min = 1000000;
+  var min = 1000000
   for (var ar of array) {
-    min = Math.min(ar[index], min);
+    min = Math.min(ar[index], min)
   }
-  return min;
+  return min
 }
 
 export function rayTracingPointsWebGL(
@@ -27,18 +27,18 @@ export function rayTracingPointsWebGL(
   num_dates,
   loc
 ) {
-  const N_TRIANGLES = trianglesArray.length / 9;
-  const width = pointsArray.length / 3; // Change this to the number of horizontal points in the grid
-  const N_POINTS = width;
-  const canvas = document.getElementById("canvas");
+  const N_TRIANGLES = trianglesArray.length / 9
+  const width = pointsArray.length / 3 // Change this to the number of horizontal points in the grid
+  const N_POINTS = width
+  const canvas = document.getElementById("canvas")
 
   //canvas.width = width;
   //canvas.height = height;
 
-  const gl = canvas.getContext("webgl2");
+  const gl = canvas.getContext("webgl2")
 
   if (!gl) {
-    alert("Your browser does not support WebGL2");
+    alert("Your browser does not support WebGL2")
   }
 
   // Vertex shader code
@@ -187,29 +187,29 @@ export function rayTracingPointsWebGL(
 		float intensity = dot(a_normal.xyz, u_sun_direction)*((shadow_value > 1.)?0.:(1.-shadow_value));
     intensity = (intensity < 0.)?0.:intensity;
     outColor = vec4(intensity, intensity, intensity, intensity); // Not shadowed
-	}`;
+	}`
 
   // Fragment shader code
   const fragmentShaderSource = `#version 300 es
 	precision highp float;
 	void main() {
 	}
-	`;
+	`
 
-  let max3DTextureSize = gl.getParameter(gl.MAX_3D_TEXTURE_SIZE);
-  console.log("Max 3D texture size: ", max3DTextureSize);
+  let max3DTextureSize = gl.getParameter(gl.MAX_3D_TEXTURE_SIZE)
+  console.log("Max 3D texture size: ", max3DTextureSize)
 
-  const numLaserPoints = laserPoints != null ? laserPoints.length : 1;
-  var textureWidth = 1;
-  var textureDepth = 1;
-  var textureHeight = 1;
-  let texturePointsGrid = new Float32Array(1);
-  var scaleDown = 1;
-  var laserPointAreaBounds = [];
-  var laserPointZBound = [];
-  var laserPointAreaWidth = 0;
-  var laserPointAreaHeight = 0;
-  var gridCellSize = 0;
+  const numLaserPoints = laserPoints != null ? laserPoints.length : 1
+  var textureWidth = 1
+  var textureDepth = 1
+  var textureHeight = 1
+  let texturePointsGrid = new Float32Array(1)
+  var scaleDown = 1
+  var laserPointAreaBounds = []
+  var laserPointZBound = []
+  var laserPointAreaWidth = 0
+  var laserPointAreaHeight = 0
+  var gridCellSize = 0
 
   if (laserPoints != null) {
     laserPointAreaBounds = [
@@ -217,37 +217,37 @@ export function rayTracingPointsWebGL(
       min_subdim(laserPoints, 1),
       max_subdim(laserPoints, 0),
       max_subdim(laserPoints, 1),
-    ];
-    laserPointZBound = [min_subdim(laserPoints, 2), max_subdim(laserPoints, 2)];
+    ]
+    laserPointZBound = [min_subdim(laserPoints, 2), max_subdim(laserPoints, 2)]
 
-    console.log(laserPointAreaBounds);
-    laserPointAreaWidth = laserPointAreaBounds[2] - laserPointAreaBounds[0];
-    laserPointAreaHeight = laserPointAreaBounds[3] - laserPointAreaBounds[1];
+    console.log(laserPointAreaBounds)
+    laserPointAreaWidth = laserPointAreaBounds[2] - laserPointAreaBounds[0]
+    laserPointAreaHeight = laserPointAreaBounds[3] - laserPointAreaBounds[1]
     gridCellSize = Math.sqrt(
       (10 * laserPointAreaHeight * laserPointAreaWidth) / numLaserPoints
-    );
+    )
 
-    console.log("GRID CELL SIZE:", gridCellSize);
-    textureWidth = Math.ceil(laserPointAreaWidth / gridCellSize);
-    textureHeight = Math.ceil(laserPointAreaHeight / gridCellSize);
+    console.log("GRID CELL SIZE:", gridCellSize)
+    textureWidth = Math.ceil(laserPointAreaWidth / gridCellSize)
+    textureHeight = Math.ceil(laserPointAreaHeight / gridCellSize)
 
-    let nPointsGrid = new Int32Array(textureWidth * textureHeight);
+    let nPointsGrid = new Int32Array(textureWidth * textureHeight)
     for (let i = 0; i < laserPoints.length; i++) {
-      let point = laserPoints[i];
-      let x = Math.floor((point[0] - laserPointAreaBounds[0]) / gridCellSize);
-      let y = Math.floor((point[1] - laserPointAreaBounds[1]) / gridCellSize);
-      let index = (y * textureWidth + x) * 4;
-      nPointsGrid[index] += 1;
+      let point = laserPoints[i]
+      let x = Math.floor((point[0] - laserPointAreaBounds[0]) / gridCellSize)
+      let y = Math.floor((point[1] - laserPointAreaBounds[1]) / gridCellSize)
+      let index = (y * textureWidth + x) * 4
+      nPointsGrid[index] += 1
     }
-    const maxNPoints = Math.max(...nPointsGrid);
-    console.log(`Maximal depth of texture: ${maxNPoints}`);
-    textureDepth = maxNPoints;
+    const maxNPoints = Math.max(...nPointsGrid)
+    console.log(`Maximal depth of texture: ${maxNPoints}`)
+    textureDepth = maxNPoints
 
     texturePointsGrid = new Float32Array(
       textureWidth * textureHeight * maxNPoints * 4
-    );
+    )
     for (var i = 0; i < texturePointsGrid.length; i++) {
-      texturePointsGrid[i] = -100.0;
+      texturePointsGrid[i] = -100.0
     }
 
     scaleDown =
@@ -256,79 +256,79 @@ export function rayTracingPointsWebGL(
         laserPointZBound[1] - laserPointZBound[0],
         laserPointAreaHeight,
         laserPointAreaWidth
-      );
+      )
 
     for (var i = 0; i < laserPoints.length; i++) {
-      let point = laserPoints[i];
-      let x = Math.floor((point[0] - laserPointAreaBounds[0]) / gridCellSize);
-      let y = Math.floor((point[1] - laserPointAreaBounds[1]) / gridCellSize);
+      let point = laserPoints[i]
+      let x = Math.floor((point[0] - laserPointAreaBounds[0]) / gridCellSize)
+      let y = Math.floor((point[1] - laserPointAreaBounds[1]) / gridCellSize)
       for (var j = 0; j < textureDepth; j++) {
         let index =
-          (y * textureWidth + x + j * textureHeight * textureWidth) * 4;
+          (y * textureWidth + x + j * textureHeight * textureWidth) * 4
         if (texturePointsGrid[index + 2] < 0) {
           texturePointsGrid[index + 0] =
-            (point[0] - laserPointAreaBounds[0]) / scaleDown;
+            (point[0] - laserPointAreaBounds[0]) / scaleDown
           texturePointsGrid[index + 1] =
-            (point[1] - laserPointAreaBounds[1]) / scaleDown;
-          texturePointsGrid[index + 2] = (point[2] - 0) / scaleDown;
-          texturePointsGrid[index + 3] = 1;
-          break;
+            (point[1] - laserPointAreaBounds[1]) / scaleDown
+          texturePointsGrid[index + 2] = (point[2] - 0) / scaleDown
+          texturePointsGrid[index + 3] = 1
+          break
         }
       }
     }
   }
 
-  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource)
   const fragmentShader = createShader(
     gl,
     gl.FRAGMENT_SHADER,
     fragmentShaderSource
-  );
+  )
 
-  const program = createProgram(gl, vertexShader, fragmentShader, ["outColor"]);
+  const program = createProgram(gl, vertexShader, fragmentShader, ["outColor"])
   if (program === "abortSimulation") {
-    return null;
+    return null
   }
 
-  const colorBuffer = makeBuffer(gl, N_POINTS * 16);
-  const tf = makeTransformFeedback(gl, colorBuffer);
+  const colorBuffer = makeBuffer(gl, N_POINTS * 16)
+  const tf = makeTransformFeedback(gl, colorBuffer)
   // gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
   // gl.pixelStorei(gl.PACK_ALIGNMENT, 1);
 
-  var maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+  var maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE)
 
   var textureWidthTris = Math.min(
     3 * N_TRIANGLES,
     Math.floor(maxTextureSize / 9) * 9
-  );
-  var textureHeightTris = Math.ceil((3 * N_TRIANGLES) / textureWidthTris);
+  )
+  var textureHeightTris = Math.ceil((3 * N_TRIANGLES) / textureWidthTris)
 
-  gl.useProgram(program);
+  gl.useProgram(program)
 
-  var alignedTrianglesArray;
+  var alignedTrianglesArray
   if (textureHeightTris == 1) {
-    alignedTrianglesArray = trianglesArray;
+    alignedTrianglesArray = trianglesArray
   } else {
     alignedTrianglesArray = new Float32Array(
       textureWidthTris * textureHeightTris * 3
-    );
+    )
 
     for (var i = 0; i < N_TRIANGLES; i++) {
-      var x = (3 * i) % textureWidthTris;
-      var y = Math.floor((3 * i) / textureWidthTris);
-      var index = y * textureWidthTris + x;
+      var x = (3 * i) % textureWidthTris
+      var y = Math.floor((3 * i) / textureWidthTris)
+      var index = y * textureWidthTris + x
       for (var j = 0; j < 3; j++) {
-        alignedTrianglesArray[index + j] = trianglesArray[3 * i + j];
+        alignedTrianglesArray[index + j] = trianglesArray[3 * i + j]
       }
     }
   }
 
-  var texture;
+  var texture
   if (laserPoints != null) {
     // Create a new texture
-    texture = gl.createTexture();
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_3D, texture);
+    texture = gl.createTexture()
+    gl.activeTexture(gl.TEXTURE0)
+    gl.bindTexture(gl.TEXTURE_3D, texture)
     // Upload the buffer to the GPU and configure the 3D texture
     gl.texImage3D(
       gl.TEXTURE_3D, // target
@@ -341,19 +341,19 @@ export function rayTracingPointsWebGL(
       gl.RGBA, // format
       gl.FLOAT, // type
       texturePointsGrid // pixel data
-    );
+    )
 
     // Set up texture parameters for the 3D texture
-    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE)
   }
 
-  let textureTri = gl.createTexture();
-  gl.activeTexture(gl.TEXTURE1);
-  gl.bindTexture(gl.TEXTURE_2D, textureTri);
+  let textureTri = gl.createTexture()
+  gl.activeTexture(gl.TEXTURE1)
+  gl.bindTexture(gl.TEXTURE_2D, textureTri)
 
   gl.texImage2D(
     gl.TEXTURE_2D,
@@ -365,121 +365,121 @@ export function rayTracingPointsWebGL(
     gl.RGB,
     gl.FLOAT,
     alignedTrianglesArray
-  );
+  )
 
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 
-  var u_trianglesLocation = gl.getUniformLocation(program, "u_triangles");
-  gl.uniform1i(u_trianglesLocation, 1);
+  var u_trianglesLocation = gl.getUniformLocation(program, "u_triangles")
+  gl.uniform1i(u_trianglesLocation, 1)
 
-  var u_pointcloudShading = gl.getUniformLocation(program, "pointcloudShading");
-  gl.uniform1i(u_pointcloudShading, laserPoints != null ? 1 : 0);
+  var u_pointcloudShading = gl.getUniformLocation(program, "pointcloudShading")
+  gl.uniform1i(u_pointcloudShading, laserPoints != null ? 1 : 0)
   if (laserPoints != null) {
-    var u_textureWidth = gl.getUniformLocation(program, "textureWidth");
-    gl.uniform1i(u_textureWidth, textureWidth);
-    var u_textureHeight = gl.getUniformLocation(program, "textureHeight");
-    gl.uniform1i(u_textureHeight, textureHeight);
-    var u_textureDepth = gl.getUniformLocation(program, "textureDepth");
-    gl.uniform1i(u_textureDepth, textureDepth);
-    var u_POINT_RADIUS = gl.getUniformLocation(program, "u_POINT_RADIUS");
-    gl.uniform1f(u_POINT_RADIUS, laserPointsRadius);
-    var u_MIN_DISTANCE = gl.getUniformLocation(program, "u_MIN_DISTANCE");
-    gl.uniform1f(u_MIN_DISTANCE, laserPointsMinDistance);
-    var u_scaleDown = gl.getUniformLocation(program, "scaleDown");
-    gl.uniform1f(u_scaleDown, scaleDown);
-    var u_MAX_STEPS = gl.getUniformLocation(program, "MAX_STEPS");
-    gl.uniform1i(u_MAX_STEPS, 10000);
-    var u_gridCellSizes = gl.getUniformLocation(program, "gridCellSizes");
-    gl.uniform3f(u_gridCellSizes, gridCellSize, gridCellSize, 10);
+    var u_textureWidth = gl.getUniformLocation(program, "textureWidth")
+    gl.uniform1i(u_textureWidth, textureWidth)
+    var u_textureHeight = gl.getUniformLocation(program, "textureHeight")
+    gl.uniform1i(u_textureHeight, textureHeight)
+    var u_textureDepth = gl.getUniformLocation(program, "textureDepth")
+    gl.uniform1i(u_textureDepth, textureDepth)
+    var u_POINT_RADIUS = gl.getUniformLocation(program, "u_POINT_RADIUS")
+    gl.uniform1f(u_POINT_RADIUS, laserPointsRadius)
+    var u_MIN_DISTANCE = gl.getUniformLocation(program, "u_MIN_DISTANCE")
+    gl.uniform1f(u_MIN_DISTANCE, laserPointsMinDistance)
+    var u_scaleDown = gl.getUniformLocation(program, "scaleDown")
+    gl.uniform1f(u_scaleDown, scaleDown)
+    var u_MAX_STEPS = gl.getUniformLocation(program, "MAX_STEPS")
+    gl.uniform1i(u_MAX_STEPS, 10000)
+    var u_gridCellSizes = gl.getUniformLocation(program, "gridCellSizes")
+    gl.uniform3f(u_gridCellSizes, gridCellSize, gridCellSize, 10)
 
-    var u_originOffset = gl.getUniformLocation(program, "origin_offset");
+    var u_originOffset = gl.getUniformLocation(program, "origin_offset")
     gl.uniform3f(
       u_originOffset,
       laserPointAreaBounds[0],
       laserPointAreaBounds[1],
       0
-    );
+    )
 
-    var u_gridLocation = gl.getUniformLocation(program, "u_grid");
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_3D, texture);
-    gl.uniform1i(u_gridLocation, 0);
+    var u_gridLocation = gl.getUniformLocation(program, "u_grid")
+    gl.activeTexture(gl.TEXTURE0)
+    gl.bindTexture(gl.TEXTURE_3D, texture)
+    gl.uniform1i(u_gridLocation, 0)
   }
 
-  var u_textureWidthTris = gl.getUniformLocation(program, "textureWidthTris");
-  gl.uniform1i(u_textureWidthTris, textureWidthTris);
+  var u_textureWidthTris = gl.getUniformLocation(program, "textureWidthTris")
+  gl.uniform1i(u_textureWidthTris, textureWidthTris)
 
-  const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-  const normalAttributeLocation = gl.getAttribLocation(program, "a_normal");
+  const positionAttributeLocation = gl.getAttribLocation(program, "a_position")
+  const normalAttributeLocation = gl.getAttribLocation(program, "a_normal")
 
-  const vao = gl.createVertexArray();
-  gl.bindVertexArray(vao);
+  const vao = gl.createVertexArray()
+  gl.bindVertexArray(vao)
 
   const positionBuffer = makeBufferAndSetAttribute(
     gl,
     pointsArray,
     positionAttributeLocation
-  );
+  )
   const normalBuffer = makeBufferAndSetAttribute(
     gl,
     normals,
     normalAttributeLocation
-  );
+  )
 
-  var colorCodedArray = null;
-  var isShadowedArray = null;
+  var colorCodedArray = null
+  var isShadowedArray = null
   for (var i = 0; i < num_dates; i++) {
     let sunDirectionUniformLocation = gl.getUniformLocation(
       program,
       "u_sun_direction"
-    );
+    )
 
-    let sunDirection = retrieveRandomSunDirections(1, loc.lat, loc.lon);
+    let sunDirection = retrieveRandomSunDirections(1, loc.lat, loc.lon)
     // let sunDirection = new Vector3(0.65, -0.65, 0.1);
-    gl.uniform3fv(sunDirectionUniformLocation, sunDirection);
+    gl.uniform3fv(sunDirectionUniformLocation, sunDirection)
 
-    drawArraysWithTransformFeedback(gl, tf, gl.POINTS, N_POINTS);
+    drawArraysWithTransformFeedback(gl, tf, gl.POINTS, N_POINTS)
 
     if (isShadowedArray == null) {
-      colorCodedArray = getResults(gl, colorBuffer, "shading", N_POINTS);
+      colorCodedArray = getResults(gl, colorBuffer, "shading", N_POINTS)
       isShadowedArray = colorCodedArray.filter(
         (_, index) => (index + 1) % 4 === 0
-      );
+      )
     } else {
-      colorCodedArray = getResults(gl, colorBuffer, "shading", N_POINTS);
+      colorCodedArray = getResults(gl, colorBuffer, "shading", N_POINTS)
       addToArray(
         isShadowedArray,
         colorCodedArray.filter((_, index) => (index + 1) % 4 === 0)
-      );
+      )
     }
   }
-  return isShadowedArray;
+  return isShadowedArray
 }
 
 function getResults(gl, buffer, label, N_POINTS) {
-  let results = new Float32Array(N_POINTS * 4);
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  let results = new Float32Array(N_POINTS * 4)
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
   gl.getBufferSubData(
     gl.ARRAY_BUFFER,
     0, // byte offset into GPU buffer,
     results
-  );
+  )
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, null); // productBuffer was still bound to ARRAY_BUFFER so unbind it
-  return results;
+  gl.bindBuffer(gl.ARRAY_BUFFER, null) // productBuffer was still bound to ARRAY_BUFFER so unbind it
+  return results
 }
 
 function createShader(gl, type, source) {
-  const shader = gl.createShader(type);
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-  const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+  const shader = gl.createShader(type)
+  gl.shaderSource(shader, source)
+  gl.compileShader(shader)
+  const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS)
   if (success) {
-    return shader;
+    return shader
   }
-  console.error(gl.getShaderInfoLog(shader));
-  gl.deleteShader(shader);
+  console.error(gl.getShaderInfoLog(shader))
+  gl.deleteShader(shader)
 }
 
 function createProgram(
@@ -488,48 +488,48 @@ function createProgram(
   fragmentShader,
   variables_of_interest
 ) {
-  const program = gl.createProgram();
+  const program = gl.createProgram()
 
   if (vertexShader === undefined || fragmentShader === undefined) {
-    window.setShowTooManyUniformsError(true);
-    return "abortSimulation";
+    window.setShowTooManyUniformsError(true)
+    return "abortSimulation"
   } else {
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
+    gl.attachShader(program, vertexShader)
+    gl.attachShader(program, fragmentShader)
     gl.transformFeedbackVaryings(
       program,
       variables_of_interest,
       gl.SEPARATE_ATTRIBS
-    );
-    gl.linkProgram(program);
-    const success = gl.getProgramParameter(program, gl.LINK_STATUS);
+    )
+    gl.linkProgram(program)
+    const success = gl.getProgramParameter(program, gl.LINK_STATUS)
     if (success) {
-      return program;
+      return program
     }
-    console.error(gl.getProgramInfoLog(program));
-    gl.deleteProgram(program);
+    console.error(gl.getProgramInfoLog(program))
+    gl.deleteProgram(program)
   }
 }
 
 function makeBuffer(gl, sizeOrData) {
-  const buf = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.bufferData(gl.ARRAY_BUFFER, sizeOrData, gl.DYNAMIC_DRAW);
-  return buf;
+  const buf = gl.createBuffer()
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf)
+  gl.bufferData(gl.ARRAY_BUFFER, sizeOrData, gl.DYNAMIC_DRAW)
+  return buf
 }
 
 function makeTransformFeedback(gl, buffer) {
-  const tf = gl.createTransformFeedback();
-  gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, tf);
-  gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, buffer);
-  return tf;
+  const tf = gl.createTransformFeedback()
+  gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, tf)
+  gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, buffer)
+  return tf
 }
 
 function makeBufferAndSetAttribute(gl, data, loc) {
-  const buf = makeBuffer(gl, data);
+  const buf = makeBuffer(gl, data)
   // setup our attributes to tell WebGL how to pull
   // the data from the buffer above to the attribute
-  gl.enableVertexAttribArray(loc);
+  gl.enableVertexAttribArray(loc)
   gl.vertexAttribPointer(
     loc,
     3, // size (num components)
@@ -537,22 +537,22 @@ function makeBufferAndSetAttribute(gl, data, loc) {
     false, // normalize
     0, // stride (0 = auto)
     0 // offset
-  );
+  )
 }
 
 function drawArraysWithTransformFeedback(gl, tf, primitiveType, count) {
   // turn of using the fragment shader
-  gl.enable(gl.RASTERIZER_DISCARD);
+  gl.enable(gl.RASTERIZER_DISCARD)
 
-  gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, tf);
-  gl.beginTransformFeedback(gl.POINTS);
-  gl.drawArrays(primitiveType, 0, count);
-  gl.endTransformFeedback();
-  gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null);
+  gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, tf)
+  gl.beginTransformFeedback(gl.POINTS)
+  gl.drawArrays(primitiveType, 0, count)
+  gl.endTransformFeedback()
+  gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null)
 
   // unbind the buffer from the TRANFORM_FEEDBACK_BUFFER
-  gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, null);
+  gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, null)
 
   // turn on using fragment shaders again
-  gl.disable(gl.RASTERIZER_DISCARD);
+  gl.disable(gl.RASTERIZER_DISCARD)
 }

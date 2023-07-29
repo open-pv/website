@@ -522,6 +522,8 @@ export async function showMeshIntensities(
       oldCameraPosition.y - window.offsetPos[1],
       oldCameraPosition.z
     )
+    window.offsetPos[0] = 0
+    window.offsetPos[1] = 0
     // console.log("New Camera Pos", camera.position);
   }
 

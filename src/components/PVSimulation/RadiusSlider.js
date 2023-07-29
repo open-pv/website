@@ -8,10 +8,10 @@ const RadiusSlider = () => {
   const { t, i18n } = useTranslation()
 
   const handleRadiusChange = (newValue) => {
-    setNumRadius(newValue);
-    window.numRadiusSimulation = newValue;
-    window.numRadiusSimulationChanged = true;
-  };
+    setNumRadius(newValue)
+    window.numRadiusSimulation = newValue
+    window.numRadiusSimulationChanged = true
+  }
 
   return (
     <div>
