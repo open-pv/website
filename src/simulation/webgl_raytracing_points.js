@@ -180,9 +180,9 @@ export function rayTracingPointsWebGL(
 
 	void main() {
 		float shadow_value = Calculate_Shading_at_Point_Triangles(a_position.xyz, u_sun_direction);
-    if (pointcloudShading > 0){
-      shadow_value += Calculate_Shading_at_Point(a_position.xyz, u_sun_direction);
-    }
+    // if (pointcloudShading > 0){
+    //   shadow_value += Calculate_Shading_at_Point(a_position.xyz, u_sun_direction);
+    // }
 		float intensity = dot(a_normal.xyz, u_sun_direction)*((shadow_value > 1.)?0.:(1.-shadow_value));
     intensity = (intensity < 0.)?0.:intensity;
     outColor = vec4(intensity, intensity, intensity, intensity); // Not shadowed
@@ -342,12 +342,10 @@ export function rayTracingPointsWebGL(
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
   gl.bindTexture(gl.TEXTURE_2D, null)
 
-  var texture
+  var texture = gl.createTexture()
+  gl.activeTexture(gl.TEXTURE1)
+  gl.bindTexture(gl.TEXTURE_3D, texture)
   if (laserPoints != null) {
-    // Create a new texture
-    texture = gl.createTexture()
-    gl.activeTexture(gl.TEXTURE1)
-    gl.bindTexture(gl.TEXTURE_3D, texture)
     // Upload the buffer to the GPU and configure the 3D texture
     gl.texImage3D(
       gl.TEXTURE_3D, // target
@@ -404,7 +402,7 @@ export function rayTracingPointsWebGL(
     )
 
     var u_gridLocation = gl.getUniformLocation(program, "u_grid")
-    gl.activeTexture(gl.TEXTURE0)
+    gl.activeTexture(gl.TEXTURE1)
     gl.bindTexture(gl.TEXTURE_3D, texture)
     gl.uniform1i(u_gridLocation, 1)
   }
@@ -456,6 +454,16 @@ export function rayTracingPointsWebGL(
       )
     }
   }
+
+  gl.deleteTexture(texture)
+  gl.deleteShader(vertexShader)
+  gl.deleteShader(fragmentShader)
+  gl.deleteProgram(program)
+  gl.deleteBuffer(positionBuffer)
+  gl.deleteBuffer(normalBuffer)
+  gl.deleteTransformFeedback(tf)
+  gl.deleteBuffer(colorBuffer)
+
   return isShadowedArray
 }
 
