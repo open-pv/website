@@ -18,7 +18,7 @@ const VisualizeLaserPointsSlider = () => {
     <div>
       <div>
         {t("visualizeLaserPointsSlider.text")}{" "}
-        {Math.floor(pointsVisualizationRatio * 100) / 100} {"%"}
+        {Math.ceil(pointsVisualizationRatio * 100)} {"%"}
       </div>
       <Slider
         value={Math.log(pointsVisualizationRatio + 0.01) / Math.log(10)}
