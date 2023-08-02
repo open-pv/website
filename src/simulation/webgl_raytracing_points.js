@@ -45,22 +45,22 @@ export function rayTracingPointsWebGL(
   const vertexShaderSource = `#version 300 es
 	#define INFINITY         1000000.0
 	precision highp float;
-    precision mediump sampler3D;
+  precision mediump sampler3D;
 
-    uniform vec3 u_sun_direction;
-  	uniform int textureWidth;
-    uniform int textureHeight;
-    uniform int textureDepth;
-    uniform float u_POINT_RADIUS;
-    uniform float u_MIN_DISTANCE;
-    uniform int MAX_STEPS;
-    uniform vec3 gridCellSizes;
-    uniform vec3 origin_offset;
-    uniform sampler3D u_grid;
-    uniform float scaleDown;
-    uniform int pointcloudShading;
+  uniform vec3 u_sun_direction;
+  uniform int textureWidth;
+  uniform int textureHeight;
+  uniform int textureDepth;
+  uniform float u_POINT_RADIUS;
+  uniform float u_MIN_DISTANCE;
+  uniform int MAX_STEPS;
+  uniform vec3 gridCellSizes;
+  uniform vec3 origin_offset;
+  uniform sampler3D u_grid;
+  uniform float scaleDown;
+  uniform int pointcloudShading;
 
-    uniform sampler2D u_triangles;
+  uniform sampler2D u_triangles;
 	uniform int textureWidthTris;
 
 	in vec3 a_position;
@@ -76,14 +76,14 @@ export function rayTracingPointsWebGL(
 		return c;
 	}
     
-    bool intersectRaySphere(vec3 rayOrigin, vec3 rayDir, vec3 sphereCenter, float sphereRadius) {
-        vec3 oc = sphereCenter - rayOrigin;
-        float b = dot(oc, rayDir);
-        float c = dot(oc, oc) - b*b;
-        return ((b > 0.)&&(c < sphereRadius * sphereRadius));
-    }
+  bool intersectRaySphere(vec3 rayOrigin, vec3 rayDir, vec3 sphereCenter, float sphereRadius) {
+      vec3 oc = sphereCenter - rayOrigin;
+      float b = dot(oc, rayDir);
+      float c = dot(oc, oc) - b*b;
+      return ((b > 0.)&&(c < sphereRadius * sphereRadius));
+  }
 
-    float TriangleIntersect( vec3 v0, vec3 v1, vec3 v2, vec3 rayOrigin, vec3 rayDirection, int isDoubleSided )
+  float TriangleIntersect( vec3 v0, vec3 v1, vec3 v2, vec3 rayOrigin, vec3 rayDirection, int isDoubleSided )
 	{
 		vec3 edge1 = v1 - v0;
 		vec3 edge2 = v2 - v0;
@@ -106,15 +106,13 @@ export function rayTracingPointsWebGL(
 		float t = dot(edge2, qvec) * inv_det;
 		float x = dot(pvec,pvec);
 		return (u < 0.0 || u > 1.0 || v < 0.0 || u + v > 1.0 || t <= 0.0) ? INFINITY : t;
-
 	}
-
 
 	float Calculate_Shading_at_Point_Triangles(vec3 vertex_position, vec3 sun_direction) {
 		float d;
 		float t = INFINITY;
 		float shadow_value = 0.;
-		for (int i = 0; i < ${N_TRIANGLES}; i++) {
+    for (int i = 0; i < ${N_TRIANGLES}; i++) {
 			int index = i * 3;
 			int x = index % textureWidthTris;
 			int y = index / textureWidthTris;
@@ -129,6 +127,7 @@ export function rayTracingPointsWebGL(
 			x = index % textureWidthTris;
 			y = index / textureWidthTris;
 			vec3 v2 = texelFetch(u_triangles, ivec2(x, y), 0).rgb;
+
 			d = TriangleIntersect(v0, v1, v2, vertex_position, sun_direction, 1);
 			if (d < t && abs(d)>0.0001) {
 				shadow_value += 1.;
@@ -323,11 +322,31 @@ export function rayTracingPointsWebGL(
     }
   }
 
+  let textureTri = gl.createTexture()
+  gl.activeTexture(gl.TEXTURE0)
+  gl.bindTexture(gl.TEXTURE_2D, textureTri)
+
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    0,
+    gl.RGB32F,
+    textureWidthTris,
+    textureHeightTris,
+    0,
+    gl.RGB,
+    gl.FLOAT,
+    alignedTrianglesArray
+  )
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+  gl.bindTexture(gl.TEXTURE_2D, null)
+
   var texture
   if (laserPoints != null) {
     // Create a new texture
     texture = gl.createTexture()
-    gl.activeTexture(gl.TEXTURE0)
+    gl.activeTexture(gl.TEXTURE1)
     gl.bindTexture(gl.TEXTURE_3D, texture)
     // Upload the buffer to the GPU and configure the 3D texture
     gl.texImage3D(
@@ -351,27 +370,10 @@ export function rayTracingPointsWebGL(
     gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE)
   }
 
-  let textureTri = gl.createTexture()
-  gl.activeTexture(gl.TEXTURE1)
-  gl.bindTexture(gl.TEXTURE_2D, textureTri)
-
-  gl.texImage2D(
-    gl.TEXTURE_2D,
-    0,
-    gl.RGB32F,
-    textureWidth,
-    textureHeight,
-    0,
-    gl.RGB,
-    gl.FLOAT,
-    alignedTrianglesArray
-  )
-
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-
   var u_trianglesLocation = gl.getUniformLocation(program, "u_triangles")
-  gl.uniform1i(u_trianglesLocation, 1)
+  gl.activeTexture(gl.TEXTURE0)
+  gl.bindTexture(gl.TEXTURE_2D, textureTri)
+  gl.uniform1i(u_trianglesLocation, 0)
 
   var u_pointcloudShading = gl.getUniformLocation(program, "pointcloudShading")
   gl.uniform1i(u_pointcloudShading, laserPoints != null ? 1 : 0)
@@ -404,7 +406,7 @@ export function rayTracingPointsWebGL(
     var u_gridLocation = gl.getUniformLocation(program, "u_grid")
     gl.activeTexture(gl.TEXTURE0)
     gl.bindTexture(gl.TEXTURE_3D, texture)
-    gl.uniform1i(u_gridLocation, 0)
+    gl.uniform1i(u_gridLocation, 1)
   }
 
   var u_textureWidthTris = gl.getUniformLocation(program, "textureWidthTris")
