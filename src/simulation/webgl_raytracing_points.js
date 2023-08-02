@@ -180,9 +180,9 @@ export function rayTracingPointsWebGL(
 
 	void main() {
 		float shadow_value = Calculate_Shading_at_Point_Triangles(a_position.xyz, u_sun_direction);
-    // if (pointcloudShading > 0){
-    //   shadow_value += Calculate_Shading_at_Point(a_position.xyz, u_sun_direction);
-    // }
+    if (pointcloudShading > 0){
+      shadow_value += Calculate_Shading_at_Point(a_position.xyz, u_sun_direction);
+    }
 		float intensity = dot(a_normal.xyz, u_sun_direction)*((shadow_value > 1.)?0.:(1.-shadow_value));
     intensity = (intensity < 0.)?0.:intensity;
     outColor = vec4(intensity, intensity, intensity, intensity); // Not shadowed
@@ -345,28 +345,26 @@ export function rayTracingPointsWebGL(
   var texture = gl.createTexture()
   gl.activeTexture(gl.TEXTURE1)
   gl.bindTexture(gl.TEXTURE_3D, texture)
-  if (laserPoints != null) {
-    // Upload the buffer to the GPU and configure the 3D texture
-    gl.texImage3D(
-      gl.TEXTURE_3D, // target
-      0, // level
-      gl.RGBA32F, // internalFormat
-      textureWidth, // width
-      textureHeight, // height
-      textureDepth, // depth
-      0, // border
-      gl.RGBA, // format
-      gl.FLOAT, // type
-      texturePointsGrid // pixel data
-    )
+  // Upload the buffer to the GPU and configure the 3D texture
+  gl.texImage3D(
+    gl.TEXTURE_3D, // target
+    0, // level
+    gl.RGBA32F, // internalFormat
+    textureWidth, // width
+    textureHeight, // height
+    textureDepth, // depth
+    0, // border
+    gl.RGBA, // format
+    gl.FLOAT, // type
+    texturePointsGrid // pixel data
+  )
 
-    // Set up texture parameters for the 3D texture
-    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-    gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE)
-  }
+  // Set up texture parameters for the 3D texture
+  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+  gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_WRAP_R, gl.CLAMP_TO_EDGE)
 
   var u_trianglesLocation = gl.getUniformLocation(program, "u_triangles")
   gl.activeTexture(gl.TEXTURE0)
@@ -375,37 +373,36 @@ export function rayTracingPointsWebGL(
 
   var u_pointcloudShading = gl.getUniformLocation(program, "pointcloudShading")
   gl.uniform1i(u_pointcloudShading, laserPoints != null ? 1 : 0)
-  if (laserPoints != null) {
-    var u_textureWidth = gl.getUniformLocation(program, "textureWidth")
-    gl.uniform1i(u_textureWidth, textureWidth)
-    var u_textureHeight = gl.getUniformLocation(program, "textureHeight")
-    gl.uniform1i(u_textureHeight, textureHeight)
-    var u_textureDepth = gl.getUniformLocation(program, "textureDepth")
-    gl.uniform1i(u_textureDepth, textureDepth)
-    var u_POINT_RADIUS = gl.getUniformLocation(program, "u_POINT_RADIUS")
-    gl.uniform1f(u_POINT_RADIUS, laserPointsRadius)
-    var u_MIN_DISTANCE = gl.getUniformLocation(program, "u_MIN_DISTANCE")
-    gl.uniform1f(u_MIN_DISTANCE, laserPointsMinDistance)
-    var u_scaleDown = gl.getUniformLocation(program, "scaleDown")
-    gl.uniform1f(u_scaleDown, scaleDown)
-    var u_MAX_STEPS = gl.getUniformLocation(program, "MAX_STEPS")
-    gl.uniform1i(u_MAX_STEPS, 10000)
-    var u_gridCellSizes = gl.getUniformLocation(program, "gridCellSizes")
-    gl.uniform3f(u_gridCellSizes, gridCellSize, gridCellSize, 10)
 
-    var u_originOffset = gl.getUniformLocation(program, "origin_offset")
-    gl.uniform3f(
-      u_originOffset,
-      laserPointAreaBounds[0],
-      laserPointAreaBounds[1],
-      0
-    )
+  var u_textureWidth = gl.getUniformLocation(program, "textureWidth")
+  gl.uniform1i(u_textureWidth, textureWidth)
+  var u_textureHeight = gl.getUniformLocation(program, "textureHeight")
+  gl.uniform1i(u_textureHeight, textureHeight)
+  var u_textureDepth = gl.getUniformLocation(program, "textureDepth")
+  gl.uniform1i(u_textureDepth, textureDepth)
+  var u_POINT_RADIUS = gl.getUniformLocation(program, "u_POINT_RADIUS")
+  gl.uniform1f(u_POINT_RADIUS, laserPointsRadius)
+  var u_MIN_DISTANCE = gl.getUniformLocation(program, "u_MIN_DISTANCE")
+  gl.uniform1f(u_MIN_DISTANCE, laserPointsMinDistance)
+  var u_scaleDown = gl.getUniformLocation(program, "scaleDown")
+  gl.uniform1f(u_scaleDown, scaleDown)
+  var u_MAX_STEPS = gl.getUniformLocation(program, "MAX_STEPS")
+  gl.uniform1i(u_MAX_STEPS, 10000)
+  var u_gridCellSizes = gl.getUniformLocation(program, "gridCellSizes")
+  gl.uniform3f(u_gridCellSizes, gridCellSize, gridCellSize, 10)
 
-    var u_gridLocation = gl.getUniformLocation(program, "u_grid")
-    gl.activeTexture(gl.TEXTURE1)
-    gl.bindTexture(gl.TEXTURE_3D, texture)
-    gl.uniform1i(u_gridLocation, 1)
-  }
+  var u_originOffset = gl.getUniformLocation(program, "origin_offset")
+  gl.uniform3f(
+    u_originOffset,
+    laserPointAreaBounds[0],
+    laserPointAreaBounds[1],
+    0
+  )
+
+  var u_gridLocation = gl.getUniformLocation(program, "u_grid")
+  gl.activeTexture(gl.TEXTURE1)
+  gl.bindTexture(gl.TEXTURE_3D, texture)
+  gl.uniform1i(u_gridLocation, 1)
 
   var u_textureWidthTris = gl.getUniformLocation(program, "textureWidthTris")
   gl.uniform1i(u_textureWidthTris, textureWidthTris)
