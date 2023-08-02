@@ -331,7 +331,7 @@ async function retrieveData(loc, resetCamera = false) {
 
       console.log("OffsetUTM32:", offsetUTM32)
       let laser_points = null
-      if (window.enableLaserPoints == 1) {
+      if (window.enableLaserPoints) {
         laser_points = await loadLAZ(
           50,
           offsetUTM32,

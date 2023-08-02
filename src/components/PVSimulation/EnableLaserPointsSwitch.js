@@ -4,9 +4,9 @@ import Switch from "@mui/material/Switch"
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
 
-export const EnableLaserPointsSwitch = (initialState) => {
+export const EnableLaserPointsSwitch = () => {
   const { t, i18n } = useTranslation()
-  const [enableLaserPoints, setEnableLaserPoints] = useState(initialState)
+  const [enableLaserPoints, setEnableLaserPoints] = useState(true)
   window.enableLaserPoints = enableLaserPoints
   const onChange = (event) => {
     setEnableLaserPoints(event.target.checked)
