@@ -20,12 +20,12 @@ const SideBar = () => {
       <section className="blurb">
         <p>{t("sidebar.mainText")}</p>
 
-        <div id="sidebar-slider">
+        <div id="sidebar-slider" style={{ position: "relative" }}>
           <DatesSlider></DatesSlider>
           <RadiusSlider></RadiusSlider>
           <DistanceSlider></DistanceSlider>
-          <VisualizeLaserPointsSlider></VisualizeLaserPointsSlider>
           <EnableLaserPointsSwitch />
+          <VisualizeLaserPointsSlider></VisualizeLaserPointsSlider>
         </div>
         <p id="status">{t("simulationStatus.waitingForAdress")}</p>
       </section>
