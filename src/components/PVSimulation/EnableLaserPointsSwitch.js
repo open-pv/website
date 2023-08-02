@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next"
 
 export const EnableLaserPointsSwitch = () => {
   const { t, i18n } = useTranslation()
-  const [enableLaserPoints, setEnableLaserPoints] = useState(true)
+  const [enableLaserPoints, setEnableLaserPoints] = useState(false)
   window.enableLaserPoints = enableLaserPoints
   const onChange = (event) => {
     setEnableLaserPoints(event.target.checked)
