@@ -49,7 +49,8 @@
     "sliderTitle": "Change simulation parameters",
     "sliderDescription": "Here you can adjust the parameters of the simulation. A larger 'Number of Simulations' will provide more accurate results, while a larger 'Simulation Radius' will show the potential in a broader area. You can change the movement on the map using the 'Step Size on Map' with the arrow keys. With 'Enable Tree Shades' you can include shades from non-buildings like trees via laser point data. This data can also be visualized by increasing 'Shown Laserpoints'."
   },
-  "laserPoints": {
-    "warning": "You calculate your PV potential with tree shading. This can take up to a minute. Give the simulation some time or disable the use of tree shading in the settings."
+  "loadingMessage": {
+    "warningUseLaserpoints": "You calculate your PV potential with tree shading. This can take up to a minute. Give the simulation some time or disable the use of tree shading in the settings.",
+    "warningUseNoLaserpoints": "You can improve the accuracy of the simulation by enabling tree shading in the parameters."
   }
 }

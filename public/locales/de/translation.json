@@ -49,7 +49,8 @@
     "sliderTitle": "Ändere die Simulation",
     "sliderDescription": "Hier kannst du die Parameter der Simulation anpassen. Mit einer größeren 'Anzahl Simulationen' wird das Ergebnis genauer, ein größerer 'Simulationsradius' zeigt das Potential auf einem größeren Gebiet. Mit der 'Schrittweite auf Karte' kannst du die Bewegung durch die Pfeiltasten in der Karte verändern. Mit 'Baumverschattung einbeziehen' werden zusätzliche Laserdaten geladen, durch die Verschattung durch Bäume und andere Objekte außerhalb der Pläne mit simuliert. Diese Laserpunkte können durch erhöhen von 'Gezeigte Laserpunkte' auch anzeigt werden."
   },
-  "laserPoints": {
-    "warning": "Du berechnest dein PV-Potential mit Verschattung von Bäumen. Dies kann bis zu einer Minute dauern. Gib der Simulation etwas Zeit oder stelle die Verwendung der Baumverschattung in den Einstellungen aus."
+  "loadingMessage": {
+    "warningUseLaserpoints": "Du berechnest dein PV-Potential mit Verschattung von Bäumen. Dies kann bis zu einer Minute dauern. Gib der Simulation etwas Zeit oder stelle die Verwendung der Baumverschattung in den Einstellungen aus.",
+    "warningUseNoLaserpoints": "Du kannst die Genaugikeit der Simulation verbessern, indem du die Baumverschattung in den Parametern anstellst."
   }
 }
