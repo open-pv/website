@@ -16,7 +16,7 @@
     "text": "Gezeigte Laserpunkte [%]:"
   },
   "enableLaserPointsSlider": {
-    "text": "Baumverschattung einbeziehen [ja/nein]:"
+    "text": "Baumverschattung einbeziehen"
   },
   "yes": "ja",
   "no": "nein",
