@@ -8,8 +8,8 @@ export const Driver = () => {
   const startTour = () => {
     const driverObj = driver({
       showProgress: true,
-      nextBtnText: "—›",
-      prevBtnText: "‹—",
+      nextBtnText: "&rarr;",
+      prevBtnText: "&larr;",
       doneBtnText: "✕",
       showProgress: true,
       steps: [
@@ -31,6 +31,16 @@ export const Driver = () => {
             align: "start",
           },
         },
+        {
+          element: ".MuiFormControlLabel-root",
+          popover: {
+            title: t("driver.sliderTitle"),
+            description: t("driver.useLaserPointsDescription"),
+            side: "right",
+            align: "start",
+          },
+        },
+
         {
           element: 'a[href="/about"]',
           popover: {
