@@ -10,7 +10,7 @@ export const EnableLaserPointsSwitch = () => {
     setEnableLaserPoints(newValue == 1 ? true : false)
   }
   return (
-    <div>
+    <div id={"enableLaserPointsSlider"}>
       {t("enableLaserPointsSlider.text")}
       {" (y/n) :"}
       <InlineSlider

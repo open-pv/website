@@ -32,7 +32,7 @@ export const Driver = () => {
           },
         },
         {
-          element: ".MuiFormControlLabel-root",
+          element: "#enableLaserPointsSlider",
           popover: {
             title: t("driver.sliderTitle"),
             description: t("driver.useLaserPointsDescription"),
