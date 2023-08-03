@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
-import { InlineSlider } from "../Template/Slider"
+import Slider from "../Template/Slider"
 
 export const EnableLaserPointsSwitch = () => {
   const { t, i18n } = useTranslation()
@@ -12,8 +12,8 @@ export const EnableLaserPointsSwitch = () => {
   return (
     <div id={"enableLaserPointsSlider"}>
       {t("enableLaserPointsSlider.text")}
-      {" (y/n) :"}
-      <InlineSlider
+      {": "} {enableLaserPoints ? t("yes") : t("no")}
+      <Slider
         value={enableLaserPoints ? 1 : 0}
         onChange={onChange}
         min={0}

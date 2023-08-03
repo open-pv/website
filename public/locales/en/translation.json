@@ -21,7 +21,7 @@
   "yes": "yes",
   "no": "no",
   "searchField": {
-    "placeholder": "Enter your address or coordinates"
+    "placeholder": "Enter your address or coordinates - e.g. Kemptener Strasse 2, Wildpoldsried"
   },
   "about": {
     "title": "Information",
