@@ -65,7 +65,7 @@ function getInt32(buffer, byteOffset, littleEndian) {
 
 export async function loadLAZ(radius, offsetPos, filenames) {
   console.log("LOADING!!!")
-  const BUFFERED_POINTS_COUNT = 20000
+  const BUFFERED_POINTS_COUNT = 400000
   let points = new Float32Array(3 * BUFFERED_POINTS_COUNT) // 1000 points * 3 values per point
   let pointsIdx = 0
 
@@ -183,8 +183,7 @@ export async function loadLAZ(radius, offsetPos, filenames) {
     console.timeEnd("LoadingTime")
   }
   // points.length = pointsIdx;
-  console.log("Points loaded")
+  console.log("Points loaded", pointsIdx / 3)
   points = points.subarray(0, pointsIdx)
-  console.log("Points", points)
   return points
 }
