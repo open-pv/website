@@ -1,18 +1,18 @@
 import { retrieveRandomSunDirections } from "./pv_simulation"
 import { addToArray } from "./utils"
 
-function max_subdim(array, index) {
+function max_subdim(array, offset, iterate = 3) {
   var max = -1000000
-  for (var ar of array) {
-    max = Math.max(ar[index], max)
+  for (var i = offset; i < array.length; i += iterate) {
+    max = Math.max(array[i], max)
   }
   return max
 }
 
-function min_subdim(array, index) {
+function min_subdim(array, offset, iterate = 3) {
   var min = 1000000
-  for (var ar of array) {
-    min = Math.min(ar[index], min)
+  for (var i = offset; i < array.length; i += iterate) {
+    min = Math.min(array[i], min)
   }
   return min
 }
@@ -212,12 +212,15 @@ export function rayTracingPointsWebGL(
 
   if (laserPoints != null) {
     laserPointAreaBounds = [
-      min_subdim(laserPoints, 0),
-      min_subdim(laserPoints, 1),
-      max_subdim(laserPoints, 0),
-      max_subdim(laserPoints, 1),
+      min_subdim(laserPoints, 0, 3),
+      min_subdim(laserPoints, 1, 3),
+      max_subdim(laserPoints, 0, 3),
+      max_subdim(laserPoints, 1, 3),
     ]
-    laserPointZBound = [min_subdim(laserPoints, 2), max_subdim(laserPoints, 2)]
+    laserPointZBound = [
+      min_subdim(laserPoints, 2, 3),
+      max_subdim(laserPoints, 2, 3),
+    ]
 
     console.log(laserPointAreaBounds)
     laserPointAreaWidth = laserPointAreaBounds[2] - laserPointAreaBounds[0]
@@ -231,14 +234,17 @@ export function rayTracingPointsWebGL(
     textureHeight = Math.ceil(laserPointAreaHeight / gridCellSize)
 
     let nPointsGrid = new Int32Array(textureWidth * textureHeight)
-    for (let i = 0; i < laserPoints.length; i++) {
-      let point = laserPoints[i]
-      let x = Math.floor((point[0] - laserPointAreaBounds[0]) / gridCellSize)
-      let y = Math.floor((point[1] - laserPointAreaBounds[1]) / gridCellSize)
+    for (let i = 0; i < laserPoints.length; i += 3) {
+      let x = Math.floor(
+        (laserPoints[i] - laserPointAreaBounds[0]) / gridCellSize
+      )
+      let y = Math.floor(
+        (laserPoints[i + 1] - laserPointAreaBounds[1]) / gridCellSize
+      )
       let index = (y * textureWidth + x) * 4
       nPointsGrid[index] += 1
     }
-    const maxNPoints = Math.max(...nPointsGrid)
+    const maxNPoints = max_subdim(nPointsGrid, 0, 1)
     console.log(`Maximal depth of texture: ${maxNPoints}`)
     textureDepth = maxNPoints
 
@@ -257,19 +263,22 @@ export function rayTracingPointsWebGL(
         laserPointAreaWidth
       )
 
-    for (var i = 0; i < laserPoints.length; i++) {
-      let point = laserPoints[i]
-      let x = Math.floor((point[0] - laserPointAreaBounds[0]) / gridCellSize)
-      let y = Math.floor((point[1] - laserPointAreaBounds[1]) / gridCellSize)
+    for (var i = 0; i < laserPoints.length; i += 3) {
+      let x = Math.floor(
+        (laserPoints[i] - laserPointAreaBounds[0]) / gridCellSize
+      )
+      let y = Math.floor(
+        (laserPoints[i + 1] - laserPointAreaBounds[1]) / gridCellSize
+      )
       for (var j = 0; j < textureDepth; j++) {
         let index =
           (y * textureWidth + x + j * textureHeight * textureWidth) * 4
         if (texturePointsGrid[index + 2] < 0) {
           texturePointsGrid[index + 0] =
-            (point[0] - laserPointAreaBounds[0]) / scaleDown
+            (laserPoints[i] - laserPointAreaBounds[0]) / scaleDown
           texturePointsGrid[index + 1] =
-            (point[1] - laserPointAreaBounds[1]) / scaleDown
-          texturePointsGrid[index + 2] = (point[2] - 0) / scaleDown
+            (laserPoints[i + 1] - laserPointAreaBounds[1]) / scaleDown
+          texturePointsGrid[index + 2] = (laserPoints[i + 2] - 0) / scaleDown
           texturePointsGrid[index + 3] = 1
           break
         }
