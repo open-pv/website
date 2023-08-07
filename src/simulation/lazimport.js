@@ -43,11 +43,31 @@ export function parseHeader(arrayBuffer) {
   }
 }
 
+// suggested by ChatGPT
+function getInt32(buffer, byteOffset, littleEndian) {
+  const bytes = [
+    buffer[byteOffset],
+    buffer[byteOffset + 1],
+    buffer[byteOffset + 2],
+    buffer[byteOffset + 3],
+  ]
+
+  if (!littleEndian) {
+    bytes.reverse()
+  }
+
+  const sign = bytes[3] & 0x80 ? -1 : 1
+  const value =
+    ((bytes[3] & 0x7f) << 24) | (bytes[2] << 16) | (bytes[1] << 8) | bytes[0]
+
+  return sign * value
+}
+
 export async function loadLAZ(radius, offsetPos, filenames) {
   console.log("LOADING!!!")
   const BUFFERED_POINTS_COUNT = 20000
-  var points = [] // new Float32Array(BUFFERED_POINTS_COUNT * 3);
-  var pointsIdx = 0
+  let points = new Float32Array(3 * BUFFERED_POINTS_COUNT) // 1000 points * 3 values per point
+  let pointsIdx = 0
 
   for (var filename of filenames) {
     var filenameIdx
@@ -117,53 +137,42 @@ export async function loadLAZ(radius, offsetPos, filenames) {
       pointDataRecordLength
     )
 
+    console.time("LoadingTime")
+
     try {
       laszip.open(filePtr, fileUint8Array.byteLength)
+
+      const heapByteOffset = LazPerf.HEAPU8.byteOffset
 
       for (let i = 0; i < pointCount; ++i) {
         laszip.getPoint(dataPtr)
 
-        // // Create a new Uint8Array for each point
-        // const pointbuffer = new Uint8Array(
-        //   LazPerf.HEAPU8.buffer,
-        //   LazPerf.HEAPU8.byteOffset + dataPtr,
-        //   pointDataRecordLength
-        // );
+        // Directly access the LazPerf.HEAPU8 buffer without creating intermediary pointbuffer or dataview
+        const baseOffset = heapByteOffset + dataPtr
 
-        // Create a new Uint8Array for each point
-        const pointbuffer = new Uint8Array(
-          LazPerf.HEAPU8.buffer,
-          LazPerf.HEAPU8.byteOffset + dataPtr,
-          pointDataRecordLength
-        )
+        // Retrieve values directly from the buffer
+        const x =
+          getInt32(LazPerf.HEAPU8, baseOffset, true) * scale[0] +
+          offset[0] -
+          offsetPos[0]
+        const y =
+          getInt32(LazPerf.HEAPU8, baseOffset + 4, true) * scale[1] +
+          offset[1] -
+          offsetPos[1]
+        const z =
+          getInt32(LazPerf.HEAPU8, baseOffset + 8, true) * scale[2] +
+          offset[2] -
+          offsetPos[2]
 
-        // The dataview needs to be recreated since its properties are read-only
-        const dataview = new DataView(
-          pointbuffer.buffer,
-          pointbuffer.byteOffset,
-          pointbuffer.byteLength
-        )
-
-        // Grab the scaled/offsetPos XYZ values and reverse the scale/offsetPos to get
-        // their absolute positions.  It would be possible to add checks for
-        // attributes other than XYZ here - our pointbuffer contains an entire
-        // point whose format corresponds to the pointDataRecordFormat above.
-        const point = [
-          dataview.getInt32(0, true),
-          dataview.getInt32(4, true),
-          dataview.getInt32(8, true),
-        ].map((v, i) => v * scale[i] + offset[i] - offsetPos[i])
-
-        if (point.every((v, i) => (v > -radius && v < radius) || i == 2)) {
-          // if (pointsIdx == points.length) {
-          //   let new_points = new Float32Array(pointsIdx * 2);
-          //   new_points.set(points);
-          //   points = new_points;
-          // } else {
-          //   points.set(point, pointsIdx);
-          //   pointsIdx += 3;
-          // }
-          points.push(point)
+        if (x > -radius && x < radius && y > -radius && y < radius) {
+          if (pointsIdx >= points.length) {
+            const newPoints = new Float32Array(points.length * 2) // Double the size
+            newPoints.set(points)
+            points = newPoints
+          }
+          points[pointsIdx++] = x
+          points[pointsIdx++] = y
+          points[pointsIdx++] = z
         }
       }
     } finally {
@@ -171,8 +180,11 @@ export async function loadLAZ(radius, offsetPos, filenames) {
       LazPerf._free(dataPtr)
       laszip.delete()
     }
+    console.timeEnd("LoadingTime")
   }
   // points.length = pointsIdx;
   console.log("Points loaded")
+  points = points.subarray(0, pointsIdx)
+  console.log("Points", points)
   return points
 }
