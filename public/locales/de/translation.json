@@ -53,5 +53,9 @@
   "loadingMessage": {
     "warningUseLaserpoints": "Du berechnest dein PV-Potential mit Verschattung von Bäumen. Dies kann bis zu einer Minute dauern. Gib der Simulation etwas Zeit oder stelle die Verwendung der Baumverschattung in den Einstellungen aus.",
     "warningUseNoLaserpoints": "Du kannst die Genaugikeit der Simulation verbessern, indem du die Baumverschattung in den Parametern anstellst."
+  },
+  "errorMessage": {
+    "tooManyUniforms": "Leider ist das ausgewählte Gebiet zu groß, um auf deinem PC simuliert zu werden. Du kannst den Gebäuderadius mit dem Slider auf der linken Seite kleiner stellen, um dieses Problem zu beheben.",
+    "wrongAdress": "Adresse wurde nicht gefunden oder liegt nicht innerhalb von Bayern. Leider können wir aktuell nur Häuser in Bayern simulieren. Alternativ kannst du auch die Koordinaten in Google Maps per Rechtsklick bestimmen und in das Suchfeld eingeben."
   }
 }
