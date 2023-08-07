@@ -23,31 +23,17 @@ function SearchField() {
   window.setShowTooManyUniformsError = setShowTooManyUniformsError
   window.setLoading = setLoading
   const handleSubmit = (event) => {
-    if (
-      inputChanged ||
-      window.numRadiusSimulationChanged ||
-      window.numSimulationsChanged ||
-      window.mapLocationChanged
-    ) {
-      setLoading(!loading)
-      window.setShowViridisLegend(false)
-      event.preventDefault()
-      window.setShowThreeViewer(true)
-      setLocation(
-        inputValue,
-        inputChanged,
-        window.numRadiusSimulationChanged || window.numSimulationsChanged,
-        window.mapLocation
-      )
-      window.numRadiusSimulationChanged = false
-      window.numSimulationsChanged = false
-      window.mapLocationChanged = false
-      setShowErrorMessage(false)
-      setShowTooManyUniformsError(false)
-      setInputChanged(false)
-    } else {
-      event.preventDefault()
-    }
+    setLoading(!loading)
+    window.setShowViridisLegend(false)
+    event.preventDefault()
+    window.setShowThreeViewer(true)
+    setLocation(inputValue, inputChanged, window.mapLocation)
+    window.numRadiusSimulationChanged = false
+    window.numSimulationsChanged = false
+    window.mapLocationChanged = false
+    setShowErrorMessage(false)
+    setShowTooManyUniformsError(false)
+    setInputChanged(false)
   }
   const handleChange = (event) => {
     if (inputValue != event.target.value) {
@@ -55,6 +41,7 @@ function SearchField() {
       setInputChanged(true)
     }
   }
+
   return (
     <>
       <form
@@ -78,6 +65,20 @@ function SearchField() {
         loading={loading}
         size={60}
       />
+      {window.enableLaserPoints && loading && (
+        <div style={{ padding: "30px" }}>
+          <p style={{ textAlign: "center" }}>
+            {t("loadingMessage.warningUseLaserpoints")}
+          </p>
+        </div>
+      )}
+      {!window.enableLaserPoints && loading && (
+        <div style={{ padding: "30px" }}>
+          <p style={{ textAlign: "center" }}>
+            {t("loadingMessage.warningUseNoLaserpoints")}
+          </p>
+        </div>
+      )}
     </>
   )
 }

@@ -1,15 +1,15 @@
-import { driver } from "driver.js";
-import "driver.js/dist/driver.css";
-import React from "react";
-import { useTranslation } from "react-i18next";
+import { driver } from "driver.js"
+import "driver.js/dist/driver.css"
+import React from "react"
+import { useTranslation } from "react-i18next"
 
 export const Driver = () => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation()
   const startTour = () => {
     const driverObj = driver({
       showProgress: true,
-      nextBtnText: "—›",
-      prevBtnText: "‹—",
+      nextBtnText: "&rarr;",
+      prevBtnText: "&larr;",
       doneBtnText: "✕",
       showProgress: true,
       steps: [
@@ -32,6 +32,16 @@ export const Driver = () => {
           },
         },
         {
+          element: "#enableLaserPointsSlider",
+          popover: {
+            title: t("driver.sliderTitle"),
+            description: t("driver.useLaserPointsDescription"),
+            side: "right",
+            align: "start",
+          },
+        },
+
+        {
           element: 'a[href="/about"]',
           popover: {
             title: t("driver.moreInformationTitle"),
@@ -41,8 +51,8 @@ export const Driver = () => {
           },
         },
       ],
-    });
-    driverObj.drive();
-  };
-  return <button onClick={startTour}>{t("driver.button")}</button>;
-};
+    })
+    driverObj.drive()
+  }
+  return <button onClick={startTour}>{t("driver.button")}</button>
+}

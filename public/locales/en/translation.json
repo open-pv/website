@@ -12,8 +12,16 @@
   "radiusSlider": {
     "text": "Simulation Radius [m]:"
   },
+  "visualizeLaserPointsSlider": {
+    "text": "Shown Laserpoints [%]:"
+  },
+  "enableLaserPointsSlider": {
+    "text": "Tree Shades"
+  },
+  "yes": "yes",
+  "no": "no",
   "searchField": {
-    "placeholder": "Enter your address or coordinates"
+    "placeholder": "Enter your address or coordinates - e.g. Kemptener Strasse 2, Wildpoldsried"
   },
   "about": {
     "title": "Information",
@@ -38,7 +46,16 @@
     "searchFieldDescription": "Here you enter an address. Try 'Hauptstrasse 7, Erlangen' or 'Gasteig München'. Then click on 'START'.",
     "moreInformationTitle": "More information",
     "moreInformationDescription": "How does this tool work? We answer that here!",
+    "useLaserPointsDescription": "You want an even more accurate result? Enable the tree shading calculation!",
     "sliderTitle": "Change simulation parameters",
-    "sliderDescription": "Here you can adjust the parameters of the simulation. A larger 'Number of Simulations' will provide more accurate results, while a larger 'Simulation Radius' will show the potential in a broader area. You can change the movement on the map using the 'Step Size on Map' with the arrow keys."
+    "sliderDescription": "Here you can adjust the parameters of the simulation. A larger 'Number of Simulations' will provide more accurate results, while a larger 'Simulation Radius' will show the potential in a broader area. You can change the movement on the map using the 'Step Size on Map' with the arrow keys. With 'Enable Tree Shades' you can include shades from non-buildings like trees via laser point data. This data can also be visualized by increasing 'Shown Laserpoints'."
+  },
+  "loadingMessage": {
+    "warningUseLaserpoints": "You calculate your PV potential with tree shading. This can take up to a minute. Give the simulation some time or disable the use of tree shading in the settings.",
+    "warningUseNoLaserpoints": "You can improve the accuracy of the simulation by enabling tree shading in the parameters."
+  },
+  "errorMessage": {
+    "tooManyUniforms": "Unfortunately, the selected area is too large to be simulated on your PC. You can reduce the building radius using the slider on the left side to resolve this issue.",
+    "wrongAdress": "Address was not found or is not within Bavaria. Unfortunately, we can currently only simulate houses in Bavaria. Alternatively, you can determine the coordinates in Google Maps by right-clicking and enter them in the search field."
   }
 }

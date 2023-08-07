@@ -1,14 +1,13 @@
-import React from 'react';
+import React from "react"
+import { useTranslation } from "react-i18next"
 
-function TooManyUniforms () {
-        return (
-            <div style={{alignItems: 'center'}}>
-              <p>
-                Leider ist das ausgewählte Gebiet zu groß, um auf deinem PC simuliert zu werden. Du kannst den Gebäuderadius mit dem Slider
-                auf der linken Seite kleiner stellen, um dieses Problem zu beheben.
-              </p>
-            </div>
-          );
-    }
+function TooManyUniforms() {
+  const { t, i18n } = useTranslation()
+  return (
+    <div style={{ alignItems: "center" }}>
+      <p>{t("errorMessage.tooManyUniforms")}</p>
+    </div>
+  )
+}
 
-export default TooManyUniforms;
+export default TooManyUniforms

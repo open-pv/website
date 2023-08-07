@@ -20,9 +20,10 @@ const DatesSlider = () => {
         {t("datesSlider.text")} {numSimulations}
       </div>
       <Slider
+        value={Math.log(numSimulations) / Math.log(10)}
         onChange={handleNumSimulationsChange}
         min={0}
-        max={2.2}
+        max={3}
         stepSize={0.01}
       />
     </div>

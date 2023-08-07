@@ -7,7 +7,7 @@ const RadiusSlider = () => {
   window.numRadiusSimulation = numRadius
   const { t, i18n } = useTranslation()
 
-  const handleNumSimulationsChange = (newValue) => {
+  const handleRadiusChange = (newValue) => {
     setNumRadius(newValue)
     window.numRadiusSimulation = newValue
     window.numRadiusSimulationChanged = true
@@ -20,7 +20,7 @@ const RadiusSlider = () => {
       </div>
       <Slider
         value={numRadius}
-        onChange={handleNumSimulationsChange}
+        onChange={handleRadiusChange}
         min={0}
         max={100}
         stepSize={1}
