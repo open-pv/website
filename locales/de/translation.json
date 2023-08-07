@@ -12,8 +12,16 @@
   "radiusSlider": {
     "text": "Simulationsradius [m]:"
   },
+  "visualizeLaserPointsSlider": {
+    "text": "Gezeigte Laserpunkte [%]:"
+  },
+  "enableLaserPointsSlider": {
+    "text": "Baumverschattung einbeziehen"
+  },
+  "yes": "ja",
+  "no": "nein",
   "searchField": {
-    "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein"
+    "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Kemptener Strasse 2, Wildpoldsried"
   },
   "about": {
     "title": "Informationen",
@@ -38,7 +46,16 @@
     "searchFieldDescription": "Hier gibst du eine Adresse ein. Versuche doch mal 'Hauptstrasse 7, Erlangen' oder 'Gasteig München'. Klicke anschließend auf 'START'.",
     "moreInformationTitle": "Weitere Informationen",
     "moreInformationDescription": "Wie funktioniert dieses Tool? Das beantworten wir hier!",
+    "useLaserPointsDescription": "Du willst ein noch genaueres Ergebnis? Stelle die Verschattungsberechnung mit Bäumen an!",
     "sliderTitle": "Ändere die Simulation",
-    "sliderDescription": "Hier kannst du die Parameter der Simulation anpassen. Mit einer größeren 'Anzahl Simulationen' wird das Ergebnis genauer, ein größerer 'Simulationsradius' zeigt das Potential auf einem größeren Gebiet. Mit der 'Schrittweite auf Karte' kannst du die Bewegung durch die Pfeiltasten in der Karte verändern. "
+    "sliderDescription": "Hier kannst du die Parameter der Simulation anpassen. Mit einer größeren 'Anzahl Simulationen' wird das Ergebnis genauer, ein größerer 'Simulationsradius' zeigt das Potential auf einem größeren Gebiet. Mit der 'Schrittweite auf Karte' kannst du die Bewegung durch die Pfeiltasten in der Karte verändern. Mit 'Baumverschattung einbeziehen' werden zusätzliche Laserdaten geladen, durch die Verschattung durch Bäume und andere Objekte außerhalb der Pläne mit simuliert. Diese Laserpunkte können durch erhöhen von 'Gezeigte Laserpunkte' auch anzeigt werden."
+  },
+  "loadingMessage": {
+    "warningUseLaserpoints": "Du berechnest dein PV-Potential mit Verschattung von Bäumen. Dies kann bis zu einer Minute dauern. Gib der Simulation etwas Zeit oder stelle die Verwendung der Baumverschattung in den Einstellungen aus.",
+    "warningUseNoLaserpoints": "Du kannst die Genaugikeit der Simulation verbessern, indem du die Baumverschattung in den Parametern anstellst."
+  },
+  "errorMessage": {
+    "tooManyUniforms": "Leider ist das ausgewählte Gebiet zu groß, um auf deinem PC simuliert zu werden. Du kannst den Gebäuderadius mit dem Slider auf der linken Seite kleiner stellen, um dieses Problem zu beheben.",
+    "wrongAdress": "Adresse wurde nicht gefunden oder liegt nicht innerhalb von Bayern. Leider können wir aktuell nur Häuser in Bayern simulieren. Alternativ kannst du auch die Koordinaten in Google Maps per Rechtsklick bestimmen und in das Suchfeld eingeben."
   }
 }
