@@ -180,10 +180,11 @@ export function rayTracingPointsWebGL(
 
 	void main() {
 		float shadow_value = Calculate_Shading_at_Point_Triangles(a_position.xyz, u_sun_direction);
+    
     if (pointcloudShading > 0){
       shadow_value += Calculate_Shading_at_Point(a_position.xyz, u_sun_direction);
     }
-		float intensity = dot(a_normal.xyz, u_sun_direction)*((shadow_value > 1.)?0.:(1.-shadow_value));
+		float intensity = ((shadow_value > 1.)?0.:(1.-shadow_value))*dot(a_normal.xyz, u_sun_direction);
     intensity = (intensity < 0.)?0.:intensity;
     outColor = vec4(intensity, intensity, intensity, intensity); // Not shadowed
 	}`
@@ -307,29 +308,31 @@ export function rayTracingPointsWebGL(
 
   var textureWidthTris = Math.min(
     3 * N_TRIANGLES,
-    Math.floor(maxTextureSize / 9) * 9
+    Math.floor(maxTextureSize / 12) * 12
   )
   var textureHeightTris = Math.ceil((3 * N_TRIANGLES) / textureWidthTris)
 
   gl.useProgram(program)
 
   var alignedTrianglesArray
-  if (textureHeightTris == 1) {
-    alignedTrianglesArray = trianglesArray
-  } else {
-    alignedTrianglesArray = new Float32Array(
-      textureWidthTris * textureHeightTris * 3
-    )
+  //if (textureHeightTris == 1) {
+  //   alignedTrianglesArray = trianglesArray
+  //} else {
+  alignedTrianglesArray = new Float32Array(
+    textureWidthTris * textureHeightTris * 4
+  )
 
-    for (var i = 0; i < N_TRIANGLES; i++) {
-      var x = (3 * i) % textureWidthTris
-      var y = Math.floor((3 * i) / textureWidthTris)
-      var index = y * textureWidthTris + x
-      for (var j = 0; j < 3; j++) {
-        alignedTrianglesArray[index + j] = trianglesArray[3 * i + j]
-      }
+  for (var i = 0; i < N_TRIANGLES; i++) {
+    var x = (12 * i) % textureWidthTris
+    var y = Math.floor((12 * i) / textureWidthTris)
+    var index = y * textureWidthTris + x
+    for (var j = 0; j < 3; j++) {
+      alignedTrianglesArray[index + j] = trianglesArray[9 * i + j]
+      alignedTrianglesArray[index + j + 4] = trianglesArray[9 * i + j + 3]
+      alignedTrianglesArray[index + j + 8] = trianglesArray[9 * i + j + 6]
     }
   }
+  // }
 
   let textureTri = gl.createTexture()
   gl.activeTexture(gl.TEXTURE0)
@@ -338,11 +341,11 @@ export function rayTracingPointsWebGL(
   gl.texImage2D(
     gl.TEXTURE_2D,
     0,
-    gl.RGB32F,
+    gl.RGBA32F,
     textureWidthTris,
     textureHeightTris,
     0,
-    gl.RGB,
+    gl.RGBA,
     gl.FLOAT,
     alignedTrianglesArray
   )
