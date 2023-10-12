@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import Slider from "../Template/Slider"
 
 const RadiusSlider = () => {
-  const [numRadius, setNumRadius] = useState(30)
+  const [numRadius, setNumRadius] = useState(40)
   window.numRadiusSimulation = numRadius
   const { t, i18n } = useTranslation()
 
