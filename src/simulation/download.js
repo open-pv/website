@@ -7,9 +7,7 @@ export var loc_utm
 
 import { loadLAZ } from "./lazimport"
 
-// var state = "WaitForAddr"; // States are "WaitForAddr", "AddrDataLoaded", "Inspect"
-
-async function getLocationFromInput(locationText) {
+async function getLatLonFromInput(locationText) {
   let loc
   const coordinatePattern = /^[-]?(\d+(\.\d+)?),\s*[-]?(\d+(\.\d+)?)$/
 
@@ -69,12 +67,11 @@ export async function setLocation(inputValue, inputChanged, loc) {
   let newloc
   window.mapLocationBaseChanged = true
   if (inputChanged) {
-    newloc = await getLocationFromInput(inputValue)
+    newloc = await getLatLonFromInput(inputValue)
     window.mapLocation = newloc
   } else {
     newloc = loc
   }
-  // console.log(newloc);
   if (typeof newloc !== "undefined" && newloc != null) {
     retrieveData(newloc, inputChanged)
   } else {
@@ -88,7 +85,7 @@ export async function setLocation(inputValue, inputChanged, loc) {
   }
 }
 
-function get_utm32(x, y) {
+function transformToUTM32(x, y) {
   const IN_PROJ = "EPSG:4326"
   const OUT_PROJ = "EPSG:25832"
 
@@ -101,10 +98,10 @@ function get_utm32(x, y) {
   return loc_utm
 }
 
-function get_file_names(x, y) {
+function getFileNames(x, y) {
   const DIVISOR = 2000
   const BUFFER_ZONE = 100
-  const loc_utm = get_utm32(x, y)
+  const loc_utm = transformToUTM32(x, y)
   const x_utm32 = loc_utm[0]
   const y_utm32 = loc_utm[1]
 
@@ -145,10 +142,10 @@ function get_file_names(x, y) {
   return file_list
 }
 
-function get_file_names_laz(x, y) {
+function getFileNamesLAZ(x, y) {
   const DIVISOR = 1000
   const BUFFER_ZONE = 100
-  const loc_utm = get_utm32(x, y)
+  const loc_utm = transformToUTM32(x, y)
   const x_utm32 = loc_utm[0]
   const y_utm32 = loc_utm[1]
 
@@ -241,7 +238,7 @@ function parseCommentLine(comment) {
 
 async function retrieveData(loc, resetCamera = false) {
   const baseurl = "https://www.openpv.de/data/"
-  var filenames = get_file_names(Number(loc.lon), Number(loc.lat))
+  var filenames = getFileNames(Number(loc.lon), Number(loc.lat))
   if (filenames.length == 0) {
     return
   }
@@ -254,7 +251,7 @@ async function retrieveData(loc, resetCamera = false) {
   var cached_file_found = false
   var main_offset = null
   console.log("Location", loc)
-  const loc_utm32 = get_utm32(Number(loc.lon), Number(loc.lat))
+  const loc_utm32 = transformToUTM32(Number(loc.lon), Number(loc.lat))
   // Iterate through all filenames
   for (const filename of filenames) {
     let filename_idx
@@ -335,7 +332,7 @@ async function retrieveData(loc, resetCamera = false) {
         laser_points = await loadLAZ(
           50,
           offsetUTM32,
-          get_file_names_laz(Number(loc.lon), Number(loc.lat))
+          getFileNamesLAZ(Number(loc.lon), Number(loc.lat))
         )
       }
       if (laser_points != null) {

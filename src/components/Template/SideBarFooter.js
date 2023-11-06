@@ -12,6 +12,8 @@ export default function SidebarFooter() {
       &copy; Erstellt von Florian, Martin und Korbinian,{" "}
       <a href="/Impressum">Impressum</a>
       {" | "}
+      <a href="/Datenschutz">Datenschutz</a>
+      {" | "}
       <a href="" onClick={() => changeLanguage("en")}>
         English
       </a>
