@@ -1,8 +1,8 @@
-import React, { Suspense, lazy } from "react"
-import { BrowserRouter, Route, Routes } from "react-router-dom"
-import "./i18n" // needs to be bundled
-import Main from "./layouts/Main" // fallback for lazy pages
-import "./static/css/main.scss" // All of our styles
+import React, { Suspense, lazy } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./i18n"; // needs to be bundled
+import Main from "./layouts/Main"; // fallback for lazy pages
+import "./static/css/main.scss"; // All of our styles
 
 const { PUBLIC_URL } = process.env
 
@@ -12,6 +12,7 @@ const { PUBLIC_URL } = process.env
 const Index = lazy(() => import("./pages/Index"))
 const NotFound = lazy(() => import("./pages/NotFound"))
 const Impressum = lazy(() => import("./pages/Impressum"))
+const Datenschutz = lazy(() => import("./pages/Datenschutz"))
 const About = lazy(() => import("./pages/About"))
 
 const App = () => (
@@ -22,6 +23,7 @@ const App = () => (
         <Route path="/anleitung" element={<About />} />
         <Route path="/about" element={<About />} />
         <Route path="/impressum" element={<Impressum />} />
+        <Route path="/datenschutz" element={<Datenschutz />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
