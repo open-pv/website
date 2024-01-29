@@ -29,7 +29,7 @@
     "react-spinners": "^0.13.8",
     "react-three-fiber": "^6.0.13",
     "suncalc": "^1.9.0",
-    "three": "^0.154.0"
+    "three": "^0.160.1"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.7",
