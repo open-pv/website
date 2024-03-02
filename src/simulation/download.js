@@ -324,28 +324,27 @@ async function retrieveData(loc, resetCamera = false) {
       console.log("OFFSETS", main_offset, local_offset)
       geometries.push(geometry)
       // Merge geometries using BufferGeometryUtils
-      const combinedGeometry = BufferGeometryUtils.mergeGeometries(geometries)
-
-      const minZ = createMeshes(combinedGeometry, main_offset)
-      const offsetUTM32 = [loc_utm32[0], loc_utm32[1], minZ + main_offset[2]]
-
-      console.log("OffsetUTM32:", offsetUTM32)
-      let laser_points = null
-      if (window.enableLaserPoints) {
-        laser_points = await loadLAZ(
-          50,
-          offsetUTM32,
-          get_file_names_laz(Number(loc.lon), Number(loc.lat))
-        )
-      }
-      if (laser_points != null) {
-        console.log(`Finished loading points ${laser_points.length}`)
-      }
-
-      //showMeshOrig();
-      calc_webgl(loc, laser_points, resetCamera)
     } else {
       console.error("STL file not found in ZIP archive")
     }
   }
+  const combinedGeometry = BufferGeometryUtils.mergeGeometries(geometries)
+  const minZ = createMeshes(combinedGeometry, main_offset)
+  const offsetUTM32 = [loc_utm32[0], loc_utm32[1], minZ + main_offset[2]]
+
+  console.log("OffsetUTM32:", offsetUTM32)
+  let laser_points = null
+  if (window.enableLaserPoints) {
+    laser_points = await loadLAZ(
+      50,
+      offsetUTM32,
+      get_file_names_laz(Number(loc.lon), Number(loc.lat))
+    )
+  }
+  if (laser_points != null) {
+    console.log(`Finished loading points ${laser_points.length}`)
+  }
+
+      //showMeshOrig();
+  calc_webgl(loc, laser_points, resetCamera);
 }
