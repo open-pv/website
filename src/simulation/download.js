@@ -210,55 +210,54 @@ async function retrieveData(loc, resetCamera = false) {
       window.setShowErrorMessage(true)
       return
     }
-
-    if (stlData) {
-      // Parse the STL data and add the geometry to the geometries array
-      let geometry = new STLLoader().parse(stlData)
-
-      // Create and display the combined mesh
-      const comment = getCommentLine(stlData)
-      var local_offset = parseCommentLine(comment)
-
-      if (main_offset == null) {
-        main_offset = local_offset
-        local_offset = [0, 0, 0]
-      } else {
-        local_offset = [
-          local_offset[0] - main_offset[0],
-          local_offset[1] - main_offset[1],
-          local_offset[2] - main_offset[2],
-        ]
-        geometry.translate(local_offset[0], local_offset[1], local_offset[2])
-      }
-      console.log("OFFSETS", main_offset, local_offset)
-      geometries.push(geometry)
-      // Merge geometries using BufferGeometryUtils
-      const combinedGeometry = BufferGeometryUtils.mergeGeometries(geometries)
-
-      const minZ = createMeshes(combinedGeometry, main_offset)
-      const offsetUTM32 = [
-        coordinatesUTM32[0],
-        coordinatesUTM32[1],
-        minZ + main_offset[2],
-      ]
-
-      console.log("OffsetUTM32:", offsetUTM32)
-      let laser_points = null
-      if (window.enableLaserPoints) {
-        laser_points = await loadLAZ(
-          50,
-          offsetUTM32,
-          get_file_names_laz(Number(loc.lon), Number(loc.lat))
-        )
-      }
-      if (laser_points != null) {
-        console.log(`Finished loading points ${laser_points.length}`)
-      }
-
-      //showMeshOrig();
-      calc_webgl(loc, laser_points, resetCamera)
-    } else {
+    if (!stlData) {
       console.error("STL file not found in ZIP archive")
     }
+
+    // Parse the STL data and add the geometry to the geometries array
+    let geometry = new STLLoader().parse(stlData)
+
+    // Create and display the combined mesh
+    const comment = getCommentLine(stlData)
+    var local_offset = parseCommentLine(comment)
+
+    if (main_offset == null) {
+      main_offset = local_offset
+      local_offset = [0, 0, 0]
+    } else {
+      local_offset = [
+        local_offset[0] - main_offset[0],
+        local_offset[1] - main_offset[1],
+        local_offset[2] - main_offset[2],
+      ]
+      geometry.translate(local_offset[0], local_offset[1], local_offset[2])
+    }
+    console.log("OFFSETS", main_offset, local_offset)
+    geometries.push(geometry)
+    // Merge geometries using BufferGeometryUtils
+    const combinedGeometry = BufferGeometryUtils.mergeGeometries(geometries)
+
+    const minZ = createMeshes(combinedGeometry, main_offset)
+    const offsetUTM32 = [
+      coordinatesUTM32[0],
+      coordinatesUTM32[1],
+      minZ + main_offset[2],
+    ]
+
+    console.log("OffsetUTM32:", offsetUTM32)
+    let laser_points = null
+    if (window.enableLaserPoints) {
+      laser_points = await loadLAZ(
+        50,
+        offsetUTM32,
+        get_file_names_laz(Number(loc.lon), Number(loc.lat))
+      )
+    }
+    if (laser_points != null) {
+      console.log(`Finished loading points ${laser_points.length}`)
+    }
+
+    //showMeshOrig();
+    calc_webgl(loc, laser_points, resetCamera)
   }
 }
