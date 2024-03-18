@@ -120,6 +120,9 @@ function get_file_names_laz(x, y) {
 }
 
 function getCommentLine(stlData) {
+  // TODO: Do not refactor this, as we do not want to communicate the offet
+  // over an stl comment in the future
+
   // Convert the ArrayBuffer to a Uint8Array
   var uint8Array = new Uint8Array(stlData)
 
@@ -170,66 +173,42 @@ function parseCommentLine(comment) {
 }
 
 async function retrieveData(loc, resetCamera = false) {
-  const baseurl = "https://www.openpv.de/data/"
+  const BASE_URL = "https://www.openpv.de/data/"
   var filenames = getFileNames(Number(loc.lon), Number(loc.lat))
   if (filenames.length == 0) {
     return
   }
 
-  const status_elem = document.getElementById("status")
-
-  // Create an array to store individual geometries
   let geometries = []
   let stlData = null
-  var cached_file_found = false
+
   var main_offset = null
-  console.log("Location", loc)
+
   const coordinatesUTM32 = projectToUTM32(Number(loc.lon), Number(loc.lat))
-  // Iterate through all filenames
   for (const filename of filenames) {
-    let filename_idx
-    if (window.stlFiles != null) {
-      filename_idx = window.stlFiles.indexOf(filename)
-    } else {
-      filename_idx = -1
-    }
-    if (filename_idx != -1) {
-      stlData = window.stlDataCached[filename_idx]
-      cached_file_found = true
-      console.log("Use cached file!!")
-    } else {
-      let url = baseurl + filename
-      cached_file_found = false
-      status_elem.textContent = "Loading from " + url
+    let url = BASE_URL + filename
 
-      try {
-        // Download the zipped STL file
-        let response
-        response = await fetch(url)
-        if (!response.ok) {
-          throw new Error("Request failed with status " + response.status)
-        }
-        const zipData = await response.arrayBuffer()
-
-        // Unzip the zipped STL file
-        const zip = new JSZip()
-        await zip.loadAsync(zipData)
-
-        // Get the STL file from the unzipped contents
-        const stlFile = zip.file(Object.keys(zip.files)[0])
-        // Load the STL file
-        stlData = await stlFile.async("arraybuffer")
-        if (window.stlFiles == null) {
-          window.stlFiles = []
-          window.stlDataCached = []
-        }
-        window.stlFiles.push(filename)
-        window.stlDataCached.push(stlData)
-      } catch (error) {
-        window.setLoading(false)
-        window.setShowErrorMessage(true)
-        return
+    try {
+      // Download the zipped STL file
+      let response
+      response = await fetch(url)
+      if (!response.ok) {
+        throw new Error("Request failed with status " + response.status)
       }
+      const zipData = await response.arrayBuffer()
+
+      // Unzip the zipped STL file
+      const zip = new JSZip()
+      await zip.loadAsync(zipData)
+
+      // Get the STL file from the unzipped contents
+      const stlFile = zip.file(Object.keys(zip.files)[0])
+      // Load the STL file
+      stlData = await stlFile.async("arraybuffer")
+    } catch (error) {
+      window.setLoading(false)
+      window.setShowErrorMessage(true)
+      return
     }
 
     if (stlData) {
