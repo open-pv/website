@@ -2,9 +2,9 @@ import JSZip from "jszip"
 import proj4 from "proj4"
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js"
-import { getCoordinatesFromSearchString } from "./location"
+import { getCoordinatesFromSearchString, projectToUTM32 } from "./location"
 import { calc_webgl, createMeshes } from "./pv_simulation"
-export var loc_utm
+export var coordinatesUTM32
 
 import { loadLAZ } from "./lazimport"
 
@@ -31,67 +31,54 @@ export async function setLocation(inputValue, inputChanged, loc) {
   }
 }
 
-function get_utm32(x, y) {
-  const IN_PROJ = "EPSG:4326"
-  const OUT_PROJ = "EPSG:25832"
-
-  proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs")
-
-  const transformer = proj4(IN_PROJ, OUT_PROJ)
-
-  const [x_utm32, y_utm32] = transformer.forward([x, y])
-  loc_utm = [x_utm32, y_utm32]
-  return loc_utm
-}
-
-function get_file_names(x, y) {
+function getFileNames(x, y) {
   const DIVISOR = 2000
   const BUFFER_ZONE = 100
-  const loc_utm = get_utm32(x, y)
-  const x_utm32 = loc_utm[0]
-  const y_utm32 = loc_utm[1]
+  const coordinatesUTM32 = projectToUTM32(x, y)
+  const xUTM32 = coordinatesUTM32[0]
+  const yUTM32 = coordinatesUTM32[1]
 
-  const x_rounded = Math.floor(x_utm32 / DIVISOR) * 2
-  const y_rounded = Math.floor(y_utm32 / DIVISOR) * 2
+  const xUTM32Rounded = Math.floor(xUTM32 / DIVISOR) * 2
+  const yUTM32Rounded = Math.floor(yUTM32 / DIVISOR) * 2
 
-  const load_tile_left = x_utm32 % DIVISOR < BUFFER_ZONE
-  const load_tile_right = x_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE
-  const load_tile_lower = y_utm32 % DIVISOR < BUFFER_ZONE
-  const load_tile_upper = y_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE
+  const loadTileLeft = xUTM32 % DIVISOR < BUFFER_ZONE
+  const loadTileRight = xUTM32 % DIVISOR > DIVISOR - BUFFER_ZONE
+  const loadTileLower = yUTM32 % DIVISOR < BUFFER_ZONE
+  const loadTileUpper = yUTM32 % DIVISOR > DIVISOR - BUFFER_ZONE
 
-  const file_list = [`${x_rounded}_${y_rounded}.zip`]
+  const files = [`${xUTM32Rounded}_${yUTM32Rounded}.zip`]
 
-  if (load_tile_left) {
-    file_list.push(`${x_rounded - 2}_${y_rounded}.zip`)
+  if (loadTileLeft) {
+    files.push(`${xUTM32Rounded - 2}_${yUTM32Rounded}.zip`)
   }
-  if (load_tile_right) {
-    file_list.push(`${x_rounded + 2}_${y_rounded}.zip`)
+  if (loadTileRight) {
+    files.push(`${xUTM32Rounded + 2}_${yUTM32Rounded}.zip`)
   }
-  if (load_tile_lower) {
-    file_list.push(`${x_rounded}_${y_rounded - 2}.zip`)
+  if (loadTileLower) {
+    files.push(`${xUTM32Rounded}_${yUTM32Rounded - 2}.zip`)
   }
-  if (load_tile_upper) {
-    file_list.push(`${x_rounded}_${y_rounded + 2}.zip`)
+  if (loadTileUpper) {
+    files.push(`${xUTM32Rounded}_${yUTM32Rounded + 2}.zip`)
   }
-  if (load_tile_left && load_tile_lower) {
-    file_list.push(`${x_rounded - 2}_${y_rounded - 2}.zip`)
+  if (loadTileLeft && loadTileLower) {
+    files.push(`${xUTM32Rounded - 2}_${yUTM32Rounded - 2}.zip`)
   }
-  if (load_tile_left && load_tile_upper) {
-    file_list.push(`${x_rounded - 2}_${y_rounded + 2}.zip`)
+  if (loadTileLeft && loadTileUpper) {
+    files.push(`${xUTM32Rounded - 2}_${yUTM32Rounded + 2}.zip`)
   }
-  if (load_tile_right && load_tile_lower) {
-    file_list.push(`${x_rounded + 2}_${y_rounded - 2}.zip`)
+  if (loadTileRight && loadTileLower) {
+    files.push(`${xUTM32Rounded + 2}_${yUTM32Rounded - 2}.zip`)
   }
-  if (load_tile_right && load_tile_upper) {
-    file_list.push(`${x_rounded + 2}_${y_rounded + 2}.zip`)
+  if (loadTileRight && loadTileUpper) {
+    files.push(`${xUTM32Rounded + 2}_${yUTM32Rounded + 2}.zip`)
   }
-  return file_list
+  return files
 }
 
 function get_file_names_laz(x, y) {
   const DIVISOR = 1000
   const BUFFER_ZONE = 100
-  const loc_utm = get_utm32(x, y)
+  const loc_utm = projectToUTM32(x, y)
   const x_utm32 = loc_utm[0]
   const y_utm32 = loc_utm[1]
 
@@ -184,7 +171,7 @@ function parseCommentLine(comment) {
 
 async function retrieveData(loc, resetCamera = false) {
   const baseurl = "https://www.openpv.de/data/"
-  var filenames = get_file_names(Number(loc.lon), Number(loc.lat))
+  var filenames = getFileNames(Number(loc.lon), Number(loc.lat))
   if (filenames.length == 0) {
     return
   }
@@ -197,7 +184,7 @@ async function retrieveData(loc, resetCamera = false) {
   var cached_file_found = false
   var main_offset = null
   console.log("Location", loc)
-  const loc_utm32 = get_utm32(Number(loc.lon), Number(loc.lat))
+  const coordinatesUTM32 = projectToUTM32(Number(loc.lon), Number(loc.lat))
   // Iterate through all filenames
   for (const filename of filenames) {
     let filename_idx
@@ -270,7 +257,11 @@ async function retrieveData(loc, resetCamera = false) {
       const combinedGeometry = BufferGeometryUtils.mergeGeometries(geometries)
 
       const minZ = createMeshes(combinedGeometry, main_offset)
-      const offsetUTM32 = [loc_utm32[0], loc_utm32[1], minZ + main_offset[2]]
+      const offsetUTM32 = [
+        coordinatesUTM32[0],
+        coordinatesUTM32[1],
+        minZ + main_offset[2],
+      ]
 
       console.log("OffsetUTM32:", offsetUTM32)
       let laser_points = null

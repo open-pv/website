@@ -1,22 +1,14 @@
+import Scene from "@open-pv/simulation"
 import * as THREE from "three"
 
 import { vec3 } from "gl-matrix"
 import { adaptiveSubdivideMesh } from "./stl_to_array.js"
 import { STLViewer, camera, controls, renderer, scene } from "./stlviewer.js"
-// import init, { Session, Input} from "@webonnx/wonnx-wasm";
-// import { cumulativeIntensityMesh } from './glmatrix_raytracing/glmatrix_raytracing.js';
+
 import SunCalc from "suncalc"
-import { loc_utm } from "./download.js"
+import { coordinatesUTM32 } from "./location.js"
 import { intensity_colormap } from "./utils.js"
-import { rayTracingWebGL } from "./webgl_raytracing.js"
 import { rayTracingPointsWebGL } from "./webgl_raytracing_points.js"
-//import { triangleIntersectText, Calculate_Shading_at_Point_text } from "./webgl_raytracing.js";
-import DatesSlider from "../components/PVSimulation/DatesSlider.js"
-
-// import '@tensorflow/tfjs-backend-webgpu';
-// Set the backend to WebGPU and wait for the module to be ready.
-
-// import { STLViewer } from "./stlviewer_2/stlviewer.js";
 
 let raytracingGeometry
 let innerGeometry
@@ -349,7 +341,7 @@ export function createMeshes(
   //center the big mesh around the building coordinates from OSM
   const newMinZ = centerMesh(
     big_geometry,
-    [loc_utm[0] - offset[0], loc_utm[1] - offset[1]],
+    [coordinatesUTM32[0] - offset[0], coordinatesUTM32[1] - offset[1]],
     minZ
   )
 

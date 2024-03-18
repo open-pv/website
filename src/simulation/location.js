@@ -1,3 +1,6 @@
+import proj4 from "proj4"
+export var coordinatesUTM32
+
 export async function getCoordinatesFromSearchString(searchString) {
   let coordinates
   if (isLongitudeLatitude(searchString)) {
@@ -44,4 +47,16 @@ async function fetchCoordinates(url) {
     console.error("Error:", error)
     return null
   }
+}
+
+export function projectToUTM32(lat, lon) {
+  const IN_PROJ = "EPSG:4326"
+  const OUT_PROJ = "EPSG:25832"
+
+  proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs")
+
+  const transformer = proj4(IN_PROJ, OUT_PROJ)
+  coordinatesUTM32 = transformer.forward([lat, lon])
+
+  return coordinatesUTM32
 }
