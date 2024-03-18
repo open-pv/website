@@ -2,74 +2,17 @@ import JSZip from "jszip"
 import proj4 from "proj4"
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js"
+import { getCoordinatesFromSearchString } from "./location"
 import { calc_webgl, createMeshes } from "./pv_simulation"
 export var loc_utm
 
 import { loadLAZ } from "./lazimport"
 
-// var state = "WaitForAddr"; // States are "WaitForAddr", "AddrDataLoaded", "Inspect"
-
-async function getLocationFromInput(locationText) {
-  let loc
-  const coordinatePattern = /^[-]?(\d+(\.\d+)?),\s*[-]?(\d+(\.\d+)?)$/
-
-  // Check if the string matches the coordinate pattern
-  if (coordinatePattern.test(locationText)) {
-    const [latitude, longitude] = locationText
-      .split(",")
-      .map((value) => parseFloat(value.trim()))
-
-    // Create the "loc" object with latitude and longitude attributes
-    loc = {
-      lat: latitude,
-      lon: longitude,
-    }
-    return loc
-  } else {
-    let url = "https://nominatim.openstreetmap.org/search?format=json&q="
-      .concat(locationText)
-      .concat("+Germany+Bavaria")
-    let response = await fetchLocation(url)
-    if (!response) {
-      let locationTextModified = locationText.split(" ").join("+")
-      url = "https://nominatim.openstreetmap.org/search?format=json&q=".concat(
-        locationTextModified
-      )
-      response = await fetchLocation(url)
-    }
-    return response
-  }
-}
-
-async function fetchLocation(url) {
-  let loc
-  const statuselem = document.getElementById("status")
-  try {
-    let response = await fetch(url)
-    if (!response.ok) {
-      console.error("Check connection to Nominatim geocoder")
-      statuselem.textContent = "Connection to Adress Server failed"
-      throw new Error("Request failed with status " + response.status)
-    }
-
-    let responseData = await response.json()
-    if (responseData.length === 0) {
-      return null
-    }
-
-    loc = responseData[0]
-    return loc
-  } catch (error) {
-    console.error("Error:", error)
-    return null
-  }
-}
-
 export async function setLocation(inputValue, inputChanged, loc) {
   let newloc
   window.mapLocationBaseChanged = true
   if (inputChanged) {
-    newloc = await getLocationFromInput(inputValue)
+    newloc = await getCoordinatesFromSearchString(inputValue)
     window.mapLocation = newloc
   } else {
     newloc = loc
