@@ -190,8 +190,7 @@ async function retrieveData(loc, resetCamera = false) {
 
     try {
       // Download the zipped STL file
-      let response
-      response = await fetch(url)
+      let response = await fetch(url)
       if (!response.ok) {
         throw new Error("Request failed with status " + response.status)
       }
