@@ -149,7 +149,7 @@ function parseCommentLine(comment) {
   return offset
 }
 
-async function downloadBuildings(loc, resetCamera = false) {
+export async function downloadBuildings(loc, resetCamera = false) {
   const BASE_URL = "https://www.openpv.de/data/"
   var filenames = getFileNames(Number(loc.lon), Number(loc.lat))
   if (filenames.length == 0) {
