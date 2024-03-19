@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Canvas } from "react-three-fiber"
 import * as THREE from "three"
-import { setLocation } from "../../simulation/download"
+import { setLocation } from "../../simulation/location"
 import { camera, controls, renderer, scene } from "../../simulation/stlviewer"
 
 export default function ThreeViewer() {
@@ -136,20 +136,27 @@ export default function ThreeViewer() {
       <Canvas className="three-viewer" flat linear></Canvas>
       
       <canvas id="canvas" width={0} height={0}></canvas>
-      {window.showViridisLegend && 
-        <div style={{ position: 'absolute', left: 0, bottom: 0, margin: '10px' }}>
-          <p style={{ fontSize: '8px' }}>
-            <a href="https://geodaten.bayern.de/opengeodata/">Gebäudedaten</a> der 
-            <a href="https://www.ldbv.bayern.de/vermessung/bvv.html"> Bayerischen Vermessungsverwaltung </a> |
-            <a href="https://creativecommons.org/licenses/by/4.0/deed.de">CC BY 4.0</a>
+      {window.showViridisLegend && (
+        <div
+          style={{ position: "absolute", left: 0, bottom: 0, margin: "10px" }}
+        >
+          <p style={{ fontSize: "8px" }}>
+            <a href="https://geodaten.bayern.de/opengeodata/">Gebäudedaten</a>{" "}
+            der
+            <a href="https://www.ldbv.bayern.de/vermessung/bvv.html">
+              {" "}
+              Bayerischen Vermessungsverwaltung{" "}
+            </a>{" "}
+            |
+            <a href="https://creativecommons.org/licenses/by/4.0/deed.de">
+              CC BY 4.0
+            </a>
           </p>
           <p><b>Leertaste</b>: Eckpunkt <b>P</b>: Polygon erstellen <b>R</b>: Alles zurücksetzen</p>
-        
-    </div>
-      }
+        </div>
+      )}
       {window.showViridisLegend && (
         <>
-        
           <button
             className="arrowButton"
             onClick={() => movePosition(0, 1)}

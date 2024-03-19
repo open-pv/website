@@ -2,34 +2,11 @@ import JSZip from "jszip"
 import proj4 from "proj4"
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js"
-import { getCoordinatesFromSearchString, projectToUTM32 } from "./location"
+import { projectToUTM32 } from "./location"
 import { calc_webgl, createMeshes } from "./pv_simulation"
 export var coordinatesUTM32
 
 import { loadLAZ } from "./lazimport"
-
-export async function setLocation(inputValue, inputChanged, loc) {
-  let newloc
-  window.mapLocationBaseChanged = true
-  if (inputChanged) {
-    newloc = await getCoordinatesFromSearchString(inputValue)
-    window.mapLocation = newloc
-  } else {
-    newloc = loc
-  }
-  // console.log(newloc);
-  if (typeof newloc !== "undefined" && newloc != null) {
-    retrieveData(newloc, inputChanged)
-  } else {
-    window.setLoading(false)
-    window.setShowThreeViewer(false)
-    window.setShowErrorMessage(true)
-  }
-
-  if (inputChanged) {
-    window.mapLocationChanged = false
-  }
-}
 
 function getFileNames(x, y) {
   const DIVISOR = 2000
@@ -172,7 +149,7 @@ function parseCommentLine(comment) {
   return offset
 }
 
-async function retrieveData(loc, resetCamera = false) {
+async function downloadBuildings(loc, resetCamera = false) {
   const BASE_URL = "https://www.openpv.de/data/"
   var filenames = getFileNames(Number(loc.lon), Number(loc.lat))
   if (filenames.length == 0) {
@@ -252,11 +229,7 @@ async function retrieveData(loc, resetCamera = false) {
         get_file_names_laz(Number(loc.lon), Number(loc.lat))
       )
     }
-    if (laser_points != null) {
-      console.log(`Finished loading points ${laser_points.length}`)
-    }
 
-    //showMeshOrig();
     calc_webgl(loc, laser_points, resetCamera)
   }
 }

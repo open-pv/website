@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
 import DotLoader from "react-spinners/DotLoader"
-import { setLocation } from "../../simulation/download"
+import { main } from "../../simulation/main"
 import TooManyUniforms from "../ErrorMessages/TooManyUniforms"
 import WrongAdress from "../ErrorMessages/WrongAdress"
 
@@ -27,7 +27,7 @@ function SearchField() {
     window.setShowViridisLegend(false)
     event.preventDefault()
     window.setShowThreeViewer(true)
-    setLocation(inputValue, inputChanged, window.mapLocation)
+    main(inputValue, inputChanged, window.mapLocation)
     window.numRadiusSimulationChanged = false
     window.numSimulationsChanged = false
     window.mapLocationChanged = false

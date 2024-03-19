@@ -1,6 +1,18 @@
 import proj4 from "proj4"
 export var coordinatesUTM32
 
+export async function setLocation(inputValue, inputChanged, loc) {
+  let newloc
+  window.mapLocationBaseChanged = true
+  if (inputChanged) {
+    newloc = await getCoordinatesFromSearchString(inputValue)
+    window.mapLocation = newloc
+  } else {
+    newloc = loc
+  }
+  return newloc
+}
+
 export async function getCoordinatesFromSearchString(searchString) {
   let coordinates
   if (isLongitudeLatitude(searchString)) {
