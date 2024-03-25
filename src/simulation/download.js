@@ -1,9 +1,8 @@
 import JSZip from "jszip"
-import proj4 from "proj4"
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js"
 import { projectToUTM32 } from "./location"
-import { calc_webgl, createMeshes } from "./pv_simulation"
+import { createMeshes } from "./pv_simulation"
 export var coordinatesUTM32
 
 import { loadLAZ } from "./lazimport"
@@ -11,9 +10,7 @@ import { loadLAZ } from "./lazimport"
 function getFileNames(x, y) {
   const DIVISOR = 2000
   const BUFFER_ZONE = 100
-  const coordinatesUTM32 = projectToUTM32(x, y)
-  const xUTM32 = coordinatesUTM32[0]
-  const yUTM32 = coordinatesUTM32[1]
+  let [xUTM32, yUTM32] = projectToUTM32(x, y)
 
   const xUTM32Rounded = Math.floor(xUTM32 / DIVISOR) * 2
   const yUTM32Rounded = Math.floor(yUTM32 / DIVISOR) * 2
@@ -150,47 +147,27 @@ function parseCommentLine(comment) {
 }
 
 export async function downloadBuildings(loc, resetCamera = false) {
-  const BASE_URL = "https://www.openpv.de/data/"
   var filenames = getFileNames(Number(loc.lon), Number(loc.lat))
+  console.log("filenames")
+  console.log(filenames)
   if (filenames.length == 0) {
     return
   }
 
   let geometries = []
   let stlData = null
-
-  var main_offset = null
+  let main_offset = null
 
   const coordinatesUTM32 = projectToUTM32(Number(loc.lon), Number(loc.lat))
-  for (const filename of filenames) {
-    let url = BASE_URL + filename
 
-    try {
-      // Download the zipped STL file
-      let response = await fetch(url)
-      if (!response.ok) {
-        throw new Error("Request failed with status " + response.status)
-      }
-      const zipData = await response.arrayBuffer()
-
-      // Unzip the zipped STL file
-      const zip = new JSZip()
-      await zip.loadAsync(zipData)
-
-      // Get the STL file from the unzipped contents
-      const stlFile = zip.file(Object.keys(zip.files)[0])
-      // Load the STL file
-      stlData = await stlFile.async("arraybuffer")
-    } catch (error) {
-      window.setLoading(false)
-      window.setShowErrorMessage(true)
-      return
-    }
-    if (!stlData) {
-      console.error("STL file not found in ZIP archive")
+  for (let filename of filenames) {
+    let zippedData = await downloadFile(filename)
+    if (!zippedData) {
+      throw new Error("File download failed!")
     }
 
-    // Parse the STL data and add the geometry to the geometries array
+    stlData = await unzipFile(zippedData)
+
     let geometry = new STLLoader().parse(stlData)
 
     // Create and display the combined mesh
@@ -208,28 +185,66 @@ export async function downloadBuildings(loc, resetCamera = false) {
       ]
       geometry.translate(local_offset[0], local_offset[1], local_offset[2])
     }
-    console.log("OFFSETS", main_offset, local_offset)
+
     geometries.push(geometry)
-    // Merge geometries using BufferGeometryUtils
-    const combinedGeometry = BufferGeometryUtils.mergeGeometries(geometries)
-
-    const minZ = createMeshes(combinedGeometry, main_offset)
-    const offsetUTM32 = [
-      coordinatesUTM32[0],
-      coordinatesUTM32[1],
-      minZ + main_offset[2],
-    ]
-
-    console.log("OffsetUTM32:", offsetUTM32)
-    let laser_points = null
-    if (window.enableLaserPoints) {
-      laser_points = await loadLAZ(
-        50,
-        offsetUTM32,
-        get_file_names_laz(Number(loc.lon), Number(loc.lat))
-      )
-    }
-
-    calc_webgl(loc, laser_points, resetCamera)
   }
+  console.log(geometries)
+  console.log("These were the geometries!")
+
+  //TODO: Why do we not create a full list of geometries and then process it further?
+  const combinedGeometry = BufferGeometryUtils.mergeGeometries(geometries)
+
+  const minZ = createMeshes(combinedGeometry, main_offset)
+  const offsetUTM32 = [
+    coordinatesUTM32[0],
+    coordinatesUTM32[1],
+    minZ + main_offset[2],
+  ]
+
+  let laser_points = null
+  if (window.enableLaserPoints) {
+    laser_points = await loadLAZ(
+      50,
+      offsetUTM32,
+      get_file_names_laz(Number(loc.lon), Number(loc.lat))
+    )
+  }
+  return { loc, laser_points, resetCamera }
+}
+
+async function downloadFile(filename) {
+  let url = "https://www.openpv.de/data/" + filename
+  console.log(url)
+  try {
+    let response = await fetch(url)
+
+    if (!response.ok) {
+      throw new Error("Request failed with status " + response.status)
+    }
+    zippedData = await response.arrayBuffer()
+    console.log("zippedData")
+    console.log(zippedData)
+
+    return zippedData
+  } catch (error) {
+    window.setLoading(false)
+    window.setShowErrorMessage(true)
+    return
+  }
+}
+
+async function unzipFile(zippedData) {
+  console.log("zipfile")
+  console.log(zippedData)
+  const zip = new JSZip()
+  await zip.loadAsync(zippedData)
+
+  const stlFile = zip.file(Object.keys(zip.files)[0])
+
+  stlData = await stlFile.async("arraybuffer")
+
+  if (!stlData) {
+    console.error("STL file not found in ZIP archive")
+  }
+  return stlData
 }
