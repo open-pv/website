@@ -1,11 +1,6 @@
 import JSZip from "jszip"
-import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
-import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js"
 import { projectToUTM32 } from "./location"
-import { createMeshes } from "./pv_simulation"
 export var coordinatesUTM32
-
-import { loadLAZ } from "./lazimport"
 
 function getFileNames(x, y) {
   const DIVISOR = 2000
@@ -93,72 +88,9 @@ function get_file_names_laz(x, y) {
   return file_list
 }
 
-function getCommentLine(stlData) {
-  // TODO: Do not refactor this, as we do not want to communicate the offet
-  // over an stl comment in the future
-
-  // Convert the ArrayBuffer to a Uint8Array
-  var uint8Array = new Uint8Array(stlData)
-
-  // Create an empty array to store the characters
-  var commentChars = []
-
-  // Iterate over the Uint8Array in reverse order
-  for (var i = uint8Array.length - 2; i >= 0; i--) {
-    // Check if the current character is a newline character
-    if (uint8Array[i] === 10 || uint8Array[i] === 13) {
-      // Stop iterating if a newline character is encountered
-      break
-    }
-
-    // Add the current character to the commentChars array
-    commentChars.unshift(String.fromCharCode(uint8Array[i]))
-  }
-
-  // Convert the array of characters to a string
-  var commentLine = commentChars.join("")
-
-  // Remove any leading or trailing whitespace
-  commentLine = commentLine.trim()
-  return commentLine
-}
-
-function parseCommentLine(comment) {
-  // Regular expression pattern to match the comment line format
-  var pattern =
-    /^;\s*offset\s*(-?\d+(?:\.\d+)?(?:e[-+]?\d+)?)\s*(-?\d+(?:\.\d+)?(?:e[-+]?\d+)?)\s*(-?\d+(?:\.\d+)?(?:e[-+]?\d+)?)\s*$/i
-
-  // Match the comment line against the pattern
-  var match = comment.match(pattern)
-
-  var offset = [0, 0, 0]
-  // Check if the comment line matches the expected format
-  if (match) {
-    // Extract the offsets from the matched groups
-    console.log("Matches", match)
-    offset = [parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3])]
-
-    // Print the offsets
-    console.log("Offsets:", offset[0], offset[1], offset[2])
-  } else {
-    console.log("Invalid comment format")
-  }
-  return offset
-}
-
-export async function downloadBuildings(loc, resetCamera = false) {
-  var filenames = getFileNames(Number(loc.lon), Number(loc.lat))
-  console.log("filenames")
-  console.log(filenames)
-  if (filenames.length == 0) {
-    return
-  }
-
-  let geometries = []
-  let stlData = null
-  let main_offset = null
-
-  const coordinatesUTM32 = projectToUTM32(Number(loc.lon), Number(loc.lat))
+export async function downloadBuildings(loc) {
+  const filenames = getFileNames(Number(loc.lon), Number(loc.lat))
+  let stlStrings = []
 
   for (let filename of filenames) {
     let zippedData = await downloadFile(filename)
@@ -166,50 +98,10 @@ export async function downloadBuildings(loc, resetCamera = false) {
       throw new Error("File download failed!")
     }
 
-    stlData = await unzipFile(zippedData)
-
-    let geometry = new STLLoader().parse(stlData)
-
-    // Create and display the combined mesh
-    const comment = getCommentLine(stlData)
-    var local_offset = parseCommentLine(comment)
-
-    if (main_offset == null) {
-      main_offset = local_offset
-      local_offset = [0, 0, 0]
-    } else {
-      local_offset = [
-        local_offset[0] - main_offset[0],
-        local_offset[1] - main_offset[1],
-        local_offset[2] - main_offset[2],
-      ]
-      geometry.translate(local_offset[0], local_offset[1], local_offset[2])
-    }
-
-    geometries.push(geometry)
+    stlStrings.push(await unzipFile(zippedData));
   }
-  console.log(geometries)
-  console.log("These were the geometries!")
 
-  //TODO: Why do we not create a full list of geometries and then process it further?
-  const combinedGeometry = BufferGeometryUtils.mergeGeometries(geometries)
-
-  const minZ = createMeshes(combinedGeometry, main_offset)
-  const offsetUTM32 = [
-    coordinatesUTM32[0],
-    coordinatesUTM32[1],
-    minZ + main_offset[2],
-  ]
-
-  let laser_points = null
-  if (window.enableLaserPoints) {
-    laser_points = await loadLAZ(
-      50,
-      offsetUTM32,
-      get_file_names_laz(Number(loc.lon), Number(loc.lat))
-    )
-  }
-  return { loc, laser_points, resetCamera }
+  return stlStrings;
 }
 
 async function downloadFile(filename) {
@@ -221,12 +113,13 @@ async function downloadFile(filename) {
     if (!response.ok) {
       throw new Error("Request failed with status " + response.status)
     }
-    zippedData = await response.arrayBuffer()
+    let zippedData = await response.arrayBuffer()
     console.log("zippedData")
     console.log(zippedData)
 
     return zippedData
   } catch (error) {
+    console.log(error);
     window.setLoading(false)
     window.setShowErrorMessage(true)
     return
@@ -241,7 +134,7 @@ async function unzipFile(zippedData) {
 
   const stlFile = zip.file(Object.keys(zip.files)[0])
 
-  stlData = await stlFile.async("arraybuffer")
+  let stlData = await stlFile.async("arraybuffer")
 
   if (!stlData) {
     console.error("STL file not found in ZIP archive")

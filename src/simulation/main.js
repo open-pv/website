@@ -1,19 +1,31 @@
 // This is the only file where both functionality and GUI stuff is allowed
 
-import { downloadBuildings } from "./download"
-import { setLocation } from "./location"
-import { calc_webgl } from "./pv_simulation"
+import Scene from "@openpv/simshady";
+import { downloadBuildings } from "./download";
+import { setLocation } from "./location";
+import { processGeometries } from "./preprocessing";
+import { showMesh } from "./viewer";
 
 export async function main(inputValue, inputChanged, oldLocation) {
   const location = await setLocation(inputValue, inputChanged, oldLocation)
 
   if (typeof location !== "undefined" && location != null) {
-    const { loc, laser_points, resetCamera } = downloadBuildings(
-      location,
-      inputChanged
-    )
+    const stlStrings = await downloadBuildings(location);
 
-    calc_webgl(loc, laser_points, resetCamera)
+    console.log(stlStrings);
+
+    // TODO: Dynamically call this when sliders are moved instead of re-downloading everything
+    const { simulationGeometry, surroundingGeometry } = processGeometries(stlStrings);
+
+    const scene = new Scene(location.lat, location.lon);
+    scene.addSimulationGeometry(simulationGeometry);
+    scene.addShadingGeometry(simulationGeometry);
+    scene.addShadingGeometry(surroundingGeometry);
+
+    const simulationMesh = await scene.calculate(window.numSimulations);
+
+    window.setLoading(false);
+    showMesh(simulationMesh, surroundingGeometry, inputChanged);
   } else {
     window.setLoading(false)
     window.setShowThreeViewer(false)

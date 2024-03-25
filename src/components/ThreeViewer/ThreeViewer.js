@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Canvas } from "react-three-fiber"
 import * as THREE from "three"
 import { setLocation } from "../../simulation/location"
-import { camera, controls, renderer, scene } from "../../simulation/stlviewer"
+import { camera, controls, renderer, scene } from "../../simulation/viewer"
 
 export default function ThreeViewer() {
   const [offsetPosition, setOffsetPosition] = useState([0, 0]) // initial camera position

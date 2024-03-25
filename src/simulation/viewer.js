@@ -651,3 +651,108 @@ function animate() {
   controls.update();
   renderer.render(scene, camera);
 }
+
+export async function showMesh(
+  simulationMesh,
+  surroundingGeometry,
+  resetCamera
+) {
+  var oldCameraPosition
+  if (resetCamera || camera == null) {
+    oldCameraPosition = { x: 0, y: 0, z: 0 }
+  } else {
+    oldCameraPosition = {
+      x: camera.position.x,
+      y: camera.position.y,
+      z: camera.position.z,
+    }
+  }
+
+  STLViewer(resetCamera)
+  console.log("Initial camera position");
+  console.log(camera.position);
+
+  let middle = new THREE.Vector3()
+  console.log(simulationMesh);
+  simulationMesh.geometry.computeBoundingBox()
+  simulationMesh.geometry.boundingBox.getCenter(middle)
+  console.log("middle", middle)
+  
+  simulationMesh.geometry.translate(-middle.x, -middle.y, -middle.z);
+  scene.add(simulationMesh)
+
+  surroundingGeometry.translate(-middle.x, -middle.y, -middle.z);
+  var surroundingMaterial = new THREE.MeshStandardMaterial({
+    vertexColors: false,
+    side: THREE.DoubleSide,
+    color: 0xd1bea4,
+    roughness: 1,
+  })
+  var surroundingMesh = new THREE.Mesh(surroundingGeometry, surroundingMaterial)
+  scene.add(surroundingMesh)
+
+  console.log("resetCamera:", resetCamera);
+  if (resetCamera) {
+    
+    camera.position.set(0, -40, 80)
+  } else {
+    console.log("Camera Rot", window.offsetPos[0], window.offsetPos[1])
+
+    camera.position.set(
+      oldCameraPosition.x - window.offsetPos[0],
+      oldCameraPosition.y - window.offsetPos[1],
+      oldCameraPosition.z
+    )
+    window.offsetPos[0] = 0
+    window.offsetPos[1] = 0
+    // console.log("New Camera Pos", camera.position);
+  }
+
+  var animate = function () {
+    requestAnimationFrame(animate)
+    controls.update()
+    renderer.render(scene, camera)
+  }
+  window.setShowViridisLegend(true)
+  animate()
+
+  console.log("Camera position");
+  console.log(camera.position);
+
+  let caster = new THREE.Raycaster();
+  window.addEventListener('click', function(event) {
+    const rect = renderer.domElement.getBoundingClientRect();
+    const mouse = {
+      x: ((event.clientX - rect.x) / rect.width) * 2 - 1,
+      y: -((event.clientY - rect.y) / rect.height) * 2 + 1
+    };
+    caster.setFromCamera(mouse, camera);
+    const intersects = caster.intersectObjects(scene.children);
+
+    if (intersects.length > 0) {
+      const intersection = intersects[0];
+      const colorAttribute = intersection.object.geometry.getAttribute('color');
+      const face = intersection.face;
+
+      const r = colorAttribute.getX(face.a);
+      const g = colorAttribute.getY(face.a);
+      const b = colorAttribute.getZ(face.a);
+
+      const color = new THREE.Color(0xff0000);
+      colorAttribute.setXYZ(face.a, color.r, color.g, color.b);
+      colorAttribute.setXYZ(face.b, color.r, color.g, color.b);
+      colorAttribute.setXYZ(face.c, color.r, color.g, color.b);
+      colorAttribute.needsUpdate = true;
+
+      window.setTimeout(function() {
+        colorAttribute.setXYZ(face.a, r, g, b);
+        colorAttribute.setXYZ(face.b, r, g, b);
+        colorAttribute.setXYZ(face.c, r, g, b);
+        colorAttribute.needsUpdate = true;
+      }, 500);
+
+      console.log('Clicked on Triangle #', face.a / 3);
+    }
+  });
+
+}
