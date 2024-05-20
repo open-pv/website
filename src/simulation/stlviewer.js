@@ -70,11 +70,7 @@ export function STLViewer(resetCamera = true) {
   scene.add(dirLight3);
   scene.add(new THREE.AmbientLight(0xffffff, 1));
 
-  // Adding a test cube to the scene
-  const geometry = new THREE.BoxGeometry();
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-  const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
+
 
   // Event listener for mouse move
   elem.addEventListener('mousemove', onMouseMove, false);
@@ -105,7 +101,10 @@ function onKeyDown(event) {
       console.log('Intersection found:', intersects[0]);
 
       const intersect = intersects[0];
-      clickedPoints.push(intersect.point.clone());
+
+      // Offset the point slightly in the direction of the normal
+      const offsetPoint = intersect.point.clone().add(intersect.face.normal.clone().multiplyScalar(0.1));
+      clickedPoints.push(offsetPoint);
 
       if (cursor) {
         scene.remove(cursor);
@@ -115,9 +114,9 @@ function onKeyDown(event) {
       const cursorMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
       cursor = new THREE.Mesh(cursorGeometry, cursorMaterial);
 
-      cursor.position.copy(intersect.point);
+      cursor.position.copy(offsetPoint);
       scene.add(cursor);
-      console.log('Cursor added at:', intersect.point);
+      console.log('Cursor added at:', offsetPoint);
     } else {
       console.log('No intersection found');
     }
@@ -151,10 +150,9 @@ function createPolygon() {
   const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
   const mesh = new THREE.Mesh(geometry, material);
 
-  // Set the z coordinate to match the average z coordinate of the points
-  const avgZ = clickedPoints.reduce((sum, point) => sum + point.z, 0) / clickedPoints.length;
-  mesh.position.z = avgZ;
-
+  // Position the mesh correctly in 3D space
+  mesh.position.set(0, 0, 0);
+  clickedPoints = []
   scene.add(mesh);
   console.log('Polygon created');
 }
