@@ -71,7 +71,6 @@ export function STLViewer(resetCamera = true) {
   scene.add(new THREE.AmbientLight(0xffffff, 1));
 
 
-
   // Event listener for mouse move
   elem.addEventListener('mousemove', onMouseMove, false);
 
@@ -131,29 +130,18 @@ function createPolygon() {
     return;
   }
 
-  const shape = new THREE.Shape();
-  const startPoint = clickedPoints[0];
-  shape.moveTo(startPoint.x, startPoint.y);
+  const vertices = [];
+  clickedPoints.forEach(point => {
+    vertices.push(point.x, point.y, point.z);
+  });
 
-  for (let i = 1; i < clickedPoints.length; i++) {
-    shape.lineTo(clickedPoints[i].x, clickedPoints[i].y);
-  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
 
-  shape.lineTo(startPoint.x, startPoint.y);  // Close the shape
-
-  const extrudeSettings = {
-    depth: 1,
-    bevelEnabled: false,
-  };
-
-  const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-  const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
-  const mesh = new THREE.Mesh(geometry, material);
-
-  // Position the mesh correctly in 3D space
-  mesh.position.set(0, 0, 0);
-  clickedPoints = []
-  scene.add(mesh);
+  const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  const line = new THREE.LineLoop(geometry, material);
+  clickedPoints = [];
+  scene.add(line);
   console.log('Polygon created');
 }
 
