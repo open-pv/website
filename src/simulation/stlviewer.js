@@ -10,6 +10,7 @@ export var mouse = new THREE.Vector2();
 export var cursor = null;
 export var lastMousePosition = { x: 0, y: 0 };
 export var clickedPoints = [];
+export var pointColors = [];
 
 export function STLViewerEnable(classname) {
   var model = document.getElementsByClassName(classname)[0];
@@ -70,7 +71,6 @@ export function STLViewer(resetCamera = true) {
   scene.add(dirLight3);
   scene.add(new THREE.AmbientLight(0xffffff, 1));
 
-
   // Event listener for mouse move
   elem.addEventListener('mousemove', onMouseMove, false);
 
@@ -105,6 +105,16 @@ function onKeyDown(event) {
       const offsetPoint = intersect.point.clone().add(intersect.face.normal.clone().multiplyScalar(0.1));
       clickedPoints.push(offsetPoint);
 
+      // Get the color at the intersection point
+      const color = new THREE.Color();
+      const material = intersect.object.material;
+      if (material && material.color) {
+        color.copy(material.color);
+      } else {
+        color.set(0xffffff); // default to white if no color found
+      }
+      pointColors.push(color);
+
       if (cursor) {
         scene.remove(cursor);
       }
@@ -131,16 +141,21 @@ function createPolygon() {
   }
 
   const vertices = [];
-  clickedPoints.forEach(point => {
+  const colors = [];
+  clickedPoints.forEach((point, index) => {
     vertices.push(point.x, point.y, point.z);
+    const color = pointColors[index];
+    colors.push(color.r, color.g, color.b);
   });
 
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
-  const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+  const material = new THREE.LineBasicMaterial({ vertexColors: true });
   const line = new THREE.LineLoop(geometry, material);
   clickedPoints = [];
+  pointColors = [];
   scene.add(line);
   console.log('Polygon created');
 }
