@@ -9,6 +9,7 @@ export var raycaster = new THREE.Raycaster();
 export var mouse = new THREE.Vector2();
 export var cursor = null;
 export var lastMousePosition = { x: 0, y: 0 };
+export var clickedPoints = [];
 
 export function STLViewerEnable(classname) {
   var model = document.getElementsByClassName(classname)[0];
@@ -104,6 +105,7 @@ function onKeyDown(event) {
       console.log('Intersection found:', intersects[0]);
 
       const intersect = intersects[0];
+      clickedPoints.push(intersect.point.clone());
 
       if (cursor) {
         scene.remove(cursor);
@@ -119,7 +121,42 @@ function onKeyDown(event) {
     } else {
       console.log('No intersection found');
     }
+  } else if (event.code === 'KeyP') {  // Press 'P' to create polygon
+    createPolygon();
   }
+}
+
+function createPolygon() {
+  if (clickedPoints.length < 3) {
+    console.log('Not enough points to create a polygon');
+    return;
+  }
+
+  const shape = new THREE.Shape();
+  const startPoint = clickedPoints[0];
+  shape.moveTo(startPoint.x, startPoint.y);
+
+  for (let i = 1; i < clickedPoints.length; i++) {
+    shape.lineTo(clickedPoints[i].x, clickedPoints[i].y);
+  }
+
+  shape.lineTo(startPoint.x, startPoint.y);  // Close the shape
+
+  const extrudeSettings = {
+    depth: 1,
+    bevelEnabled: false,
+  };
+
+  const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+  const mesh = new THREE.Mesh(geometry, material);
+
+  // Set the z coordinate to match the average z coordinate of the points
+  const avgZ = clickedPoints.reduce((sum, point) => sum + point.z, 0) / clickedPoints.length;
+  mesh.position.z = avgZ;
+
+  scene.add(mesh);
+  console.log('Polygon created');
 }
 
 function animate() {
