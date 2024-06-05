@@ -11,6 +11,7 @@ export var cursor = null;
 export var lastMousePosition = { x: 0, y: 0 };
 export var clickedPoints = [];
 export var pointColors = [];
+var innerMesh; // Add this line at the top to hold the reference to the inner mesh
 
 export function STLViewerEnable(classname) {
   var model = document.getElementsByClassName(classname)[0];
@@ -106,14 +107,11 @@ function onKeyDown(event) {
       clickedPoints.push(offsetPoint);
 
       // Get the color at the intersection point
-      const color = new THREE.Color();
-      const material = intersect.object.material;
-      if (material && material.color) {
-        color.copy(material.color);
-      } else {
-        color.set(0xffffff); // default to white if no color found
-      }
+      const color = getColorAtIntersection(intersect);
       pointColors.push(color);
+
+      // Log the color at the intersection point
+      console.log('Color at intersection:', color.getStyle());
 
       if (cursor) {
         scene.remove(cursor);
@@ -132,7 +130,35 @@ function onKeyDown(event) {
   } else if (event.code === 'KeyP') {  // Press 'P' to create polygon
     createPolygon();
   }
+} 
+
+function getColorAtIntersection(intersect) {
+  const uv = intersect.uv;
+  const material = intersect.object.material;
+
+  if (material.map && material.map.image && uv) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    const image = material.map.image;
+    canvas.width = image.width;
+    canvas.height = image.height;
+    context.drawImage(image, 0, 0, image.width, image.height);
+
+    const x = Math.floor(uv.x * image.width);
+    const y = Math.floor((1 - uv.y) * image.height);  // note the 1 - uv.y
+    const pixel = context.getImageData(x, y, 1, 1).data;
+
+    return new THREE.Color(pixel[0] / 255, pixel[1] / 255, pixel[2] / 255);
+  }
+
+  if (material.color) {
+    return material.color.clone();
+  }
+
+  return new THREE.Color(0xffffff); // default to white if no color found
 }
+
+
 
 function createPolygon() {
   if (clickedPoints.length < 3) {
