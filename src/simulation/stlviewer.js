@@ -197,7 +197,55 @@ function createPolygon() {
   // Triangulate the polygon
   const indices = THREE.ShapeUtils.triangulateShape(clickedPoints, []);
 
-  geometry.setIndex(indices.flat());
+  // Subdivide the triangles to ensure no side is longer than 0.2
+  let triangles = indices.map(index => {
+    return {
+      a: new THREE.Vector3(vertices[index[0] * 3], vertices[index[0] * 3 + 1], vertices[index[0] * 3 + 2]),
+      b: new THREE.Vector3(vertices[index[1] * 3], vertices[index[1] * 3 + 1], vertices[index[1] * 3 + 2]),
+      c: new THREE.Vector3(vertices[index[2] * 3], vertices[index[2] * 3 + 1], vertices[index[2] * 3 + 2])
+    };
+  });
+
+  function subdivideTriangle(triangle) {
+    const ab = triangle.a.distanceTo(triangle.b);
+    const bc = triangle.b.distanceTo(triangle.c);
+    const ca = triangle.c.distanceTo(triangle.a);
+
+    if (ab > 1 || bc > 1 || ca > 1) {
+      const midpoint = (p1, p2) => p1.clone().add(p2).multiplyScalar(0.5);
+      const abMid = midpoint(triangle.a, triangle.b);
+      const bcMid = midpoint(triangle.b, triangle.c);
+      const caMid = midpoint(triangle.c, triangle.a);
+
+      const newTriangles = [
+        { a: triangle.a, b: abMid, c: caMid },
+        { a: abMid, b: triangle.b, c: bcMid },
+        { a: caMid, b: bcMid, c: triangle.c },
+        { a: abMid, b: bcMid, c: caMid }
+      ];
+
+      return newTriangles.flatMap(subdivideTriangle);
+    } else {
+      return [triangle];
+    }
+  }
+
+  triangles = triangles.flatMap(subdivideTriangle);
+
+  // Create new geometry with the subdivided triangles
+  const newVertices = [];
+  const newIndices = [];
+
+  triangles.forEach(triangle => {
+    const startIndex = newVertices.length / 3;
+    newVertices.push(triangle.a.x, triangle.a.y, triangle.a.z);
+    newVertices.push(triangle.b.x, triangle.b.y, triangle.b.z);
+    newVertices.push(triangle.c.x, triangle.c.y, triangle.c.z);
+    newIndices.push(startIndex, startIndex + 1, startIndex + 2);
+  });
+
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(newVertices, 3));
+  geometry.setIndex(newIndices);
 
   // Create the mesh
   const material = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide });
@@ -211,9 +259,15 @@ function createPolygon() {
   const lines = new THREE.LineSegments(edges, lineMaterial);
   scene.add(lines);
 
+  // Draw the wireframe of the inner triangles in light grey
+  const wireframeGeometry = new THREE.WireframeGeometry(geometry);
+  const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0xcccccc });
+  const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+  scene.add(wireframe);
+
   // Find the closest polygon for each vertex
-  for (let i = 0; i < vertices.length; i += 3) {
-    const vertexPosition = new THREE.Vector3(vertices[i], vertices[i + 1], vertices[i + 2]);
+  for (let i = 0; i < newVertices.length; i += 3) {
+    const vertexPosition = new THREE.Vector3(newVertices[i], newVertices[i + 1], newVertices[i + 2]);
     const closestPolygon = findClosestPolygon(vertexPosition);
     console.log(`Vertex ${i / 3}:`);
     console.log(`  Coordinates: (${vertexPosition.x}, ${vertexPosition.y}, ${vertexPosition.z})`);
