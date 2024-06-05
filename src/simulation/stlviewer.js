@@ -190,20 +190,21 @@ function createPolygon() {
 
   const material = new THREE.LineBasicMaterial({ vertexColors: true });
   const line = new THREE.LineLoop(geometry, material);
-  clickedPoints = [];
-  pointColors = [];
   scene.add(line);
   console.log('Polygon created');
 
   // Find the closest polygon for each vertex
-  vertices.forEach((vertex, index) => {
-    const vertexPosition = new THREE.Vector3(vertices[index * 3], vertices[index * 3 + 1], vertices[index * 3 + 2]);
+  for (let i = 0; i < vertices.length; i += 3) {
+    const vertexPosition = new THREE.Vector3(vertices[i], vertices[i + 1], vertices[i + 2]);
     const closestPolygon = findClosestPolygon(vertexPosition);
-    console.log(`Vertex ${index}:`);
+    console.log(`Vertex ${i / 3}:`);
     console.log(`  Coordinates: (${vertexPosition.x}, ${vertexPosition.y}, ${vertexPosition.z})`);
     console.log(`  Closest polygon vertices: ${JSON.stringify(closestPolygon.vertices)}`);
     console.log(`  Polygon normal: (${closestPolygon.normal.x}, ${closestPolygon.normal.y}, ${closestPolygon.normal.z})`);
-  });
+  }
+
+  clickedPoints = [];
+  pointColors = [];
 }
 
 function findClosestPolygon(vertex) {
