@@ -194,6 +194,44 @@ function createPolygon() {
   pointColors = [];
   scene.add(line);
   console.log('Polygon created');
+
+  // Find the closest polygon for each vertex
+  vertices.forEach((vertex, index) => {
+    const vertexPosition = new THREE.Vector3(vertices[index * 3], vertices[index * 3 + 1], vertices[index * 3 + 2]);
+    const closestPolygon = findClosestPolygon(vertexPosition);
+    console.log(`Vertex ${index}:`);
+    console.log(`  Coordinates: (${vertexPosition.x}, ${vertexPosition.y}, ${vertexPosition.z})`);
+    console.log(`  Closest polygon vertices: ${JSON.stringify(closestPolygon.vertices)}`);
+    console.log(`  Polygon normal: (${closestPolygon.normal.x}, ${closestPolygon.normal.y}, ${closestPolygon.normal.z})`);
+  });
+}
+
+function findClosestPolygon(vertex) {
+  let closestPolygon = null;
+  let minDistance = Infinity;
+
+  scene.traverse((child) => {
+    if (child.isMesh) {
+      const geometry = child.geometry;
+      if (!geometry.isBufferGeometry) return;
+
+      const positions = geometry.attributes.position.array;
+      for (let i = 0; i < positions.length; i += 9) {
+        const v0 = new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2]);
+        const v1 = new THREE.Vector3(positions[i + 3], positions[i + 4], positions[i + 5]);
+        const v2 = new THREE.Vector3(positions[i + 6], positions[i + 7], positions[i + 8]);
+
+        const distance = vertex.distanceTo(v0) + vertex.distanceTo(v1) + vertex.distanceTo(v2);
+        if (distance < minDistance) {
+          minDistance = distance;
+          const normal = new THREE.Triangle(v0, v1, v2).getNormal(new THREE.Vector3());
+          closestPolygon = { vertices: [v0, v1, v2], normal };
+        }
+      }
+    }
+  });
+
+  return closestPolygon;
 }
 
 function animate() {
