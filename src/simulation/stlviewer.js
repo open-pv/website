@@ -87,6 +87,18 @@ function onMouseMove(event) {
   
   lastMousePosition.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
   lastMousePosition.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+  if (clickedPoints.length > 0) {
+    raycaster.setFromCamera(lastMousePosition, camera);
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    if (intersects.length > 0) {
+      const intersect = intersects[0];
+      const potentialVertex = intersect.point.clone();
+      const lastVertex = clickedPoints[clickedPoints.length - 1];
+      const distance = potentialVertex.distanceTo(lastVertex);
+      console.log('Distance to potential vertex:', distance);
+    }
+  }
 }
 
 function onKeyDown(event) {
@@ -157,8 +169,6 @@ function getColorAtIntersection(intersect) {
 
   return new THREE.Color(0xffffff); // default to white if no color found
 }
-
-
 
 function createPolygon() {
   if (clickedPoints.length < 3) {
