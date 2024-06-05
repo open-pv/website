@@ -176,22 +176,40 @@ function createPolygon() {
     return;
   }
 
-  const vertices = [];
-  const colors = [];
+  // Create geometry from the clicked points
+  const geometry = new THREE.BufferGeometry();
+  const vertices = new Float32Array(clickedPoints.length * 3);
+  const colors = new Float32Array(clickedPoints.length * 3);
+
   clickedPoints.forEach((point, index) => {
-    vertices.push(point.x, point.y, point.z);
+    vertices[index * 3] = point.x;
+    vertices[index * 3 + 1] = point.y;
+    vertices[index * 3 + 2] = point.z;
     const color = pointColors[index];
-    colors.push(color.r, color.g, color.b);
+    colors[index * 3] = color.r;
+    colors[index * 3 + 1] = color.g;
+    colors[index * 3 + 2] = color.b;
   });
 
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+  geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-  const material = new THREE.LineBasicMaterial({ vertexColors: true });
-  const line = new THREE.LineLoop(geometry, material);
-  scene.add(line);
+  // Triangulate the polygon
+  const indices = THREE.ShapeUtils.triangulateShape(clickedPoints, []);
+
+  geometry.setIndex(indices.flat());
+
+  // Create the mesh
+  const material = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide });
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
   console.log('Polygon created');
+
+  // Draw the outline
+  const edges = new THREE.EdgesGeometry(geometry);
+  const lineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
+  const lines = new THREE.LineSegments(edges, lineMaterial);
+  scene.add(lines);
 
   // Find the closest polygon for each vertex
   for (let i = 0; i < vertices.length; i += 3) {
@@ -199,6 +217,7 @@ function createPolygon() {
     const closestPolygon = findClosestPolygon(vertexPosition);
     console.log(`Vertex ${i / 3}:`);
     console.log(`  Coordinates: (${vertexPosition.x}, ${vertexPosition.y}, ${vertexPosition.z})`);
+    console.log(`  Closest polygon ID: ${closestPolygon.id}`);
     console.log(`  Closest polygon vertices: ${JSON.stringify(closestPolygon.vertices)}`);
     console.log(`  Polygon normal: (${closestPolygon.normal.x}, ${closestPolygon.normal.y}, ${closestPolygon.normal.z})`);
   }
@@ -210,6 +229,7 @@ function createPolygon() {
 function findClosestPolygon(vertex) {
   let closestPolygon = null;
   let minDistance = Infinity;
+  let polygonId = 0;
 
   scene.traverse((child) => {
     if (child.isMesh) {
@@ -226,8 +246,9 @@ function findClosestPolygon(vertex) {
         if (distance < minDistance) {
           minDistance = distance;
           const normal = new THREE.Triangle(v0, v1, v2).getNormal(new THREE.Vector3());
-          closestPolygon = { vertices: [v0, v1, v2], normal };
+          closestPolygon = { id: polygonId, vertices: [v0, v1, v2], normal };
         }
+        polygonId++;
       }
     }
   });
