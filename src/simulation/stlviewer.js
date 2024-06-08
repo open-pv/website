@@ -393,10 +393,6 @@ function getColorAtPointOnTriangle(point, triangle) {
   return new THREE.Color(r, g, b);
 }
 
-function getColorAtVertex(vertex) {
-  // Dummy implementation; in a real application, you would get the color from the vertex data
-  return new THREE.Color(1, 1, 1);  // Default to white
-}
 
 function resetScene() {
   // Remove all drawn objects from the scene
