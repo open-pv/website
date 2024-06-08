@@ -11,7 +11,7 @@ export var cursor = null;
 export var lastMousePosition = { x: 0, y: 0 };
 export var clickedPoints = [];
 export var pointColors = [];
-var innerMesh; // Add this line at the top to hold the reference to the inner mesh
+var drawnObjects = []; // Store references to all drawn objects
 
 export function STLViewerEnable(classname) {
   var model = document.getElementsByClassName(classname)[0];
@@ -141,8 +141,10 @@ function onKeyDown(event) {
     }
   } else if (event.code === 'KeyP') {  // Press 'P' to create polygon
     createPolygon();
+  } else if (event.code === 'KeyR') {  // Press 'R' to reset
+    resetScene();
   }
-} 
+}
 
 function getColorAtIntersection(intersect) {
   const uv = intersect.uv;
@@ -251,6 +253,7 @@ function createPolygon() {
   const material = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide });
   const mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
+  drawnObjects.push(mesh);
   console.log('Polygon created');
 
   // Draw the outline
@@ -258,12 +261,14 @@ function createPolygon() {
   const lineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
   const lines = new THREE.LineSegments(edges, lineMaterial);
   scene.add(lines);
+  drawnObjects.push(lines);
 
   // Draw the wireframe of the inner triangles in light grey
   const wireframeGeometry = new THREE.WireframeGeometry(geometry);
   const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0xcccccc });
   const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
   scene.add(wireframe);
+  drawnObjects.push(wireframe);
 
   // Find the closest polygon for each vertex
   for (let i = 0; i < newVertices.length; i += 3) {
@@ -308,6 +313,18 @@ function findClosestPolygon(vertex) {
   });
 
   return closestPolygon;
+}
+
+function resetScene() {
+  // Remove all drawn objects from the scene
+  drawnObjects.forEach(object => scene.remove(object));
+  drawnObjects = [];
+
+  // Clear the clicked points and point colors
+  clickedPoints = [];
+  pointColors = [];
+
+  console.log('Scene reset');
 }
 
 function animate() {
