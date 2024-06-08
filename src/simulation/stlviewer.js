@@ -258,6 +258,7 @@ function createPolygon() {
   const newVertices = [];
   const newIndices = [];
   const newColors = [];
+  const newIntensities = [];
 
   triangles.forEach(triangle => {
     const startIndex = newVertices.length / 3;
@@ -275,9 +276,12 @@ function createPolygon() {
     if (closestPolygon) {
       const projectedVertex = projectOntoTriangle(vertex, closestPolygon);
       const color = getColorAtPointOnTriangle(projectedVertex, closestPolygon);
+      const intensity = getIntensityAtPointOnTriangle(projectedVertex, closestPolygon);
       newColors.push(color.r, color.g, color.b);
+      newIntensities.push(intensity)
     } else {
       newColors.push(1, 1, 1);  // Default to white if no closest polygon is found
+      newIntensities.push(-1000);
     }
   }
 
@@ -296,6 +300,9 @@ function createPolygon() {
     console.log(`  Color A: ${new THREE.Color(newColors[i * 9], newColors[i * 9 + 1], newColors[i * 9 + 2]).getStyle()}`);
     console.log(`  Color B: ${new THREE.Color(newColors[i * 9 + 3], newColors[i * 9 + 4], newColors[i * 9 + 5]).getStyle()}`);
     console.log(`  Color C: ${new THREE.Color(newColors[i * 9 + 6], newColors[i * 9 + 7], newColors[i * 9 + 8]).getStyle()}`);
+    console.log(`  Intensity A: ${newIntensities[i*3]}`);
+    console.log(`  Intensity B: ${newIntensities[i*3+1]}`);
+    console.log(`  Intensity C: ${newIntensities[i*3+2]}`);
   }
 
   // Create the mesh
@@ -334,6 +341,7 @@ function findClosestPolygon(vertex) {
 
       const positions = geometry.attributes.position.array;
       const colors = geometry.attributes.color ? geometry.attributes.color.array : null;
+      const intensities = geometry.intensities ? geometry.intensities : null;
       for (let i = 0; i < positions.length; i += 9) {
         const v0 = new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2]);
         const v1 = new THREE.Vector3(positions[i + 3], positions[i + 4], positions[i + 5]);
@@ -343,11 +351,15 @@ function findClosestPolygon(vertex) {
         const color1 = colors ? new THREE.Color(colors[i + 3], colors[i + 4], colors[i + 5]) : new THREE.Color(1, 1, 1);
         const color2 = colors ? new THREE.Color(colors[i + 6], colors[i + 7], colors[i + 8]) : new THREE.Color(1, 1, 1);
 
+        const intensity1 = intensities ? intensities[i/3] : -1000;
+        const intensity2 = intensities ? intensities[i/3+1]: -1000;
+        const intensity3 = intensities ? intensities[i/3+2]: -1000;
+
         const distance = vertex.distanceTo(v0) + vertex.distanceTo(v1) + vertex.distanceTo(v2);
         if (distance < minDistance) {
           minDistance = distance;
           const normal = new THREE.Triangle(v0, v1, v2).getNormal(new THREE.Vector3());
-          closestPolygon = { vertices: [v0, v1, v2], colors: [color0, color1, color2], normal };
+          closestPolygon = { vertices: [v0, v1, v2], colors: [color0, color1, color2], normal,intensities: [intensity1,intensity2,intensity3] };
         }
       }
     }
@@ -392,6 +404,30 @@ function getColorAtPointOnTriangle(point, triangle) {
 
   return new THREE.Color(r, g, b);
 }
+
+function getIntensityAtPointOnTriangle(point, triangle) {
+  const [v0, v1, v2] = triangle.vertices;
+  const normal = triangle.normal.clone().normalize();
+
+  // Calculate barycentric coordinates
+  const areaABC = normal.dot(new THREE.Vector3().crossVectors(v1.clone().sub(v0), v2.clone().sub(v0)));
+  const areaPBC = normal.dot(new THREE.Vector3().crossVectors(v1.clone().sub(point), v2.clone().sub(point)));
+  const areaPCA = normal.dot(new THREE.Vector3().crossVectors(v2.clone().sub(point), v0.clone().sub(point)));
+
+  const u = areaPBC / areaABC;
+  const v = areaPCA / areaABC;
+  const w = 1 - u - v;
+
+  // Interpolate the color at the point using barycentric coordinates
+  const intensity0 = triangle.intensities[0];
+  const intensity1 = triangle.intensities[1];
+  const intensity2 = triangle.intensities[2];
+
+  const intensityAtPoint = u * intensity0 + v * intensity1 + w * intensity2;
+
+  return intensityAtPoint;
+}
+
 
 
 function resetScene() {
