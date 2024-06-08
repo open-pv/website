@@ -257,6 +257,7 @@ function createPolygon() {
   // Create new geometry with the subdivided triangles
   const newVertices = [];
   const newIndices = [];
+  const newColors = [];
 
   triangles.forEach(triangle => {
     const startIndex = newVertices.length / 3;
@@ -266,7 +267,22 @@ function createPolygon() {
     newIndices.push(startIndex, startIndex + 1, startIndex + 2);
   });
 
+  // Project each new vertex onto the closest triangle and get the color
+  for (let i = 0; i < newVertices.length; i += 3) {
+    const vertex = new THREE.Vector3(newVertices[i], newVertices[i + 1], newVertices[i + 2]);
+    const closestPolygon = findClosestPolygon(vertex);
+
+    if (closestPolygon) {
+      const projectedVertex = projectOntoTriangle(vertex, closestPolygon);
+      const color = getColorAtPointOnTriangle(projectedVertex, closestPolygon);
+      newColors.push(color.r, color.g, color.b);
+    } else {
+      newColors.push(1, 1, 1);  // Default to white if no closest polygon is found
+    }
+  }
+
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(newVertices, 3));
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(newColors, 3));
   geometry.setIndex(newIndices);
 
   // Create the mesh
@@ -290,17 +306,6 @@ function createPolygon() {
   scene.add(wireframe);
   drawnObjects.push(wireframe);
 
-  // Find the closest polygon for each vertex
-  for (let i = 0; i < newVertices.length; i += 3) {
-    const vertexPosition = new THREE.Vector3(newVertices[i], newVertices[i + 1], newVertices[i + 2]);
-    const closestPolygon = findClosestPolygon(vertexPosition);
-    console.log(`Vertex ${i / 3}:`);
-    console.log(`  Coordinates: (${vertexPosition.x}, ${vertexPosition.y}, ${vertexPosition.z})`);
-    console.log(`  Closest polygon ID: ${closestPolygon.id}`);
-    console.log(`  Closest polygon vertices: ${JSON.stringify(closestPolygon.vertices)}`);
-    console.log(`  Polygon normal: (${closestPolygon.normal.x}, ${closestPolygon.normal.y}, ${closestPolygon.normal.z})`);
-  }
-
   clickedPoints = [];
   pointColors = [];
 }
@@ -308,7 +313,6 @@ function createPolygon() {
 function findClosestPolygon(vertex) {
   let closestPolygon = null;
   let minDistance = Infinity;
-  let polygonId = 0;
 
   scene.traverse((child) => {
     if (child.isMesh) {
@@ -316,23 +320,64 @@ function findClosestPolygon(vertex) {
       if (!geometry.isBufferGeometry) return;
 
       const positions = geometry.attributes.position.array;
+      const colors = geometry.attributes.color ? geometry.attributes.color.array : null;
       for (let i = 0; i < positions.length; i += 9) {
         const v0 = new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2]);
         const v1 = new THREE.Vector3(positions[i + 3], positions[i + 4], positions[i + 5]);
         const v2 = new THREE.Vector3(positions[i + 6], positions[i + 7], positions[i + 8]);
 
+        const color0 = colors ? new THREE.Color(colors[i], colors[i + 1], colors[i + 2]) : new THREE.Color(1, 1, 1);
+        const color1 = colors ? new THREE.Color(colors[i + 3], colors[i + 4], colors[i + 5]) : new THREE.Color(1, 1, 1);
+        const color2 = colors ? new THREE.Color(colors[i + 6], colors[i + 7], colors[i + 8]) : new THREE.Color(1, 1, 1);
+
         const distance = vertex.distanceTo(v0) + vertex.distanceTo(v1) + vertex.distanceTo(v2);
         if (distance < minDistance) {
           minDistance = distance;
           const normal = new THREE.Triangle(v0, v1, v2).getNormal(new THREE.Vector3());
-          closestPolygon = { id: polygonId, vertices: [v0, v1, v2], normal };
+          closestPolygon = { vertices: [v0, v1, v2], colors: [color0, color1, color2], normal };
         }
-        polygonId++;
       }
     }
   });
 
   return closestPolygon;
+}
+
+function projectOntoTriangle(vertex, triangle) {
+  const [v0, v1, v2] = triangle.vertices;
+  const normal = triangle.normal.clone().normalize();
+
+  // Compute the projection of the vertex onto the plane of the triangle
+  const d = v0.dot(normal);
+  const t = (d - vertex.dot(normal)) / normal.dot(normal);
+  const projection = vertex.clone().add(normal.clone().multiplyScalar(t));
+
+  return projection;
+}
+
+function getColorAtPointOnTriangle(point, triangle) {
+  const [v0, v1, v2] = triangle.vertices;
+  const normal = triangle.normal.clone().normalize();
+
+  // Calculate barycentric coordinates
+  const areaABC = normal.dot(new THREE.Vector3().crossVectors(v1.clone().sub(v0), v2.clone().sub(v0)));
+  const areaPBC = normal.dot(new THREE.Vector3().crossVectors(v1.clone().sub(point), v2.clone().sub(point)));
+  const areaPCA = normal.dot(new THREE.Vector3().crossVectors(v2.clone().sub(point), v0.clone().sub(point)));
+
+  const u = areaPBC / areaABC;
+  const v = areaPCA / areaABC;
+  const w = 1 - u - v;
+
+  // Interpolate the color at the point using barycentric coordinates
+  const color0 = triangle.colors[0];
+  const color1 = triangle.colors[1];
+  const color2 = triangle.colors[2];
+
+  const r = u * color0.r + v * color1.r + w * color2.r;
+  const g = u * color0.g + v * color1.g + w * color2.g;
+  const b = u * color0.b + v * color1.b + w * color2.b;
+
+  return new THREE.Color(r, g, b);
 }
 
 function resetScene() {
