@@ -102,6 +102,11 @@ function onMouseMove(event) {
 }
 
 function onKeyDown(event) {
+  // Check if the target is an input field
+  if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+    return; // Allow the event to proceed normally
+  }
+
   if (event.code === 'Space') {
     event.preventDefault();
 
