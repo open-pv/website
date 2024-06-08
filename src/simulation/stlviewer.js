@@ -114,8 +114,14 @@ function onKeyDown(event) {
 
       const intersect = intersects[0];
 
-      // Offset the point slightly in the direction of the normal
-      const offsetPoint = intersect.point.clone().add(intersect.face.normal.clone().multiplyScalar(0.1));
+      let offsetPoint;
+      if (intersect.face) {
+        // Offset the point slightly in the direction of the normal
+        offsetPoint = intersect.point.clone().add(intersect.face.normal.clone().multiplyScalar(0.1));
+      } else {
+        // If face is null, just use the intersection point
+        offsetPoint = intersect.point.clone();
+      }
       clickedPoints.push(offsetPoint);
 
       // Get the color at the intersection point
@@ -173,6 +179,8 @@ function getColorAtIntersection(intersect) {
 }
 
 function createPolygon() {
+  const threshold = 1;  // Set your desired threshold here
+
   if (clickedPoints.length < 3) {
     console.log('Not enough points to create a polygon');
     return;
@@ -199,7 +207,7 @@ function createPolygon() {
   // Triangulate the polygon
   const indices = THREE.ShapeUtils.triangulateShape(clickedPoints, []);
 
-  // Subdivide the triangles to ensure no side is longer than 0.2
+  // Subdivide the triangles by splitting the longest side until the longest edge is below the threshold
   let triangles = indices.map(index => {
     return {
       a: new THREE.Vector3(vertices[index[0] * 3], vertices[index[0] * 3 + 1], vertices[index[0] * 3 + 2]),
@@ -208,31 +216,38 @@ function createPolygon() {
     };
   });
 
-  function subdivideTriangle(triangle) {
+  function subdivideTriangle(triangle, threshold) {
     const ab = triangle.a.distanceTo(triangle.b);
     const bc = triangle.b.distanceTo(triangle.c);
     const ca = triangle.c.distanceTo(triangle.a);
 
-    if (ab > 1 || bc > 1 || ca > 1) {
-      const midpoint = (p1, p2) => p1.clone().add(p2).multiplyScalar(0.5);
-      const abMid = midpoint(triangle.a, triangle.b);
-      const bcMid = midpoint(triangle.b, triangle.c);
-      const caMid = midpoint(triangle.c, triangle.a);
-
-      const newTriangles = [
-        { a: triangle.a, b: abMid, c: caMid },
-        { a: abMid, b: triangle.b, c: bcMid },
-        { a: caMid, b: bcMid, c: triangle.c },
-        { a: abMid, b: bcMid, c: caMid }
-      ];
-
-      return newTriangles.flatMap(subdivideTriangle);
+    if (ab > threshold || bc > threshold || ca > threshold) {
+      let longestEdgeMidpoint;
+      if (ab >= bc && ab >= ca) {
+        longestEdgeMidpoint = triangle.a.clone().add(triangle.b).multiplyScalar(0.5);
+        return [
+          ...subdivideTriangle({ a: triangle.a, b: longestEdgeMidpoint, c: triangle.c }, threshold),
+          ...subdivideTriangle({ a: longestEdgeMidpoint, b: triangle.b, c: triangle.c }, threshold)
+        ];
+      } else if (bc >= ab && bc >= ca) {
+        longestEdgeMidpoint = triangle.b.clone().add(triangle.c).multiplyScalar(0.5);
+        return [
+          ...subdivideTriangle({ a: triangle.a, b: triangle.b, c: longestEdgeMidpoint }, threshold),
+          ...subdivideTriangle({ a: triangle.a, b: longestEdgeMidpoint, c: triangle.c }, threshold)
+        ];
+      } else {
+        longestEdgeMidpoint = triangle.c.clone().add(triangle.a).multiplyScalar(0.5);
+        return [
+          ...subdivideTriangle({ a: triangle.a, b: triangle.b, c: longestEdgeMidpoint }, threshold),
+          ...subdivideTriangle({ a: longestEdgeMidpoint, b: triangle.b, c: triangle.c }, threshold)
+        ];
+      }
     } else {
       return [triangle];
     }
   }
 
-  triangles = triangles.flatMap(subdivideTriangle);
+  triangles = triangles.flatMap(triangle => subdivideTriangle(triangle, threshold));
 
   // Create new geometry with the subdivided triangles
   const newVertices = [];
