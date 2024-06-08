@@ -285,6 +285,19 @@ function createPolygon() {
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(newColors, 3));
   geometry.setIndex(newIndices);
 
+  // Log the subdivided triangles and their vertex colors
+  console.log('Subdivided triangles and their vertex colors:');
+  for (let i = 0; i < triangles.length; i++) {
+    const triangle = triangles[i];
+    console.log(`Triangle ${i}:`);
+    console.log(`  Vertex A: (${triangle.a.x}, ${triangle.a.y}, ${triangle.a.z})`);
+    console.log(`  Vertex B: (${triangle.b.x}, ${triangle.b.y}, ${triangle.b.z})`);
+    console.log(`  Vertex C: (${triangle.c.x}, ${triangle.c.y}, ${triangle.c.z})`);
+    console.log(`  Color A: ${new THREE.Color(newColors[i * 9], newColors[i * 9 + 1], newColors[i * 9 + 2]).getStyle()}`);
+    console.log(`  Color B: ${new THREE.Color(newColors[i * 9 + 3], newColors[i * 9 + 4], newColors[i * 9 + 5]).getStyle()}`);
+    console.log(`  Color C: ${new THREE.Color(newColors[i * 9 + 6], newColors[i * 9 + 7], newColors[i * 9 + 8]).getStyle()}`);
+  }
+
   // Create the mesh
   const material = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide });
   const mesh = new THREE.Mesh(geometry, material);
@@ -378,6 +391,11 @@ function getColorAtPointOnTriangle(point, triangle) {
   const b = u * color0.b + v * color1.b + w * color2.b;
 
   return new THREE.Color(r, g, b);
+}
+
+function getColorAtVertex(vertex) {
+  // Dummy implementation; in a real application, you would get the color from the vertex data
+  return new THREE.Color(1, 1, 1);  // Default to white
 }
 
 function resetScene() {
