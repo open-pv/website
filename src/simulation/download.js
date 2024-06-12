@@ -1,47 +1,25 @@
-import JSZip from "jszip"
-import { projectToUTM32 } from "./location"
-export var coordinatesUTM32
+import { Matrix4 } from "three";
+import { coordinatesXY15, projectToWebMercator } from "./location"
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-function getFileNames(x, y) {
-  const DIVISOR = 2000
-  const BUFFER_ZONE = 100
-  let [xUTM32, yUTM32] = projectToUTM32(x, y)
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('/draco/');
+// dracoLoader.setDecoderConfig({ type: "js" }); 
+dracoLoader.preload();
+const gltfLoader = new GLTFLoader();
+gltfLoader.setDRACOLoader(dracoLoader);
 
-  const xUTM32Rounded = Math.floor(xUTM32 / DIVISOR) * 2
-  const yUTM32Rounded = Math.floor(yUTM32 / DIVISOR) * 2
+function getFileNames(lon, lat) {
+  let [x, y] = projectToWebMercator(lon, lat)
 
-  const loadTileLeft = xUTM32 % DIVISOR < BUFFER_ZONE
-  const loadTileRight = xUTM32 % DIVISOR > DIVISOR - BUFFER_ZONE
-  const loadTileLower = yUTM32 % DIVISOR < BUFFER_ZONE
-  const loadTileUpper = yUTM32 % DIVISOR > DIVISOR - BUFFER_ZONE
+  const tile_x = Math.floor(x);
+  const tile_y = Math.floor(y);
 
-  const files = [`${xUTM32Rounded}_${yUTM32Rounded}.zip`]
-
-  if (loadTileLeft) {
-    files.push(`${xUTM32Rounded - 2}_${yUTM32Rounded}.zip`)
-  }
-  if (loadTileRight) {
-    files.push(`${xUTM32Rounded + 2}_${yUTM32Rounded}.zip`)
-  }
-  if (loadTileLower) {
-    files.push(`${xUTM32Rounded}_${yUTM32Rounded - 2}.zip`)
-  }
-  if (loadTileUpper) {
-    files.push(`${xUTM32Rounded}_${yUTM32Rounded + 2}.zip`)
-  }
-  if (loadTileLeft && loadTileLower) {
-    files.push(`${xUTM32Rounded - 2}_${yUTM32Rounded - 2}.zip`)
-  }
-  if (loadTileLeft && loadTileUpper) {
-    files.push(`${xUTM32Rounded - 2}_${yUTM32Rounded + 2}.zip`)
-  }
-  if (loadTileRight && loadTileLower) {
-    files.push(`${xUTM32Rounded + 2}_${yUTM32Rounded - 2}.zip`)
-  }
-  if (loadTileRight && loadTileUpper) {
-    files.push(`${xUTM32Rounded + 2}_${yUTM32Rounded + 2}.zip`)
-  }
-  return files
+  const downloads = [
+    {tile: {x: tile_x, y: tile_y}, center: {x, y}}
+  ];
+  return downloads;
 }
 
 function get_file_names_laz(x, y) {
@@ -90,54 +68,40 @@ function get_file_names_laz(x, y) {
 
 export async function downloadBuildings(loc) {
   const filenames = getFileNames(Number(loc.lon), Number(loc.lat))
-  let stlStrings = []
-
-  for (let filename of filenames) {
-    let zippedData = await downloadFile(filename)
-    if (!zippedData) {
-      throw new Error("File download failed!")
-    }
-
-    stlStrings.push(await unzipFile(zippedData));
-  }
-
-  return stlStrings;
+  const promises = filenames.map(filename => downloadFile(filename))
+  const geometries = await Promise.all(promises);
+  return geometries.flat();
 }
 
-async function downloadFile(filename) {
-  let url = "https://www.openpv.de/data/" + filename
-  console.log(url)
-  try {
-    let response = await fetch(url)
+async function downloadFile(download_spec) {
+  const {tile, center} = download_spec;
+  const url = `/germany-mapboxv3-draco/15-${tile.x}-${tile.y}.glb`;
+  console.log(url);
 
-    if (!response.ok) {
-      throw new Error("Request failed with status " + response.status)
-    }
-    let zippedData = await response.arrayBuffer()
-    console.log("zippedData")
-    console.log(zippedData)
+  return await new Promise(resolve => {
+    gltfLoader.load(url, data => {
+      let geometries = [];
+      for(let scene of data.scenes) {
+        for(let child of scene.children) {
+          const geometry = child.geometry;
 
-    return zippedData
-  } catch (error) {
-    console.log(error);
-    window.setLoading(false)
-    window.setShowErrorMessage(true)
-    return
-  }
-}
+          const scale2tile = new Matrix4();
+          scale2tile.makeScale(1. / 8192., 1. / 8912, 1.0);
+          const translate = new Matrix4();
+          translate.makeTranslation(tile.x - center.x, tile.y - center.y, 0.0);
+          const scale2meters = new Matrix4();
+          scale2meters.makeScale(1222.992452, 1222.99245, 1.0);
 
-async function unzipFile(zippedData) {
-  console.log("zipfile")
-  console.log(zippedData)
-  const zip = new JSZip()
-  await zip.loadAsync(zippedData)
+          const tx = scale2tile;
+          tx.premultiply(translate);
+          tx.premultiply(scale2meters);
+          geometry.applyMatrix4(tx);
 
-  const stlFile = zip.file(Object.keys(zip.files)[0])
+          geometries.push(geometry.toNonIndexed());
+        }
+      }
 
-  let stlData = await stlFile.async("arraybuffer")
-
-  if (!stlData) {
-    console.error("STL file not found in ZIP archive")
-  }
-  return stlData
+      resolve(geometries);
+    });
+  });
 }

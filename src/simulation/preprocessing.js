@@ -2,32 +2,17 @@ import { vec3 } from "gl-matrix"
 import * as THREE from "three"
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
 import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js"
-import { coordinatesUTM32 } from "./location"
+import { coordinatesXY15 } from "./location"
 
 
-export function processGeometries(stlStrings) {
-    let geometries = []
+export function processGeometries(geometries) {
+    console.log(geometries);
 
-    for(let stlData of stlStrings) {
-        let geometry = new STLLoader().parse(stlData)
-
-        // Create and display the combined mesh
-        const comment = getCommentLine(stlData)
-        var local_offset = parseCommentLine(comment)
-        geometry.translate(
-            local_offset[0] - coordinatesUTM32[0],
-            local_offset[1] - coordinatesUTM32[1],
-            local_offset[2]
-        )
-    
-        geometries.push(geometry)
-    }
-  
     const combinedGeometries = BufferGeometryUtils.mergeGeometries(geometries);
 
     const simulationCutoff = window.numRadiusSimulation + 20;
     const shadingCutoff = window.numRadiusSimulation + 70;
-    
+
     let [simulationGeometry, surroundingGeometry] = partitionMesh(combinedGeometries, simulationCutoff, shadingCutoff);
 
     return { simulationGeometry, surroundingGeometry };
@@ -106,57 +91,4 @@ function partitionMesh(geometry, innerCutoff, outerCutoff) {
     outerGeometry.attributes.normal.needsUpdate = true
 
     return [innerGeometry, outerGeometry]
-}
-
-function getCommentLine(stlData) {
-    // TODO: Do not refactor this, as we do not want to communicate the offet
-    // over an stl comment in the future
-
-    // Convert the ArrayBuffer to a Uint8Array
-    var uint8Array = new Uint8Array(stlData)
-
-    // Create an empty array to store the characters
-    var commentChars = []
-
-    // Iterate over the Uint8Array in reverse order
-    for (var i = uint8Array.length - 2; i >= 0; i--) {
-        // Check if the current character is a newline character
-        if (uint8Array[i] === 10 || uint8Array[i] === 13) {
-        // Stop iterating if a newline character is encountered
-        break
-        }
-
-        // Add the current character to the commentChars array
-        commentChars.unshift(String.fromCharCode(uint8Array[i]))
-    }
-
-    // Convert the array of characters to a string
-    var commentLine = commentChars.join("")
-
-    // Remove any leading or trailing whitespace
-    commentLine = commentLine.trim()
-    return commentLine
-}
-
-function parseCommentLine(comment) {
-// Regular expression pattern to match the comment line format
-var pattern =
-    /^;\s*offset\s*(-?\d+(?:\.\d+)?(?:e[-+]?\d+)?)\s*(-?\d+(?:\.\d+)?(?:e[-+]?\d+)?)\s*(-?\d+(?:\.\d+)?(?:e[-+]?\d+)?)\s*$/i
-
-// Match the comment line against the pattern
-var match = comment.match(pattern)
-
-var offset = [0, 0, 0]
-// Check if the comment line matches the expected format
-if (match) {
-    // Extract the offsets from the matched groups
-    console.log("Matches", match)
-    offset = [parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3])]
-
-    // Print the offsets
-    console.log("Offsets:", offset[0], offset[1], offset[2])
-} else {
-    console.log("Invalid comment format")
-}
-return offset
 }

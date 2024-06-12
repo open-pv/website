@@ -1,5 +1,8 @@
 import proj4 from "proj4"
-export var coordinatesUTM32
+
+/** x, y tile coordinates in WebMercator XYZ tiling at zoom level X=15
+  */
+export var coordinatesXY15
 
 export async function setLocation(inputValue, inputChanged, loc) {
   let newloc
@@ -61,14 +64,12 @@ async function fetchCoordinates(url) {
   }
 }
 
-export function projectToUTM32(lat, lon) {
-  const IN_PROJ = "EPSG:4326"
-  const OUT_PROJ = "EPSG:25832"
-
-  proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs")
-
-  const transformer = proj4(IN_PROJ, OUT_PROJ)
-  coordinatesUTM32 = transformer.forward([lat, lon])
-
-  return coordinatesUTM32
+export function projectToWebMercator(lon, lat) {
+  console.log(`Projecting ${lon}E ${lat}N`);
+  const lat_rad = lat * Math.PI / 180.0;
+  const n = Math.pow(2, 15);
+  const xtile = n * ((lon + 180) / 360);
+  const ytile = n * (1 - (Math.log(Math.tan(lat_rad) + 1 / Math.cos(lat_rad)) / Math.PI)) / 2;
+  console.log(`Tile ${xtile},${ytile}`);
+  return [xtile, ytile];
 }
