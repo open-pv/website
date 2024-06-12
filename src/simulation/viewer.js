@@ -731,25 +731,30 @@ export async function showMesh(
 
     if (intersects.length > 0) {
       const intersection = intersects[0];
-      const colorAttribute = intersection.object.geometry.getAttribute('color');
       const face = intersection.face;
 
-      const r = colorAttribute.getX(face.a);
-      const g = colorAttribute.getY(face.a);
-      const b = colorAttribute.getZ(face.a);
+      try {
+        const colorAttribute = intersection.object.geometry.getAttribute('color');
 
-      const color = new THREE.Color(0xff0000);
-      colorAttribute.setXYZ(face.a, color.r, color.g, color.b);
-      colorAttribute.setXYZ(face.b, color.r, color.g, color.b);
-      colorAttribute.setXYZ(face.c, color.r, color.g, color.b);
-      colorAttribute.needsUpdate = true;
+        const r = colorAttribute.getX(face.a);
+        const g = colorAttribute.getY(face.a);
+        const b = colorAttribute.getZ(face.a);
 
-      window.setTimeout(function() {
-        colorAttribute.setXYZ(face.a, r, g, b);
-        colorAttribute.setXYZ(face.b, r, g, b);
-        colorAttribute.setXYZ(face.c, r, g, b);
+        const color = new THREE.Color(0xff0000);
+        colorAttribute.setXYZ(face.a, color.r, color.g, color.b);
+        colorAttribute.setXYZ(face.b, color.r, color.g, color.b);
+        colorAttribute.setXYZ(face.c, color.r, color.g, color.b);
         colorAttribute.needsUpdate = true;
-      }, 500);
+
+        window.setTimeout(function() {
+          colorAttribute.setXYZ(face.a, r, g, b);
+          colorAttribute.setXYZ(face.b, r, g, b);
+          colorAttribute.setXYZ(face.c, r, g, b);
+          colorAttribute.needsUpdate = true;
+        }, 500);
+      } catch {
+        console.warn("Clicked on triangle without color attribute");
+      }
 
       console.log('Clicked on Triangle #', face.a / 3);
     }
