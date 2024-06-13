@@ -15,6 +15,7 @@ var drawnObjects = [];
 var prefilteredPolygons = [];
 const POLYGON_PREFILTERING_CUTOFF = 10;
 const TRIANGLE_SUBDIVSION_THRESHOLD = 1;
+const ANNUAL_YIELD_SCALING_FACTOR = 3.75;
 
 //camera controls
 let isTransitioning = false;
@@ -243,7 +244,7 @@ function createSprite(text, position) {
   const context = canvas.getContext('2d');
 
   // Set a larger canvas size for better text resolution
-  canvas.width = 512;
+  canvas.width = 640;
   canvas.height = 128;
 
   // Increase font size and add styling
@@ -270,7 +271,7 @@ function createSprite(text, position) {
   });
   const sprite = new THREE.Sprite(spriteMaterial);
   sprite.position.copy(position);
-  sprite.scale.set(5, 1.25, 1); // Adjust scale to match canvas aspect ratio
+  sprite.scale.set(5, 1, 1); // Adjust scale to match canvas aspect ratio
   sprite.renderOrder = 999; // Ensure the sprite is rendered last
   return sprite;
 }
@@ -334,6 +335,7 @@ function createPolygon() {
   // Calculate and log the area of the created polygon
   const polygonArea = calculatePolygonArea(triangles);
   const polygonIntensity = calculatePolygonIntensity(newVertices, newIntensities);
+  const annualYield = polygonArea*polygonIntensity*ANNUAL_YIELD_SCALING_FACTOR;
   console.log('Polygon Area:', polygonArea);
   console.log('Polygon Intensity:', polygonIntensity);
 
@@ -361,7 +363,7 @@ function createPolygon() {
   drawnObjects.push(wireframe);
 
   const centroid = calculateCentroid(newVertices);
-  const sprite = createSprite(`Area: ${polygonArea.toFixed(2)}\nIntensity: ${polygonIntensity.toFixed(2)}`, centroid);
+  const sprite = createSprite(`Fläche: ${polygonArea.toFixed(2)} qm\nJahresertrag:${annualYield.toFixed(1)} kWh`, centroid);
   scene.add(sprite);
   drawnObjects.push(sprite);
 
