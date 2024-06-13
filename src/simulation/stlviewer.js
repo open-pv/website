@@ -16,6 +16,15 @@ var prefilteredPolygons = [];
 const POLYGON_PREFILTERING_CUTOFF = 10;
 const TRIANGLE_SUBDIVSION_THRESHOLD = 1;
 
+//camera controls
+let isTransitioning = false;
+let transitionStartTime = 0;
+const transitionDuration = 50; // Duration in milliseconds
+let startTarget = null;
+let endTarget = null;
+let startPosition = null;
+let endPosition = null;
+
 export function STLViewerEnable(classname) {
   var model = document.getElementsByClassName(classname)[0];
   STLViewer(model);
@@ -55,6 +64,44 @@ export function STLViewer(resetCamera = true) {
   animate();
 }
 
+
+
+function onRightClick(event) {
+  event.preventDefault();
+  const elem = document.getElementsByClassName("three-viewer")[0];
+  const rect = elem.getBoundingClientRect();
+
+  const mouse = new THREE.Vector2();
+  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(scene.children, true);
+
+  if (intersects.length > 0) {
+    const intersect = intersects[0];
+    const intersectPoint = intersect.point.clone();
+    
+    // Calculate the offset between the camera and the intersection point
+    const offset = new THREE.Vector3().subVectors(camera.position, controls.target);
+    
+    // Store the start and end positions for interpolation
+    startTarget = controls.target.clone();
+    endTarget = intersectPoint;
+    startPosition = camera.position.clone();
+    endPosition = intersectPoint.clone().add(offset);
+
+    // Start the transition
+    isTransitioning = true;
+    transitionStartTime = performance.now();
+  }
+}
+
+
+function setupScene() {
+  scene = new THREE.Scene();
+  addLightsToScene();
+}
 function setupControls() {
   controls = new MapControls(camera, renderer.domElement);
   controls.mouseButtons = {
@@ -64,11 +111,8 @@ function setupControls() {
   };
   controls.screenSpacePanning = false;
   controls.maxPolarAngle = Math.PI / 2;
-}
 
-function setupScene() {
-  scene = new THREE.Scene();
-  addLightsToScene();
+  renderer.domElement.addEventListener('contextmenu', onRightClick, false);
 }
 
 function addLightsToScene() {
@@ -564,6 +608,22 @@ function resetScene() {
 
 function animate() {
   requestAnimationFrame(animate);
+
+  if (isTransitioning) {
+    const currentTime = performance.now();
+    const elapsedTime = currentTime - transitionStartTime;
+    const t = Math.min(elapsedTime / transitionDuration, 1); // Ensure t is between 0 and 1
+
+    // Interpolate the target and position
+    controls.target.lerpVectors(startTarget, endTarget, t);
+    camera.position.lerpVectors(startPosition, endPosition, t);
+
+    if (t === 1) {
+      isTransitioning = false;
+    }
+  }
+
   controls.update();
   renderer.render(scene, camera);
 }
+
