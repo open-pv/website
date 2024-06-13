@@ -258,6 +258,10 @@ function createPolygon(scene) {
 
   triangles = triangles.flatMap(triangle => subdivideTriangle(triangle, TRIANGLE_SUBDIVSION_THRESHOLD));
 
+
+  // Pre-filter the polygons based on the threshold
+  prefilteredPolygons = filterPolygonsByDistance(scene, clickedPoints, POLYGON_PREFILTERING_CUTOFF);
+
   // Create new geometry with the subdivided triangles
   const newVertices = [];
   const newIndices = [];
@@ -271,6 +275,7 @@ function createPolygon(scene) {
     newVertices.push(triangle.c.x, triangle.c.y, triangle.c.z);
     newIndices.push(startIndex, startIndex + 1, startIndex + 2);
   });
+
 
   // Project each new vertex onto the closest triangle and get the color
   for (let i = 0; i < newVertices.length; i += 3) {
@@ -332,8 +337,6 @@ function createPolygon(scene) {
 
 
 
-  // Pre-filter the polygons based on the threshold
-  prefilteredPolygons = filterPolygonsByDistance(scene, clickedPoints, POLYGON_PREFILTERING_CUTOFF);
 
   clickedPoints = [];
   pointColors = [];
@@ -398,7 +401,7 @@ function findClosestPolygon(vertex, polygons) {
     }
   });
 
-  if (minDistance >= 1) { // Threshold check
+  if (minDistance >= POLYGON_PREFILTERING_CUTOFF) { // Threshold check
     console.error(`Error: Trying to create a polygon with a distance longer than the threshold (${minDistance})`);
   }
 
