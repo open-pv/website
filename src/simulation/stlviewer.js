@@ -138,6 +138,7 @@ function handleSpaceKey() {
 
   if (intersects.length > 0) {
     const intersect = intersects[0];
+    //check if intersection face has normal, go in normal direction, if not then just stay there
     const offsetPoint = intersect.face
       ? intersect.point.clone().add(intersect.face.normal.clone().multiplyScalar(0.1))
       : intersect.point.clone();
@@ -255,6 +256,9 @@ function createPolygon() {
 
   const material = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide });
   const mesh = new THREE.Mesh(geometry, material);
+  // Calculate and log the area of the created polygon
+  const polygonArea = calculatePolygonArea(triangles);
+  console.log('Polygon Area:', polygonArea);
   scene.add(mesh);
   drawnObjects.push(mesh);
   console.log('Polygon created');
@@ -304,6 +308,28 @@ function subdivideTriangle(triangle, threshold) {
   } else {
     return [triangle];
   }
+}
+
+function calculatePolygonArea(polygon) {
+  let totalArea = 0;
+  
+  polygon.forEach(triangle => {
+    totalArea += calculateTriangleArea(triangle);
+  });
+
+  return totalArea;
+}
+
+function calculateTriangleArea(triangle) {
+  const { a, b, c } = triangle;
+
+  // Use the cross product method to calculate the area of the triangle
+  const ab = new THREE.Vector3().subVectors(b, a);
+  const ac = new THREE.Vector3().subVectors(c, a);
+  const crossProduct = new THREE.Vector3().crossVectors(ab, ac);
+  const area = 0.5 * crossProduct.length();
+
+  return area;
 }
 
 function filterPolygonsByDistance(scene, points, threshold) {
