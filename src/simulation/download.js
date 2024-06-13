@@ -123,15 +123,53 @@ async function downloadFile(download_spec) {
   */
 export async function loadMapTile(tx, ty, zoom) {
   const url = `https://tile.openstreetmap.org/${zoom}/${tx}/${ty}.png`;
-  // const url = `https://a.tile.openstreetmap.fr/hot/${zoom}/${tx}/${ty}.png`;
+  const mapFuture = new THREE.TextureLoader().loadAsync(url);
+
+  if(zoom < 12) {
+    console.error("DEM is broken for zoom < 12!");
+  }
+
+  const shift = zoom - 12;
+  const dem_url = `https://maps.heidler.info/dem-tiles-12/12/${tx >> shift}/${ty >> shift}.png`;
+  const demFuture = new THREE.TextureLoader().loadAsync(dem_url);
+
+  // DEM Processing
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  document.body.appendChild(canvas);  // Add to the DOM temporarily if needed
+  canvas.style.display = 'none';      // Hide the canvas
+  const dem = await demFuture;
+  canvas.width = dem.image.width;
+  canvas.height = dem.image.height;
+  context.drawImage(dem.image, 0, 0, canvas.width, canvas.height);
+
+  function sampleDEM(fraction_x, fraction_y) {
+    // Ensure x and y are within bounds
+    if (fraction_x >= 0 && fraction_x <= 1 && fraction_y >= 0 && fraction_y <= 1) {
+      const x0 = tx - ((tx >> shift) << shift);
+      const y0 = ty - ((ty >> shift) << shift);
+      const s = 1 << shift;
+      const x = Math.round((fraction_x + x0) / s * (canvas.width - 1));
+      const y = Math.round((fraction_y + y0) / s * (canvas.height - 1));
+      console.log("xy", x, y, "/", canvas.width, canvas.height);
+      // Get image data at the specific (x, y) location
+      const pixelData = context.getImageData(x, y, 1, 1).data;
+      const [r, g, b, _] = pixelData;
+      const height = -10000 + ((r * 256 * 256 + g * 256 + b) * 0.1);
+      return height;
+    }
+  }
 
   const scale = 1 << (zoom - 15);
-  const corners = [[tx, ty], [tx+1, ty], [tx, ty+1], [tx+1, ty+1]];
+  // TODO: Subdivide
+  const corners = [[0, 0], [1, 0], [0, 1], [1, 1]];
   const vertices = corners.flatMap(([x, y]) => [
-    TILE2METERS * (x / scale - coordinatesXY15[0]),
-    -TILE2METERS * (y / scale - coordinatesXY15[1]),
-    520,
+    // [[tx, ty], [tx+1, ty], [tx, ty+1], [tx+1, ty+1]];
+    TILE2METERS * ((tx + x) / scale - coordinatesXY15[0]),
+    -TILE2METERS * ((ty + y) / scale - coordinatesXY15[1]),
+    sampleDEM(x, y),
   ]);
+  console.log(vertices);
   const vertexBuffer = new Float32Array(vertices);
   // UV mapping for the texture
   const uvs = new Float32Array([0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0]);
@@ -142,15 +180,10 @@ export async function loadMapTile(tx, ty, zoom) {
   geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
   geometry.setIndex(new THREE.BufferAttribute(indices, 1));
 
-  const textureLoader = new THREE.TextureLoader();
-  return await new Promise(resolve => {
-    textureLoader.load(url, (texture) => {
-      const material = new THREE.MeshBasicMaterial({
-        map: texture,
-        side: THREE.DoubleSide,
-        roughness: 1,
-      });
-      resolve(new THREE.Mesh(geometry, material));
-    });
+  const material = new THREE.MeshBasicMaterial({
+    map: await mapFuture,
+    side: THREE.DoubleSide,
   });
+
+  return new THREE.Mesh(geometry, material);
 }

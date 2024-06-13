@@ -53,11 +53,6 @@ export function STLViewer(resetCamera = true) {
 
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
 
-  //   if (camera != null) {
-  //     console.log("ResetCamera", resetCamera);
-  //     console.log("CameraPos", camera.position);
-  //     console.log("CameraRotation", camera.rotation);
-  //   }
   if (resetCamera == false || camera == null) {
     camera = new THREE.PerspectiveCamera(
       45,
@@ -687,8 +682,6 @@ export async function showMesh(
   }
 
   STLViewer(resetCamera)
-  console.log("Initial camera position");
-  console.log(camera.position);
 
   let middle = new THREE.Vector3()
   console.log(simulationMesh);
@@ -701,13 +694,12 @@ export async function showMesh(
     vertexColors: false,
     side: THREE.DoubleSide,
     color: 0xd1bea4,
-    roughness: 1.0,
     metalness: 0.0,
   })
   var surroundingMesh = new THREE.Mesh(surroundingGeometry, surroundingMaterial)
   scene.add(surroundingMesh)
 
-  // Add map below the buildings
+  /// Add map below the buildings
   const [x, y] = coordinatesXY15;
   const tx = Math.floor(x);
   const ty = Math.floor(y);
@@ -731,42 +723,21 @@ export async function showMesh(
       // load_map_tile(tx + dx, ty + dy, 15).then(mesh => scene.add(mesh));
     }
   }
-  //     if(dx == 0 && dy == 0) {
-  //       load_map_tile(2*tx  , 2*ty  , 16).then(mesh => scene.add(mesh));
-  //       load_map_tile(2*tx+1, 2*ty  , 16).then(mesh => scene.add(mesh));
-  //       load_map_tile(2*tx  , 2*ty+1, 16).then(mesh => scene.add(mesh));
-  //       load_map_tile(2*tx+1, 2*ty+1, 16).then(mesh => scene.add(mesh));
-  //     } else {
-  //       load_map_tile(tx + dx, ty + dy, 15).then(mesh => scene.add(mesh));
-  //     }
-  //   }
-  // }
-  // End map code
-  //
+
+  /// End map code
+
   // Axis Arrows for Debugging
-  const x_unit = new THREE.Vector3( 1, 0, 0 );
-  const y_unit = new THREE.Vector3( 0, 1, 0 );
-  const z_unit = new THREE.Vector3( 0, 0, 1 );
-  const origin = new THREE.Vector3( 0, 0, 0 );
-  scene.add( new THREE.ArrowHelper(x_unit, origin, 30.0, 0xff0000));
-  scene.add( new THREE.ArrowHelper(y_unit, origin, 30.0, 0x00ff00));
-  scene.add( new THREE.ArrowHelper(z_unit, origin, 30.0, 0x0000ff));
+  // const x_unit = new THREE.Vector3( 1, 0, 0 );
+  // const y_unit = new THREE.Vector3( 0, 1, 0 );
+  // const z_unit = new THREE.Vector3( 0, 0, 1 );
+  // const origin = new THREE.Vector3( 0, 0, 0 );
+  // scene.add( new THREE.ArrowHelper(x_unit, origin, 30.0, 0xff0000));
+  // scene.add( new THREE.ArrowHelper(y_unit, origin, 30.0, 0x00ff00));
+  // scene.add( new THREE.ArrowHelper(z_unit, origin, 30.0, 0x0000ff));
 
-  console.log("resetCamera:", resetCamera);
-  if (resetCamera) {
-    camera.position.set(0, -40, 80)
-  } else {
-    console.log("Camera Rot", window.offsetPos[0], window.offsetPos[1])
-
-    camera.position.set(
-      oldCameraPosition.x - window.offsetPos[0],
-      oldCameraPosition.y - window.offsetPos[1],
-      oldCameraPosition.z
-    )
-    window.offsetPos[0] = 0
-    window.offsetPos[1] = 0
-    // console.log("New Camera Pos", camera.position);
-  }
+  camera.position.set(0, -40, 580);
+  camera.lookAt(0, 0, 520);
+  controls.target.set(0, 0, 520)
 
   var animate = function () {
     requestAnimationFrame(animate)
@@ -775,9 +746,6 @@ export async function showMesh(
   }
   window.setShowViridisLegend(true)
   animate()
-
-  console.log("Camera position");
-  console.log(camera.position);
 
   let caster = new THREE.Raycaster();
   window.addEventListener('click', function(event) {

@@ -20,13 +20,6 @@ export default function ThreeViewer() {
     cylinder.rotation.set(Math.PI / 2, 0, 0)
     scene.add(cylinder)
 
-    // setTimeout(() => {
-    //   scene.remove(cylinder);
-    //   cylinder.geometry.dispose();
-    //   cylinder.material.dispose();
-    //   renderer.render(scene, camera);
-    // }, 2000);
-
     // Create a function to gradually reduce the opacity
     function fade() {
       if (cylinder.scale.y > 0.1) {
@@ -102,8 +95,8 @@ export default function ThreeViewer() {
         camera.position.y + step.y,
         camera.position.z
       )
-      camera.lookAt(newPos[0], newPos[1], 0)
-      controls.target.set(newPos[0], newPos[1], 0)
+      camera.lookAt(newPos[0], newPos[1], 520)
+      controls.target.set(newPos[0], newPos[1], 520)
 
       // console.log("PostMove Camera Position", camera.position);
       // console.log("Camera Rot", camera.rotation);
