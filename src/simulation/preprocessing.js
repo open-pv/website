@@ -11,7 +11,8 @@ export function processGeometries(geometries) {
     const combinedGeometries = BufferGeometryUtils.mergeGeometries(geometries);
 
     const simulationCutoff = window.numRadiusSimulation + 20;
-    const shadingCutoff = window.numRadiusSimulation + 70;
+    // const shadingCutoff = window.numRadiusSimulation + 70;
+    const shadingCutoff = 10000000000000; // window.numRadiusSimulation + 70;
 
     let [simulationGeometry, surroundingGeometry] = partitionMesh(combinedGeometries, simulationCutoff, shadingCutoff);
 
@@ -20,6 +21,7 @@ export function processGeometries(geometries) {
 
 function partitionMesh(geometry, innerCutoff, outerCutoff) {
     let posarray = geometry.attributes.position.array.slice()
+    let norarray = geometry.attributes.normal.array.slice()
     let innerPos = []
     let innerNormals = []
     let outerPos = []
@@ -55,12 +57,14 @@ function partitionMesh(geometry, innerCutoff, outerCutoff) {
             if (zone == 'inner') {
                 for (var j = 0; j < 9; j++) {
                     innerPos.push(posarray[i + j])
-                    innerNormals.push(normal[j % 3])
+                    // innerNormals.push(normal[j % 3])
+                    innerNormals.push(norarray[i + j])
                 }
             } else if (zone == 'outer') {
                 for (var j = 0; j < 9; j++) {
                     outerPos.push(posarray[i + j])
-                    outerNormals.push(normal[j % 3])
+                    // outerNormals.push(normal[j % 3])
+                    outerNormals.push(norarray[i + j])
                 }
             }
         }

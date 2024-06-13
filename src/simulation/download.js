@@ -17,7 +17,15 @@ function getFileNames(lon, lat) {
   const tile_y = Math.floor(y);
 
   const downloads = [
-    {tile: {x: tile_x, y: tile_y}, center: {x, y}}
+    {tile: {x: tile_x  , y: tile_y  }, center: {x, y}},
+    {tile: {x: tile_x-1, y: tile_y  }, center: {x, y}},
+    {tile: {x: tile_x  , y: tile_y-1}, center: {x, y}},
+    {tile: {x: tile_x+1, y: tile_y  }, center: {x, y}},
+    {tile: {x: tile_x  , y: tile_y+1}, center: {x, y}},
+    {tile: {x: tile_x-1, y: tile_y-1}, center: {x, y}},
+    {tile: {x: tile_x-1, y: tile_y+1}, center: {x, y}},
+    {tile: {x: tile_x+1, y: tile_y-1}, center: {x, y}},
+    {tile: {x: tile_x+1, y: tile_y+1}, center: {x, y}},
   ];
   return downloads;
 }
@@ -80,10 +88,11 @@ async function downloadFile(download_spec) {
 
   return await new Promise(resolve => {
     gltfLoader.load(url, data => {
+      console.warn(data);
       let geometries = [];
       for(let scene of data.scenes) {
         for(let child of scene.children) {
-          const geometry = child.geometry;
+          let geometry = child.geometry;
 
           const scale2tile = new Matrix4();
           scale2tile.makeScale(1. / 8192., 1. / 8912, 1.0);
@@ -96,8 +105,9 @@ async function downloadFile(download_spec) {
           tx.premultiply(translate);
           tx.premultiply(scale2meters);
           geometry.applyMatrix4(tx);
+          geometry = geometry.toNonIndexed();
 
-          geometries.push(geometry.toNonIndexed());
+          geometries.push(geometry);
         }
       }
 

@@ -45,9 +45,9 @@ export function STLViewer(resetCamera = true) {
       45,
       elem.clientWidth / elem.clientHeight,
       1,
-      1000
-    );
-    camera.up = new THREE.Vector3(0, 0, 1);
+      10000
+    )
+    camera.up = new THREE.Vector3(0, 0, 1)
   }
   renderer.setSize(elem.clientWidth, elem.clientHeight);
   elem.replaceChild(renderer.domElement, elem.firstChild);
@@ -677,7 +677,7 @@ export async function showMesh(
   simulationMesh.geometry.computeBoundingBox()
   simulationMesh.geometry.boundingBox.getCenter(middle)
   console.log("middle", middle)
-  
+
   simulationMesh.geometry.translate(-middle.x, -middle.y, -middle.z);
   scene.add(simulationMesh)
 
@@ -693,7 +693,6 @@ export async function showMesh(
 
   console.log("resetCamera:", resetCamera);
   if (resetCamera) {
-    
     camera.position.set(0, -40, 80)
   } else {
     console.log("Camera Rot", window.offsetPos[0], window.offsetPos[1])

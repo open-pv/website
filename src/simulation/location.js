@@ -40,7 +40,7 @@ function processLongitudeLatitude(searchString) {
 async function processAdress(searchString) {
   let url = "https://nominatim.openstreetmap.org/search?format=json&q="
     .concat(searchString)
-    .concat("+Germany+Bavaria")
+    .concat("+Germany")
   let response = await fetchCoordinates(url)
   if (!response) {
     url = "https://nominatim.openstreetmap.org/search?format=json&q=".concat(

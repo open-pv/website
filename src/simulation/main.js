@@ -5,6 +5,7 @@ import { downloadBuildings } from "./download";
 import { setLocation } from "./location";
 import { processGeometries } from "./preprocessing";
 import { showMesh } from "./viewer";
+import * as THREE from "three"
 
 export async function main(inputValue, inputChanged, oldLocation) {
   const location = await setLocation(inputValue, inputChanged, oldLocation)
@@ -22,8 +23,14 @@ export async function main(inputValue, inputChanged, oldLocation) {
     scene.addShadingGeometry(simulationGeometry);
     scene.addShadingGeometry(surroundingGeometry);
 
-    const simulationMesh = await scene.calculate(window.numSimulations);
-
+    const simMaterial = new THREE.MeshStandardMaterial({
+      vertexColors: false,
+      side: THREE.DoubleSide,
+      color: 0xff0000,
+      roughness: 1,
+    })
+    var simulationMesh = new THREE.Mesh(simulationGeometry, simMaterial)
+    // const simulationMesh = await scene.calculate(window.numSimulations);
     window.setLoading(false);
     showMesh(simulationMesh, surroundingGeometry, inputChanged);
   } else {
