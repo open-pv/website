@@ -11,12 +11,15 @@ export async function main(inputValue, inputChanged, oldLocation) {
   const location = await setLocation(inputValue, inputChanged, oldLocation)
 
   if (typeof location !== "undefined" && location != null) {
-    const stlStrings = await downloadBuildings(location);
-
-    console.log(stlStrings);
+    const buildingGeometries = await downloadBuildings(location);
+    for(let b of buildingGeometries) {
+      console.log(b);
+      b.computeBoundingBox();
+      console.log(b.boundingBox);
+    }
 
     // TODO: Dynamically call this when sliders are moved instead of re-downloading everything
-    const { simulationGeometry, surroundingGeometry } = processGeometries(stlStrings);
+    const { simulationGeometry, surroundingGeometry } = processGeometries(buildingGeometries);
 
     const scene = new Scene(location.lat, location.lon);
     scene.addSimulationGeometry(simulationGeometry);

@@ -5,8 +5,12 @@ import { MapControls } from "three/addons/controls/MapControls.js";
 import * as THREE from "three"
 import { MapControls } from "three/addons/controls/MapControls.js"
 import { coordinatesXY15 } from './location.js'
+<<<<<<< HEAD
 import { load_map_tile } from './download.js'
 >>>>>>> aa89013 (Fix coordinate transformations, add basemap)
+=======
+import { loadMapTile } from './download.js'
+>>>>>>> 43a81f9 (Buildings are where they should be)
 
 export var scene = null;
 export var renderer = null;
@@ -116,8 +120,8 @@ function onRightClick(event) {
 function setupScene() {
   scene = new THREE.Scene();
   addLightsToScene();
-
 }
+
 function setupControls() {
   controls = new MapControls(camera, renderer.domElement);
   controls.mouseButtons = {
@@ -196,7 +200,6 @@ function onMouseMove(event) {
   }
 }
 
-<<<<<<< HEAD
 function onKeyDown(event) {
   if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
     return;
@@ -665,12 +668,6 @@ function animate() {
 
   controls.update();
   renderer.render(scene, camera);
-=======
-  let dirLight = new THREE.DirectionalLight(0xffffff, 1.0)
-  dirLight.position.set(0, 1., -1.)
-  scene.add(dirLight)
-  scene.add(new THREE.AmbientLight(0xffffff, 1))
->>>>>>> aa89013 (Fix coordinate transformations, add basemap)
 }
 
 export async function showMesh(
@@ -699,10 +696,7 @@ export async function showMesh(
   simulationMesh.geometry.boundingBox.getCenter(middle)
   console.log("middle", middle)
 
-  simulationMesh.geometry.translate(-middle.x, -middle.y, -middle.z);
   scene.add(simulationMesh)
-
-  surroundingGeometry.translate(-middle.x, -middle.y, -middle.z);
   var surroundingMaterial = new THREE.MeshStandardMaterial({
     vertexColors: false,
     side: THREE.DoubleSide,
@@ -719,7 +713,7 @@ export async function showMesh(
   const ty = Math.floor(y);
   for(let dx = -5; dx <= 5; dx++) {
     for(let dy = -5; dy <= 5; dy++) {
-        load_map_tile(tx*4 + dx, ty*4 + dy, 17).then(mesh => scene.add(mesh));
+        loadMapTile(tx*4 + dx, ty*4 + dy, 17).then(mesh => scene.add(mesh));
     }
   }
 

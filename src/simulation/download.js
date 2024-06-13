@@ -81,14 +81,12 @@ export async function downloadBuildings(loc) {
   const filenames = getFileNames(Number(loc.lon), Number(loc.lat))
   const promises = filenames.map(filename => downloadFile(filename))
   const geometries = await Promise.all(promises);
-  console.log(geometries);
   return geometries.flat();
 }
 
 async function downloadFile(download_spec) {
   const {tile, center} = download_spec;
   const url = `/germany-mapboxv3-draco/15-${tile.x}-${tile.y}.glb`;
-  console.log(url);
 
   try {
     const data = await gltfLoader.loadAsync(url);
@@ -105,9 +103,9 @@ async function downloadFile(download_spec) {
         // Flip sign of Y axis (in WebMercator, Y+ points down, but we need it to point up)
         scale2meters.makeScale(TILE2METERS, -TILE2METERS, 1.0);
 
-        const tx = scale2tile;
-        tx.premultiply(translate);
-        tx.premultiply(scale2meters);
+        const tx = scale2meters;
+        tx.multiply(translate);
+        tx.multiply(scale2tile);
         geometry.applyMatrix4(tx);
         geometry = geometry.toNonIndexed();
 
@@ -123,8 +121,7 @@ async function downloadFile(download_spec) {
 
 /** Load an OSM map tile and return it as a THREE Mesh
   */
-export async function load_map_tile(tx, ty, zoom) {
-  console.log(`Loading tile ${tx}, ${ty}@${zoom}`);
+export async function loadMapTile(tx, ty, zoom) {
   const url = `https://tile.openstreetmap.org/${zoom}/${tx}/${ty}.png`;
   // const url = `https://a.tile.openstreetmap.fr/hot/${zoom}/${tx}/${ty}.png`;
 
@@ -133,7 +130,7 @@ export async function load_map_tile(tx, ty, zoom) {
   const vertices = corners.flatMap(([x, y]) => [
     TILE2METERS * (x / scale - coordinatesXY15[0]),
     -TILE2METERS * (y / scale - coordinatesXY15[1]),
-    -10.0
+    520,
   ]);
   const vertexBuffer = new Float32Array(vertices);
   // UV mapping for the texture
