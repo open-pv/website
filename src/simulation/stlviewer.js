@@ -331,7 +331,14 @@ function createPolygon() {
     const color = pointColors[index];
     colors.push(color.r, color.g, color.b);
   });
-
+  if (distanceLine) {
+      scene.remove(distanceLine);
+      distanceLine = null;
+    }
+    if (distanceText) {
+      scene.remove(distanceText);
+      distanceText = null;
+    }
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
@@ -646,6 +653,14 @@ function resetScene() {
   clickedPoints = [];
   pointColors = [];
   console.log('Scene reset');
+  if (distanceLine) {
+    scene.remove(distanceLine);
+    distanceLine = null;
+  }
+  if (distanceText) {
+    scene.remove(distanceText);
+    distanceText = null;
+  }
 }
 
 function animate() {
