@@ -23,11 +23,12 @@ export async function main(inputValue, inputChanged, oldLocation) {
     scene.addShadingGeometry(simulationGeometry);
     scene.addShadingGeometry(surroundingGeometry);
 
-    const simMaterial = new THREE.MeshStandardMaterial({
+    const simMaterial = new THREE.MeshLambertMaterial({
       vertexColors: false,
       side: THREE.DoubleSide,
       color: 0xff0000,
-      roughness: 1,
+      roughness: 1.0,
+      metalness: 0.0
     })
     var simulationMesh = new THREE.Mesh(simulationGeometry, simMaterial)
     // const simulationMesh = await scene.calculate(window.numSimulations);

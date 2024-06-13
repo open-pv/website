@@ -13,7 +13,7 @@
 		margin: 0 auto;
 		max-width: 100%;
 		opacity: 1;
-		padding: (_size(section-spacing) * 1.5);
+		padding: (_size(section-spacing));
 		width: 90em;
 
 		body.is-menu-visible & {

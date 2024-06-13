@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 import * as THREE from "three";
 import { MapControls } from "three/addons/controls/MapControls.js";
+=======
+import * as THREE from "three"
+import { MapControls } from "three/addons/controls/MapControls.js"
+import { coordinatesXY15 } from './location.js'
+import { load_map_tile } from './download.js'
+>>>>>>> aa89013 (Fix coordinate transformations, add basemap)
 
 export var scene = null;
 export var renderer = null;
@@ -37,10 +44,17 @@ export function STLViewerEnable(classname) {
 export function STLViewer(resetCamera = true) {
   const elem = document.getElementsByClassName("three-viewer")[0];
 
-  elem.style.width = "100%";
-  elem.style.height = "450px";
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  if (resetCamera === false || camera === null) {
+  elem.style.width = "100%"
+  elem.style.height = "700px"
+
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+
+  //   if (camera != null) {
+  //     console.log("ResetCamera", resetCamera);
+  //     console.log("CameraPos", camera.position);
+  //     console.log("CameraRotation", camera.rotation);
+  //   }
+  if (resetCamera == false || camera == null) {
     camera = new THREE.PerspectiveCamera(
       45,
       elem.clientWidth / elem.clientHeight,
@@ -182,6 +196,7 @@ function onMouseMove(event) {
   }
 }
 
+<<<<<<< HEAD
 function onKeyDown(event) {
   if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
     return;
@@ -650,6 +665,12 @@ function animate() {
 
   controls.update();
   renderer.render(scene, camera);
+=======
+  let dirLight = new THREE.DirectionalLight(0xffffff, 1.0)
+  dirLight.position.set(0, 1., -1.)
+  scene.add(dirLight)
+  scene.add(new THREE.AmbientLight(0xffffff, 1))
+>>>>>>> aa89013 (Fix coordinate transformations, add basemap)
 }
 
 export async function showMesh(
@@ -686,10 +707,56 @@ export async function showMesh(
     vertexColors: false,
     side: THREE.DoubleSide,
     color: 0xd1bea4,
-    roughness: 1,
+    roughness: 1.0,
+    metalness: 0.0,
   })
   var surroundingMesh = new THREE.Mesh(surroundingGeometry, surroundingMaterial)
   scene.add(surroundingMesh)
+
+  // Add map below the buildings
+  const [x, y] = coordinatesXY15;
+  const tx = Math.floor(x);
+  const ty = Math.floor(y);
+  for(let dx = -5; dx <= 5; dx++) {
+    for(let dy = -5; dy <= 5; dy++) {
+        load_map_tile(tx*4 + dx, ty*4 + dy, 17).then(mesh => scene.add(mesh));
+    }
+  }
+
+  for(let dx = -1; dx <= 1; dx++) {
+    for(let dy = -1; dy <= 1; dy++) {
+      const geometry = new THREE.BoxGeometry(1222.992452, 1222.992452, 50); 
+      geometry.translate(
+         1222.992452 * (tx + dx + 0.5 - x),
+        -1222.992452 * (ty + dy + 0.5 - y),
+        25);
+      const edges = new THREE.EdgesGeometry( geometry ); 
+      const line = new THREE.LineSegments(edges,
+        new THREE.LineBasicMaterial( { color: 0x0000ff } ) );
+      scene.add( line );
+      // load_map_tile(tx + dx, ty + dy, 15).then(mesh => scene.add(mesh));
+    }
+  }
+  //     if(dx == 0 && dy == 0) {
+  //       load_map_tile(2*tx  , 2*ty  , 16).then(mesh => scene.add(mesh));
+  //       load_map_tile(2*tx+1, 2*ty  , 16).then(mesh => scene.add(mesh));
+  //       load_map_tile(2*tx  , 2*ty+1, 16).then(mesh => scene.add(mesh));
+  //       load_map_tile(2*tx+1, 2*ty+1, 16).then(mesh => scene.add(mesh));
+  //     } else {
+  //       load_map_tile(tx + dx, ty + dy, 15).then(mesh => scene.add(mesh));
+  //     }
+  //   }
+  // }
+  // End map code
+  //
+  // Axis Arrows for Debugging
+  const x_unit = new THREE.Vector3( 1, 0, 0 );
+  const y_unit = new THREE.Vector3( 0, 1, 0 );
+  const z_unit = new THREE.Vector3( 0, 0, 1 );
+  const origin = new THREE.Vector3( 0, 0, 0 );
+  scene.add( new THREE.ArrowHelper(x_unit, origin, 30.0, 0xff0000));
+  scene.add( new THREE.ArrowHelper(y_unit, origin, 30.0, 0x00ff00));
+  scene.add( new THREE.ArrowHelper(z_unit, origin, 30.0, 0x0000ff));
 
   console.log("resetCamera:", resetCamera);
   if (resetCamera) {
