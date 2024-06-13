@@ -194,6 +194,41 @@ function createCursor(position) {
   return mesh;
 }
 
+function createSprite(text, position) {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+
+  // Set a larger canvas size for better text resolution
+  canvas.width = 512;
+  canvas.height = 128;
+
+  // Increase font size and add styling
+  context.font = '55px Arial';
+  context.fillStyle = 'white';
+
+  // Add a background color
+  context.fillStyle = 'rgba(0, 0, 0, 0.3)';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Split the text into multiple lines and draw each line
+  const lines = text.split('\n');
+  context.font = '55px Arial';
+  context.fillStyle = 'white';
+  lines.forEach((line, index) => {
+    context.fillText(line, 10, 60 + index * 60); // Adjust the Y position for each line
+  });
+
+  // Create a texture and sprite
+  const texture = new THREE.CanvasTexture(canvas);
+  const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+  const sprite = new THREE.Sprite(spriteMaterial);
+  sprite.position.copy(position);
+  sprite.scale.set(5, 1.25, 1); // Adjust scale to match canvas aspect ratio
+
+  return sprite;
+}
+
+
 function createPolygon() {
   if (clickedPoints.length < 3) {
     console.log('Not enough points to create a polygon');
@@ -251,8 +286,9 @@ function createPolygon() {
   }
   // Calculate and log the area of the created polygon
   const polygonArea = calculatePolygonArea(triangles);
-  const polygonIntensity = calculatePolygonIntensity(newVertices,newIntensities)
+  const polygonIntensity = calculatePolygonIntensity(newVertices, newIntensities);
   console.log('Polygon Area:', polygonArea);
+  console.log('Polygon Intensity:', polygonIntensity);
 
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(newVertices, 3));
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(newColors, 3));
@@ -277,8 +313,28 @@ function createPolygon() {
   scene.add(wireframe);
   drawnObjects.push(wireframe);
 
+  const centroid = calculateCentroid(newVertices);
+  const sprite = createSprite(`Area: ${polygonArea.toFixed(2)}\nIntensity: ${polygonIntensity.toFixed(2)}`, centroid);
+  scene.add(sprite);
+  drawnObjects.push(sprite);
+
   clickedPoints = [];
   pointColors = [];
+}
+
+function calculateCentroid(vertices) {
+  const numVertices = vertices.length / 3;
+  const centroid = new THREE.Vector3();
+
+  for (let i = 0; i < numVertices; i++) {
+    centroid.x += vertices[i * 3];
+    centroid.y += vertices[i * 3 + 1];
+    centroid.z += vertices[i * 3 + 2]+0.2;
+  }
+
+  centroid.divideScalar(numVertices);
+
+  return centroid;
 }
 
 function subdivideTriangle(triangle, threshold) {
