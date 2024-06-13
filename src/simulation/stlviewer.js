@@ -246,9 +246,13 @@ function createPolygon() {
       newIntensities.push(intensity);
     } else {
       newColors.push(1, 1, 1);
-      newIntensities.push(-1000);
+      newIntensities.push(-1);
     }
   }
+  // Calculate and log the area of the created polygon
+  const polygonArea = calculatePolygonArea(triangles);
+  const polygonIntensity = calculatePolygonIntensity(newVertices,newIntensities)
+  console.log('Polygon Area:', polygonArea);
 
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(newVertices, 3));
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(newColors, 3));
@@ -256,9 +260,7 @@ function createPolygon() {
 
   const material = new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.DoubleSide });
   const mesh = new THREE.Mesh(geometry, material);
-  // Calculate and log the area of the created polygon
-  const polygonArea = calculatePolygonArea(triangles);
-  console.log('Polygon Area:', polygonArea);
+
   scene.add(mesh);
   drawnObjects.push(mesh);
   console.log('Polygon created');
@@ -308,6 +310,41 @@ function subdivideTriangle(triangle, threshold) {
   } else {
     return [triangle];
   }
+}
+
+function calculateTriangleIntensity(triangle) {
+  const intensities = triangle.intensities;
+  const averageIntensity = (intensities[0] + intensities[1] + intensities[2]) / 3;
+  return averageIntensity;
+}
+
+function calculatePolygonIntensity(vertices, intensities) {
+  // vertices is a flat array of 3-component vertices, so there are 3 vertices per triangle
+  const numTriangles = vertices.length / 9;
+  let totalIntensity = 0;
+  let totalArea = 0;
+
+  for (let i = 0; i < numTriangles; i++) {
+    const triangle = {
+      a: new THREE.Vector3(vertices[i * 9], vertices[i * 9 + 1], vertices[i * 9 + 2]),
+      b: new THREE.Vector3(vertices[i * 9 + 3], vertices[i * 9 + 4], vertices[i * 9 + 5]),
+      c: new THREE.Vector3(vertices[i * 9 + 6], vertices[i * 9 + 7], vertices[i * 9 + 8]),
+      intensities: [
+        intensities[i * 3],
+        intensities[i * 3 + 1],
+        intensities[i * 3 + 2],
+      ],
+    };
+
+    const triangleArea = calculateTriangleArea(triangle);
+    const triangleIntensity = calculateTriangleIntensity(triangle);
+    totalIntensity += triangleIntensity * triangleArea;
+    totalArea += triangleArea;
+  }
+
+  const averageIntensity = totalIntensity / totalArea;
+  console.log('Average Intensity:', averageIntensity);
+  return averageIntensity;
 }
 
 function calculatePolygonArea(polygon) {
