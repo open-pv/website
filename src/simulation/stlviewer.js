@@ -220,11 +220,14 @@ function createSprite(text, position) {
 
   // Create a texture and sprite
   const texture = new THREE.CanvasTexture(canvas);
-  const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+  const spriteMaterial = new THREE.SpriteMaterial({ 
+    map: texture,
+    depthTest: false  // Ensure the sprite is not affected by depth
+  });
   const sprite = new THREE.Sprite(spriteMaterial);
   sprite.position.copy(position);
   sprite.scale.set(5, 1.25, 1); // Adjust scale to match canvas aspect ratio
-
+  sprite.renderOrder = 999; // Ensure the sprite is rendered last
   return sprite;
 }
 
