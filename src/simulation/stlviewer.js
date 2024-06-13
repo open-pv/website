@@ -26,6 +26,12 @@ let endTarget = null;
 let startPosition = null;
 let endPosition = null;
 
+
+//distance to last vertex
+let distanceLine = null;
+let distanceText = null;
+
+
 export function STLViewerEnable(classname) {
   var model = document.getElementsByClassName(classname)[0];
   STLViewer(model);
@@ -63,6 +69,88 @@ export function STLViewer(resetCamera = true) {
   setupScene();
   addEventListeners(elem);
   animate();
+}
+
+function addEventListeners(elem) {
+  elem.addEventListener('mousemove', onMouseMove, false);
+  window.addEventListener('keydown', onKeyDown, false);
+}
+
+function onMouseMove(event) {
+  const elem = document.getElementsByClassName("three-viewer")[0];
+  const rect = elem.getBoundingClientRect();
+
+  lastMousePosition.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  lastMousePosition.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+  if (clickedPoints.length > 0) {
+    raycaster.setFromCamera(lastMousePosition, camera);
+    const intersects = raycaster.intersectObjects(scene.children, true);
+    if (intersects.length > 0) {
+      const intersect = intersects[0];
+      const potentialVertex = intersect.point.clone();
+      const lastVertex = clickedPoints[clickedPoints.length - 1];
+      const distance = potentialVertex.distanceTo(lastVertex);
+
+      // Update the line and distance text
+      updateDistanceLineAndText(lastVertex, potentialVertex, distance);
+    }
+  }
+}
+
+function updateDistanceLineAndText(startPoint, endPoint, distance) {
+  if (distanceLine) {
+    scene.remove(distanceLine);
+  }
+  if (distanceText) {
+    scene.remove(distanceText);
+  }
+
+  const geometry = new THREE.BufferGeometry().setFromPoints([startPoint, endPoint]);
+  const material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+  distanceLine = new THREE.Line(geometry, material);
+  scene.add(distanceLine);
+
+  const midPoint = new THREE.Vector3().addVectors(startPoint, endPoint).multiplyScalar(0.5);
+  distanceText = createSprite(`Distance: ${distance.toFixed(2)} units`, midPoint);
+  scene.add(distanceText);
+}
+
+function handleSpaceKey() {
+  raycaster.setFromCamera(lastMousePosition, camera);
+  const intersects = raycaster.intersectObjects(scene.children, true);
+
+  if (intersects.length > 0) {
+    const intersect = intersects[0];
+    // Check if intersection face has normal, go in normal direction, if not then just stay there
+    const offsetPoint = intersect.face
+      ? intersect.point.clone().add(intersect.face.normal.clone().multiplyScalar(0.1))
+      : intersect.point.clone();
+
+    clickedPoints.push(offsetPoint);
+    pointColors.push(getColorAtIntersection(intersect));
+    console.log('Color at intersection:', pointColors[pointColors.length - 1].getStyle());
+
+    if (cursor) {
+      scene.remove(cursor);
+    }
+
+    cursor = createCursor(offsetPoint);
+    scene.add(cursor);
+    console.log('Cursor added at:', offsetPoint);
+
+    // If a line and text are displayed, remove them when a new point is added
+    if (distanceLine) {
+      scene.remove(distanceLine);
+      distanceLine = null;
+    }
+    if (distanceText) {
+      scene.remove(distanceText);
+      distanceText = null;
+    }
+  } else {
+    console.log('No intersection found');
+  }
 }
 
 
@@ -130,10 +218,7 @@ function addLightsToScene() {
   scene.add(new THREE.AmbientLight(0xffffff, 1));
 }
 
-function addEventListeners(elem) {
-  elem.addEventListener('mousemove', onMouseMove, false);
-  window.addEventListener('keydown', onKeyDown, false);
-}
+
 
 function onWindowResize() {
   const elem = document.getElementsByClassName("three-viewer")[0];
@@ -142,25 +227,6 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
 }
 
-function onMouseMove(event) {
-  const elem = document.getElementsByClassName("three-viewer")[0];
-  const rect = elem.getBoundingClientRect();
-
-  lastMousePosition.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-  lastMousePosition.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-  if (clickedPoints.length > 0) {
-    raycaster.setFromCamera(lastMousePosition, camera);
-    const intersects = raycaster.intersectObjects(scene.children, true);
-    if (intersects.length > 0) {
-      const intersect = intersects[0];
-      const potentialVertex = intersect.point.clone();
-      const lastVertex = clickedPoints[clickedPoints.length - 1];
-      const distance = potentialVertex.distanceTo(lastVertex);
-      console.log('Distance to potential vertex:', distance);
-    }
-  }
-}
 
 function onKeyDown(event) {
   if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
@@ -177,32 +243,6 @@ function onKeyDown(event) {
   }
 }
 
-function handleSpaceKey() {
-  raycaster.setFromCamera(lastMousePosition, camera);
-  const intersects = raycaster.intersectObjects(scene.children, true);
-
-  if (intersects.length > 0) {
-    const intersect = intersects[0];
-    //check if intersection face has normal, go in normal direction, if not then just stay there
-    const offsetPoint = intersect.face
-      ? intersect.point.clone().add(intersect.face.normal.clone().multiplyScalar(0.1))
-      : intersect.point.clone();
-
-    clickedPoints.push(offsetPoint);
-    pointColors.push(getColorAtIntersection(intersect));
-    console.log('Color at intersection:', pointColors[pointColors.length - 1].getStyle());
-
-    if (cursor) {
-      scene.remove(cursor);
-    }
-
-    cursor = createCursor(offsetPoint);
-    scene.add(cursor);
-    console.log('Cursor added at:', offsetPoint);
-  } else {
-    console.log('No intersection found');
-  }
-}
 
 function getColorAtIntersection(intersect) {
   const uv = intersect.uv;
