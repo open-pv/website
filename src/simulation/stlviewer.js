@@ -12,6 +12,11 @@ export var lastMousePosition = { x: 0, y: 0 };
 export var clickedPoints = [];
 export var pointColors = [];
 var drawnObjects = []; // Store references to all drawn objects
+var prefilteredPolygons = []; // Store pre-filtered polygons
+const POLYGON_PREFILTERING_CUTOFF = 10;  // Set your desired threshold here
+const TRIANGLE_SUBDIVSION_THRESHOLD = 1; 
+
+
 
 export function STLViewerEnable(classname) {
   var model = document.getElementsByClassName(classname)[0];
@@ -151,7 +156,7 @@ function onKeyDown(event) {
       console.log('No intersection found');
     }
   } else if (event.code === 'KeyP') {  // Press 'P' to create polygon
-    createPolygon();
+    createPolygon(scene);
   } else if (event.code === 'KeyR') {  // Press 'R' to reset
     resetScene();
   }
@@ -183,8 +188,7 @@ function getColorAtIntersection(intersect) {
   return new THREE.Color(0xffffff); // default to white if no color found
 }
 
-function createPolygon() {
-  const threshold = 1;  // Set your desired threshold here
+function createPolygon(scene) {
 
   if (clickedPoints.length < 3) {
     console.log('Not enough points to create a polygon');
@@ -252,7 +256,7 @@ function createPolygon() {
     }
   }
 
-  triangles = triangles.flatMap(triangle => subdivideTriangle(triangle, threshold));
+  triangles = triangles.flatMap(triangle => subdivideTriangle(triangle, TRIANGLE_SUBDIVSION_THRESHOLD));
 
   // Create new geometry with the subdivided triangles
   const newVertices = [];
@@ -271,7 +275,7 @@ function createPolygon() {
   // Project each new vertex onto the closest triangle and get the color
   for (let i = 0; i < newVertices.length; i += 3) {
     const vertex = new THREE.Vector3(newVertices[i], newVertices[i + 1], newVertices[i + 2]);
-    const closestPolygon = findClosestPolygon(vertex);
+    const closestPolygon = findClosestPolygon(vertex, prefilteredPolygons);
 
     if (closestPolygon) {
       const projectedVertex = projectOntoTriangle(vertex, closestPolygon);
@@ -326,13 +330,17 @@ function createPolygon() {
   scene.add(wireframe);
   drawnObjects.push(wireframe);
 
+
+
+  // Pre-filter the polygons based on the threshold
+  prefilteredPolygons = filterPolygonsByDistance(scene, clickedPoints, POLYGON_PREFILTERING_CUTOFF);
+
   clickedPoints = [];
   pointColors = [];
 }
 
-function findClosestPolygon(vertex) {
-  let closestPolygon = null;
-  let minDistance = Infinity;
+function filterPolygonsByDistance(scene, points, threshold) {
+  const filteredPolygons = [];
 
   scene.traverse((child) => {
     if (child.isMesh) {
@@ -342,6 +350,7 @@ function findClosestPolygon(vertex) {
       const positions = geometry.attributes.position.array;
       const colors = geometry.attributes.color ? geometry.attributes.color.array : null;
       const intensities = geometry.intensities ? geometry.intensities : null;
+
       for (let i = 0; i < positions.length; i += 9) {
         const v0 = new THREE.Vector3(positions[i], positions[i + 1], positions[i + 2]);
         const v1 = new THREE.Vector3(positions[i + 3], positions[i + 4], positions[i + 5]);
@@ -355,15 +364,43 @@ function findClosestPolygon(vertex) {
         const intensity2 = intensities ? intensities[i/3+1]: -1000;
         const intensity3 = intensities ? intensities[i/3+2]: -1000;
 
-        const distance = vertex.distanceTo(v0) + vertex.distanceTo(v1) + vertex.distanceTo(v2);
-        if (distance < minDistance) {
-          minDistance = distance;
+        let minDistance = Infinity;
+        points.forEach(point => {
+          const distance = Math.min(point.distanceTo(v0), point.distanceTo(v1), point.distanceTo(v2));
+          if (distance < minDistance) {
+            minDistance = distance;
+          }
+        });
+
+        if (minDistance < threshold) {
           const normal = new THREE.Triangle(v0, v1, v2).getNormal(new THREE.Vector3());
-          closestPolygon = { vertices: [v0, v1, v2], colors: [color0, color1, color2], normal,intensities: [intensity1,intensity2,intensity3] };
+          filteredPolygons.push({ vertices: [v0, v1, v2], colors: [color0, color1, color2], normal, intensities: [intensity1, intensity2, intensity3] });
         }
       }
     }
   });
+
+  console.log('Filtered polygons:', filteredPolygons); // Debugging line to see the filtered polygons
+
+  return filteredPolygons;
+}
+
+function findClosestPolygon(vertex, polygons) {
+  let closestPolygon = null;
+  let minDistance = Infinity;
+
+  polygons.forEach(polygon => {
+    const [v0, v1, v2] = polygon.vertices;
+    const distance = vertex.distanceTo(v0) + vertex.distanceTo(v1) + vertex.distanceTo(v2);
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestPolygon = polygon;
+    }
+  });
+
+  if (minDistance >= 1) { // Threshold check
+    console.error(`Error: Trying to create a polygon with a distance longer than the threshold (${minDistance})`);
+  }
 
   return closestPolygon;
 }
@@ -427,8 +464,6 @@ function getIntensityAtPointOnTriangle(point, triangle) {
 
   return intensityAtPoint;
 }
-
-
 
 function resetScene() {
   // Remove all drawn objects from the scene
