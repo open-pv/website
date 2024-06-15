@@ -148,7 +148,7 @@ function onMouseMove(event) {
   lastMousePosition.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
   raycaster.setFromCamera(lastMousePosition, camera);
-  const intersects = raycaster.intersectObjects(scene.children, true);
+  const intersects = raycaster.intersectObjects(scene.children.filter(obj => !drawnObjects.includes(obj)), true);
 
   if (intersects.length > 0) {
     const intersect = intersects[0];
@@ -196,7 +196,7 @@ function onKeyDown(event) {
 
 function handleSpaceKey() {
   raycaster.setFromCamera(lastMousePosition, camera);
-  const intersects = raycaster.intersectObjects(scene.children, true);
+  const intersects = raycaster.intersectObjects(scene.children.filter(obj => !drawnObjects.includes(obj)), true);
 
   if (intersects.length > 0) {
     const intersect = intersects[0];
