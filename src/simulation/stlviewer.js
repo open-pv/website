@@ -13,6 +13,8 @@ export var clickedPoints = [];
 export var pointColors = [];
 var drawnObjects = [];
 var prefilteredPolygons = [];
+let polygonYields = [];
+
 const POLYGON_PREFILTERING_CUTOFF = 10;
 const TRIANGLE_SUBDIVSION_THRESHOLD = 1;
 const ANNUAL_YIELD_SCALING_FACTOR = 3.75;
@@ -100,6 +102,9 @@ function onRightClick(event) {
 function setupScene() {
   scene = new THREE.Scene();
   addLightsToScene();
+
+  const legend = createLegend();
+  scene.add(legend);
 }
 function setupControls() {
   controls = new MapControls(camera, renderer.domElement);
@@ -387,6 +392,11 @@ function createPolygon() {
 
   clickedPoints = [];
   pointColors = [];
+
+  // Add the new yield to the array and update the legend
+  polygonYields.push(annualYield.toFixed(1));
+  updateLegend(polygonYields);
+
 }
 
 function calculateCentroid(vertices) {
@@ -621,8 +631,86 @@ function resetScene() {
   drawnObjects = [];
   clickedPoints = [];
   pointColors = [];
+  polygonYields = [];
   console.log('Scene reset');
+
+  // Update the legend with the default or empty yield list
+  updateLegend(polygonYields);
 }
+
+function createLegend() {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  canvas.width = 512;
+  canvas.height = 256;
+
+  context.font = '30px Arial';
+  context.fillStyle = 'white';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  const textLines = [
+    'Space: Add Vertex',
+    'P: Create Polygon',
+    'R: Reset Scene',
+    'Expected Annual Solar Yield: XXX kWh'
+  ];
+
+  context.fillStyle = 'black';
+  textLines.forEach((line, index) => {
+    context.fillText(line, 10, 40 + index * 40);
+  });
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const material = new THREE.SpriteMaterial({ map: texture });
+  const sprite = new THREE.Sprite(material);
+  
+  // Adjust the position and scale of the sprite
+  sprite.scale.set(20, 10, 1);
+  sprite.position.set(-20, 15, 50); // Adjust this based on your scene dimensions
+
+  return sprite;
+}
+
+function updateLegend(solarYields) {
+  const oldLegend = scene.getObjectByName('legend');
+  if (oldLegend) {
+    scene.remove(oldLegend);
+  }
+
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  canvas.width = 512;
+  canvas.height = Math.max(256, solarYields.length * 40 + 80);
+
+  context.font = '30px Arial';
+  context.fillStyle = 'white';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  const textLines = [
+    'Space: Add Vertex',
+    'P: Create Polygon',
+    'R: Reset Scene',
+    ...solarYields.map((solarYield, index) => `Polygon ${index + 1} Yield: ${solarYield} kWh`)
+  ];
+
+  context.fillStyle = 'black';
+  textLines.forEach((line, index) => {
+    context.fillText(line, 10, 40 + index * 40);
+  });
+
+  const texture = new THREE.CanvasTexture(canvas);
+  const material = new THREE.SpriteMaterial({ map: texture });
+  const sprite = new THREE.Sprite(material);
+  
+  // Adjust the position and scale of the sprite
+  sprite.scale.set(20, canvas.height / 256 * 10, 1);
+  sprite.position.set(-20, 15, 50); // Adjust this based on your scene dimensions
+  sprite.name = 'legend';
+
+  scene.add(sprite);
+}
+
+
 
 function animate() {
   requestAnimationFrame(animate);
