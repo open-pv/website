@@ -456,6 +456,8 @@ export async function showMeshIntensities(
     newColors[3 * i + 2] = col[2]
   }
 
+  innerGeometry.intensities = intensities
+
   innerGeometry.setAttribute(
     "color",
     new THREE.Float32BufferAttribute(newColors, 3)
