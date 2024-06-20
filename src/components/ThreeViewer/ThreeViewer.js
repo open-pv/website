@@ -143,7 +143,7 @@ export default function ThreeViewer() {
             <a href="https://www.ldbv.bayern.de/vermessung/bvv.html"> Bayerischen Vermessungsverwaltung </a> |
             <a href="https://creativecommons.org/licenses/by/4.0/deed.de">CC BY 4.0</a>
           </p>
-          <p><b>Leertaste</b>: Eckpunkt <b>P</b>: Polygon erstellen <b>B</b>: Alles zurücksetzen</p>
+          <p><b>Leertaste</b>: Eckpunkt <b>P</b>: Polygon erstellen <b>R</b>: Alles zurücksetzen</p>
         
     </div>
       }
