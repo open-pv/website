@@ -86,7 +86,7 @@ export async function downloadBuildings(loc) {
 
 async function downloadFile(download_spec) {
   const {tile, center} = download_spec;
-  const url = `/germany-mapboxv3-draco/15-${tile.x}-${tile.y}.glb`;
+  const url = `/germany-draco/15-${tile.x}-${tile.y}.glb`;
 
   try {
     const data = await gltfLoader.loadAsync(url);
@@ -130,7 +130,8 @@ export async function loadMapTile(tx, ty, zoom) {
   }
 
   const shift = zoom - 12;
-  const dem_url = `https://maps.heidler.info/dem-tiles-12/12/${tx >> shift}/${ty >> shift}.png`;
+  // const dem_url = `https://maps.heidler.info/dem-tiles-12/12/${tx >> shift}/${ty >> shift}.png`;
+  const dem_url = `https://web3d.basemap.de/maplibre/dgm5-rgb/12/${tx >> shift}/${ty >> shift}.png`
   const demFuture = new THREE.TextureLoader().loadAsync(dem_url);
 
   // DEM Processing
