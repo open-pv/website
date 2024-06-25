@@ -5,21 +5,17 @@
     "deploy": "gh-pages -d build -b build"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@openpv/simshady": "^0.0.1",
     "@react-three/drei": "^9.77.10",
     "driver.js": "^1.1.0",
-    "gh-pages": "^5.0.0",
     "gl-matrix": "^3.4.3",
     "i18next": "^23.2.11",
     "i18next-browser-languagedetector": "^7.1.0",
     "i18next-http-backend": "^2.2.1",
     "jszip": "^3.10.1",
     "laz-perf": "^0.0.6",
-    "markdown-to-jsx": "^7.2.1",
     "proj4": "^2.9.0",
     "react": "^18.2.0",
     "react-burger-menu": "^3.0.9",
@@ -30,7 +26,6 @@
     "react-scripts": "^5.0.1",
     "react-spinners": "^0.13.8",
     "react-three-fiber": "^6.0.13",
-    "suncalc": "^1.9.0",
     "three": "^0.163.0"
   },
   "devDependencies": {
@@ -38,6 +33,7 @@
     "@babel/preset-env": "^7.22.9",
     "@babel/preset-react": "^7.22.5",
     "babel-jest": "^29.6.2",
+    "gh-pages": "^6.1.1",
     "rimraf": "^5.0.0",
     "sass": "^1.64.1",
     "source-map-explorer": "^2.5.3"
