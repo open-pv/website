@@ -1,8 +1,8 @@
-import * as THREE from "three"
+import * as THREE from "three";
 import { Matrix4 } from "three";
-import { coordinatesXY15, projectToWebMercator } from "./location"
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { coordinatesXY15, projectToWebMercator } from "./location";
 
 const TILE2METERS = 1222.992452;
 
@@ -31,50 +31,6 @@ function getFileNames(lon, lat) {
     {tile: {x: tile_x+1, y: tile_y+1}, center: {x, y}},
   ];
   return downloads;
-}
-
-function get_file_names_laz(x, y) {
-  const DIVISOR = 1000
-  const BUFFER_ZONE = 100
-  const loc_utm = projectToUTM32(x, y)
-  const x_utm32 = loc_utm[0]
-  const y_utm32 = loc_utm[1]
-
-  const x_rounded = Math.floor(x_utm32 / DIVISOR)
-  const y_rounded = Math.floor(y_utm32 / DIVISOR)
-
-  const load_tile_left = x_utm32 % DIVISOR < BUFFER_ZONE
-  const load_tile_right = x_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE
-  const load_tile_lower = y_utm32 % DIVISOR < BUFFER_ZONE
-  const load_tile_upper = y_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE
-
-  const file_list = [`${x_rounded}_${y_rounded}.laz`]
-
-  if (load_tile_left) {
-    file_list.push(`${x_rounded - 2}_${y_rounded}.laz`)
-  }
-  if (load_tile_right) {
-    file_list.push(`${x_rounded + 2}_${y_rounded}.laz`)
-  }
-  if (load_tile_lower) {
-    file_list.push(`${x_rounded}_${y_rounded - 2}.laz`)
-  }
-  if (load_tile_upper) {
-    file_list.push(`${x_rounded}_${y_rounded + 2}.laz`)
-  }
-  if (load_tile_left && load_tile_lower) {
-    file_list.push(`${x_rounded - 2}_${y_rounded - 2}.laz`)
-  }
-  if (load_tile_left && load_tile_upper) {
-    file_list.push(`${x_rounded - 2}_${y_rounded + 2}.laz`)
-  }
-  if (load_tile_right && load_tile_lower) {
-    file_list.push(`${x_rounded + 2}_${y_rounded - 2}.laz`)
-  }
-  if (load_tile_right && load_tile_upper) {
-    file_list.push(`${x_rounded + 2}_${y_rounded + 2}.laz`)
-  }
-  return file_list
 }
 
 export async function downloadBuildings(loc) {
