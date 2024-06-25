@@ -1,11 +1,11 @@
 // This is the only file where both functionality and GUI stuff is allowed
 
-import Scene from "@openpv/simshady";
+import ShadingScene from "@openpv/simshady";
+import * as THREE from "three";
 import { downloadBuildings } from "./download";
 import { setLocation } from "./location";
 import { processGeometries } from "./preprocessing";
 import { showMesh } from "./viewer";
-import * as THREE from "three"
 
 export async function main(inputValue, inputChanged, oldLocation) {
   const location = await setLocation(inputValue, inputChanged, oldLocation)
@@ -21,7 +21,7 @@ export async function main(inputValue, inputChanged, oldLocation) {
     // TODO: Dynamically call this when sliders are moved instead of re-downloading everything
     const { simulationGeometry, surroundingGeometry } = processGeometries(buildingGeometries);
 
-    const scene = new Scene(location.lat, location.lon);
+    const scene = new ShadingScene(location.lat, location.lon);
     scene.addSimulationGeometry(simulationGeometry);
     scene.addShadingGeometry(simulationGeometry);
     scene.addShadingGeometry(surroundingGeometry);
