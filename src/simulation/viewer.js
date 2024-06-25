@@ -1,16 +1,7 @@
-<<<<<<< HEAD
 import * as THREE from "three";
 import { MapControls } from "three/addons/controls/MapControls.js";
-=======
-import * as THREE from "three"
-import { MapControls } from "three/addons/controls/MapControls.js"
 import { coordinatesXY15 } from './location.js'
-<<<<<<< HEAD
-import { load_map_tile } from './download.js'
->>>>>>> aa89013 (Fix coordinate transformations, add basemap)
-=======
 import { loadMapTile } from './download.js'
->>>>>>> 43a81f9 (Buildings are where they should be)
 
 export var scene = null;
 export var renderer = null;
@@ -182,6 +173,8 @@ function onMouseMove(event) {
       mouseCursor = null;
     }
   }
+  controls.screenSpacePanning = false
+  controls.maxPolarAngle = 1.1 * Math.PI / 2
 
   if (clickedPoints.length > 0) {
     const intersects = raycaster.intersectObjects(scene.children, true);
@@ -711,16 +704,15 @@ export async function showMesh(
 
   for(let dx = -1; dx <= 1; dx++) {
     for(let dy = -1; dy <= 1; dy++) {
-      const geometry = new THREE.BoxGeometry(1222.992452, 1222.992452, 50); 
+      const geometry = new THREE.BoxGeometry(1222.992452, 1222.992452, 100); 
       geometry.translate(
          1222.992452 * (tx + dx + 0.5 - x),
         -1222.992452 * (ty + dy + 0.5 - y),
-        25);
+        middle.z);
       const edges = new THREE.EdgesGeometry( geometry ); 
       const line = new THREE.LineSegments(edges,
         new THREE.LineBasicMaterial( { color: 0x0000ff } ) );
       scene.add( line );
-      // load_map_tile(tx + dx, ty + dy, 15).then(mesh => scene.add(mesh));
     }
   }
 
@@ -735,9 +727,11 @@ export async function showMesh(
   // scene.add( new THREE.ArrowHelper(y_unit, origin, 30.0, 0x00ff00));
   // scene.add( new THREE.ArrowHelper(z_unit, origin, 30.0, 0x0000ff));
 
-  camera.position.set(0, -40, 580);
-  camera.lookAt(0, 0, 520);
-  controls.target.set(0, 0, 520)
+  camera.position.set(middle.x, middle.y, middle.z);
+  const offset = new THREE.Vector3(0, -40, 80);
+  camera.position.add(offset);
+  camera.lookAt(middle);
+  controls.target.set(middle.x, middle.y, middle.z)
 
   var animate = function () {
     requestAnimationFrame(animate)

@@ -42,7 +42,7 @@ export async function downloadBuildings(loc) {
 
 async function downloadFile(download_spec) {
   const {tile, center} = download_spec;
-  const url = `/germany-draco/15-${tile.x}-${tile.y}.glb`;
+  const url = `https://maps.heidler.info/germany-draco/15-${tile.x}-${tile.y}.glb`;
 
   try {
     const data = await gltfLoader.loadAsync(url);
@@ -108,7 +108,6 @@ export async function loadMapTile(tx, ty, zoom) {
       const s = 1 << shift;
       const x = Math.round((fraction_x + x0) / s * (canvas.width - 1));
       const y = Math.round((fraction_y + y0) / s * (canvas.height - 1));
-      console.log("xy", x, y, "/", canvas.width, canvas.height);
       // Get image data at the specific (x, y) location
       const pixelData = context.getImageData(x, y, 1, 1).data;
       const [r, g, b, _] = pixelData;
@@ -126,7 +125,8 @@ export async function loadMapTile(tx, ty, zoom) {
     -TILE2METERS * ((ty + y) / scale - coordinatesXY15[1]),
     sampleDEM(x, y),
   ]);
-  console.log(vertices);
+  // canvas.remove();
+
   const vertexBuffer = new Float32Array(vertices);
   // UV mapping for the texture
   const uvs = new Float32Array([0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0]);
