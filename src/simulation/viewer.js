@@ -122,17 +122,11 @@ function setupControls() {
 }
 
 function addLightsToScene() {
-  const lightConfigs = [
-    { color: 0xffffff, intensity: 0.25, position: [0, -0.3, 1] },
-    { color: 0xffffff, intensity: 0.1, position: [0.3, -0.3, 1] },
-    { color: 0xffffff, intensity: 0.1, position: [-0.3, -0.3, 1] },
-  ];
-  lightConfigs.forEach(config => {
-    const light = new THREE.DirectionalLight(config.color, config.intensity);
-    light.position.set(...config.position);
-    scene.add(light);
-  });
-  scene.add(new THREE.AmbientLight(0xffffff, 1));
+  let dirLight = new THREE.DirectionalLight(0xffffff, 1.0)
+  dirLight.position.set(0, 1., -1.)
+  scene.add(dirLight)
+  scene.add(new THREE.AmbientLight(0xffffff, 1))
+  console.log('Adding lights');
 }
 
 function addEventListeners(elem) {
