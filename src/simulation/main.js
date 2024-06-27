@@ -1,7 +1,6 @@
 // This is the only file where both functionality and GUI stuff is allowed
 
 import ShadingScene from "@openpv/simshady";
-import * as THREE from "three";
 import { downloadBuildings } from "./download";
 import { setLocation } from "./location";
 import { processGeometries } from "./preprocessing";

@@ -40,9 +40,8 @@ export function STLViewerEnable(classname) {
 
 export function STLViewer(resetCamera = true) {
   const elem = document.getElementsByClassName("three-viewer")[0];
-
   elem.style.width = "100%"
-  elem.style.height = "700px"
+  elem.style.height = "500px"
 
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
 
@@ -711,11 +710,11 @@ export async function initializeViewer(geometries, resetCamera) {
 
   /// Add map below the buildings
   const [x, y] = coordinatesXY15;
-  const tx = Math.floor(x);
-  const ty = Math.floor(y);
+  const tx = Math.floor(x * 8);
+  const ty = Math.floor(y * 8);
   for(let dx = -5; dx <= 5; dx++) {
     for(let dy = -5; dy <= 5; dy++) {
-        loadMapTile(tx*4 + dx, ty*4 + dy, 17).then(mesh => scene.add(mesh));
+        loadMapTile(tx + dx, ty + dy, 18).then(mesh => scene.add(mesh));
     }
   }
 
@@ -761,48 +760,6 @@ export async function initializeViewer(geometries, resetCamera) {
   }
   window.setShowViridisLegend(true)
   animate()
-
-  let caster = new THREE.Raycaster();
-  window.addEventListener('click', function(event) {
-    const rect = renderer.domElement.getBoundingClientRect();
-    const mouse = {
-      x: ((event.clientX - rect.x) / rect.width) * 2 - 1,
-      y: -((event.clientY - rect.y) / rect.height) * 2 + 1
-    };
-    caster.setFromCamera(mouse, camera);
-    const intersects = caster.intersectObjects(scene.children);
-
-    if (intersects.length > 0) {
-      const intersection = intersects[0];
-      const face = intersection.face;
-
-      try {
-        const colorAttribute = intersection.object.geometry.getAttribute('color');
-
-        const r = colorAttribute.getX(face.a);
-        const g = colorAttribute.getY(face.a);
-        const b = colorAttribute.getZ(face.a);
-
-        const color = new THREE.Color(0xff0000);
-        colorAttribute.setXYZ(face.a, color.r, color.g, color.b);
-        colorAttribute.setXYZ(face.b, color.r, color.g, color.b);
-        colorAttribute.setXYZ(face.c, color.r, color.g, color.b);
-        colorAttribute.needsUpdate = true;
-
-        window.setTimeout(function() {
-          colorAttribute.setXYZ(face.a, r, g, b);
-          colorAttribute.setXYZ(face.b, r, g, b);
-          colorAttribute.setXYZ(face.c, r, g, b);
-          colorAttribute.needsUpdate = true;
-        }, 500);
-      } catch {
-        console.warn("Clicked on triangle without color attribute");
-      }
-
-      console.log('Clicked on Triangle #', face.a / 3);
-    }
-  });
-
 }
 
 export function swapSimulationMesh(newMesh) {
