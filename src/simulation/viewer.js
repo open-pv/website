@@ -148,6 +148,7 @@ function onMouseMove(event) {
   lastMousePosition.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
   lastMousePosition.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
+  /*
   raycaster.setFromCamera(lastMousePosition, camera);
   const intersects = raycaster.intersectObjects(scene.children.filter(obj => !drawnObjects.includes(obj)), true);
 
@@ -167,9 +168,11 @@ function onMouseMove(event) {
       mouseCursor = null;
     }
   }
+  */
   controls.screenSpacePanning = false
   controls.maxPolarAngle = 1.1 * Math.PI / 2
 
+  /*
   if (clickedPoints.length > 0) {
     const intersects = raycaster.intersectObjects(scene.children, true);
     if (intersects.length > 0) {
@@ -180,6 +183,7 @@ function onMouseMove(event) {
       console.log('Distance to potential vertex:', distance);
     }
   }
+  */
 }
 
 function onKeyDown(event) {
@@ -696,6 +700,7 @@ export async function showMesh(
     }
   }
 
+  /* Debugging Overlay of 3D Tile boundaries
   for(let dx = -1; dx <= 1; dx++) {
     for(let dy = -1; dy <= 1; dy++) {
       const geometry = new THREE.BoxGeometry(1222.992452, 1222.992452, 100); 
@@ -709,17 +714,20 @@ export async function showMesh(
       scene.add( line );
     }
   }
+  */
 
   /// End map code
 
-  // Axis Arrows for Debugging
-  // const x_unit = new THREE.Vector3( 1, 0, 0 );
-  // const y_unit = new THREE.Vector3( 0, 1, 0 );
-  // const z_unit = new THREE.Vector3( 0, 0, 1 );
-  // const origin = new THREE.Vector3( 0, 0, 0 );
-  // scene.add( new THREE.ArrowHelper(x_unit, origin, 30.0, 0xff0000));
-  // scene.add( new THREE.ArrowHelper(y_unit, origin, 30.0, 0x00ff00));
-  // scene.add( new THREE.ArrowHelper(z_unit, origin, 30.0, 0x0000ff));
+  /* Debugging display of origin
+  Axis Arrows for Debugging
+  const x_unit = new THREE.Vector3( 1, 0, 0 );
+  const y_unit = new THREE.Vector3( 0, 1, 0 );
+  const z_unit = new THREE.Vector3( 0, 0, 1 );
+  const origin = new THREE.Vector3( 0, 0, 0 );
+  scene.add( new THREE.ArrowHelper(x_unit, origin, 30.0, 0xff0000));
+  scene.add( new THREE.ArrowHelper(y_unit, origin, 30.0, 0x00ff00));
+  scene.add( new THREE.ArrowHelper(z_unit, origin, 30.0, 0x0000ff));
+  */
 
   camera.position.set(middle.x, middle.y, middle.z);
   const offset = new THREE.Vector3(0, -40, 80);

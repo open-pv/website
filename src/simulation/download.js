@@ -8,7 +8,6 @@ const TILE2METERS = 1222.992452;
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('/draco/');
-// dracoLoader.setDecoderConfig({ type: "js" }); 
 dracoLoader.preload();
 const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
@@ -21,14 +20,14 @@ function getFileNames(lon, lat) {
 
   const downloads = [
     {tile: {x: tile_x  , y: tile_y  }, center: {x, y}},
-    {tile: {x: tile_x-1, y: tile_y  }, center: {x, y}},
-    {tile: {x: tile_x  , y: tile_y-1}, center: {x, y}},
-    {tile: {x: tile_x+1, y: tile_y  }, center: {x, y}},
-    {tile: {x: tile_x  , y: tile_y+1}, center: {x, y}},
-    {tile: {x: tile_x-1, y: tile_y-1}, center: {x, y}},
-    {tile: {x: tile_x-1, y: tile_y+1}, center: {x, y}},
-    {tile: {x: tile_x+1, y: tile_y-1}, center: {x, y}},
-    {tile: {x: tile_x+1, y: tile_y+1}, center: {x, y}},
+    // {tile: {x: tile_x-1, y: tile_y  }, center: {x, y}},
+    // {tile: {x: tile_x  , y: tile_y-1}, center: {x, y}},
+    // {tile: {x: tile_x+1, y: tile_y  }, center: {x, y}},
+    // {tile: {x: tile_x  , y: tile_y+1}, center: {x, y}},
+    // {tile: {x: tile_x-1, y: tile_y-1}, center: {x, y}},
+    // {tile: {x: tile_x-1, y: tile_y+1}, center: {x, y}},
+    // {tile: {x: tile_x+1, y: tile_y-1}, center: {x, y}},
+    // {tile: {x: tile_x+1, y: tile_y+1}, center: {x, y}},
   ];
   return downloads;
 }
@@ -46,6 +45,8 @@ async function downloadFile(download_spec) {
 
   try {
     const data = await gltfLoader.loadAsync(url);
+    console.log('data');
+    console.log(data);
     let geometries = [];
     for(let scene of data.scenes) {
       for(let child of scene.children) {
@@ -63,9 +64,41 @@ async function downloadFile(download_spec) {
         tx.multiply(translate);
         tx.multiply(scale2tile);
         geometry.applyMatrix4(tx);
+
+        // Essentially all of our code assumes that the geometries are not indexed
+        // i.e. that position[9*i...(9*i)+9] always refers to a single triangle
+        // This makes sure of that
         geometry = geometry.toNonIndexed();
 
-        geometries.push(geometry);
+        console.log(geometry);
+        let buildings = {};
+        const position = geometry.attributes.position.array;
+        const normal = geometry.attributes.normal.array;
+        const feature_ids = geometry.attributes._feature_id_0.array;
+        console.log('position:', position.length);
+        console.log('normal:', normal.length);
+        console.log('feature_ids:', feature_ids.length);
+        for(let i = 0; i < geometry.attributes.position.count; i++) {
+          const key = feature_ids[i];
+          if(!buildings.hasOwnProperty(key)) {
+            buildings[key] = {
+              position: [],
+              normal: []
+            };
+          }
+          for(let j = 0; j < 3; j++) {
+            buildings[key].position.push(position[3*i+j]);
+            buildings[key].normal.push(normal[3*i+j]);
+          }
+        }
+        for(let {position, normal} of Object.values(buildings)) {
+          let buildingGeometry = new THREE.BufferGeometry()
+          position = new THREE.BufferAttribute(new Float32Array(position), 3);
+          buildingGeometry.setAttribute("position", position);
+          normal = new THREE.BufferAttribute(new Float32Array(normal), 3);
+          buildingGeometry.setAttribute("normal", normal);
+          geometries.push(buildingGeometry);
+        }
       }
     }
     return geometries;
