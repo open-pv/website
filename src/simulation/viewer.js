@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { MapControls } from "three/addons/controls/MapControls.js";
 import { coordinatesXY15 } from './location.js'
 import { loadMapTile } from './download.js'
+import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
 
 export var scene = null;
 export var renderer = null;
@@ -13,6 +14,7 @@ export var cursor = null;
 export var lastMousePosition = { x: 0, y: 0 };
 export var clickedPoints = [];
 export var pointColors = [];
+export var simulationMesh = null;
 var drawnObjects = [];
 var prefilteredPolygons = [];
 let polygonYields = [];
@@ -122,10 +124,10 @@ function setupControls() {
 }
 
 function addLightsToScene() {
-  let dirLight = new THREE.DirectionalLight(0xffffff, 1.0)
+  let dirLight = new THREE.DirectionalLight(0xffffff, 2.0)
   dirLight.position.set(0, 1., -1.)
   scene.add(dirLight)
-  scene.add(new THREE.AmbientLight(0xffffff, 1))
+  scene.add(new THREE.AmbientLight(0xffffff, 2.0))
   console.log('Adding lights');
 }
 
@@ -656,11 +658,7 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-export async function showMesh(
-  simulationMesh,
-  surroundingGeometry,
-  resetCamera
-) {
+export async function initializeViewer(geometries, resetCamera) {
   var oldCameraPosition
   if (resetCamera || camera == null) {
     oldCameraPosition = { x: 0, y: 0, z: 0 }
@@ -672,23 +670,44 @@ export async function showMesh(
     }
   }
 
-  STLViewer(resetCamera)
+  STLViewer(resetCamera);
+
+  const simGeometry = BufferGeometryUtils.mergeGeometries(geometries.simulation)
+  const simMaterial = new THREE.MeshLambertMaterial({
+    vertexColors: false,
+    side: THREE.DoubleSide,
+    color: 0xffffff,
+    roughness: 1.0,
+    metalness: 0.0
+  })
+  simulationMesh = new THREE.Mesh(simGeometry, simMaterial)
 
   let middle = new THREE.Vector3()
-  console.log(simulationMesh);
-  simulationMesh.geometry.computeBoundingBox()
-  simulationMesh.geometry.boundingBox.getCenter(middle)
-  console.log("middle", middle)
+  simGeometry.computeBoundingBox()
+  simGeometry.boundingBox.getCenter(middle)
 
-  scene.add(simulationMesh)
+  scene.add(simulationMesh);
+
   var surroundingMaterial = new THREE.MeshStandardMaterial({
     vertexColors: false,
     side: THREE.DoubleSide,
     color: 0xd1bea4,
     metalness: 0.0,
   })
+  const surroundingGeometry = BufferGeometryUtils.mergeGeometries(geometries.surrounding);
   var surroundingMesh = new THREE.Mesh(surroundingGeometry, surroundingMaterial)
   scene.add(surroundingMesh)
+
+  const backgroundGeometry = BufferGeometryUtils.mergeGeometries(geometries.background);
+  const backgroundMaterial = new THREE.MeshLambertMaterial({
+    vertexColors: false,
+    side: THREE.DoubleSide,
+    color: 0xcccccc,
+    transparent: true,
+    opacity: 0.3,
+  })
+  var backgroundMesh = new THREE.Mesh(backgroundGeometry, backgroundMaterial)
+  scene.add(backgroundMesh)
 
   /// Add map below the buildings
   const [x, y] = coordinatesXY15;
@@ -784,4 +803,12 @@ export async function showMesh(
     }
   });
 
+}
+
+export function swapSimulationMesh(newMesh) {
+  if(simulationMesh) {
+    scene.remove(simulationMesh)
+  }
+  simulationMesh = newMesh;
+  scene.add(simulationMesh);
 }

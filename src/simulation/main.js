@@ -5,36 +5,29 @@ import * as THREE from "three";
 import { downloadBuildings } from "./download";
 import { setLocation } from "./location";
 import { processGeometries } from "./preprocessing";
-import { showMesh } from "./viewer";
+import { initializeViewer, swapSimulationMesh } from "./viewer";
 
 export async function main(inputValue, inputChanged, oldLocation) {
   const location = await setLocation(inputValue, inputChanged, oldLocation)
 
   if (typeof location !== "undefined" && location != null) {
     const buildingGeometries = await downloadBuildings(location);
-    // for(let b of buildingGeometries) {
-    //   b.computeBoundingBox();
-    // }
 
     // TODO: Dynamically call this when sliders are moved instead of re-downloading everything
-    const { simulationGeometry, surroundingGeometry } = processGeometries(buildingGeometries);
-
+    const geometries = processGeometries(buildingGeometries);
+    for(let k of Object.keys(geometries)) {
+      console.log(k, geometries[k]);
+    }
     const scene = new ShadingScene(location.lat, location.lon);
-    scene.addSimulationGeometry(simulationGeometry);
-    scene.addShadingGeometry(simulationGeometry);
-    scene.addShadingGeometry(surroundingGeometry);
+    geometries.simulation.forEach(geom => scene.addSimulationGeometry(geom));
+    geometries.surrounding.forEach(geom => scene.addShadingGeometry(geom));
 
-    const simMaterial = new THREE.MeshLambertMaterial({
-      vertexColors: false,
-      side: THREE.DoubleSide,
-      color: 0xff0000,
-      roughness: 1.0,
-      metalness: 0.0
-    })
-    var simulationMesh = new THREE.Mesh(simulationGeometry, simMaterial)
-    // const simulationMesh = await scene.calculate(window.numSimulations);
-    window.setLoading(false);
-    showMesh(simulationMesh, surroundingGeometry, inputChanged);
+    initializeViewer(geometries, inputChanged);
+    scene.calculate(window.numSimulations).then(simulationMesh => {
+      window.setLoading(false);
+      console.log(simulationMesh);
+      swapSimulationMesh(simulationMesh);
+    });
   } else {
     window.setLoading(false)
     window.setShowThreeViewer(false)

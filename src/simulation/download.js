@@ -20,14 +20,14 @@ function getFileNames(lon, lat) {
 
   const downloads = [
     {tile: {x: tile_x  , y: tile_y  }, center: {x, y}},
-    // {tile: {x: tile_x-1, y: tile_y  }, center: {x, y}},
-    // {tile: {x: tile_x  , y: tile_y-1}, center: {x, y}},
-    // {tile: {x: tile_x+1, y: tile_y  }, center: {x, y}},
-    // {tile: {x: tile_x  , y: tile_y+1}, center: {x, y}},
-    // {tile: {x: tile_x-1, y: tile_y-1}, center: {x, y}},
-    // {tile: {x: tile_x-1, y: tile_y+1}, center: {x, y}},
-    // {tile: {x: tile_x+1, y: tile_y-1}, center: {x, y}},
-    // {tile: {x: tile_x+1, y: tile_y+1}, center: {x, y}},
+    {tile: {x: tile_x-1, y: tile_y  }, center: {x, y}},
+    {tile: {x: tile_x  , y: tile_y-1}, center: {x, y}},
+    {tile: {x: tile_x+1, y: tile_y  }, center: {x, y}},
+    {tile: {x: tile_x  , y: tile_y+1}, center: {x, y}},
+    {tile: {x: tile_x-1, y: tile_y-1}, center: {x, y}},
+    {tile: {x: tile_x-1, y: tile_y+1}, center: {x, y}},
+    {tile: {x: tile_x+1, y: tile_y-1}, center: {x, y}},
+    {tile: {x: tile_x+1, y: tile_y+1}, center: {x, y}},
   ];
   return downloads;
 }
@@ -45,8 +45,6 @@ async function downloadFile(download_spec) {
 
   try {
     const data = await gltfLoader.loadAsync(url);
-    console.log('data');
-    console.log(data);
     let geometries = [];
     for(let scene of data.scenes) {
       for(let child of scene.children) {
@@ -70,14 +68,10 @@ async function downloadFile(download_spec) {
         // This makes sure of that
         geometry = geometry.toNonIndexed();
 
-        console.log(geometry);
         let buildings = {};
         const position = geometry.attributes.position.array;
         const normal = geometry.attributes.normal.array;
         const feature_ids = geometry.attributes._feature_id_0.array;
-        console.log('position:', position.length);
-        console.log('normal:', normal.length);
-        console.log('feature_ids:', feature_ids.length);
         for(let i = 0; i < geometry.attributes.position.count; i++) {
           const key = feature_ids[i];
           if(!buildings.hasOwnProperty(key)) {
