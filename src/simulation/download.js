@@ -93,8 +93,6 @@ export async function loadMapTile(tx, ty, zoom) {
   // DEM Processing
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
-  document.body.appendChild(canvas);  // Add to the DOM temporarily if needed
-  canvas.style.display = 'none';      // Hide the canvas
   const dem = await demFuture;
   canvas.width = dem.image.width;
   canvas.height = dem.image.height;
@@ -125,7 +123,6 @@ export async function loadMapTile(tx, ty, zoom) {
     -TILE2METERS * ((ty + y) / scale - coordinatesXY15[1]),
     sampleDEM(x, y),
   ]);
-  // canvas.remove();
 
   const vertexBuffer = new Float32Array(vertices);
   // UV mapping for the texture
