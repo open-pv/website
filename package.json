@@ -12,7 +12,6 @@
     "driver.js": "^1.1.0",
     "gl-matrix": "^3.4.3",
     "i18next": "^23.2.11",
-    "i18next-browser-languagedetector": "^7.1.0",
     "i18next-http-backend": "^2.2.1",
     "jszip": "^3.10.1",
     "laz-perf": "^0.0.6",
