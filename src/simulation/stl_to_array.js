@@ -1,5 +1,4 @@
 import { vec3 } from "gl-matrix"
-// const { vec3, mat4 } = glMatrix;
 
 export function loadSTL(model) {
   return new Promise((resolve, reject) => {
