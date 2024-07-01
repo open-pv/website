@@ -6,17 +6,8 @@
   "datesSlider": {
     "text": "Number of Simulations:"
   },
-  "distanceSlider": {
-    "text": "Step Size on Map [m]:"
-  },
   "radiusSlider": {
     "text": "Simulation Radius [m]:"
-  },
-  "visualizeLaserPointsSlider": {
-    "text": "Shown Laserpoints [%]:"
-  },
-  "enableLaserPointsSlider": {
-    "text": "Tree Shades"
   },
   "yes": "yes",
   "no": "no",

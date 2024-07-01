@@ -6,18 +6,11 @@
   "datesSlider": {
     "text": "Anzahl Simulationen: "
   },
-  "distanceSlider": {
-    "text": "Schrittweite auf Karte [m]:"
-  },
+
   "radiusSlider": {
     "text": "Simulationsradius [m]:"
   },
-  "visualizeLaserPointsSlider": {
-    "text": "Gezeigte Laserpunkte [%]:"
-  },
-  "enableLaserPointsSlider": {
-    "text": "Baumverschattung einbeziehen"
-  },
+
   "yes": "ja",
   "no": "nein",
   "searchField": {
