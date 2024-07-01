@@ -1,9 +1,3 @@
-export function addToArray(ar1, ar2) {
-  for (var i = 0; i < ar1.length; i++) {
-    ar1[i] += ar2[i]
-  }
-}
-
 // from https://observablehq.com/@flimsyhat/webgl-color-maps
 export function intensity_colormap(t) {
   //viridis
