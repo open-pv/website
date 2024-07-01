@@ -65,20 +65,6 @@ function SearchField() {
         loading={loading}
         size={60}
       />
-      {window.enableLaserPoints && loading && (
-        <div style={{ padding: "30px" }}>
-          <p style={{ textAlign: "center" }}>
-            {t("loadingMessage.warningUseLaserpoints")}
-          </p>
-        </div>
-      )}
-      {!window.enableLaserPoints && loading && (
-        <div style={{ padding: "30px" }}>
-          <p style={{ textAlign: "center" }}>
-            {t("loadingMessage.warningUseNoLaserpoints")}
-          </p>
-        </div>
-      )}
     </>
   )
 }
