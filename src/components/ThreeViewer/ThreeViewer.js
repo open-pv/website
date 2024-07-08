@@ -23,7 +23,6 @@ export default function ThreeViewer() {
   return (
     <div className="viewer-container" style={{ position: "relative" }}>
       <Canvas className="three-viewer" flat linear></Canvas>
-      <canvas id="canvas" width={0} height={0}></canvas>
 
       {window.showViridisLegend && (
         <>
