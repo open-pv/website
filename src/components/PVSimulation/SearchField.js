@@ -1,38 +1,24 @@
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
-import DotLoader from "react-spinners/DotLoader"
 import { main } from "../../simulation/main"
-import TooManyUniforms from "../ErrorMessages/TooManyUniforms"
-import WrongAdress from "../ErrorMessages/WrongAdress"
 
-const override = {
-  display: "block",
-  margin: "auto",
-  borderColor: "red",
-}
-
-function SearchField() {
+function SearchField({ setIsLoading, setshowSimulatedBuilding }) {
   const [inputValue, setInputValue] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [showErrorMessage, setShowErrorMessage] = useState(false)
+
   const [inputChanged, setInputChanged] = useState(false)
   const { t, i18n } = useTranslation()
-  const [showTooManyUniformsError, setShowTooManyUniformsError] =
-    useState(false)
-  window.setShowErrorMessage = setShowErrorMessage
-  window.setShowTooManyUniformsError = setShowTooManyUniformsError
-  window.setLoading = setLoading
+
   const handleSubmit = (event) => {
-    setLoading(!loading)
-    window.setShowViridisLegend(false)
+    setIsLoading(true)
     event.preventDefault()
-    window.setShowThreeViewer(true)
+
     main(inputValue, inputChanged, window.mapLocation)
+    setshowSimulatedBuilding(true)
     window.numRadiusSimulationChanged = false
     window.numSimulationsChanged = false
     window.mapLocationChanged = false
-    setShowErrorMessage(false)
-    setShowTooManyUniformsError(false)
+    window.setShowErrorMessage(false)
+    window.setShowTooManyUniformsError(false)
     setInputChanged(false)
   }
   const handleChange = (event) => {
@@ -57,14 +43,6 @@ function SearchField() {
         />
         <button type="submit">Start</button>
       </form>
-      {showErrorMessage && <WrongAdress />}
-      {showTooManyUniformsError && <TooManyUniforms />}
-      <DotLoader
-        color="MediumAquaMarine"
-        cssOverride={override}
-        loading={loading}
-        size={60}
-      />
     </>
   )
 }

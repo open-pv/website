@@ -1,30 +1,18 @@
 import { useState } from "react"
-import { Canvas } from "react-three-fiber"
-import { setLocation } from "../../simulation/location"
 
-export default function ThreeViewer() {
-  const [loading, setLoading] = useState(false)
+import { Canvas } from "react-three-fiber"
+
+export default function ThreeViewer(showSimulatedBuilding) {
   if (window.offsetPos == null) {
     window.offsetPos = [0, 0]
-  }
-
-  const resimulate = () => {
-    setLoading(!loading)
-    window.setShowViridisLegend(false)
-    window.setShowThreeViewer(true)
-    setLocation("", false, window.mapLocation)
-    window.numRadiusSimulationChanged = false
-    window.numSimulationsChanged = false
-    window.mapLocationChanged = false
-    setShowErrorMessage(false)
-    setShowTooManyUniformsError(false)
   }
 
   return (
     <div className="viewer-container" style={{ position: "relative" }}>
       <Canvas className="three-viewer" flat linear></Canvas>
 
-      {window.showViridisLegend && (
+      {!showSimulatedBuilding && <p>Show Map now</p>}
+      {showSimulatedBuilding && (
         <>
           <div
             style={{
@@ -47,7 +35,7 @@ export default function ThreeViewer() {
             style={{ position: "absolute", left: 0, bottom: 0, margin: "10px" }}
           >
             <div id="footer">
-              <p class="copyright">
+              <p className="copyright">
                 <a href="https://geodaten.bayern.de/opengeodata/">
                   Gebäudedaten
                 </a>{" "}

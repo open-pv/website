@@ -66,7 +66,7 @@ export function STLViewer(resetCamera = true) {
     false
   )
 
-  setupControls()
+  setupMapControls()
   setupScene()
   addEventListeners(elem)
   animate()
@@ -111,7 +111,7 @@ function setupScene() {
   addLightsToScene()
 }
 
-function setupControls() {
+function setupMapControls() {
   controls = new MapControls(camera, renderer.domElement)
   controls.mouseButtons = {
     LEFT: THREE.MOUSE.PAN,
@@ -905,7 +905,7 @@ export async function initializeViewer(geometries, resetCamera) {
     controls.update()
     renderer.render(scene, camera)
   }
-  window.setShowViridisLegend(true)
+  window.setshowSimulatedBuilding(true)
   animate()
 }
 

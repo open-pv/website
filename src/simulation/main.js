@@ -46,7 +46,7 @@ export async function main(inputValue, inputChanged, oldLocation) {
       )
       .then((simulationMesh) => {
         console.log("Simulation Mesh", simulationMesh)
-        window.setLoading(false)
+        window.setIsLoading(false)
         console.log(simulationMesh)
         const material = new THREE.MeshLambertMaterial({
           vertexColors: true,
@@ -58,7 +58,7 @@ export async function main(inputValue, inputChanged, oldLocation) {
         swapSimulationMesh(simulationMesh)
       })
   } else {
-    window.setLoading(false)
+    window.setIsLoading(false)
     window.setShowThreeViewer(false)
     window.setShowErrorMessage(true)
   }
