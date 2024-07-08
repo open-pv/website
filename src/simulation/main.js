@@ -7,6 +7,8 @@ import { setLocation } from "./location"
 import { processGeometries } from "./preprocessing"
 import { initializeViewer, swapSimulationMesh } from "./viewer"
 
+window.numSimulations = 80
+
 export async function main(inputValue, inputChanged, oldLocation) {
   const location = await setLocation(inputValue, inputChanged, oldLocation)
 
@@ -31,9 +33,13 @@ export async function main(inputValue, inputChanged, oldLocation) {
     })
 
     initializeViewer(geometries, inputChanged)
+    let numSimulations
+    window.numSimulations
+      ? (numSimulations = window.numSimulations)
+      : (numSimulations = 80)
     scene
       .calculate(
-        window.numSimulations,
+        numSimulations,
         "https://www.openpv.de/data/irradiance",
         0.22,
         1400 * 0.22
