@@ -17,6 +17,10 @@ export async function main(inputValue, inputChanged, oldLocation) {
 
     // TODO: Dynamically call this when sliders are moved instead of re-downloading everything
     const geometries = processGeometries(buildingGeometries)
+    if (geometries.simulation.length == 0) {
+      window.setshowErrorNoGeometry(true)
+      return
+    }
     for (let k of Object.keys(geometries)) {
       console.log(k, geometries[k])
     }
@@ -60,7 +64,7 @@ export async function main(inputValue, inputChanged, oldLocation) {
   } else {
     window.setIsLoading(false)
     window.setShowThreeViewer(false)
-    window.setShowErrorMessage(true)
+    window.setshowErrorNoGeometry(true)
   }
 
   if (inputChanged) {
