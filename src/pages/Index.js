@@ -2,7 +2,6 @@ import React, { useState } from "react"
 import SearchField from "../components/PVSimulation/SearchField"
 
 import ThreeViewer from "../components/ThreeViewer/ThreeViewer"
-import ViridisLegend from "../components/ThreeViewer/ViridisLegend"
 import Main from "../layouts/Main"
 
 function Index() {
@@ -20,7 +19,6 @@ function Index() {
           </div>
         </header>
         {showThreeViewer && <ThreeViewer />}
-        {showViridisLegend && <ViridisLegend />}
       </article>
     </Main>
   )
