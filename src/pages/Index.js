@@ -1,26 +1,17 @@
 import React, { useState } from "react"
+import WrongAdress from "../components/ErrorMessages/WrongAdress"
 import SearchField from "../components/PVSimulation/SearchField"
-
 import ThreeViewer from "../components/ThreeViewer/ThreeViewer"
 import Main from "../layouts/Main"
-
-const override = {
-  display: "block",
-  margin: "auto",
-  borderColor: "red",
-}
 
 function Index() {
   const [showMap, setShowMap] = useState(true)
   const [showSimulatedBuilding, setshowSimulatedBuilding] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [showErrorMessage, setShowErrorMessage] = useState(false)
-  const [showTooManyUniformsError, setShowTooManyUniformsError] =
-    useState(false)
+  const [showErrorNoGeometry, setshowErrorNoGeometry] = useState(false)
 
   window.setShowThreeViewer = setShowMap
-  window.setShowErrorMessage = setShowErrorMessage
-  window.setShowTooManyUniformsError = setShowTooManyUniformsError
+  window.setshowErrorNoGeometry = setshowErrorNoGeometry
   window.setIsLoading = setIsLoading
   window.setshowSimulatedBuilding = setshowSimulatedBuilding
 
@@ -35,15 +26,12 @@ function Index() {
             />
           </div>
         </header>
-        {showErrorMessage && <WrongAdress />}
-        {showTooManyUniformsError && <TooManyUniforms />}
+        {showErrorNoGeometry && <WrongAdress />}
+
         {showMap && (
-          <ThreeViewer
-            showSimulatedBuilding={showSimulatedBuilding}
-            isLoading={isLoading}
-          />
+          <ThreeViewer showSimulatedBuilding={showSimulatedBuilding} />
         )}
-        {isLoading && <p>Show Loading Bar Now</p>}
+        {isLoading && <p>Show Loading Bar Component Now</p>}
       </article>
     </Main>
   )

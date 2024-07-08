@@ -10,7 +10,6 @@ const RadiusSlider = () => {
   const handleRadiusChange = (newValue) => {
     setNumRadius(newValue)
     window.numRadiusSimulation = newValue
-    window.numRadiusSimulationChanged = true
   }
 
   return (

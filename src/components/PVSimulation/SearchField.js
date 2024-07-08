@@ -14,11 +14,9 @@ function SearchField({ setIsLoading, setshowSimulatedBuilding }) {
 
     main(inputValue, inputChanged, window.mapLocation)
     setshowSimulatedBuilding(true)
-    window.numRadiusSimulationChanged = false
     window.numSimulationsChanged = false
     window.mapLocationChanged = false
-    window.setShowErrorMessage(false)
-    window.setShowTooManyUniformsError(false)
+    window.setshowErrorNoGeometry(false)
     setInputChanged(false)
   }
   const handleChange = (event) => {
