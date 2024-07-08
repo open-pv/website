@@ -7,7 +7,8 @@ import Navigation from "../components/Template/Navigation"
 const Footer = () => (
   <footer id="footer">
     <p className="copyright">
-      &copy; Erstellt vom Team OpenPV, <a href="/Impressum">Impressum</a>
+      &copy; Erstellt vom <a href="https://github.com/open-pv">Team OpenPV</a>,{" "}
+      <a href="/Impressum">Impressum</a>
       {" | "}
       <a href="/Datenschutz">Datenschutz</a>
       {" | "}
