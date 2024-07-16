@@ -12,6 +12,13 @@ window.numSimulations = 80
 export async function main(inputValue, inputChanged, oldLocation) {
   const location = await setLocation(inputValue, inputChanged, oldLocation)
 
+  // Clear previous attributions if any
+  if(window.setAttribution) {
+    for(let attributionSetter of Object.values(window.setAttribution)) {
+      attributionSetter(false);
+    }
+  }
+
   if (typeof location !== "undefined" && location != null) {
     const buildingGeometries = await downloadBuildings(location)
 

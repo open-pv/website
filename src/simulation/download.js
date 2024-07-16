@@ -95,6 +95,16 @@ async function downloadFile(download_spec) {
         }
       }
     }
+
+    // Parse Bundesländer
+    const buffer = await data.parser.getDependency('bufferView', 0);
+    const ids = new TextDecoder().decode(buffer);
+    for(const bundesland of Object.keys(window.setAttribution)) {
+      if(ids.includes(`DE${bundesland}`)) {
+        window.setAttribution[bundesland](true);
+      }
+    }
+
     return geometries;
   } catch (error) {
     console.warn(error);
