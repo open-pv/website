@@ -26,6 +26,10 @@ export default function Overlay() {
       </div>
       <div style={{ position: "absolute", left: 0, bottom: 0, margin: "10px" }}>
         <div id="footer">
+          <p key="map-attribution" class="copyright">
+          Basiskarte &copy; <a href="https://www.bkg.bund.de" target="_blank">BKG</a>
+          &nbsp;(<a href="https://www.govdata.de/dl-de/by-2-0" target="_blank">dl-de/by-2-0</a>)
+          </p>
           { attrs }
         </div>
       </div>

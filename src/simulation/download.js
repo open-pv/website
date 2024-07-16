@@ -115,7 +115,8 @@ async function downloadFile(download_spec) {
 /** Load an OSM map tile and return it as a THREE Mesh
   */
 export async function loadMapTile(tx, ty, zoom) {
-  const url = `https://tile.openstreetmap.org/${zoom}/${tx}/${ty}.png`;
+  // const url = `https://tile.openstreetmap.org/${zoom}/${tx}/${ty}.png`;
+  const url = `https://sgx.geodatenzentrum.de/wmts_basemapde/tile/1.0.0/de_basemapde_web_raster_farbe/default/GLOBAL_WEBMERCATOR/${zoom}/${ty}/${tx}.png`
   const mapFuture = new THREE.TextureLoader().loadAsync(url);
 
   if(zoom < 12) {

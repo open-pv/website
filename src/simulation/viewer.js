@@ -857,11 +857,11 @@ export async function initializeViewer(geometries, resetCamera) {
 
   /// Add map below the buildings
   const [x, y] = coordinatesXY15
-  const tx = Math.floor(x * 8)
-  const ty = Math.floor(y * 8)
-  for (let dx = -5; dx <= 5; dx++) {
-    for (let dy = -5; dy <= 5; dy++) {
-      loadMapTile(tx + dx, ty + dy, 18).then((mesh) => scene.add(mesh))
+  const tx = Math.floor(x * 16)
+  const ty = Math.floor(y * 16)
+  for (let dx = -11; dx <= 11; dx++) {
+    for (let dy = -11; dy <= 11; dy++) {
+      loadMapTile(tx + dx, ty + dy, 19).then((mesh) => scene.add(mesh))
     }
   }
 
