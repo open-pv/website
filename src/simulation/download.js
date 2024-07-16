@@ -15,19 +15,16 @@ gltfLoader.setDRACOLoader(dracoLoader);
 function getFileNames(lon, lat) {
   let [x, y] = projectToWebMercator(lon, lat)
 
-  const tile_x = Math.floor(x);
-  const tile_y = Math.floor(y);
+  const x0 = Math.round(x) - 1;
+  const x1 = Math.round(x);
+  const y0 = Math.round(y) - 1;
+  const y1 = Math.round(y);
 
-  const downloads = [
-    {tile: {x: tile_x  , y: tile_y  }, center: {x, y}},
-    {tile: {x: tile_x-1, y: tile_y  }, center: {x, y}},
-    {tile: {x: tile_x  , y: tile_y-1}, center: {x, y}},
-    {tile: {x: tile_x+1, y: tile_y  }, center: {x, y}},
-    {tile: {x: tile_x  , y: tile_y+1}, center: {x, y}},
-    {tile: {x: tile_x-1, y: tile_y-1}, center: {x, y}},
-    {tile: {x: tile_x-1, y: tile_y+1}, center: {x, y}},
-    {tile: {x: tile_x+1, y: tile_y-1}, center: {x, y}},
-    {tile: {x: tile_x+1, y: tile_y+1}, center: {x, y}},
+  let downloads = [
+    {tile: {x: x0, y: y0}, center: {x, y}},
+    {tile: {x: x1, y: y0}, center: {x, y}},
+    {tile: {x: x0, y: y1}, center: {x, y}},
+    {tile: {x: x1, y: y1}, center: {x, y}},
   ];
   return downloads;
 }
