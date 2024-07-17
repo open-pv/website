@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import WrongAdress from "../components/ErrorMessages/WrongAdress"
 import SearchField from "../components/PVSimulation/SearchField"
 import Map from "../components/ThreeViewer/Map"
+import Overlay from "../components/ThreeViewer/Overlay"
 import Scene from "../components/ThreeViewer/Scene"
 import Main from "../layouts/Main"
 
@@ -9,6 +10,7 @@ function Index() {
   // Frontend States
   const [showMap, setShowMap] = useState(true)
   const [showSimulatedBuilding, setshowSimulatedBuilding] = useState(true)
+  const [isDrawPV, setIsDrawPV] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [showErrorNoGeometry, setshowErrorNoGeometry] = useState(false)
 
@@ -45,6 +47,7 @@ function Index() {
             simulationMesh={displayedSimulationMesh}
           />
         )}
+        {showSimulatedBuilding && <Overlay setIsDrawPV={setIsDrawPV} />}
         {isLoading && <p>Show Loading Bar Component Now</p>}
       </div>
     </Main>
