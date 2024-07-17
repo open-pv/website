@@ -815,7 +815,6 @@ export async function initializeViewer(geometries, resetCamera) {
   STLViewer(resetCamera)
 
   const simGeometry = BufferGeometryUtils.mergeGeometries(geometries.simulation)
-
   const simMaterial = new THREE.MeshLambertMaterial({
     vertexColors: false,
     side: THREE.DoubleSide,
@@ -837,24 +836,28 @@ export async function initializeViewer(geometries, resetCamera) {
     metalness: 0.0,
   })
 
-  const surroundingGeometry = BufferGeometryUtils.mergeGeometries(
-    geometries.surrounding
-  )
-  var surroundingMesh = new THREE.Mesh(surroundingGeometry, surroundingMaterial)
-  scene.add(surroundingMesh)
+  if(geometries.surrounding.length > 0) {
+    const surroundingGeometry = BufferGeometryUtils.mergeGeometries(
+      geometries.surrounding
+    )
+    var surroundingMesh = new THREE.Mesh(surroundingGeometry, surroundingMaterial)
+    scene.add(surroundingMesh)
+  }
 
-  const backgroundGeometry = BufferGeometryUtils.mergeGeometries(
-    geometries.background
-  )
-  const backgroundMaterial = new THREE.MeshLambertMaterial({
-    vertexColors: false,
-    side: THREE.DoubleSide,
-    color: 0xcccccc,
-    transparent: true,
-    opacity: 0.3,
-  })
-  var backgroundMesh = new THREE.Mesh(backgroundGeometry, backgroundMaterial)
-  scene.add(backgroundMesh)
+  if(geometries.background.length > 0) {
+    const backgroundGeometry = BufferGeometryUtils.mergeGeometries(
+      geometries.background
+    )
+    const backgroundMaterial = new THREE.MeshLambertMaterial({
+      vertexColors: false,
+      side: THREE.DoubleSide,
+      color: 0xcccccc,
+      transparent: true,
+      opacity: 0.3,
+    })
+    var backgroundMesh = new THREE.Mesh(backgroundGeometry, backgroundMaterial)
+    scene.add(backgroundMesh)
+  }
 
   /// Add map below the buildings
   const [x, y] = coordinatesXY15
