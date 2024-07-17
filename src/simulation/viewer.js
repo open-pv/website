@@ -815,6 +815,7 @@ export async function initializeViewer(geometries, resetCamera) {
   STLViewer(resetCamera)
 
   const simGeometry = BufferGeometryUtils.mergeGeometries(geometries.simulation)
+
   const simMaterial = new THREE.MeshLambertMaterial({
     vertexColors: false,
     side: THREE.DoubleSide,
@@ -829,13 +830,13 @@ export async function initializeViewer(geometries, resetCamera) {
   simGeometry.boundingBox.getCenter(middle)
 
   scene.add(simulationMesh)
-
   var surroundingMaterial = new THREE.MeshStandardMaterial({
     vertexColors: false,
     side: THREE.DoubleSide,
     color: 0xd1bea4,
     metalness: 0.0,
   })
+
   const surroundingGeometry = BufferGeometryUtils.mergeGeometries(
     geometries.surrounding
   )

@@ -51,9 +51,6 @@ export async function main(inputValue, inputChanged, oldLocation) {
     scene
       .calculate(
         numSimulations,
-        "https://www.openpv.de/data/irradiance",
-        0.22,
-        1400 * 0.22
       )
       .then((simulationMesh) => {
         console.log("Simulation Mesh", simulationMesh)

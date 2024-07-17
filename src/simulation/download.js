@@ -2,9 +2,12 @@ import * as THREE from "three";
 import { Matrix4 } from "three";
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { coordinatesXY15, projectToWebMercator } from "./location";
+import { coordinatesXY15, coordinatesLonLat, projectToWebMercator } from "./location";
 
-const TILE2METERS = 1222.992452;
+function tile2meters() {
+  const lat = coordinatesLonLat[1];
+  return 1222.992452 * Math.cos(lat * Math.PI / 180.0);
+}
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('/draco/');
@@ -53,7 +56,7 @@ async function downloadFile(download_spec) {
         translate.makeTranslation(tile.x - center.x, tile.y - center.y, 0.0);
         const scale2meters = new Matrix4();
         // Flip sign of Y axis (in WebMercator, Y+ points down, but we need it to point up)
-        scale2meters.makeScale(TILE2METERS, -TILE2METERS, 1.0);
+        scale2meters.makeScale(tile2meters(), -tile2meters(), 1.0);
 
         const tx = scale2meters;
         tx.multiply(translate);
@@ -154,8 +157,8 @@ export async function loadMapTile(tx, ty, zoom) {
   const corners = [[0, 0], [1, 0], [0, 1], [1, 1]];
   const vertices = corners.flatMap(([x, y]) => [
     // [[tx, ty], [tx+1, ty], [tx, ty+1], [tx+1, ty+1]];
-    TILE2METERS * ((tx + x) / scale - coordinatesXY15[0]),
-    -TILE2METERS * ((ty + y) / scale - coordinatesXY15[1]),
+    tile2meters() * ((tx + x) / scale - coordinatesXY15[0]),
+    -tile2meters() * ((ty + y) / scale - coordinatesXY15[1]),
     sampleDEM(x, y),
   ]);
 
