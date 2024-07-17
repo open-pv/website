@@ -7,6 +7,7 @@ import BackgroundMesh from "./BackgroundMesh"
 import CustomMapControl from "./CustomMapControl"
 import SimulationMesh from "./SimulationMesh"
 import SurroundingMesh from "./SurroundingMesh"
+import Terrain from "./Terrain"
 
 const Scene = ({ simulationMesh, geometries }) => {
   console.log("SceneGeoms", geometries)
@@ -14,7 +15,8 @@ const Scene = ({ simulationMesh, geometries }) => {
 
   return (
     <Canvas>
-      <ambientLight />
+      <ambientLight intensity={2} />
+      <directionalLight intensity={2} position={[0, 1, -1]} />
       {geometries.surrounding.length > 0 && (
         <SurroundingMesh
           geometry={BufferGeometryUtils.mergeGeometries(geometries.surrounding)}
@@ -29,6 +31,7 @@ const Scene = ({ simulationMesh, geometries }) => {
       {simulationMesh != undefined && (
         <CustomMapControl middle={simulationMesh.middle} />
       )}
+      {simulationMesh != undefined && <Terrain />}
     </Canvas>
   )
 }

@@ -1,7 +1,7 @@
 import React from "react"
 
 const Map = () => {
-  return <p>This will be a map component</p>
+  return <p>This is the map</p>
 }
 
 export default Map
