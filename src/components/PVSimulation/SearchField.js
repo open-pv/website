@@ -1,23 +1,42 @@
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
-import { main } from "../../simulation/main"
+import * as THREE from "three"
+import { mainSimulation } from "../../simulation/main"
 
-function SearchField({ setIsLoading, setshowSimulatedBuilding }) {
-  const [inputValue, setInputValue] = useState("")
-
+function SearchField({
+  setShowScene,
+  setGeometries,
+  setDisplayedSimluationMesh,
+}) {
+  const [inputValue, setInputValue] = useState("Arnulfstraße 138, Münche")
+  window.searchFieldInput = inputValue
   const [inputChanged, setInputChanged] = useState(false)
   const { t, i18n } = useTranslation()
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
+    setShowScene(true)
     setIsLoading(true)
     event.preventDefault()
+    //
+    console.log("inputValue", inputValue)
+    const { simulationMesh, geometries } = await mainSimulation(
+      inputValue,
+      inputChanged,
+      window.mapLocation,
+      setGeometries
+    )
+    let middle = new THREE.Vector3()
+    simulationMesh.geometry.computeBoundingBox()
+    simulationMesh.geometry.boundingBox.getCenter(middle)
+    simulationMesh.middle = middle
 
-    main(inputValue, inputChanged, window.mapLocation)
+    setGeometries(geometries)
+    setDisplayedSimluationMesh(simulationMesh)
     setshowSimulatedBuilding(true)
-    window.numSimulationsChanged = false
-    window.mapLocationChanged = false
-    window.setshowErrorNoGeometry(false)
-    setInputChanged(false)
+    //window.numSimulationsChanged = false
+    //window.mapLocationChanged = false
+    //window.setshowErrorNoGeometry(false)
+    //setInputChanged(false)
   }
   const handleChange = (event) => {
     if (inputValue != event.target.value) {

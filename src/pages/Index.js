@@ -1,14 +1,24 @@
 import React, { useState } from "react"
 import WrongAdress from "../components/ErrorMessages/WrongAdress"
 import SearchField from "../components/PVSimulation/SearchField"
-import ThreeViewer from "../components/ThreeViewer/ThreeViewer"
+import Map from "../components/ThreeViewer/Map"
+import Scene from "../components/ThreeViewer/Scene"
 import Main from "../layouts/Main"
 
 function Index() {
+  // Frontend States
   const [showMap, setShowMap] = useState(true)
-  const [showSimulatedBuilding, setshowSimulatedBuilding] = useState(false)
+  const [showSimulatedBuilding, setshowSimulatedBuilding] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [showErrorNoGeometry, setshowErrorNoGeometry] = useState(false)
+
+  // Simulation States
+  const [geometries, setGeometries] = useState({
+    surrounding: [],
+    background: [],
+  })
+  const [displayedSimulationMesh, setDisplayedSimluationMesh] =
+    useState(undefined)
 
   window.setShowThreeViewer = setShowMap
   window.setshowErrorNoGeometry = setshowErrorNoGeometry
@@ -21,15 +31,19 @@ function Index() {
         <header>
           <div className="title">
             <SearchField
-              setIsLoading={setIsLoading}
-              setshowSimulatedBuilding={setshowSimulatedBuilding}
+              setShowScene={setshowSimulatedBuilding}
+              setGeometries={setGeometries}
+              setDisplayedSimluationMesh={setDisplayedSimluationMesh}
             />
           </div>
         </header>
         {showErrorNoGeometry && <WrongAdress />}
-
-        {showMap && (
-          <ThreeViewer showSimulatedBuilding={showSimulatedBuilding} />
+        {showMap && <Map />}
+        {showSimulatedBuilding && (
+          <Scene
+            geometries={geometries}
+            simulationMesh={displayedSimulationMesh}
+          />
         )}
         {isLoading && <p>Show Loading Bar Component Now</p>}
       </article>

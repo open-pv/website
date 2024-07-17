@@ -5,18 +5,24 @@ import * as THREE from "three"
 import { downloadBuildings } from "./download"
 import { setLocation } from "./location"
 import { processGeometries } from "./preprocessing"
-import { initializeViewer, swapSimulationMesh } from "./viewer"
+import { initializeViewer, simulationMesh, swapSimulationMesh } from "./viewer"
 
 window.numSimulations = 80
 
-export async function main(inputValue, inputChanged, oldLocation) {
+export async function mainSimulation(
+  inputValue,
+  inputChanged,
+  oldLocation,
+  setGeometries
+) {
   const location = await setLocation(inputValue, inputChanged, oldLocation)
 
   if (typeof location !== "undefined" && location != null) {
     const buildingGeometries = await downloadBuildings(location)
 
     // TODO: Dynamically call this when sliders are moved instead of re-downloading everything
-    const geometries = processGeometries(buildingGeometries)
+    let geometries = processGeometries(buildingGeometries)
+    setGeometries(geometries)
     if (geometries.simulation.length == 0) {
       window.setshowErrorNoGeometry(true)
       return
@@ -36,35 +42,31 @@ export async function main(inputValue, inputChanged, oldLocation) {
       scene.addShadingGeometry(geom)
     })
 
-    initializeViewer(geometries, inputChanged)
+    //initializeViewer(geometries, inputChanged)
     let numSimulations
     window.numSimulations
       ? (numSimulations = window.numSimulations)
       : (numSimulations = 80)
-    scene
-      .calculate(
-        numSimulations,
-        "https://www.openpv.de/data/irradiance",
-        0.22,
-        1400 * 0.22
-      )
-      .then((simulationMesh) => {
-        console.log("Simulation Mesh", simulationMesh)
-        window.setIsLoading(false)
-        console.log(simulationMesh)
-        const material = new THREE.MeshLambertMaterial({
-          vertexColors: true,
-          side: THREE.DoubleSide,
-        })
-        simulationMesh.material = material
-        simulationMesh.name = "simulationMesh"
+    let simulationMesh = await scene.calculate(
+      numSimulations,
+      undefined,
+      0.22,
+      1400 * 0.22
+    )
 
-        swapSimulationMesh(simulationMesh)
-      })
-  } else {
+    console.log("Simulation Mesh", simulationMesh)
     window.setIsLoading(false)
-    window.setShowThreeViewer(false)
-    window.setshowErrorNoGeometry(true)
+    const material = new THREE.MeshLambertMaterial({
+      vertexColors: true,
+      side: THREE.DoubleSide,
+    })
+    simulationMesh.material = material
+    simulationMesh.name = "simulationMesh"
+    // } else {
+    // window.setIsLoading(false)
+    // window.setShowThreeViewer(false)
+    // window.setshowErrorNoGeometry(true)
+    return { simulationMesh, geometries }
   }
 
   if (inputChanged) {

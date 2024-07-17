@@ -66,11 +66,14 @@ export function STLViewer(resetCamera = true) {
     false
   )
 
-  setupMapControls()
+  //setupMapControls()
+  setupControlsDrawPV()
   setupScene()
   addEventListeners(elem)
   animate()
 }
+
+function setupControlsDrawPV() {}
 
 function onRightClick(event) {
   event.preventDefault()
@@ -187,10 +190,10 @@ function onKeyDown(event) {
     return
   }
 
-  if (event.code === "Space") {
+  if (event.button === 0) {
     event.preventDefault()
     handleSpaceKey()
-  } else if (event.code === "KeyP") {
+  } else if (event.code === "Enter") {
     createPolygon()
   } else if (event.code === "KeyR") {
     resetScene()

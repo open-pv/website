@@ -1,6 +1,6 @@
 import React from "react"
 
-export default function Overlay() {
+export default function Overlay({ setIsDrawPV }) {
   return (
     <>
       <div
@@ -13,7 +13,10 @@ export default function Overlay() {
           margin: "10px",
         }}
       >
-        <button style={{ width: "100%", height: "50px" }}>
+        <button
+          style={{ width: "100%", height: "50px" }}
+          onClick={setIsDrawPV(true)}
+        >
           PV Anlage einzeichnen
         </button>
         <button style={{ width: "100%", height: "50px" }}>
