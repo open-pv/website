@@ -27,7 +27,7 @@ function Index() {
 
   return (
     <Main description={"Berechne das Potential deiner Solaranlage."}>
-      <article className="post" id="index">
+      <div style={{ height: "500px" }}>
         <header>
           <div className="title">
             <SearchField
@@ -46,7 +46,7 @@ function Index() {
           />
         )}
         {isLoading && <p>Show Loading Bar Component Now</p>}
-      </article>
+      </div>
     </Main>
   )
 }
