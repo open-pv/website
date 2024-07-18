@@ -9,7 +9,7 @@ import Main from "../layouts/Main"
 function Index() {
   // Frontend States
   const [showMap, setShowMap] = useState(true)
-  const [showSimulatedBuilding, setshowSimulatedBuilding] = useState(true)
+  const [showSimulatedBuilding, setshowSimulatedBuilding] = useState(false)
   const [isDrawPV, setIsDrawPV] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [showErrorNoGeometry, setshowErrorNoGeometry] = useState(false)
