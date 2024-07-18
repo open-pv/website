@@ -4,25 +4,6 @@ import { Helmet, HelmetProvider } from "react-helmet-async"
 
 import Navigation from "../components/Template/Navigation"
 
-const Footer = () => (
-  <footer id="footer">
-    <p className="copyright">
-      &copy; Erstellt vom <a href="https://github.com/open-pv">Team OpenPV</a>,{" "}
-      <a href="/Impressum">Impressum</a>
-      {" | "}
-      <a href="/Datenschutz">Datenschutz</a>
-      {" | "}
-      <a href="" onClick={() => changeLanguage("en")}>
-        English
-      </a>
-      {" | "}
-      <a href="" onClick={() => changeLanguage("de")}>
-        German
-      </a>
-    </p>
-  </footer>
-)
-
 const Main = (props) => (
   <HelmetProvider>
     <Helmet titleTemplate="%s | OpenPV" defaultTitle="OpenPV" defer={false}>
@@ -33,7 +14,6 @@ const Main = (props) => (
       <Navigation />
       <div id="main">
         {props.children}
-        <Footer />
       </div>
     </div>
   </HelmetProvider>

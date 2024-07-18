@@ -29,16 +29,16 @@ function Index() {
 
   return (
     <Main description={"Berechne das Potential deiner Solaranlage."}>
-      <div style={{ height: "500px" }}>
-        <header>
-          <div className="title">
-            <SearchField
-              setShowScene={setshowSimulatedBuilding}
-              setGeometries={setGeometries}
-              setDisplayedSimluationMesh={setDisplayedSimluationMesh}
-            />
-          </div>
-        </header>
+      <header>
+        <div className="title">
+          <SearchField
+            setShowScene={setshowSimulatedBuilding}
+            setGeometries={setGeometries}
+            setDisplayedSimluationMesh={setDisplayedSimluationMesh}
+          />
+        </div>
+      </header>
+      <div class="content">
         {showErrorNoGeometry && <WrongAdress />}
         {showMap && <Map />}
         {showSimulatedBuilding && (

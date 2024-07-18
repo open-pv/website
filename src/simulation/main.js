@@ -50,8 +50,6 @@ export async function mainSimulation(
     let simulationMesh = await scene.calculate(
       numSimulations,
       undefined,
-      0.22,
-      1400 * 0.22
     )
 
     console.log("Simulation Mesh", simulationMesh)
