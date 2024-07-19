@@ -1,5 +1,4 @@
-import { MapControls, OrbitControls } from "@react-three/drei"
-import React, { useEffect, useState } from "react"
+import React from "react"
 import { Canvas } from "react-three-fiber"
 
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
