@@ -1,7 +1,9 @@
 import React from "react"
 
 const Map = () => {
-  return <p>This is the map</p>
+  return <div class="mapview">
+    This is the map
+  </div>
 }
 
 export default Map

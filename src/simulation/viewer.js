@@ -39,8 +39,8 @@ export function STLViewerEnable(classname) {
 
 export function STLViewer(resetCamera = true) {
   const elem = document.getElementsByClassName("three-viewer")[0]
-  elem.style.width = "100%"
-  elem.style.height = "500px"
+  // elem.style.width = "100%"
+  // elem.style.height = "500px"
 
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
 
