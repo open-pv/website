@@ -7,6 +7,7 @@ function SearchField({
   setFrontendState,
   setGeometries,
   setDisplayedSimluationMesh,
+  setControlsState,
 }) {
   const [inputValue, setInputValue] = useState("Arnulfstraße 138, Münche")
   window.searchFieldInput = inputValue
@@ -32,6 +33,7 @@ function SearchField({
     setGeometries(geometries)
     setDisplayedSimluationMesh(simulationMesh)
     setFrontendState("Results")
+    setControlsState("Results")
   }
   const handleChange = (event) => {
     if (inputValue != event.target.value) {

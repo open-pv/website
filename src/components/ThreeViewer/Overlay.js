@@ -1,18 +1,21 @@
 import React from "react"
 
-export default function Overlay({ setIsDrawPV, showTerrain, setShowTerrain }) {
+export default function Overlay({
+  setControlsState,
+  showTerrain,
+  setShowTerrain,
+}) {
   return (
     <div className="overlay">
-      {false && (
-        <div className="overlay-buttons">
-          <button>PV Anlage einzeichnen</button>
-          <button>Parameter ändern</button>
-          <button onClick={setShowTerrain(!showTerrain)}>
-            Karte ein-/ausblenden
-          </button>
-        </div>
-      )}
-
+      <div className="overlay-buttons">
+        <button onClick={() => setControlsState("drawPV")}>
+          PV Anlage einzeichnen
+        </button>
+        <button>Parameter ändern</button>
+        <button onClick={() => setShowTerrain(!showTerrain)}>
+          Karte ein-/ausblenden
+        </button>
+      </div>
       <div className="attribution">
         <p className="copyright">
           <a href="https://geodaten.bayern.de/opengeodata/">Gebäudedaten</a> der
