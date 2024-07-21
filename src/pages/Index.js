@@ -9,7 +9,6 @@ import Main from "../layouts/Main"
 
 function Index() {
   // Frontend States
-  const [showMap, setShowMap] = useState(true)
   const [frontendState, setFrontendState] = useState("Map")
   const [isDrawPV, setIsDrawPV] = useState(false)
   const [showErrorNoGeometry, setshowErrorNoGeometry] = useState(false)
@@ -24,7 +23,6 @@ function Index() {
   const [displayedSimulationMesh, setDisplayedSimluationMesh] =
     useState(undefined)
 
-  window.setShowThreeViewer = setShowMap
   window.setshowErrorNoGeometry = setshowErrorNoGeometry
   window.setFrontendState = setFrontendState
   window.setSimulationProgress = setSimulationProgress
@@ -42,7 +40,7 @@ function Index() {
       </header>
       <div className="content">
         {showErrorNoGeometry && <WrongAdress />}
-        {showMap && <Map />}
+        {frontendState == "Map" && <Map />}
         {frontendState == "Results" && (
           <Overlay
             setIsDrawPV={setIsDrawPV}
