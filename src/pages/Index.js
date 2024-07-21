@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import WrongAdress from "../components/ErrorMessages/WrongAdress"
 import SearchField from "../components/PVSimulation/SearchField"
+import LoadingBar from "../components/Template/LoadingBar"
 import Map from "../components/ThreeViewer/Map"
 import Overlay from "../components/ThreeViewer/Overlay"
 import Scene from "../components/ThreeViewer/Scene"
@@ -9,10 +10,11 @@ import Main from "../layouts/Main"
 function Index() {
   // Frontend States
   const [showMap, setShowMap] = useState(true)
-  const [showSimulatedBuilding, setshowSimulatedBuilding] = useState(false)
+  const [frontendState, setFrontendState] = useState("Map")
   const [isDrawPV, setIsDrawPV] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [showErrorNoGeometry, setshowErrorNoGeometry] = useState(false)
+  const [showTerrain, setShowTerrain] = useState(true)
+  const [simulationProgress, setSimulationProgress] = useState(0)
 
   // Simulation States
   const [geometries, setGeometries] = useState({
@@ -24,31 +26,41 @@ function Index() {
 
   window.setShowThreeViewer = setShowMap
   window.setshowErrorNoGeometry = setshowErrorNoGeometry
-  window.setIsLoading = setIsLoading
-  window.setshowSimulatedBuilding = setshowSimulatedBuilding
+  window.setFrontendState = setFrontendState
+  window.setSimulationProgress = setSimulationProgress
 
   return (
     <Main description={"Berechne das Potential deiner Solaranlage."}>
       <header>
         <div className="title">
           <SearchField
-            setShowScene={setshowSimulatedBuilding}
+            setFrontendState={setFrontendState}
             setGeometries={setGeometries}
             setDisplayedSimluationMesh={setDisplayedSimluationMesh}
           />
         </div>
       </header>
-      <div class="content">
+      <div className="content">
         {showErrorNoGeometry && <WrongAdress />}
         {showMap && <Map />}
-        {showSimulatedBuilding && (
+        {frontendState == "Results" && (
+          <Overlay
+            setIsDrawPV={setIsDrawPV}
+            showTerrain={showTerrain}
+            setShowTerrain={setShowTerrain}
+          />
+        )}
+        {frontendState == "Results" && (
           <Scene
             geometries={geometries}
             simulationMesh={displayedSimulationMesh}
+            showTerrain={showTerrain}
           />
         )}
-        {showSimulatedBuilding && <Overlay setIsDrawPV={setIsDrawPV} />}
-        {isLoading && <p>Show Loading Bar Component Now</p>}
+
+        {frontendState == "Loading" && (
+          <LoadingBar progress={simulationProgress} />
+        )}
       </div>
     </Main>
   )

@@ -4,7 +4,7 @@ import * as THREE from "three"
 import { mainSimulation } from "../../simulation/main"
 
 function SearchField({
-  setShowScene,
+  setFrontendState,
   setGeometries,
   setDisplayedSimluationMesh,
 }) {
@@ -14,8 +14,7 @@ function SearchField({
   const { t, i18n } = useTranslation()
 
   const handleSubmit = async (event) => {
-    setShowScene(true)
-    setIsLoading(true)
+    setFrontendState("Loading")
     event.preventDefault()
     //
     console.log("inputValue", inputValue)
@@ -32,11 +31,7 @@ function SearchField({
 
     setGeometries(geometries)
     setDisplayedSimluationMesh(simulationMesh)
-    setshowSimulatedBuilding(true)
-    //window.numSimulationsChanged = false
-    //window.mapLocationChanged = false
-    //window.setshowErrorNoGeometry(false)
-    //setInputChanged(false)
+    setFrontendState("Results")
   }
   const handleChange = (event) => {
     if (inputValue != event.target.value) {

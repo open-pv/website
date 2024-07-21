@@ -1,21 +1,21 @@
 import React from "react"
 
-export default function Overlay({ setIsDrawPV }) {
+export default function Overlay({ setIsDrawPV, showTerrain, setShowTerrain }) {
   return (
-    <div class="overlay">
-      <div class="overlay-buttons">
-        <button onClick={setIsDrawPV(true)}>
-          PV Anlage einzeichnen
-        </button>
-        <button >
-          Parameter ändern
-        </button>
-      </div>
+    <div className="overlay">
+      {false && (
+        <div className="overlay-buttons">
+          <button>PV Anlage einzeichnen</button>
+          <button>Parameter ändern</button>
+          <button onClick={setShowTerrain(!showTerrain)}>
+            Karte ein-/ausblenden
+          </button>
+        </div>
+      )}
 
-      <div class="attribution">
-        <p class="copyright">
-          <a href="https://geodaten.bayern.de/opengeodata/">Gebäudedaten</a>{" "}
-          der
+      <div className="attribution">
+        <p className="copyright">
+          <a href="https://geodaten.bayern.de/opengeodata/">Gebäudedaten</a> der
           <a href="https://www.ldbv.bayern.de/vermessung/bvv.html">
             {" "}
             Bayerischen Vermessungsverwaltung{" "}
@@ -27,7 +27,8 @@ export default function Overlay({ setIsDrawPV }) {
         </p>
 
         <p className="copyright">
-          &copy; Erstellt vom <a href="https://github.com/open-pv">Team OpenPV</a>,{" "}
+          &copy; Erstellt vom{" "}
+          <a href="https://github.com/open-pv">Team OpenPV</a>,{" "}
           <a href="/Impressum">Impressum</a>
           {" | "}
           <a href="/Datenschutz">Datenschutz</a>

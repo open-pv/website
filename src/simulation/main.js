@@ -47,23 +47,26 @@ export async function mainSimulation(
     window.numSimulations
       ? (numSimulations = window.numSimulations)
       : (numSimulations = 80)
+    function loadingBarWrapperFunction(progress, total = 100) {
+      console.log("Simulation Progress is ", progress)
+      return window.setSimulationProgress(progress)
+    }
+
     let simulationMesh = await scene.calculate(
       numSimulations,
       undefined,
+      0.2,
+      1400 * 0.2,
+      loadingBarWrapperFunction
     )
 
     console.log("Simulation Mesh", simulationMesh)
-    window.setIsLoading(false)
     const material = new THREE.MeshLambertMaterial({
       vertexColors: true,
       side: THREE.DoubleSide,
     })
     simulationMesh.material = material
     simulationMesh.name = "simulationMesh"
-    // } else {
-    // window.setIsLoading(false)
-    // window.setShowThreeViewer(false)
-    // window.setshowErrorNoGeometry(true)
     return { simulationMesh, geometries }
   }
 

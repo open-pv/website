@@ -908,7 +908,7 @@ export async function initializeViewer(geometries, resetCamera) {
     controls.update()
     renderer.render(scene, camera)
   }
-  window.setshowSimulatedBuilding(true)
+  window.setFrontendState("Results")
   animate()
 }
 

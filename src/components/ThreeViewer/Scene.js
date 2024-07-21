@@ -8,7 +8,7 @@ import SimulationMesh from "./SimulationMesh"
 import SurroundingMesh from "./SurroundingMesh"
 import Terrain from "./Terrain"
 
-const Scene = ({ simulationMesh, geometries }) => {
+const Scene = ({ simulationMesh, geometries, showTerrain }) => {
   console.log("SceneGeoms", geometries)
   console.log("SceneSimulationMesh", simulationMesh)
 
@@ -30,7 +30,7 @@ const Scene = ({ simulationMesh, geometries }) => {
       {simulationMesh != undefined && (
         <CustomMapControl middle={simulationMesh.middle} />
       )}
-      {simulationMesh != undefined && <Terrain />}
+      {simulationMesh != undefined && showTerrain && <Terrain />}
     </Canvas>
   )
 }
