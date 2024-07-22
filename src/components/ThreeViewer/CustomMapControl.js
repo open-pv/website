@@ -70,11 +70,10 @@ function CustomMapControl(props) {
     controls.current.update()
     //controls.current.target = props.middle
   })
-  let returnVal = (
+
+  return (
     <mapControls ref={controls} args={[camera, gl.domElement]} {...props} />
   )
-  console.log(returnVal)
-  return returnVal
 }
 
 export default CustomMapControl

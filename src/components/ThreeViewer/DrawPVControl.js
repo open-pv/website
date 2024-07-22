@@ -7,23 +7,34 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
 extend({ OrbitControls })
 
-export default function DrawPVControl() {
+export default function DrawPVControl(props) {
   const controls = useRef()
   const { camera, gl } = useThree()
 
-  useEffect(() => {
-    controls.current.update()
-  }, [])
+  camera.far = 10000
+  camera.position.set(props.middle.x, props.middle.y, props.middle.z)
+  const offset = new THREE.Vector3(0, -40, 80)
+  camera.position.add(offset)
+  camera.lookAt(props.middle)
+  camera.up = new THREE.Vector3(0, 0, 1)
 
-  useFrame(() => {
+  useEffect(() => {
     if (controls.current) {
-      controls.current.update()
+      controls.current.target = props.middle // Set your desired target
       controls.current.mouseButtons = {
         LEFT: THREE.MOUSE.PAN,
         MIDDLE: THREE.MOUSE.DOLLY,
         RIGHT: THREE.MOUSE.ROTATE,
       }
+
+      controls.current.screenSpacePanning = false
+      controls.current.maxPolarAngle = Math.PI / 2
+      controls.current.update()
     }
+  }, [])
+
+  useFrame(() => {
+    controls.current.update()
   })
 
   return <orbitControls ref={controls} args={[camera, gl.domElement]} />

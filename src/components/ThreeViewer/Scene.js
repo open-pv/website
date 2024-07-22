@@ -31,7 +31,9 @@ const Scene = ({ simulationMesh, geometries, showTerrain, frontendState }) => {
       {simulationMesh != undefined && frontendState == "Results" && (
         <CustomMapControl middle={simulationMesh.middle} />
       )}
-      {frontendState == "DrawPV" && <DrawPVControl />}
+      {frontendState == "DrawPV" && (
+        <DrawPVControl middle={simulationMesh.middle} />
+      )}
       {simulationMesh != undefined && showTerrain && <Terrain />}
     </Canvas>
   )
