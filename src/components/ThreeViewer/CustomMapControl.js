@@ -44,7 +44,6 @@ function CustomMapControl(props) {
   const controls = useRef()
 
   const { camera, gl } = useThree()
-  camera.far = 10000
   camera.position.set(props.middle.x, props.middle.y, props.middle.z)
   const offset = new THREE.Vector3(0, -40, 80)
   camera.position.add(offset)

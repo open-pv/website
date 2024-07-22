@@ -15,6 +15,7 @@ const Scene = ({ simulationMesh, geometries, showTerrain, frontendState }) => {
 
   return (
     <Canvas>
+      <perspectiveCamera fov={45} near={1} far={10000} />
       <ambientLight intensity={2} />
       <directionalLight intensity={2} position={[0, 1, -1]} />
       {geometries.surrounding.length > 0 && (
@@ -40,4 +41,3 @@ const Scene = ({ simulationMesh, geometries, showTerrain, frontendState }) => {
 }
 
 export default Scene
-//<mesh geometry={geometries.surrounding} material={surroundingMaterial} />
