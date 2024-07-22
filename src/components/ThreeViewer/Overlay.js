@@ -1,14 +1,14 @@
 import React from "react"
 
 export default function Overlay({
-  setControlsState,
+  setFrontendState,
   showTerrain,
   setShowTerrain,
 }) {
   return (
     <div className="overlay">
       <div className="overlay-buttons">
-        <button onClick={() => setControlsState("drawPV")}>
+        <button onClick={() => setFrontendState("DrawPV")}>
           PV Anlage einzeichnen
         </button>
         <button>Parameter ändern</button>

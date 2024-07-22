@@ -10,7 +10,6 @@ import Main from "../layouts/Main"
 function Index() {
   // Frontend States
   const [frontendState, setFrontendState] = useState("Map")
-  const [controlsState, setControlsState] = useState("None")
   const [showErrorNoGeometry, setshowErrorNoGeometry] = useState(false)
   const [showTerrain, setShowTerrain] = useState(true)
   const [simulationProgress, setSimulationProgress] = useState(0)
@@ -24,7 +23,6 @@ function Index() {
     useState(undefined)
 
   window.setshowErrorNoGeometry = setshowErrorNoGeometry
-  window.setFrontendState = setFrontendState
   window.setSimulationProgress = setSimulationProgress
 
   return (
@@ -35,7 +33,6 @@ function Index() {
             setFrontendState={setFrontendState}
             setGeometries={setGeometries}
             setDisplayedSimluationMesh={setDisplayedSimluationMesh}
-            setControlsState={setControlsState}
           />
         </div>
       </header>
@@ -44,17 +41,17 @@ function Index() {
         {frontendState == "Map" && <Map />}
         {frontendState == "Results" && (
           <Overlay
-            setControlsState={setControlsState}
+            setFrontendState={setFrontendState}
             showTerrain={showTerrain}
             setShowTerrain={setShowTerrain}
           />
         )}
-        {frontendState == "Results" && (
+        {(frontendState == "Results" || frontendState == "DrawPV") && (
           <Scene
             geometries={geometries}
             simulationMesh={displayedSimulationMesh}
             showTerrain={showTerrain}
-            controlsState={controlsState}
+            frontendState={frontendState}
           />
         )}
 

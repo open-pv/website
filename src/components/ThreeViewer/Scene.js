@@ -9,7 +9,7 @@ import SimulationMesh from "./SimulationMesh"
 import SurroundingMesh from "./SurroundingMesh"
 import Terrain from "./Terrain"
 
-const Scene = ({ simulationMesh, geometries, showTerrain, controlsState }) => {
+const Scene = ({ simulationMesh, geometries, showTerrain, frontendState }) => {
   console.log("SceneGeoms", geometries)
   console.log("SceneSimulationMesh", simulationMesh)
 
@@ -28,10 +28,10 @@ const Scene = ({ simulationMesh, geometries, showTerrain, controlsState }) => {
         />
       )}
       {simulationMesh != undefined && <SimulationMesh mesh={simulationMesh} />}
-      {simulationMesh != undefined && controlsState == "Results" && (
+      {simulationMesh != undefined && frontendState == "Results" && (
         <CustomMapControl middle={simulationMesh.middle} />
       )}
-      {controlsState == "drawPV" && <DrawPVControl />}
+      {frontendState == "DrawPV" && <DrawPVControl />}
       {simulationMesh != undefined && showTerrain && <Terrain />}
     </Canvas>
   )
