@@ -79,7 +79,7 @@ async function loadMapTile(tx, ty, zoom) {
     side: THREE.DoubleSide,
   })
 
-  return <mesh geometry={geometry} material={material} />
+  return <mesh key={`${tx}-${ty}`} geometry={geometry} material={material} />
 }
 
 const Terrain = () => {
