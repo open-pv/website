@@ -3,6 +3,7 @@ import WrongAdress from "../components/ErrorMessages/WrongAdress"
 import SearchField from "../components/PVSimulation/SearchField"
 import LoadingBar from "../components/Template/LoadingBar"
 import Map from "../components/ThreeViewer/Map"
+import OverlayDrawPV from "../components/ThreeViewer/OverlayDrawPV"
 import OverlayResults from "../components/ThreeViewer/OverlayResults"
 import Scene from "../components/ThreeViewer/Scene"
 import Main from "../layouts/Main"
@@ -46,6 +47,7 @@ function Index() {
             setShowTerrain={setShowTerrain}
           />
         )}
+        {frontendState == "DrawPV" && <OverlayDrawPV />}
         {(frontendState == "Results" || frontendState == "DrawPV") && (
           <Scene
             geometries={geometries}
