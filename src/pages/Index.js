@@ -3,7 +3,7 @@ import WrongAdress from "../components/ErrorMessages/WrongAdress"
 import SearchField from "../components/PVSimulation/SearchField"
 import LoadingBar from "../components/Template/LoadingBar"
 import Map from "../components/ThreeViewer/Map"
-import Overlay from "../components/ThreeViewer/Overlay"
+import OverlayResults from "../components/ThreeViewer/OverlayResults"
 import Scene from "../components/ThreeViewer/Scene"
 import Main from "../layouts/Main"
 
@@ -40,7 +40,7 @@ function Index() {
         {showErrorNoGeometry && <WrongAdress />}
         {frontendState == "Map" && <Map />}
         {frontendState == "Results" && (
-          <Overlay
+          <OverlayResults
             setFrontendState={setFrontendState}
             showTerrain={showTerrain}
             setShowTerrain={setShowTerrain}

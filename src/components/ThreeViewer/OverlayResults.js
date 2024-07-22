@@ -1,6 +1,6 @@
 import React from "react"
 
-export default function Overlay({
+export default function OverlayResults({
   setFrontendState,
   showTerrain,
   setShowTerrain,
