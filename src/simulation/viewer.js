@@ -201,11 +201,11 @@ function onKeyDown(event) {
 }
 
 function handleSpaceKey() {
-  raycaster.setFromCamera(lastMousePosition, camera)
+  raycaster.setFromCamera(lastMousePosition, camera) // raycaster bekommt Kamera info
   const intersects = raycaster.intersectObjects(
     scene.children.filter((obj) => !drawnObjects.includes(obj)),
     true
-  )
+  ) // raycaster intersection mit allen children der Szene
 
   if (intersects.length > 0) {
     const intersect = intersects[0]
@@ -226,7 +226,7 @@ function handleSpaceKey() {
       scene.remove(cursor)
     }
 
-    cursor = createCursor(offsetPoint)
+    cursor = createCursor(offsetPoint) // Cursor ist der Rote Punkt
     scene.add(cursor)
     console.log("Cursor added at:", offsetPoint)
   } else {
@@ -278,6 +278,7 @@ function createMouseCursor(position) {
 }
 
 function createSprite(text, position) {
+  // Angezeigtes Kästchen mit Text, nicht die Solaranlage
   const canvas = document.createElement("canvas")
   const context = canvas.getContext("2d")
 
@@ -310,6 +311,7 @@ function createSprite(text, position) {
 }
 
 function createPolygon() {
+  //Solaranlage
   if (clickedPoints.length < 3) {
     console.log("Not enough points to create a polygon")
     return
@@ -377,7 +379,7 @@ function createPolygon() {
       newVertices[i + 1],
       newVertices[i + 2]
     )
-    const closestPolygon = findClosestPolygon(vertex, prefilteredPolygons)
+    const closestPolygon = findClosestPolygon(vertex, prefilteredPolygons) // Für eingezeichnetes Poligon das darunterliegende finden
     if (closestPolygon) {
       const projectedVertex = projectOntoTriangle(vertex, closestPolygon)
       const color = getColorAtPointOnTriangle(projectedVertex, closestPolygon)
@@ -449,6 +451,7 @@ function createPolygon() {
 }
 
 function calculateCentroid(vertices) {
+  //Mittelpunkt vom Polygon um das Sprite zu setzen
   const numVertices = vertices.length / 3
   const centroid = new THREE.Vector3()
 
@@ -464,6 +467,7 @@ function calculateCentroid(vertices) {
 }
 
 function subdivideTriangle(triangle, threshold) {
+  // zerteilt und triangulisiert das Polygon, damit die Intensity des Poligon an vielen stellen gemessen werden kann
   const ab = triangle.a.distanceTo(triangle.b)
   const bc = triangle.b.distanceTo(triangle.c)
   const ca = triangle.c.distanceTo(triangle.a)
