@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef } from "react"
 import { Canvas } from "react-three-fiber"
 
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
@@ -12,10 +12,24 @@ import Terrain from "./Terrain"
 const Scene = ({ simulationMesh, geometries, showTerrain, frontendState }) => {
   console.log("SceneGeoms", geometries)
   console.log("SceneSimulationMesh", simulationMesh)
+  const position = [
+    simulationMesh.middle.x,
+    simulationMesh.middle.y - 40,
+    simulationMesh.middle.z + 80,
+  ]
+  const cameraRef = useRef()
 
   return (
-    <Canvas>
-      <perspectiveCamera fov={45} near={1} far={20000} />
+    <Canvas
+      camera={{
+        fov: 45,
+        near: 1,
+        far: 20000,
+        position: position,
+        up: [0, 0, 1],
+        ref: cameraRef,
+      }}
+    >
       <ambientLight intensity={2} />
       <directionalLight intensity={2} position={[0, 1, -1]} />
       {geometries.surrounding.length > 0 && (
