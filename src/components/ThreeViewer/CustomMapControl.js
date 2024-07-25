@@ -43,13 +43,8 @@ function onRightClick(event) {
 function CustomMapControl(props) {
   const controls = useRef()
 
-  const { camera, gl } = useThree()
-  camera.position.set(props.middle.x, props.middle.y, props.middle.z)
-  const offset = new THREE.Vector3(0, -40, 80)
-  camera.position.add(offset)
-  camera.lookAt(props.middle)
-  camera.up = new THREE.Vector3(0, 0, 1)
-  //gl.domElement.addEventListener("contextmenu", onRightClick, false)
+  const { gl, camera } = useThree()
+
   useEffect(() => {
     if (controls.current) {
       controls.current.target = props.middle // Set your desired target
@@ -67,7 +62,6 @@ function CustomMapControl(props) {
 
   useFrame(() => {
     controls.current.update()
-    //controls.current.target = props.middle
   })
 
   return (
