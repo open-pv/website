@@ -11,19 +11,13 @@ export default function DrawPVControl(props) {
   const controls = useRef()
   const { camera, gl } = useThree()
 
-  camera.position.set(props.middle.x, props.middle.y, props.middle.z)
-  const offset = new THREE.Vector3(0, -40, 80)
-  camera.position.add(offset)
-  camera.lookAt(props.middle)
-  camera.up = new THREE.Vector3(0, 0, 1)
-
   useEffect(() => {
     if (controls.current) {
       controls.current.target = props.middle // Set your desired target
       controls.current.mouseButtons = {
-        LEFT: THREE.MOUSE.PAN,
-        MIDDLE: THREE.MOUSE.DOLLY,
-        RIGHT: THREE.MOUSE.ROTATE,
+        LEFT: THREE.MOUSE.PAN, // Punkte setzen -> raycaster findet nächstgelegenes Poligon on mouse move oder click,
+        MIDDLE: THREE.MOUSE.DOLLY, // Zoomen
+        RIGHT: THREE.MOUSE.ROTATE, // Bleibt Rotate
       }
 
       controls.current.screenSpacePanning = false
