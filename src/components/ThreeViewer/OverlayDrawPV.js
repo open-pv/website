@@ -1,6 +1,6 @@
 import React from "react"
 
-export default function OverlayDrawPV() {
+export default function OverlayDrawPV(pvPoints) {
   return (
     <div className="overlay">
       <div className="overlay-buttons">

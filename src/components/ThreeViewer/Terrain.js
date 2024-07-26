@@ -6,9 +6,9 @@ import { coordinatesXY15 } from "../../simulation/location"
 /** Load an OSM map tile and return it as a THREE Mesh
  */
 const TerrainTile = (props) => {
-  const zoom = props.zoom;
-  const tx = props.x;
-  const ty = props.y;
+  const zoom = props.zoom
+  const tx = props.x
+  const ty = props.y
 
   const url = `https://sgx.geodatenzentrum.de/wmts_basemapde/tile/1.0.0/de_basemapde_web_raster_farbe/default/GLOBAL_WEBMERCATOR/${zoom}/${ty}/${tx}.png`
   const shift = zoom - 12
@@ -18,18 +18,17 @@ const TerrainTile = (props) => {
   }
 
   // const dem_url = `https://maps.heidler.info/dem-tiles-12/12/${tx >> shift}/${ty >> shift}.png`;
-  const dem_url = `https://web3d.basemap.de/maplibre/dgm5-rgb/12/${tx >> shift}/${ty >> shift}.png`
+  const dem_url = `https://web3d.basemap.de/maplibre/dgm5-rgb/12/${
+    tx >> shift
+  }/${ty >> shift}.png`
 
-  let [geometry, setGeometry] = useState(null);
-  let [material, setMaterial] = useState(null);
+  let [geometry, setGeometry] = useState(null)
+  let [material, setMaterial] = useState(null)
   let [meshLoaded, setMeshLoaded] = useState(false)
 
-  let mesh = <>
-    { meshLoaded && 
-      <mesh geometry={geometry} material={material} />
-    }
-  </>
-  console.log(mesh);
+  let mesh = (
+    <>{meshLoaded && <mesh geometry={geometry} material={material} />}</>
+  )
 
   useEffect(() => {
     async function fetchData() {
@@ -85,44 +84,46 @@ const TerrainTile = (props) => {
       // Triangle indices
       const indices = new Uint32Array([0, 2, 1, 1, 2, 3])
       const geometry = new THREE.BufferGeometry()
-      geometry.setAttribute("position", new THREE.BufferAttribute(vertexBuffer, 3))
+      geometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(vertexBuffer, 3)
+      )
       geometry.setAttribute("uv", new THREE.BufferAttribute(uvs, 2))
       geometry.setIndex(new THREE.BufferAttribute(indices, 1))
 
-      setGeometry(geometry);
-      setMaterial(new THREE.MeshBasicMaterial({
-        map: await mapFuture,
-        side: THREE.DoubleSide,
-      }));
-      setMeshLoaded(true);
+      setGeometry(geometry)
+      setMaterial(
+        new THREE.MeshBasicMaterial({
+          map: await mapFuture,
+          side: THREE.DoubleSide,
+        })
+      )
+      setMeshLoaded(true)
     }
     fetchData()
   }, [])
 
-  return mesh;
+  return mesh
 }
 
 const Terrain = () => {
   const [x, y] = coordinatesXY15
-  let tiles = [];
+  let tiles = []
   const tx = Math.floor(x * 16)
   const ty = Math.floor(y * 16)
 
-  let xys = [];
+  let xys = []
   for (let dx = -11; dx <= 11; dx++) {
     for (let dy = -11; dy <= 11; dy++) {
-      xys.push({dx: dx, dy: dy});
+      xys.push({ dx: dx, dy: dy })
     }
   }
 
-  xys.sort((a, b) => (a.dx*a.dx + a.dy*a.dy) - (b.dx*b.dx+b.dy*b.dy));
-  for(let {dx, dy} of xys) {
-    const key = `${tx+dx}-${ty+dy}-${19}`;
-    tiles.push(
-      <TerrainTile key={key} x={tx+dx} y={ty+dy} zoom={19} />
-    );
+  xys.sort((a, b) => a.dx * a.dx + a.dy * a.dy - (b.dx * b.dx + b.dy * b.dy))
+  for (let { dx, dy } of xys) {
+    const key = `${tx + dx}-${ty + dy}-${19}`
+    tiles.push(<TerrainTile key={key} x={tx + dx} y={ty + dy} zoom={19} />)
   }
-
 
   return <>{tiles}</>
 }

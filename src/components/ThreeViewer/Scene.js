@@ -1,15 +1,18 @@
-import React, { useRef } from "react"
+import React, { useRef, useState } from "react"
 import { Canvas } from "react-three-fiber"
 
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
 import BackgroundMesh from "./BackgroundMesh"
 import CustomMapControl from "./CustomMapControl"
 import DrawPVControl from "./DrawPVControl"
+import Points from "./Points"
 import SimulationMesh from "./SimulationMesh"
 import SurroundingMesh from "./SurroundingMesh"
 import Terrain from "./Terrain"
 
 const Scene = ({ simulationMesh, geometries, showTerrain, frontendState }) => {
+  const [pvPoints, setPVPoints] = useState([])
+  window.setPVPoints = setPVPoints
   console.log("SceneGeoms", geometries)
   console.log("SceneSimulationMesh", simulationMesh)
   const position = [
@@ -47,7 +50,13 @@ const Scene = ({ simulationMesh, geometries, showTerrain, frontendState }) => {
         <CustomMapControl middle={simulationMesh.middle} />
       )}
       {frontendState == "DrawPV" && (
-        <DrawPVControl middle={simulationMesh.middle} />
+        <>
+          <DrawPVControl
+            middle={simulationMesh.middle}
+            setPVPoints={setPVPoints}
+          />
+          <Points points={pvPoints} />
+        </>
       )}
       {simulationMesh != undefined && showTerrain && <Terrain />}
     </Canvas>
