@@ -26,7 +26,9 @@ const PVSystem = ({ geometry, annualYield, area }) => {
       />
 
       <TextSprite
-        text={`Jahresertrag: ${annualYield}\nFläche: ${area}`}
+        text={`Jahresertrag: ${Math.round(annualYield).toLocaleString(
+          "de"
+        )} kWh pro Jahr\nFläche: ${area.toPrecision(3)}m²`}
         position={center}
       />
     </>
