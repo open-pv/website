@@ -14,6 +14,7 @@ function Index() {
   const [showErrorNoGeometry, setshowErrorNoGeometry] = useState(false)
   const [showTerrain, setShowTerrain] = useState(true)
   const [simulationProgress, setSimulationProgress] = useState(0)
+  const [visiblePVSystems, setvisiblePVSystems] = useState([])
 
   // Simulation States
   const [geometries, setGeometries] = useState({
@@ -47,13 +48,19 @@ function Index() {
             setShowTerrain={setShowTerrain}
           />
         )}
-        {frontendState == "DrawPV" && <OverlayDrawPV />}
+        {frontendState == "DrawPV" && (
+          <OverlayDrawPV
+            setvisiblePVSystems={setvisiblePVSystems}
+            visiblePVSystems={visiblePVSystems}
+          />
+        )}
         {(frontendState == "Results" || frontendState == "DrawPV") && (
           <Scene
             geometries={geometries}
             simulationMesh={displayedSimulationMesh}
             showTerrain={showTerrain}
             frontendState={frontendState}
+            visiblePVSystems={visiblePVSystems}
           />
         )}
 

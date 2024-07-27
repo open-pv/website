@@ -7,7 +7,7 @@ import { setLocation } from "./location"
 import { processGeometries } from "./preprocessing"
 import { initializeViewer, simulationMesh, swapSimulationMesh } from "./viewer"
 
-window.numSimulations = 80
+window.numSimulations = 5
 
 export async function mainSimulation(
   inputValue,

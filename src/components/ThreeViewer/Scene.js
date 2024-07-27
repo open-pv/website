@@ -6,11 +6,18 @@ import BackgroundMesh from "./BackgroundMesh"
 import CustomMapControl from "./CustomMapControl"
 import DrawPVControl from "./DrawPVControl"
 import Points from "./Points"
+import PVSystems from "./PVSystems"
 import SimulationMesh from "./SimulationMesh"
 import SurroundingMesh from "./SurroundingMesh"
 import Terrain from "./Terrain"
 
-const Scene = ({ simulationMesh, geometries, showTerrain, frontendState }) => {
+const Scene = ({
+  simulationMesh,
+  geometries,
+  showTerrain,
+  frontendState,
+  visiblePVSystems,
+}) => {
   const [pvPoints, setPVPoints] = useState([])
   window.setPVPoints = setPVPoints
   console.log("SceneGeoms", geometries)
@@ -35,30 +42,37 @@ const Scene = ({ simulationMesh, geometries, showTerrain, frontendState }) => {
     >
       <ambientLight intensity={2} />
       <directionalLight intensity={2} position={[0, 1, -1]} />
-      {geometries.surrounding.length > 0 && (
+      {true && geometries.surrounding.length > 0 && (
         <SurroundingMesh
           geometry={BufferGeometryUtils.mergeGeometries(geometries.surrounding)}
         />
       )}
-      {geometries.background.length > 0 && (
+      {true && geometries.background.length > 0 && (
         <BackgroundMesh
           geometry={BufferGeometryUtils.mergeGeometries(geometries.background)}
         />
       )}
-      {simulationMesh != undefined && <SimulationMesh mesh={simulationMesh} />}
+      {true && simulationMesh != undefined && (
+        <SimulationMesh mesh={simulationMesh} />
+      )}
       {simulationMesh != undefined && frontendState == "Results" && (
         <CustomMapControl middle={simulationMesh.middle} />
       )}
       {frontendState == "DrawPV" && (
-        <>
-          <DrawPVControl
-            middle={simulationMesh.middle}
-            setPVPoints={setPVPoints}
-          />
-          <Points points={pvPoints} />
-        </>
+        <DrawPVControl
+          middle={simulationMesh.middle}
+          setPVPoints={setPVPoints}
+        />
       )}
-      {simulationMesh != undefined && showTerrain && <Terrain />}
+      {frontendState == "DrawPV" && <Points points={pvPoints} />}
+      {frontendState == "DrawPV" && (
+        <PVSystems
+          visiblePVSystems={visiblePVSystems}
+          pvPoints={pvPoints}
+          setPVPoints={setPVPoints}
+        />
+      )}
+      {false && simulationMesh != undefined && showTerrain && <Terrain />}
     </Canvas>
   )
 }

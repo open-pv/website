@@ -1,10 +1,18 @@
 import React from "react"
 
-export default function OverlayDrawPV(pvPoints) {
+export default function OverlayDrawPV({
+  visiblePVSystems,
+  setvisiblePVSystems,
+}) {
+  const handleButtonClick = () => {
+    const nextIndex = visiblePVSystems.length
+    setvisiblePVSystems([...visiblePVSystems, nextIndex])
+  }
+
   return (
     <div className="overlay">
       <div className="overlay-buttons">
-        <button>Berechnen</button>
+        <button onClick={handleButtonClick}>PV-Anlage erstellen</button>
       </div>
     </div>
   )
