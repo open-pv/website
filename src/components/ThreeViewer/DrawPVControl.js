@@ -12,7 +12,7 @@ const DrawPVControl = ({ middle, setPVPoints }) => {
   useEffect(() => {
     // Initialize OrbitControls
     controls.current = new OrbitControls(camera, gl.domElement)
-    controls.current.target = middle // Set your desired target
+    controls.current.target = middle
     controls.current.mouseButtons = {
       MIDDLE: THREE.MOUSE.DOLLY,
       RIGHT: THREE.MOUSE.ROTATE,
@@ -28,24 +28,27 @@ const DrawPVControl = ({ middle, setPVPoints }) => {
   }, [camera, gl, middle])
 
   const onPointerDown = (event) => {
-    if (event.button !== 0) return // Only respond to left-clicks
+    if (event.button !== 0) return
 
     const rect = event.target.getBoundingClientRect()
     mouse.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
     mouse.current.y = (-(event.clientY - rect.top) / rect.height) * 2 + 1
 
-    // Update the raycaster with the camera and mouse position
     raycaster.current.setFromCamera(mouse.current, camera)
 
-    // Calculate objects intersecting the picking ray
     const intersects = raycaster.current.intersectObjects(scene.children, true)
 
     if (intersects.length > 0) {
       const intersection = intersects[0]
 
       const point = intersection.point
+      const normal = intersection.face.normal
+        .clone()
+        .transformDirection(intersection.object.matrixWorld)
       console.log("point", point)
-      setPVPoints((prevPoints) => [...prevPoints, point])
+      console.log("normal", normal)
+
+      setPVPoints((prevPoints) => [...prevPoints, { point, normal }])
     }
   }
 

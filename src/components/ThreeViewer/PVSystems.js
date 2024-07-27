@@ -4,6 +4,8 @@ import * as THREE from "three"
 import PVSystem from "./PVSystem"
 
 const PVSystems = ({ visiblePVSystems, pvPoints, setPVPoints }) => {
+  const points = pvPoints.map((obj) => obj.point) // pvPoints is a list of objects, each object has a point and a normal
+
   const { scene } = useThree()
   const [pvSystems, setPVSystems] = useState([])
   console.log("pvPoints", pvPoints)
@@ -15,7 +17,7 @@ const PVSystems = ({ visiblePVSystems, pvPoints, setPVPoints }) => {
     }
     const geometry = new THREE.BufferGeometry()
     const vertices = []
-    pvPoints.forEach((point) => {
+    points.forEach((point) => {
       vertices.push(point.x, point.y, point.z)
     })
     console.log("vertices", vertices)
@@ -24,41 +26,22 @@ const PVSystems = ({ visiblePVSystems, pvPoints, setPVPoints }) => {
     const bufferTriangles = []
     const normalOffset = 0.1 // Adjust this value as needed
 
-    const calculateNormal = (v0, v1, v2) => {
-      const ux = v1.x - v0.x
-      const uy = v1.y - v0.y
-      const uz = v1.z - v0.z
-
-      const vx = v2.x - v0.x
-      const vy = v2.y - v0.y
-      const vz = v2.z - v0.z
-
-      const nx = uy * vz - uz * vy
-      const ny = uz * vx - ux * vz
-      const nz = ux * vy - uy * vx
-
-      const length = Math.sqrt(nx * nx + ny * ny + nz * nz)
-      return { x: nx / length, y: ny / length, z: nz / length }
-    }
-
     for (let i = 1; i < pvPoints.length - 1; i++) {
       const v0 = pvPoints[0]
       const v1 = pvPoints[i]
       const v2 = pvPoints[i + 1]
 
-      const normal = calculateNormal(v0, v1, v2)
-
-      const shift = (v) => ({
-        x: v.x + normal.x * normalOffset,
-        y: v.y + normal.y * normalOffset,
-        z: v.z + normal.z * normalOffset,
+      const shift = (element) => ({
+        x: element.point.x + element.normal.x * normalOffset,
+        y: element.point.y + element.normal.y * normalOffset,
+        z: element.point.z + element.normal.z * normalOffset,
       })
 
       const sv0 = shift(v0)
       const sv1 = shift(v1)
       const sv2 = shift(v2)
 
-      triangles.push({ a: sv0, b: sv1, c: sv2 })
+      triangles.push({ a: v0.point, b: v1.point, c: v2.point })
       bufferTriangles.push(
         sv0.x,
         sv0.y,
@@ -90,7 +73,7 @@ const PVSystems = ({ visiblePVSystems, pvPoints, setPVPoints }) => {
     const polygonPrefilteringCutoff = 10
     const prefilteredPolygons = filterPolygonsByDistance(
       simulationMesh,
-      pvPoints,
+      points,
       polygonPrefilteringCutoff
     )
     const newVertices = []
