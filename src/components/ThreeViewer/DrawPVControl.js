@@ -1,5 +1,5 @@
 import { useFrame, useThree } from "@react-three/fiber"
-import React, { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import * as THREE from "three"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 
@@ -14,7 +14,6 @@ const DrawPVControl = ({ middle, setPVPoints }) => {
     controls.current = new OrbitControls(camera, gl.domElement)
     controls.current.target = middle // Set your desired target
     controls.current.mouseButtons = {
-      LEFT: THREE.MOUSE.PAN,
       MIDDLE: THREE.MOUSE.DOLLY,
       RIGHT: THREE.MOUSE.ROTATE,
     }
@@ -31,9 +30,9 @@ const DrawPVControl = ({ middle, setPVPoints }) => {
   const onPointerDown = (event) => {
     if (event.button !== 0) return // Only respond to left-clicks
 
-    // Calculate mouse position in normalized device coordinates (-1 to +1) for both components
-    mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1
-    mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1
+    const rect = event.target.getBoundingClientRect()
+    mouse.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+    mouse.current.y = (-(event.clientY - rect.top) / rect.height) * 2 + 1
 
     // Update the raycaster with the camera and mouse position
     raycaster.current.setFromCamera(mouse.current, camera)
