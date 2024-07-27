@@ -5,7 +5,6 @@ import * as THREE from "three"
 import { downloadBuildings } from "./download"
 import { setLocation } from "./location"
 import { processGeometries } from "./preprocessing"
-import { initializeViewer, simulationMesh, swapSimulationMesh } from "./viewer"
 
 window.numSimulations = 5
 
