@@ -2,7 +2,7 @@ import * as THREE from "three"
 
 const SurroundingMesh = ({ geometry }) => {
   return (
-    <mesh geometry={geometry}>
+    <mesh geometry={geometry} name="SurroundingMesh">
       <meshStandardMaterial
         vertexColors={false}
         color={0xd1bea4}
