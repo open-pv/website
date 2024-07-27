@@ -17,12 +17,16 @@ const PVSystem = ({ geometry, annualYield, area }) => {
 
   return (
     <>
-      <mesh geometry={geometry} />
-      <meshStandardMaterial
-        vertexColors={false}
-        color="navy"
-        metalness={0}
-        opacity={0.5}
+      <mesh
+        geometry={geometry}
+        material={
+          new THREE.MeshStandardMaterial({
+            color: "#2b2c40",
+            transparent: true,
+            opacity: 0.5,
+            metalness: 1,
+          })
+        }
       />
 
       <TextSprite
