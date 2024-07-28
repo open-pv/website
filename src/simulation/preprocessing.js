@@ -32,6 +32,7 @@ export function processGeometries(geometries) {
     }
   }
   surrounding.splice(indexOfSimulationInSurrounding, 1)
+  console.log("Surrounding", surrounding)
 
   return { simulation, surrounding, background }
 }

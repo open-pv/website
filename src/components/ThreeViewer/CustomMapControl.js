@@ -6,44 +6,39 @@ import { MapControls } from "three/examples/jsm/Addons.js"
 
 extend({ MapControls })
 
-function onRightClick(event) {
-  event.preventDefault()
-  const elem = document.getElementsByClassName("three-viewer")[0]
-  const rect = elem.getBoundingClientRect()
-
-  const mouse = new THREE.Vector2()
-  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
-  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
-
-  raycaster.setFromCamera(mouse, camera)
-  const intersects = raycaster.intersectObjects(scene.children, true)
-
-  if (intersects.length > 0) {
-    const intersect = intersects[0]
-    const intersectPoint = intersect.point.clone()
-
-    // Calculate the offset between the camera and the intersection point
-    const offset = new THREE.Vector3().subVectors(
-      camera.position,
-      controls.target
-    )
-
-    // Store the start and end positions for interpolation
-    startTarget = controls.target.clone()
-    endTarget = intersectPoint
-    startPosition = camera.position.clone()
-    endPosition = intersectPoint.clone().add(offset)
-
-    // Start the transition
-    isTransitioning = true
-    transitionStartTime = performance.now()
-  }
-}
-
 function CustomMapControl(props) {
   const controls = useRef()
+  const raycaster = useRef(new THREE.Raycaster())
+  const mouse = useRef(new THREE.Vector2())
 
-  const { gl, camera } = useThree()
+  const { gl, camera, scene } = useThree()
+
+  const handleDoubleClick = (event) => {
+    // Calculate mouse position in normalized device coordinates (-1 to +1) for both components
+    mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1
+    mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1
+
+    raycaster.current.setFromCamera(mouse.current, camera)
+
+    const intersects = raycaster.current.intersectObjects(scene.children, true)
+
+    if (intersects.length > 0) {
+      const intersectedMesh = intersects[0].object
+      if (!intersectedMesh) return
+      if (
+        intersectedMesh.name &&
+        (intersectedMesh.name.includes("SurroundingMesh") ||
+          intersectedMesh.name.includes("BackgroundMesh"))
+      ) {
+        props.setSelectedMesh({
+          geometry: intersectedMesh.geometry,
+          material: intersectedMesh.material,
+        })
+      }
+    } else {
+      console.log("No children in the intersected mesh.")
+    }
+  }
 
   useEffect(() => {
     if (controls.current) {
@@ -63,6 +58,17 @@ function CustomMapControl(props) {
   useFrame(() => {
     controls.current.update()
   })
+
+  useEffect(() => {
+    // Add the event listener
+    window.addEventListener("dblclick", handleDoubleClick)
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("dblclick", handleDoubleClick)
+    }
+  }, [camera, scene])
+  window.addEventListener("dblclick", handleDoubleClick)
 
   return (
     <mapControls ref={controls} args={[camera, gl.domElement]} {...props} />

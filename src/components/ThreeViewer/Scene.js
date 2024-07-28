@@ -5,6 +5,7 @@ import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
 import BackgroundMesh from "./BackgroundMesh"
 import CustomMapControl from "./CustomMapControl"
 import DrawPVControl from "./DrawPVControl"
+import { HighlightedMesh } from "./HiglightedMesh"
 import Points from "./Points"
 import PVSystems from "./PVSystems"
 import SimulationMesh from "./SimulationMesh"
@@ -19,6 +20,7 @@ const Scene = ({
   visiblePVSystems,
 }) => {
   const [pvPoints, setPVPoints] = useState([])
+  const [selectedMesh, setSelectedMesh] = useState(null)
   window.setPVPoints = setPVPoints
   const position = [
     simulationMesh.middle.x,
@@ -26,7 +28,6 @@ const Scene = ({
     simulationMesh.middle.z + 80,
   ]
   const cameraRef = useRef()
-
   return (
     <Canvas
       camera={{
@@ -41,21 +42,25 @@ const Scene = ({
       <ambientLight intensity={2} />
       <directionalLight intensity={1} position={[0, 1, -10]} />
 
-      {true && geometries.surrounding.length > 0 && (
-        <SurroundingMesh
-          geometry={BufferGeometryUtils.mergeGeometries(geometries.surrounding)}
-        />
+      {geometries.surrounding.length > 0 && (
+        <SurroundingMesh geometries={geometries.surrounding} />
       )}
-      {true && geometries.background.length > 0 && (
-        <BackgroundMesh
-          geometry={BufferGeometryUtils.mergeGeometries(geometries.background)}
-        />
+      {geometries.background.length > 0 && (
+        <BackgroundMesh geometries={geometries.background} />
       )}
-      {true && simulationMesh != undefined && (
-        <SimulationMesh mesh={simulationMesh} />
+
+      {simulationMesh != undefined && <SimulationMesh mesh={simulationMesh} />}
+      {selectedMesh && (
+        <HighlightedMesh
+          geometry={selectedMesh.geometry}
+          material={selectedMesh.material}
+        />
       )}
       {simulationMesh != undefined && frontendState == "Results" && (
-        <CustomMapControl middle={simulationMesh.middle} />
+        <CustomMapControl
+          middle={simulationMesh.middle}
+          setSelectedMesh={setSelectedMesh}
+        />
       )}
       {frontendState == "DrawPV" && (
         <DrawPVControl

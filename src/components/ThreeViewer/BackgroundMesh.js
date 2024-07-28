@@ -1,8 +1,16 @@
-const BackgroundMesh = ({ geometry }) => {
+const BackgroundMesh = ({ geometries }) => {
   return (
-    <mesh geometry={geometry} name="BackgroundMesh">
-      <meshLambertMaterial color={0xcccccc} transparent={true} opacity={0.3} />
-    </mesh>
+    <>
+      {geometries.map((geometry, index) => (
+        <mesh geometry={geometry} name={`BackgroundMesh-${index}`}>
+          <meshLambertMaterial
+            color={0xcccccc}
+            transparent={true}
+            opacity={0.3}
+          />
+        </mesh>
+      ))}
+    </>
   )
 }
 
