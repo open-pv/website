@@ -1,7 +1,7 @@
 import { useFrame } from "@react-three/fiber"
 import React, { useRef } from "react"
 import * as THREE from "three"
-import TextSprite from "./TextSprite"
+import TextSprite from "../TextSprite"
 
 const PVSystem = ({ geometry, annualYield, area }) => {
   const textRef = useRef()

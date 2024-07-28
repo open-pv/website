@@ -1,15 +1,14 @@
 import React, { useRef, useState } from "react"
 import { Canvas } from "react-three-fiber"
 
-import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
-import BackgroundMesh from "./BackgroundMesh"
-import CustomMapControl from "./CustomMapControl"
-import DrawPVControl from "./DrawPVControl"
-import { HighlightedMesh } from "./HiglightedMesh"
+import CustomMapControl from "./Controls/CustomMapControl"
+import DrawPVControl from "./Controls/DrawPVControl"
+import BackgroundMesh from "./Meshes/BackgroundMesh"
+import { HighlightedMesh } from "./Meshes/HiglightedMesh"
+import PVSystems from "./Meshes/PVSystems"
+import SimulationMesh from "./Meshes/SimulationMesh"
+import SurroundingMesh from "./Meshes/SurroundingMesh"
 import Points from "./Points"
-import PVSystems from "./PVSystems"
-import SimulationMesh from "./SimulationMesh"
-import SurroundingMesh from "./SurroundingMesh"
 import Terrain from "./Terrain"
 
 const Scene = ({
