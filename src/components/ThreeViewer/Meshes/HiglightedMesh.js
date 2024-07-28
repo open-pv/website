@@ -12,8 +12,6 @@ export function HighlightedMesh({ geometry, material }) {
           transparent: false,
         })
       }
-    >
-      <Edges color="orange" lineWidth={5} />
-    </mesh>
+    ></mesh>
   )
 }
