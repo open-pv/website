@@ -7,7 +7,7 @@ function Footer({ federalState }) {
 
   return (
     <div className="attribution">
-      <p key="map-attribution" class="copyright">
+      <p key="map-attribution" className="copyright">
         Basiskarte &copy;{" "}
         <a href="https://www.bkg.bund.de" target="_blank">
           BKG
