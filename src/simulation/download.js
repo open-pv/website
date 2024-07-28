@@ -8,7 +8,7 @@ import {
   projectToWebMercator,
 } from "./location"
 
-function tile2meters() {
+export function tile2meters() {
   const lat = coordinatesLonLat[1]
   return 1222.992452 * Math.cos((lat * Math.PI) / 180.0)
 }

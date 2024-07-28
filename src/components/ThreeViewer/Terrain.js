@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import * as THREE from "three"
-import { TILE2METERS } from "../../simulation/download"
+import { tile2meters } from "../../simulation/download"
 import { coordinatesXY15 } from "../../simulation/location"
 
 /** Load an OSM map tile and return it as a THREE Mesh
@@ -73,8 +73,8 @@ const TerrainTile = (props) => {
       ]
       const vertices = corners.flatMap(([x, y]) => [
         // [[tx, ty], [tx+1, ty], [tx, ty+1], [tx+1, ty+1]];
-        TILE2METERS * ((tx + x) / scale - coordinatesXY15[0]),
-        -TILE2METERS * ((ty + y) / scale - coordinatesXY15[1]),
+        tile2meters() * ((tx + x) / scale - coordinatesXY15[0]),
+        -tile2meters() * ((ty + y) / scale - coordinatesXY15[1]),
         sampleDEM(x, y),
       ])
 
