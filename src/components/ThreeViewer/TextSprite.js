@@ -8,7 +8,7 @@ const TextSprite = ({ text, position }) => {
     const canvas = document.createElement("canvas")
     const context = canvas.getContext("2d")
     const canvasRatio = 7
-    canvas.width = 128 * 7
+    canvas.width = 128 * canvasRatio
     canvas.height = 128
 
     context.font = "55px Arial"
@@ -30,7 +30,7 @@ const TextSprite = ({ text, position }) => {
 
     spriteRef.current.material = spriteMaterial
     spriteRef.current.position.copy(position)
-    spriteRef.current.scale.set(7, 1, 1)
+    spriteRef.current.scale.set(canvasRatio, 1, 1)
     spriteRef.current.renderOrder = 999
     console.log("spriteRef", spriteRef)
   }, [text, position])
