@@ -4,7 +4,6 @@ export default function OverlayResults({
   setFrontendState,
   showTerrain,
   setShowTerrain,
-  federalState,
 }) {
   return (
     <div className="overlay">
@@ -17,8 +16,6 @@ export default function OverlayResults({
           Karte ein-/ausblenden
         </button>
       </div>
-
-      <Footer federalState={federalState} />
     </div>
   )
 }

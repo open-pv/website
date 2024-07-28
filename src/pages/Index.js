@@ -2,11 +2,11 @@ import React, { useState } from "react"
 import WrongAdress from "../components/ErrorMessages/WrongAdress"
 import SearchField from "../components/PVSimulation/SearchField"
 import LoadingBar from "../components/Template/LoadingBar"
+import Footer from "../components/ThreeViewer/Footer"
 import Map from "../components/ThreeViewer/Map"
 import OverlayDrawPV from "../components/ThreeViewer/OverlayDrawPV"
 import OverlayResults from "../components/ThreeViewer/OverlayResults"
 import Scene from "../components/ThreeViewer/Scene"
-import { attributions } from "../data/dataLicense"
 import Main from "../layouts/Main"
 
 function Index() {
@@ -49,14 +49,12 @@ function Index() {
             setFrontendState={setFrontendState}
             showTerrain={showTerrain}
             setShowTerrain={setShowTerrain}
-            federalState={federalState}
           />
         )}
         {frontendState == "DrawPV" && (
           <OverlayDrawPV
             setvisiblePVSystems={setvisiblePVSystems}
             visiblePVSystems={visiblePVSystems}
-            federalState={federalState}
           />
         )}
         {(frontendState == "Results" || frontendState == "DrawPV") && (
@@ -73,6 +71,7 @@ function Index() {
           <LoadingBar progress={simulationProgress} />
         )}
       </div>
+      <Footer federalState={federalState} />
     </Main>
   )
 }

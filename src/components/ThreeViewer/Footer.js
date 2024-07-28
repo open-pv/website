@@ -1,8 +1,9 @@
 import React from "react"
 import { attributions, licenseLinks } from "../../data/dataLicense"
 
-function Footer(federalState) {
-  const attrs = federalState ? Attribution(federalState) : ""
+function Footer({ federalState }) {
+  console.log("federalState", federalState)
+  const attr = federalState ? attributions[federalState] : undefined
 
   return (
     <div className="attribution">
@@ -17,7 +18,25 @@ function Footer(federalState) {
         </a>
         )
       </p>
-      {attrs}
+      {federalState && (
+        <>
+          <p
+            key={federalState}
+            className="copyright"
+            style={federalState ? {} : { display: "none" }}
+          >
+            Geb&auml;udedaten &copy;{" "}
+            <a href={attr.link} target="_blank">
+              {attr.attribution}
+            </a>
+            &nbsp;(
+            <a href={licenseLinks[attr.license]} target="_blank">
+              {attr.license}
+            </a>
+            )
+          </p>
+        </>
+      )}
       <p className="copyright">
         &copy; Erstellt vom <a href="https://github.com/open-pv">Team OpenPV</a>
         , <a href="/Impressum">Impressum</a>
@@ -37,28 +56,3 @@ function Footer(federalState) {
 }
 
 export default Footer
-
-function Attribution(federalState) {
-  console.log("attribuionsFooter", attributions)
-  const attr = attributions[federalState["federalState"]]
-
-  return (
-    <>
-      <p
-        key={federalState}
-        className="copyright"
-        style={federalState ? {} : { display: "none" }}
-      >
-        Geb&auml;udedaten &copy;{" "}
-        <a href={attr.link} target="_blank">
-          {attr.attribution}
-        </a>
-        &nbsp;(
-        <a href={licenseLinks[attr.license]} target="_blank">
-          {attr.license}
-        </a>
-        )
-      </p>
-    </>
-  )
-}
