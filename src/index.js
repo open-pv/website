@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from "react"
 import { createRoot, hydrateRoot } from "react-dom/client"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import "./i18n" // needs to be bundled
-import Main from "./layouts/Main" // fallback for lazy pages
+import Main from "./Main" // fallback for lazy pages
 import "./static/css/main.scss" // All of our styles
 
 const { PUBLIC_URL } = process.env

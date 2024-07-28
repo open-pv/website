@@ -2,7 +2,7 @@ import React from "react"
 import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 
-import Main from "../layouts/Main"
+import Main from "../Main"
 
 const About = () => {
   const { t, i18n } = useTranslation()

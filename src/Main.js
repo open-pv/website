@@ -2,7 +2,7 @@ import PropTypes from "prop-types"
 import React from "react"
 import { Helmet, HelmetProvider } from "react-helmet-async"
 
-import Navigation from "../components/Template/Navigation"
+import Navigation from "./components/Template/Navigation"
 
 const Main = (props) => (
   <HelmetProvider>
@@ -12,9 +12,7 @@ const Main = (props) => (
     </Helmet>
     <div id="wrapper">
       <Navigation />
-      <div id="main">
-        {props.children}
-      </div>
+      <div id="main">{props.children}</div>
     </div>
   </HelmetProvider>
 )

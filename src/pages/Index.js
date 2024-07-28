@@ -7,7 +7,7 @@ import Map from "../components/ThreeViewer/Map"
 import OverlayDrawPV from "../components/ThreeViewer/OverlayDrawPV"
 import OverlayResults from "../components/ThreeViewer/OverlayResults"
 import Scene from "../components/ThreeViewer/Scene"
-import Main from "../layouts/Main"
+import Main from "../Main"
 
 function Index() {
   // Frontend States
