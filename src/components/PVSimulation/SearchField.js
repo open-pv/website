@@ -16,8 +16,7 @@ function SearchField({
   const handleSubmit = async (event) => {
     setFrontendState("Loading")
     event.preventDefault()
-    //
-    console.log("inputValue", inputValue)
+
     const { simulationMesh, geometries } = await mainSimulation(
       inputValue,
       inputChanged,

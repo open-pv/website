@@ -20,8 +20,6 @@ const Scene = ({
 }) => {
   const [pvPoints, setPVPoints] = useState([])
   window.setPVPoints = setPVPoints
-  console.log("SceneGeoms", geometries)
-  console.log("SceneSimulationMesh", simulationMesh)
   const position = [
     simulationMesh.middle.x,
     simulationMesh.middle.y - 40,

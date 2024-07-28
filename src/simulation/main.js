@@ -33,9 +33,7 @@ export async function mainSimulation(
       window.setshowErrorNoGeometry(true)
       return
     }
-    for (let k of Object.keys(geometries)) {
-      console.log(k, geometries[k])
-    }
+
     const scene = new ShadingScene(
       parseFloat(location.lat),
       parseFloat(location.lon)
@@ -66,7 +64,6 @@ export async function mainSimulation(
       loadingBarWrapperFunction
     )
 
-    console.log("Simulation Mesh", simulationMesh)
     const material = new THREE.MeshLambertMaterial({
       vertexColors: true,
       side: THREE.DoubleSide,

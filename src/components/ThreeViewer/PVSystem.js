@@ -7,7 +7,6 @@ const PVSystem = ({ geometry, annualYield, area }) => {
   const textRef = useRef()
 
   const center = calculateCenter(geometry.attributes.position.array)
-  console.log("center", center)
 
   useFrame(({ camera }) => {
     if (textRef.current) {

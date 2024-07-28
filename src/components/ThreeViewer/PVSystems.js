@@ -8,7 +8,6 @@ const PVSystems = ({ visiblePVSystems, pvPoints, setPVPoints }) => {
 
   const { scene } = useThree()
   const [pvSystems, setPVSystems] = useState([])
-  console.log("pvPoints", pvPoints)
 
   useEffect(() => {
     if (visiblePVSystems.length === 0 || pvPoints.length < 3) {
@@ -20,7 +19,6 @@ const PVSystems = ({ visiblePVSystems, pvPoints, setPVPoints }) => {
     points.forEach((point) => {
       vertices.push(point.x, point.y, point.z)
     })
-    console.log("vertices", vertices)
 
     const triangles = []
     const bufferTriangles = []
@@ -115,45 +113,15 @@ const PVSystems = ({ visiblePVSystems, pvPoints, setPVPoints }) => {
       newIntensities
     )
     const annualYield = polygonArea * polygonIntensity
-    console.log("Polygon Area:", polygonArea)
-    console.log("Polygon Intensity:", polygonIntensity)
-    console.log("annualYield:", annualYield)
 
-    //nst raycaster = new THREE.Raycaster()
-    //ycaster.setFromCamera()
-    //nst irradianceValues = []
-    //bdividedTriangles.forEach((triangle) => {
-    //const centroid = new THREE.Vector3()
-    //centroid
-    //  .addVectors(triangle.a, triangle.b)
-    //  .add(triangle.c)
-    //  .divideScalar(3)
-    //raycaster.set(centroid, new THREE.Vector3(0, 0, -1))
-    //const intersects = raycaster.intersectObject(simulationMesh)
-    //if (intersects.length > 0) {
-    //  const intersect = intersects[0]
-    //  const irradiance =
-    //    intersect.object.geometry.attributes.intensities.array[
-    //      intersect.face.a
-    //    ]
-    //  irradianceValues.push(irradiance)
-    //}
-    //
-
-    //const meanIrradiance =
-    //  irradianceValues.reduce((acc, val) => acc + val, 0) /
-    //  irradianceValues.length
-    //
     const newPVSystem = {
       geometry: geometry,
       annualYield: annualYield,
       area: polygonArea,
     }
-    //console.log("newPVSystem", newPVSystem)
-    //
+
     setPVSystems((prevSystems) => [...prevSystems, newPVSystem])
     setPVPoints([])
-    //console.log(newPVSystem)
   }, [visiblePVSystems])
 
   return (
