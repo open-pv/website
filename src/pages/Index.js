@@ -69,8 +69,8 @@ function Index() {
         {frontendState == "Loading" && (
           <LoadingBar progress={simulationProgress} />
         )}
+        <Footer federalState={federalState} />
       </div>
-      <Footer federalState={federalState} />
     </Main>
   )
 }
