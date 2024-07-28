@@ -12,7 +12,6 @@ import Main from "../layouts/Main"
 function Index() {
   // Frontend States
   const [frontendState, setFrontendState] = useState("Map")
-  const [showErrorNoGeometry, setshowErrorNoGeometry] = useState(false)
   const [showTerrain, setShowTerrain] = useState(true)
   const [simulationProgress, setSimulationProgress] = useState(0)
   const [visiblePVSystems, setvisiblePVSystems] = useState([])
@@ -27,7 +26,7 @@ function Index() {
   const [displayedSimulationMesh, setDisplayedSimluationMesh] =
     useState(undefined)
 
-  window.setshowErrorNoGeometry = setshowErrorNoGeometry
+  window.setFrontendState = setFrontendState
   window.setSimulationProgress = setSimulationProgress
 
   return (
@@ -42,7 +41,7 @@ function Index() {
         </div>
       </header>
       <div className="content">
-        {showErrorNoGeometry && <WrongAdress />}
+        {frontendState == "ErrorAdress" && <WrongAdress />}
         {frontendState == "Map" && <Map />}
         {frontendState == "Results" && (
           <OverlayResults

@@ -30,8 +30,8 @@ export async function mainSimulation(
     let geometries = processGeometries(buildingGeometries)
     setGeometries(geometries)
     if (geometries.simulation.length == 0) {
-      window.setshowErrorNoGeometry(true)
-      return
+      window.setFrontendState("ErrorAdress")
+      return { simulationMesh: undefined, geometries: undefined }
     }
 
     const scene = new ShadingScene(

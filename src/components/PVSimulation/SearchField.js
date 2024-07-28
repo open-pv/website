@@ -23,14 +23,16 @@ function SearchField({
       window.mapLocation,
       setGeometries
     )
-    let middle = new THREE.Vector3()
-    simulationMesh.geometry.computeBoundingBox()
-    simulationMesh.geometry.boundingBox.getCenter(middle)
-    simulationMesh.middle = middle
+    if (simulationMesh) {
+      let middle = new THREE.Vector3()
+      simulationMesh.geometry.computeBoundingBox()
+      simulationMesh.geometry.boundingBox.getCenter(middle)
+      simulationMesh.middle = middle
 
-    setGeometries(geometries)
-    setDisplayedSimluationMesh(simulationMesh)
-    setFrontendState("Results")
+      setGeometries(geometries)
+      setDisplayedSimluationMesh(simulationMesh)
+      setFrontendState("Results")
+    }
   }
   const handleChange = (event) => {
     if (inputValue != event.target.value) {

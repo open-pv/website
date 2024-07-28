@@ -152,3 +152,10 @@ p.copyright {
   width: 100%;
   height: 100%;
 }
+
+.error-message {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
