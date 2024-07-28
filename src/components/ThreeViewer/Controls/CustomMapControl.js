@@ -15,8 +15,10 @@ function CustomMapControl(props) {
 
   const handleDoubleClick = (event) => {
     // Calculate mouse position in normalized device coordinates (-1 to +1) for both components
-    mouse.current.x = (event.clientX / window.innerWidth) * 2 - 1
-    mouse.current.y = -(event.clientY / window.innerHeight) * 2 + 1
+
+    const rect = event.target.getBoundingClientRect()
+    mouse.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+    mouse.current.y = (-(event.clientY - rect.top) / rect.height) * 2 + 1
 
     raycaster.current.setFromCamera(mouse.current, camera)
 
