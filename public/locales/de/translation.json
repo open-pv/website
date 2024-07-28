@@ -43,8 +43,9 @@
     "sliderDescription": "Hier kannst du die Parameter der Simulation anpassen. Mit einer größeren 'Anzahl Simulationen' wird das Ergebnis genauer, ein größerer 'Simulationsradius' zeigt das Potential auf einem größeren Gebiet."
   },
   "loadingMessage": {
-    "warningUseLaserpoints": "Du berechnest dein PV-Potential mit Verschattung von Bäumen. Dies kann bis zu einer Minute dauern. Gib der Simulation etwas Zeit oder stelle die Verwendung der Baumverschattung in den Einstellungen aus.",
-    "warningUseNoLaserpoints": "Du kannst die Genaugikeit der Simulation verbessern, indem du die Baumverschattung in den Parametern anstellst."
+    "tip1": "Mit Doppelklick kannst du ein anderes Gebäude auf der Karte auswählen und die Simulation neu starten.",
+    "tip2": "Die Berechnung der Verschattung findet bei dir im Browser statt. Hast du ein großes Gebäude ausgewählt oder nutzt du einen alten PC, dann dauert die Berechnung länger.",
+    "tip3": "Manchmal werden Teile des Gebäudes unter der Karte angezeigt. In diesem Fall kannst du die Karte ausblenden, um das ganze Gebäude zu sehen."
   },
   "errorMessage": {
     "tooManyUniforms": "Leider ist das ausgewählte Gebiet zu groß, um auf deinem PC simuliert zu werden. Du kannst den Gebäuderadius mit dem Slider auf der linken Seite kleiner stellen, um dieses Problem zu beheben.",
