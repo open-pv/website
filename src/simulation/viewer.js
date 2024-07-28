@@ -836,39 +836,43 @@ export async function initializeViewer(geometries, resetCamera) {
   simGeometry.boundingBox.getCenter(middle)
 
   scene.add(simulationMesh)
-
   var surroundingMaterial = new THREE.MeshStandardMaterial({
     vertexColors: false,
     side: THREE.DoubleSide,
     color: 0xd1bea4,
     metalness: 0.0,
   })
-  const surroundingGeometry = BufferGeometryUtils.mergeGeometries(
-    geometries.surrounding
-  )
-  var surroundingMesh = new THREE.Mesh(surroundingGeometry, surroundingMaterial)
-  scene.add(surroundingMesh)
 
-  const backgroundGeometry = BufferGeometryUtils.mergeGeometries(
-    geometries.background
-  )
-  const backgroundMaterial = new THREE.MeshLambertMaterial({
-    vertexColors: false,
-    side: THREE.DoubleSide,
-    color: 0xcccccc,
-    transparent: true,
-    opacity: 0.3,
-  })
-  var backgroundMesh = new THREE.Mesh(backgroundGeometry, backgroundMaterial)
-  scene.add(backgroundMesh)
+  if(geometries.surrounding.length > 0) {
+    const surroundingGeometry = BufferGeometryUtils.mergeGeometries(
+      geometries.surrounding
+    )
+    var surroundingMesh = new THREE.Mesh(surroundingGeometry, surroundingMaterial)
+    scene.add(surroundingMesh)
+  }
+
+  if(geometries.background.length > 0) {
+    const backgroundGeometry = BufferGeometryUtils.mergeGeometries(
+      geometries.background
+    )
+    const backgroundMaterial = new THREE.MeshLambertMaterial({
+      vertexColors: false,
+      side: THREE.DoubleSide,
+      color: 0xcccccc,
+      transparent: true,
+      opacity: 0.3,
+    })
+    var backgroundMesh = new THREE.Mesh(backgroundGeometry, backgroundMaterial)
+    scene.add(backgroundMesh)
+  }
 
   /// Add map below the buildings
   const [x, y] = coordinatesXY15
-  const tx = Math.floor(x * 8)
-  const ty = Math.floor(y * 8)
-  for (let dx = -5; dx <= 5; dx++) {
-    for (let dy = -5; dy <= 5; dy++) {
-      loadMapTile(tx + dx, ty + dy, 18).then((mesh) => scene.add(mesh))
+  const tx = Math.floor(x * 16)
+  const ty = Math.floor(y * 16)
+  for (let dx = -11; dx <= 11; dx++) {
+    for (let dy = -11; dy <= 11; dy++) {
+      loadMapTile(tx + dx, ty + dy, 19).then((mesh) => scene.add(mesh))
     }
   }
 

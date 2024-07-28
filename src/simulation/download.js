@@ -2,9 +2,16 @@ import * as THREE from "three"
 import { Matrix4 } from "three"
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js"
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js"
-import { coordinatesXY15, projectToWebMercator } from "./location"
+import {
+  coordinatesLonLat,
+  coordinatesXY15,
+  projectToWebMercator,
+} from "./location"
 
-export const TILE2METERS = 1222.992452
+function tile2meters() {
+  const lat = coordinatesLonLat[1]
+  return 1222.992452 * Math.cos((lat * Math.PI) / 180.0)
+}
 
 const dracoLoader = new DRACOLoader()
 dracoLoader.setDecoderPath("/draco/")
@@ -15,19 +22,16 @@ gltfLoader.setDRACOLoader(dracoLoader)
 function getFileNames(lon, lat) {
   let [x, y] = projectToWebMercator(lon, lat)
 
-  const tile_x = Math.floor(x)
-  const tile_y = Math.floor(y)
+  const x0 = Math.round(x) - 1
+  const x1 = Math.round(x)
+  const y0 = Math.round(y) - 1
+  const y1 = Math.round(y)
 
-  const downloads = [
-    { tile: { x: tile_x, y: tile_y }, center: { x, y } },
-    { tile: { x: tile_x - 1, y: tile_y }, center: { x, y } },
-    { tile: { x: tile_x, y: tile_y - 1 }, center: { x, y } },
-    { tile: { x: tile_x + 1, y: tile_y }, center: { x, y } },
-    { tile: { x: tile_x, y: tile_y + 1 }, center: { x, y } },
-    { tile: { x: tile_x - 1, y: tile_y - 1 }, center: { x, y } },
-    { tile: { x: tile_x - 1, y: tile_y + 1 }, center: { x, y } },
-    { tile: { x: tile_x + 1, y: tile_y - 1 }, center: { x, y } },
-    { tile: { x: tile_x + 1, y: tile_y + 1 }, center: { x, y } },
+  let downloads = [
+    { tile: { x: x0, y: y0 }, center: { x, y } },
+    { tile: { x: x1, y: y0 }, center: { x, y } },
+    { tile: { x: x0, y: y1 }, center: { x, y } },
+    { tile: { x: x1, y: y1 }, center: { x, y } },
   ]
   return downloads
 }
@@ -56,7 +60,7 @@ async function downloadFile(download_spec) {
         translate.makeTranslation(tile.x - center.x, tile.y - center.y, 0.0)
         const scale2meters = new Matrix4()
         // Flip sign of Y axis (in WebMercator, Y+ points down, but we need it to point up)
-        scale2meters.makeScale(TILE2METERS, -TILE2METERS, 1.0)
+        scale2meters.makeScale(tile2meters(), -tile2meters(), 1.0)
 
         const tx = scale2meters
         tx.multiply(translate)
@@ -95,6 +99,16 @@ async function downloadFile(download_spec) {
         }
       }
     }
+
+    // Parse Bundesländer
+    const buffer = await data.parser.getDependency("bufferView", 0)
+    const ids = new TextDecoder().decode(buffer)
+    for (const bundesland of Object.keys(window.setAttribution)) {
+      if (ids.includes(`DE${bundesland}`)) {
+        window.setAttribution[bundesland](true)
+      }
+    }
+
     return geometries
   } catch (error) {
     console.warn(error)
@@ -105,7 +119,8 @@ async function downloadFile(download_spec) {
 /** Load an OSM map tile and return it as a THREE Mesh
  */
 export async function loadMapTile(tx, ty, zoom) {
-  const url = `https://tile.openstreetmap.org/${zoom}/${tx}/${ty}.png`
+  // const url = `https://tile.openstreetmap.org/${zoom}/${tx}/${ty}.png`;
+  const url = `https://sgx.geodatenzentrum.de/wmts_basemapde/tile/1.0.0/de_basemapde_web_raster_farbe/default/GLOBAL_WEBMERCATOR/${zoom}/${ty}/${tx}.png`
   const mapFuture = new THREE.TextureLoader().loadAsync(url)
 
   if (zoom < 12) {
@@ -158,8 +173,8 @@ export async function loadMapTile(tx, ty, zoom) {
   ]
   const vertices = corners.flatMap(([x, y]) => [
     // [[tx, ty], [tx+1, ty], [tx, ty+1], [tx+1, ty+1]];
-    TILE2METERS * ((tx + x) / scale - coordinatesXY15[0]),
-    -TILE2METERS * ((ty + y) / scale - coordinatesXY15[1]),
+    tile2meters() * ((tx + x) / scale - coordinatesXY15[0]),
+    -tile2meters() * ((ty + y) / scale - coordinatesXY15[1]),
     sampleDEM(x, y),
   ])
 
