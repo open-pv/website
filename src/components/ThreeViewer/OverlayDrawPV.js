@@ -1,19 +1,23 @@
 import React from "react"
-import Footer from "./Footer"
 
 export default function OverlayDrawPV({
   visiblePVSystems,
   setvisiblePVSystems,
 }) {
-  const handleButtonClick = () => {
+  const handleCreatePVButtonClick = () => {
     const nextIndex = visiblePVSystems.length
     setvisiblePVSystems([...visiblePVSystems, nextIndex])
+  }
+
+  const handleAbortButtonClick = () => {
+    window.setFrontendState("Results")
   }
 
   return (
     <div className="overlay">
       <div className="overlay-buttons">
-        <button onClick={handleButtonClick}>PV-Anlage erstellen</button>
+        <button onClick={handleCreatePVButtonClick}>PV-Anlage erstellen</button>
+        <button onClick={handleAbortButtonClick}>Abbrechen</button>
       </div>
     </div>
   )

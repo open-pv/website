@@ -39,7 +39,8 @@ const Scene = ({
       }}
     >
       <ambientLight intensity={2} />
-      <directionalLight intensity={2} position={[0, 1, -1]} />
+      <directionalLight intensity={1} position={[0, 1, -10]} />
+
       {true && geometries.surrounding.length > 0 && (
         <SurroundingMesh
           geometry={BufferGeometryUtils.mergeGeometries(geometries.surrounding)}
@@ -63,13 +64,13 @@ const Scene = ({
         />
       )}
       {frontendState == "DrawPV" && <Points points={pvPoints} />}
-      {frontendState == "DrawPV" && (
-        <PVSystems
-          visiblePVSystems={visiblePVSystems}
-          pvPoints={pvPoints}
-          setPVPoints={setPVPoints}
-        />
-      )}
+
+      <PVSystems
+        visiblePVSystems={visiblePVSystems}
+        pvPoints={pvPoints}
+        setPVPoints={setPVPoints}
+      />
+
       {simulationMesh != undefined && showTerrain && <Terrain />}
     </Canvas>
   )
