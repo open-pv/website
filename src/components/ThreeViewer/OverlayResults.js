@@ -4,6 +4,7 @@ export default function OverlayResults({
   setFrontendState,
   showTerrain,
   setShowTerrain,
+  federalState,
 }) {
   return (
     <div className="overlay">
@@ -17,7 +18,7 @@ export default function OverlayResults({
         </button>
       </div>
 
-      <Footer />
+      <Footer federalState={federalState} />
     </div>
   )
 }

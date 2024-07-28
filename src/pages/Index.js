@@ -6,6 +6,7 @@ import Map from "../components/ThreeViewer/Map"
 import OverlayDrawPV from "../components/ThreeViewer/OverlayDrawPV"
 import OverlayResults from "../components/ThreeViewer/OverlayResults"
 import Scene from "../components/ThreeViewer/Scene"
+import { attributions } from "../data/dataLicense"
 import Main from "../layouts/Main"
 
 function Index() {
@@ -15,6 +16,8 @@ function Index() {
   const [showTerrain, setShowTerrain] = useState(true)
   const [simulationProgress, setSimulationProgress] = useState(0)
   const [visiblePVSystems, setvisiblePVSystems] = useState([])
+  const [federalState, setFederalState] = useState(false)
+  window.setFederalState = setFederalState
 
   // Simulation States
   const [geometries, setGeometries] = useState({
@@ -46,12 +49,14 @@ function Index() {
             setFrontendState={setFrontendState}
             showTerrain={showTerrain}
             setShowTerrain={setShowTerrain}
+            federalState={federalState}
           />
         )}
         {frontendState == "DrawPV" && (
           <OverlayDrawPV
             setvisiblePVSystems={setvisiblePVSystems}
             visiblePVSystems={visiblePVSystems}
+            federalState={federalState}
           />
         )}
         {(frontendState == "Results" || frontendState == "DrawPV") && (

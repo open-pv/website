@@ -2,6 +2,7 @@ import * as THREE from "three"
 import { Matrix4 } from "three"
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js"
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js"
+import { attributions } from "../data/dataLicense"
 import {
   coordinatesLonLat,
   coordinatesXY15,
@@ -103,9 +104,9 @@ async function downloadFile(download_spec) {
     // Parse Bundesländer
     const buffer = await data.parser.getDependency("bufferView", 0)
     const ids = new TextDecoder().decode(buffer)
-    for (const bundesland of Object.keys(window.setAttribution)) {
+    for (const bundesland of Object.keys(attributions)) {
       if (ids.includes(`DE${bundesland}`)) {
-        window.setAttribution[bundesland](true)
+        window.setFederalState(bundesland)
       }
     }
 
