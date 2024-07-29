@@ -45,8 +45,6 @@ const DrawPVControl = ({ middle, setPVPoints }) => {
       const normal = intersection.face.normal
         .clone()
         .transformDirection(intersection.object.matrixWorld)
-      console.log("point", point)
-      console.log("normal", normal)
 
       setPVPoints((prevPoints) => [...prevPoints, { point, normal }])
     }

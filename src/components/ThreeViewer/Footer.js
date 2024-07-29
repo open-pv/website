@@ -2,7 +2,6 @@ import React from "react"
 import { attributions, licenseLinks } from "../../data/dataLicense"
 
 function Footer({ federalState }) {
-  console.log("federalState", federalState)
   const attr = federalState ? attributions[federalState] : undefined
 
   return (

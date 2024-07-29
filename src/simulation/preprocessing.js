@@ -3,6 +3,8 @@ import * as THREE from "three"
 export function processGeometries(geometries) {
   // TODO: This is a hand-wavy way of converting real-world meters to WebMercator meters
   // in mid-latitudes need to do this more accurately using the latitude of the center point
+
+  // The geometries from the input are centered around the simulation geometry
   let radius
   window.numRadiusSimulation
     ? (radius = window.numRadiusSimulation)
@@ -32,7 +34,6 @@ export function processGeometries(geometries) {
     }
   }
   surrounding.splice(indexOfSimulationInSurrounding, 1)
-  console.log("Surrounding", surrounding)
 
   return { simulation, surrounding, background }
 }

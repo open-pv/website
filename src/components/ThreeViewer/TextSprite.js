@@ -32,7 +32,6 @@ const TextSprite = ({ text, position }) => {
     spriteRef.current.position.copy(position)
     spriteRef.current.scale.set(canvasRatio, 1, 1)
     spriteRef.current.renderOrder = 999
-    console.log("spriteRef", spriteRef)
   }, [text, position])
 
   return <sprite ref={spriteRef} />
