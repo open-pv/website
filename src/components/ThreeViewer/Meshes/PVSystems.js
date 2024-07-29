@@ -65,9 +65,11 @@ const PVSystems = ({ visiblePVSystems, pvPoints, setPVPoints }) => {
         subdivideTriangle(triangle, triangleSubdivisionThreshold)
       )
     })
-
     const simulationMesh = scene.getObjectByName("SimulationMesh")
-    if (!simulationMesh) return
+    if (!simulationMesh) {
+      console.error("No Simulation Mesh was found in the scene.")
+      return
+    }
     const polygonPrefilteringCutoff = 10
     const prefilteredPolygons = filterPolygonsByDistance(
       simulationMesh,

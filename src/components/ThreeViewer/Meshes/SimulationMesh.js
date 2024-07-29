@@ -1,10 +1,15 @@
+import React from "react"
 import * as THREE from "three"
 
-const SimulationMesh = ({ mesh }) => {
+const SimulationMesh = ({ meshes }) => {
   return (
-    <mesh geometry={mesh.geometry} name="SimulationMesh">
-      <meshStandardMaterial vertexColors={true} side={THREE.DoubleSide} />
-    </mesh>
+    <>
+      {meshes.map((mesh, index) => (
+        <mesh key={index + 1} geometry={mesh.geometry} name={`SimulationMesh`}>
+          <meshStandardMaterial vertexColors={true} side={THREE.DoubleSide} />
+        </mesh>
+      ))}
+    </>
   )
 }
 

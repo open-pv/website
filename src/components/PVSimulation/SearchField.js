@@ -6,6 +6,7 @@ import { mainSimulation } from "../../simulation/main"
 function SearchField({
   setFrontendState,
   setGeometries,
+  displayedSimulationMesh,
   setDisplayedSimluationMesh,
 }) {
   const [inputValue, setInputValue] = useState("Arnulfstraße 138, Münche")
@@ -30,7 +31,7 @@ function SearchField({
       simulationMesh.middle = middle
 
       setGeometries(geometries)
-      setDisplayedSimluationMesh(simulationMesh)
+      setDisplayedSimluationMesh([...displayedSimulationMesh, simulationMesh])
       setFrontendState("Results")
     }
   }

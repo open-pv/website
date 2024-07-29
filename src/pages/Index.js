@@ -23,9 +23,10 @@ function Index() {
     surrounding: [],
     background: [],
   })
-  const [displayedSimulationMesh, setDisplayedSimluationMesh] =
-    useState(undefined)
+  const [displayedSimulationMesh, setDisplayedSimluationMesh] = useState([])
   const [selectedMesh, setSelectedMesh] = useState([])
+  const [location, setLocation] = useState()
+  window.setLocation = setLocation
 
   window.setFrontendState = setFrontendState
   window.setSimulationProgress = setSimulationProgress
@@ -37,6 +38,7 @@ function Index() {
           <SearchField
             setFrontendState={setFrontendState}
             setGeometries={setGeometries}
+            displayedSimulationMesh={displayedSimulationMesh}
             setDisplayedSimluationMesh={setDisplayedSimluationMesh}
           />
         </div>
@@ -53,6 +55,7 @@ function Index() {
             setSelectedMesh={setSelectedMesh}
             geometries={geometries}
             displayedSimulationMesh={displayedSimulationMesh}
+            location={location}
           />
         )}
         {frontendState == "DrawPV" && (
