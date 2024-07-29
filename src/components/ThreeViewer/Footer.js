@@ -1,23 +1,25 @@
 import React from "react"
 import { attributions, licenseLinks } from "../../data/dataLicense"
 
-function Footer({ federalState }) {
+function Footer({ federalState, frontendState }) {
   const attr = federalState ? attributions[federalState] : undefined
 
   return (
     <div className="overlay">
       <div className="attribution">
-        <p key="map-attribution" className="copyright">
-          Basiskarte &copy;{" "}
-          <a href="https://www.bkg.bund.de" target="_blank">
-            BKG
-          </a>
-          &nbsp;(
-          <a href="https://www.govdata.de/dl-de/by-2-0" target="_blank">
-            dl-de/by-2-0
-          </a>
-          )
-        </p>
+        {(frontendState == "Results" || frontendState == "DrawPV") && (
+          <p key="map-attribution" className="copyright">
+            Basiskarte &copy;{" "}
+            <a href="https://www.bkg.bund.de" target="_blank">
+              BKG
+            </a>
+            &nbsp;(
+            <a href="https://www.govdata.de/dl-de/by-2-0" target="_blank">
+              dl-de/by-2-0
+            </a>
+            )
+          </p>
+        )}
         {federalState && (
           <>
             <p
