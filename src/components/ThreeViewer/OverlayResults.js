@@ -8,6 +8,7 @@ export default function OverlayResults({
   setSelectedMesh,
   geometries,
   displayedSimulationMesh,
+  geoLocation,
 }) {
   return (
     <div className="overlay">
@@ -27,7 +28,7 @@ export default function OverlayResults({
                 setSelectedMesh,
                 geometries,
                 displayedSimulationMesh,
-                location,
+                geoLocation,
               })
             }
           >

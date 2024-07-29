@@ -25,8 +25,8 @@ function Index() {
   })
   const [displayedSimulationMesh, setDisplayedSimluationMesh] = useState([])
   const [selectedMesh, setSelectedMesh] = useState([])
-  const [location, setLocation] = useState()
-  window.setLocation = setLocation
+  const [geoLocation, setGeoLocation] = useState()
+  window.setGeoLocation = setGeoLocation
 
   window.setFrontendState = setFrontendState
   window.setSimulationProgress = setSimulationProgress
@@ -55,7 +55,7 @@ function Index() {
             setSelectedMesh={setSelectedMesh}
             geometries={geometries}
             displayedSimulationMesh={displayedSimulationMesh}
-            location={location}
+            geoLocation={geoLocation}
           />
         )}
         {frontendState == "DrawPV" && (

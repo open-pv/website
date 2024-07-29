@@ -14,7 +14,7 @@ export async function mainSimulation(
   setGeometries
 ) {
   const location = await requestLocation(inputValue, inputChanged, oldLocation)
-  window.setLocation(location)
+  window.setGeoLocation({ lat: location.lat, lon: location.lon })
 
   // Clear previous attributions if any
   if (window.setAttribution) {
@@ -106,9 +106,10 @@ export async function simulationForNewBuilding(props) {
   )
   console.log(geometries)
   const scene = new ShadingScene(
-    parseFloat(props.location.lat),
-    parseFloat(props.location.lon)
+    parseFloat(props.geoLocation.lat),
+    parseFloat(props.geoLocation.lon)
   )
+  console.log("latitude longitute", props.geoLocation)
   scene.addSimulationGeometry(simulationGeometries)
   geometries.surrounding.forEach((geom) => {
     scene.addShadingGeometry(geom)
