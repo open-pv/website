@@ -2,6 +2,7 @@
 
 import ShadingScene from "@openpv/simshady"
 import * as THREE from "three"
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
 import { downloadBuildings } from "./download"
 import { setLocation } from "./location"
 import { processGeometries } from "./preprocessing"
@@ -26,7 +27,6 @@ export async function mainSimulation(
   if (typeof location !== "undefined" && location != null) {
     const buildingGeometries = await downloadBuildings(location)
 
-    // TODO: Dynamically call this when sliders are moved instead of re-downloading everything
     let geometries = processGeometries(buildingGeometries)
     setGeometries(geometries)
     if (geometries.simulation.length == 0) {
@@ -76,4 +76,14 @@ export async function mainSimulation(
   if (inputChanged) {
     window.mapLocationChanged = false
   }
+}
+
+export async function simulationForNewBuilding(props) {
+  console.log("Button clicked")
+  //const simulationMesh = mergeGeometries(props.selectedMesh)
+  // Neuen Radius erstellen anhand von Radius Simulation Mesh plus Puffer
+  // Alle Alten Geometries zusammenhauen
+  // shadingGeometries anhand von neuem Radius, neuem Mittelpunkt und allen alten Geometries erstellen
+  // simshady initialisieren und rechnen
+  // Neue Simulation Meshes anzeigen
 }
