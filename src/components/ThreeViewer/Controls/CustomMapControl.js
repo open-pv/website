@@ -15,7 +15,6 @@ function CustomMapControl(props) {
 
   const handleDoubleClick = (event) => {
     // Calculate mouse position in normalized device coordinates (-1 to +1) for both components
-
     const rect = event.target.getBoundingClientRect()
     mouse.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
     mouse.current.y = (-(event.clientY - rect.top) / rect.height) * 2 + 1
@@ -32,10 +31,26 @@ function CustomMapControl(props) {
         (intersectedMesh.name.includes("SurroundingMesh") ||
           intersectedMesh.name.includes("BackgroundMesh"))
       ) {
-        props.setSelectedMesh({
-          geometry: intersectedMesh.geometry,
-          material: intersectedMesh.material,
-        })
+        const existingIndex = props.selectedMesh.findIndex(
+          (mesh) => mesh.name === intersectedMesh.name
+        )
+        if (existingIndex > -1) {
+          // Remove the mesh from the list if it already exists
+          props.setSelectedMesh([
+            ...props.selectedMesh.slice(0, existingIndex),
+            ...props.selectedMesh.slice(existingIndex + 1),
+          ])
+        } else {
+          // Add the mesh to the list if it does not exist
+          props.setSelectedMesh([
+            ...props.selectedMesh,
+            {
+              name: intersectedMesh.name,
+              geometry: intersectedMesh.geometry,
+              material: intersectedMesh.material,
+            },
+          ])
+        }
       }
     } else {
       console.log("No children in the intersected mesh.")

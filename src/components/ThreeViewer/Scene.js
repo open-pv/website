@@ -50,15 +50,11 @@ const Scene = ({
       )}
 
       {simulationMesh != undefined && <SimulationMesh mesh={simulationMesh} />}
-      {selectedMesh && (
-        <HighlightedMesh
-          geometry={selectedMesh.geometry}
-          material={selectedMesh.material}
-        />
-      )}
+      {selectedMesh && <HighlightedMesh meshes={selectedMesh} />}
       {simulationMesh != undefined && frontendState == "Results" && (
         <CustomMapControl
           middle={simulationMesh.middle}
+          selectedMesh={selectedMesh}
           setSelectedMesh={setSelectedMesh}
         />
       )}
