@@ -7,7 +7,7 @@ function SearchField({
   setFrontendState,
   setGeometries,
   displayedSimulationMesh,
-  setDisplayedSimluationMesh,
+  setDisplayedSimulationMesh,
 }) {
   const [inputValue, setInputValue] = useState("Arnulfstraße 138, Münche")
   window.searchFieldInput = inputValue
@@ -31,7 +31,7 @@ function SearchField({
       simulationMesh.middle = middle
 
       setGeometries(geometries)
-      setDisplayedSimluationMesh([...displayedSimulationMesh, simulationMesh])
+      setDisplayedSimulationMesh([...displayedSimulationMesh, simulationMesh])
       setFrontendState("Results")
     }
   }

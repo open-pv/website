@@ -7,7 +7,10 @@ export default function OverlayResults({
   selectedMesh,
   setSelectedMesh,
   geometries,
+  setDisplayedSimulationMesh,
   displayedSimulationMesh,
+  deletedSurroundingMeshes,
+  deletedBackgroundMeshes,
   geoLocation,
 }) {
   return (
@@ -28,6 +31,9 @@ export default function OverlayResults({
                 setSelectedMesh,
                 geometries,
                 displayedSimulationMesh,
+                setDisplayedSimulationMesh,
+                deletedSurroundingMeshes,
+                deletedBackgroundMeshes,
                 geoLocation,
               })
             }

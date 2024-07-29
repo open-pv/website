@@ -5,7 +5,7 @@ import { downloadBuildings } from "./download"
 import { requestLocation } from "./location"
 import { processGeometries } from "./preprocessing"
 
-window.numSimulations = 5
+window.numSimulations = 90
 
 export async function mainSimulation(
   inputValue,
@@ -105,17 +105,17 @@ export async function simulationForNewBuilding(props) {
     radius
   )
   console.log(geometries)
-  const scene = new ShadingScene(
+  const shadingScene = new ShadingScene(
     parseFloat(props.geoLocation.lat),
     parseFloat(props.geoLocation.lon)
   )
   console.log("latitude longitute", props.geoLocation)
-  scene.addSimulationGeometry(simulationGeometries)
+  shadingScene.addSimulationGeometry(simulationGeometries)
   geometries.surrounding.forEach((geom) => {
-    scene.addShadingGeometry(geom)
+    shadingScene.addShadingGeometry(geom)
   })
 
-  let simulationMesh = await scene.calculate(
+  let simulationMesh = await shadingScene.calculate(
     numSimulations,
     undefined,
     0.2,
@@ -129,6 +129,21 @@ export async function simulationForNewBuilding(props) {
   })
   simulationMesh.material = material
   simulationMesh.name = "simulationMesh"
+  props.setDisplayedSimulationMesh([
+    ...props.displayedSimulationMesh,
+    simulationMesh,
+  ])
+  window.setDeletedSurroundingMeshes([
+    ...props.deletedSurroundingMeshes,
+    ...props.selectedMesh.map((obj) => obj.name),
+  ])
+
+  window.setDeletedBackgroundMeshes([
+    ...props.deletedBackgroundMeshes,
+    ...props.selectedMesh.map((obj) => obj.name),
+  ])
+
+  props.setSelectedMesh([])
 
   // Neuen Radius erstellen anhand von Radius Simulation Mesh plus Puffer
   // Alle Alten Geometries zusammenhauen

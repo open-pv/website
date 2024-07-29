@@ -19,6 +19,8 @@ const Scene = ({
   visiblePVSystems,
   selectedMesh,
   setSelectedMesh,
+  deletedSurroundingMeshes,
+  deletedBackgroundMeshes,
 }) => {
   const [pvPoints, setPVPoints] = useState([])
   window.setPVPoints = setPVPoints
@@ -43,10 +45,17 @@ const Scene = ({
       <directionalLight intensity={1} position={[0, 1, -10]} />
 
       {geometries.surrounding.length > 0 && (
-        <SurroundingMesh geometries={geometries.surrounding} />
+        <SurroundingMesh
+          geometries={geometries.surrounding}
+          deletedSurroundingMeshes={deletedSurroundingMeshes}
+          deletedBackgroundMeshes={deletedBackgroundMeshes}
+        />
       )}
       {geometries.background.length > 0 && (
-        <BackgroundMesh geometries={geometries.background} />
+        <BackgroundMesh
+          geometries={geometries.background}
+          deletedBackgroundMeshes={deletedBackgroundMeshes}
+        />
       )}
 
       {simulationMesh.length > 0 && <SimulationMesh meshes={simulationMesh} />}

@@ -15,6 +15,10 @@ function Index() {
   const [showTerrain, setShowTerrain] = useState(true)
   const [simulationProgress, setSimulationProgress] = useState(0)
   const [visiblePVSystems, setvisiblePVSystems] = useState([])
+  const [deletedSurroundingMeshes, setDeletedSurroundingMeshes] = useState([])
+  const [deletedBackgroundMeshes, setDeletedBackgroundMeshes] = useState([])
+  window.setDeletedSurroundingMeshes = setDeletedSurroundingMeshes
+  window.setDeletedBackgroundMeshes = setDeletedBackgroundMeshes
   const [federalState, setFederalState] = useState(false)
   window.setFederalState = setFederalState
 
@@ -23,7 +27,7 @@ function Index() {
     surrounding: [],
     background: [],
   })
-  const [displayedSimulationMesh, setDisplayedSimluationMesh] = useState([])
+  const [displayedSimulationMesh, setDisplayedSimulationMesh] = useState([])
   const [selectedMesh, setSelectedMesh] = useState([])
   const [geoLocation, setGeoLocation] = useState()
   window.setGeoLocation = setGeoLocation
@@ -39,7 +43,7 @@ function Index() {
             setFrontendState={setFrontendState}
             setGeometries={setGeometries}
             displayedSimulationMesh={displayedSimulationMesh}
-            setDisplayedSimluationMesh={setDisplayedSimluationMesh}
+            setDisplayedSimulationMesh={setDisplayedSimulationMesh}
           />
         </div>
       </header>
@@ -55,6 +59,9 @@ function Index() {
             setSelectedMesh={setSelectedMesh}
             geometries={geometries}
             displayedSimulationMesh={displayedSimulationMesh}
+            setDisplayedSimulationMesh={setDisplayedSimulationMesh}
+            deletedSurroundingMeshes={deletedSurroundingMeshes}
+            deletedBackgroundMeshes={deletedBackgroundMeshes}
             geoLocation={geoLocation}
           />
         )}
@@ -73,6 +80,8 @@ function Index() {
             visiblePVSystems={visiblePVSystems}
             selectedMesh={selectedMesh}
             setSelectedMesh={setSelectedMesh}
+            deletedSurroundingMeshes={deletedSurroundingMeshes}
+            deletedBackgroundMeshes={deletedBackgroundMeshes}
           />
         )}
 
