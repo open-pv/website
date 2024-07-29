@@ -25,6 +25,7 @@ function Index() {
   })
   const [displayedSimulationMesh, setDisplayedSimluationMesh] =
     useState(undefined)
+  const [selectedMesh, setSelectedMesh] = useState(null)
 
   window.setFrontendState = setFrontendState
   window.setSimulationProgress = setSimulationProgress
@@ -48,6 +49,7 @@ function Index() {
             setFrontendState={setFrontendState}
             showTerrain={showTerrain}
             setShowTerrain={setShowTerrain}
+            selectedMesh={selectedMesh}
           />
         )}
         {frontendState == "DrawPV" && (
@@ -63,6 +65,8 @@ function Index() {
             showTerrain={showTerrain}
             frontendState={frontendState}
             visiblePVSystems={visiblePVSystems}
+            selectedMesh={selectedMesh}
+            setSelectedMesh={setSelectedMesh}
           />
         )}
 

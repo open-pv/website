@@ -156,3 +156,13 @@ p.copyright {
   flex-direction: column;
   align-items: center;
 }
+
+@keyframes blink {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.button-high-prio {
+  animation: blink 1s infinite;
+}

@@ -17,9 +17,10 @@ const Scene = ({
   showTerrain,
   frontendState,
   visiblePVSystems,
+  selectedMesh,
+  setSelectedMesh,
 }) => {
   const [pvPoints, setPVPoints] = useState([])
-  const [selectedMesh, setSelectedMesh] = useState(null)
   window.setPVPoints = setPVPoints
   const position = [
     simulationMesh.middle.x,

@@ -3,6 +3,7 @@ export default function OverlayResults({
   setFrontendState,
   showTerrain,
   setShowTerrain,
+  selectedMesh,
 }) {
   return (
     <div className="overlay">
@@ -13,6 +14,9 @@ export default function OverlayResults({
         <button onClick={() => setShowTerrain(!showTerrain)}>
           Karte ein-/ausblenden
         </button>
+        {selectedMesh && (
+          <button className="button-high-prio">Gebäude simulieren</button>
+        )}
       </div>
     </div>
   )
