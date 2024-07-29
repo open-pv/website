@@ -27,6 +27,7 @@ export default function OverlayResults({
                 setSelectedMesh,
                 geometries,
                 displayedSimulationMesh,
+                location,
               })
             }
           >

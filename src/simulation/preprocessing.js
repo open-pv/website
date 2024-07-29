@@ -1,16 +1,14 @@
 import * as THREE from "three"
 
-export function processGeometries(geometries) {
+export function processGeometries(geometries, simulationCenter, shadingCutoff) {
   // TODO: This is a hand-wavy way of converting real-world meters to WebMercator meters
   // in mid-latitudes need to do this more accurately using the latitude of the center point
 
   // The geometries from the input are centered around the simulation geometry
-  let radius
-  window.numRadiusSimulation
-    ? (radius = window.numRadiusSimulation)
-    : (radius = 80)
+  console.log("simulationCenter", simulationCenter)
+  console.log("shadingCutoff", shadingCutoff)
 
-  const cutoff2 = radius * radius
+  const cutoff2 = shadingCutoff * shadingCutoff
   let minDist = Infinity
   let indexOfSimulationInSurrounding = 0
   let simulation = []
@@ -21,7 +19,9 @@ export function processGeometries(geometries) {
     geom.computeBoundingBox()
     let center = new THREE.Vector3()
     geom.boundingBox.getCenter(center)
-    const d2 = center.x * center.x + center.y * center.y
+    const d2 =
+      (center.x - simulationCenter.x) ** 2 +
+      (center.y - simulationCenter.y) ** 2
     if (d2 <= cutoff2) {
       if (d2 < minDist) {
         simulation = [geom]

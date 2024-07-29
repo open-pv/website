@@ -23,9 +23,9 @@ const Scene = ({
   const [pvPoints, setPVPoints] = useState([])
   window.setPVPoints = setPVPoints
   const position = [
-    simulationMesh.middle.x,
-    simulationMesh.middle.y - 40,
-    simulationMesh.middle.z + 80,
+    simulationMesh[0].middle.x,
+    simulationMesh[0].middle.y - 40,
+    simulationMesh[0].middle.z + 80,
   ]
   const cameraRef = useRef()
   return (
@@ -49,18 +49,18 @@ const Scene = ({
         <BackgroundMesh geometries={geometries.background} />
       )}
 
-      {simulationMesh != undefined && <SimulationMesh mesh={simulationMesh} />}
+      {simulationMesh.length > 0 && <SimulationMesh meshes={simulationMesh} />}
       {selectedMesh && <HighlightedMesh meshes={selectedMesh} />}
-      {simulationMesh != undefined && frontendState == "Results" && (
+      {simulationMesh.length > 0 && frontendState == "Results" && (
         <CustomMapControl
-          middle={simulationMesh.middle}
+          middle={simulationMesh[0].middle}
           selectedMesh={selectedMesh}
           setSelectedMesh={setSelectedMesh}
         />
       )}
       {frontendState == "DrawPV" && (
         <DrawPVControl
-          middle={simulationMesh.middle}
+          middle={simulationMesh[0].middle}
           setPVPoints={setPVPoints}
         />
       )}

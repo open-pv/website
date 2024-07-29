@@ -1,10 +1,8 @@
-// This is the only file where both functionality and GUI stuff is allowed
-
 import ShadingScene from "@openpv/simshady"
 import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
 import { downloadBuildings } from "./download"
-import { setLocation } from "./location"
+import { requestLocation } from "./location"
 import { processGeometries } from "./preprocessing"
 
 window.numSimulations = 5
@@ -15,7 +13,8 @@ export async function mainSimulation(
   oldLocation,
   setGeometries
 ) {
-  const location = await setLocation(inputValue, inputChanged, oldLocation)
+  const location = await requestLocation(inputValue, inputChanged, oldLocation)
+  window.setLocation(location)
 
   // Clear previous attributions if any
   if (window.setAttribution) {
@@ -27,7 +26,11 @@ export async function mainSimulation(
   if (typeof location !== "undefined" && location != null) {
     const buildingGeometries = await downloadBuildings(location)
 
-    let geometries = processGeometries(buildingGeometries)
+    let geometries = processGeometries(
+      buildingGeometries,
+      new THREE.Vector3(0, 0, 0),
+      80
+    )
     setGeometries(geometries)
     if (geometries.simulation.length == 0) {
       window.setFrontendState("ErrorAdress")
@@ -79,8 +82,53 @@ export async function mainSimulation(
 }
 
 export async function simulationForNewBuilding(props) {
-  console.log("Button clicked")
-  //const simulationMesh = mergeGeometries(props.selectedMesh)
+  console.log(props)
+  // Get all geometries from the list and put it in one big simulation geometries. This needs
+  // to be done since multiple buildings can be part of selectedMesh
+  let simulationGeometries = mergeGeometries(
+    props.selectedMesh.map((mesh) => mesh.geometry)
+  )
+  simulationGeometries.computeBoundingBox()
+  simulationGeometries.computeBoundingSphere()
+  let simulationCenter = new THREE.Vector3()
+  simulationGeometries.boundingBox.getCenter(simulationCenter)
+
+  const radius = simulationGeometries.boundingSphere.radius + 80
+  const allBuildingGeometries = [
+    ...props.geometries.surrounding,
+    ...props.geometries.background,
+    ...props.geometries.simulation,
+  ]
+  const geometries = processGeometries(
+    allBuildingGeometries,
+    simulationCenter,
+    radius
+  )
+  console.log(geometries)
+  const scene = new ShadingScene(
+    parseFloat(props.location.lat),
+    parseFloat(props.location.lon)
+  )
+  scene.addSimulationGeometry(simulationGeometries)
+  geometries.surrounding.forEach((geom) => {
+    scene.addShadingGeometry(geom)
+  })
+
+  let simulationMesh = await scene.calculate(
+    numSimulations,
+    undefined,
+    0.2,
+    1400 * 0.2,
+    (progress, total) => console.log("Simulation Progress is ", progress)
+  )
+  console.log("SimulationMesh", simulationMesh)
+  const material = new THREE.MeshLambertMaterial({
+    vertexColors: true,
+    side: THREE.DoubleSide,
+  })
+  simulationMesh.material = material
+  simulationMesh.name = "simulationMesh"
+
   // Neuen Radius erstellen anhand von Radius Simulation Mesh plus Puffer
   // Alle Alten Geometries zusammenhauen
   // shadingGeometries anhand von neuem Radius, neuem Mittelpunkt und allen alten Geometries erstellen

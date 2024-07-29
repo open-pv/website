@@ -1,10 +1,10 @@
 import proj4 from "proj4"
 
 /** x, y tile coordinates in WebMercator XYZ tiling at zoom level X=15
-  */
-export var coordinatesXY15, coordinatesLonLat;
+ */
+export var coordinatesXY15, coordinatesLonLat
 
-export async function setLocation(inputValue, inputChanged, loc) {
+export async function requestLocation(inputValue, inputChanged, loc) {
   let newloc
   window.mapLocationBaseChanged = true
   if (inputChanged) {
@@ -65,13 +65,15 @@ async function fetchCoordinates(url) {
 }
 
 export function projectToWebMercator(lon, lat) {
-  console.log(`Projecting ${lon}E ${lat}N`);
-  coordinatesLonLat = [lon, lat];
-  const lat_rad = lat * Math.PI / 180.0;
-  const n = Math.pow(2, 15);
-  const xtile = n * ((lon + 180) / 360);
-  const ytile = n * (1 - (Math.log(Math.tan(lat_rad) + 1 / Math.cos(lat_rad)) / Math.PI)) / 2;
-  console.log(`Tile ${xtile},${ytile}`);
-  coordinatesXY15 = [xtile, ytile];
-  return [xtile, ytile];
+  console.log(`Projecting ${lon}E ${lat}N`)
+  coordinatesLonLat = [lon, lat]
+  const lat_rad = (lat * Math.PI) / 180.0
+  const n = Math.pow(2, 15)
+  const xtile = n * ((lon + 180) / 360)
+  const ytile =
+    (n * (1 - Math.log(Math.tan(lat_rad) + 1 / Math.cos(lat_rad)) / Math.PI)) /
+    2
+  console.log(`Tile ${xtile},${ytile}`)
+  coordinatesXY15 = [xtile, ytile]
+  return [xtile, ytile]
 }
