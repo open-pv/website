@@ -1,3 +1,4 @@
+import { Button, Checkbox } from "@chakra-ui/react"
 import React from "react"
 import { simulationForNewBuilding } from "../../simulation/main"
 export default function OverlayResults({
@@ -16,14 +17,17 @@ export default function OverlayResults({
   return (
     <div className="overlay">
       <div className="overlay-buttons">
-        <button onClick={() => setFrontendState("DrawPV")}>
+        <Button onClick={() => setFrontendState("DrawPV")}>
           PV Anlage einzeichnen
-        </button>
-        <button onClick={() => setShowTerrain(!showTerrain)}>
-          Karte ein-/ausblenden
-        </button>
+        </Button>
+        <Checkbox
+          checked={showTerrain} // This binds the checkbox's checked state to the showTerrain state
+          onChange={() => setShowTerrain((prev) => !prev)} // Toggles the showTerrain state
+        >
+          {showTerrain ? "Karte ausblenden" : "Karte einblenden"}
+        </Checkbox>
         {selectedMesh.length > 0 && (
-          <button
+          <Button
             className="button-high-prio"
             onClick={async () =>
               await simulationForNewBuilding({
@@ -39,7 +43,7 @@ export default function OverlayResults({
             }
           >
             Gebäude simulieren
-          </button>
+          </Button>
         )}
       </div>
     </div>

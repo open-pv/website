@@ -1,3 +1,4 @@
+import { Button } from "@chakra-ui/react"
 import React from "react"
 
 export default function OverlayDrawPV({
@@ -16,8 +17,8 @@ export default function OverlayDrawPV({
   return (
     <div className="overlay">
       <div className="overlay-buttons">
-        <button onClick={handleCreatePVButtonClick}>PV-Anlage erstellen</button>
-        <button onClick={handleAbortButtonClick}>Abbrechen</button>
+        <Button onClick={handleCreatePVButtonClick}>PV-Anlage erstellen</Button>
+        <Button onClick={handleAbortButtonClick}>Abbrechen</Button>
       </div>
     </div>
   )
