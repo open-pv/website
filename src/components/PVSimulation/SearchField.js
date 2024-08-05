@@ -44,14 +44,26 @@ function SearchField({
   }
 
   return (
-    <FormControl style={{ display: "flex", alignItems: "center" }}>
+    <FormControl
+      style={{
+        display: "flex",
+        alignItems: "center",
+        padding: "5px",
+      }}
+    >
       <Input
         type="text"
         placeholder={t("searchField.placeholder")}
         value={inputValue}
         onChange={handleChange}
+        margin={"5px"}
       />
-      <Button type="submit" minWidth={"150px"} onClick={handleSubmit}>
+      <Button
+        type="submit"
+        minWidth={"150px"}
+        margin={"5px"}
+        onClick={handleSubmit}
+      >
         Start
       </Button>
     </FormControl>
