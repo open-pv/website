@@ -1,3 +1,4 @@
+import { ChakraProvider } from "@chakra-ui/react"
 import React, { Suspense, lazy } from "react"
 import { createRoot, hydrateRoot } from "react-dom/client"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
@@ -18,20 +19,22 @@ const About = lazy(() => import("./pages/About"))
 
 // See https://reactjs.org/docs/strict-mode.html
 const StrictApp = () => (
-  <React.StrictMode>
-    <BrowserRouter basename={PUBLIC_URL}>
-      <Suspense fallback={<Main />}>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/anleitung" element={<About />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/impressum" element={<Impressum />} />
-          <Route path="/datenschutz" element={<Datenschutz />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
-  </React.StrictMode>
+  <ChakraProvider>
+    <React.StrictMode>
+      <BrowserRouter basename={PUBLIC_URL}>
+        <Suspense fallback={<Main />}>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/anleitung" element={<About />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/impressum" element={<Impressum />} />
+            <Route path="/datenschutz" element={<Datenschutz />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+    </React.StrictMode>
+  </ChakraProvider>
 )
 
 const rootElement = document.getElementById("root")
