@@ -1,45 +1,34 @@
-import PropTypes from "prop-types"
-import React from "react"
+import { Progress } from "@chakra-ui/react"
+import React, { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 
 const LoadingBar = ({ progress }) => {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const numberTips = 3
-  const shownTip = Math.floor(Math.random() * numberTips) + 1
+  const [shownTip, setShownTip] = useState(0)
 
-  const containerStyle = {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    flexDirection: "column",
-  }
-
-  const barContainerStyle = {
-    width: "80%",
-    backgroundColor: "#e0e0df",
-    borderRadius: "5px",
-    overflow: "hidden",
-  }
-
-  const barStyle = {
-    width: `${progress}%`,
-    height: "20px",
-    backgroundColor: "#76c7c0",
-  }
+  useEffect(() => {
+    // Set a random tip when the component mounts
+    const randomTip = Math.floor(Math.random() * numberTips) + 1
+    setShownTip(randomTip)
+  }, [])
 
   return (
-    <div style={containerStyle}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+      }}
+    >
       <p>{t("loadingMessage.tip" + shownTip.toString())}</p>
-      <div style={barContainerStyle}>
-        <div style={barStyle}></div>
+      <div style={{ width: "80%", maxWidth: "600px", margin: "0 auto" }}>
+        <Progress value={progress} width="100%" hasStripe={true} />
       </div>
     </div>
   )
-}
-
-LoadingBar.propTypes = {
-  progress: PropTypes.number.isRequired,
 }
 
 export default LoadingBar
