@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Drawer,
   DrawerBody,
@@ -6,6 +7,7 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
+  Stack,
   useDisclosure,
 } from "@chakra-ui/react"
 import { simulationForNewBuilding } from "../../simulation/main"
@@ -34,38 +36,47 @@ function Overlay({
   const btnRef = React.useRef()
 
   return (
-    <div className="overlay">
-      <div className="overlay-buttons">
-        {frontendState == "Results" && (
-          <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
-            Optionen
-          </Button>
-        )}
-        {frontendState == "DrawPV" && (
-          <OverlayDrawPV
-            setvisiblePVSystems={setvisiblePVSystems}
-            visiblePVSystems={visiblePVSystems}
-          />
-        )}
-        {selectedMesh.length > 0 && (
-          <Button
-            className="button-high-prio"
-            onClick={async () =>
-              await simulationForNewBuilding({
-                selectedMesh,
-                setSelectedMesh,
-                geometries,
-                displayedSimulationMesh,
-                setDisplayedSimulationMesh,
-                deletedSurroundingMeshes,
-                deletedBackgroundMeshes,
-                geoLocation,
-              })
-            }
-          >
-            Gebäude simulieren
-          </Button>
-        )}
+    <Box position="relative" width="100%" height="100%">
+      {frontendState == "Results" && (
+        <Button
+          ref={btnRef}
+          colorScheme="teal"
+          onClick={onOpen}
+          variant={"link"}
+          position="absolute"
+          top="10px"
+          left="10px"
+          zIndex={100}
+        >
+          Optionen
+        </Button>
+      )}
+      {frontendState == "DrawPV" && (
+        <OverlayDrawPV
+          setvisiblePVSystems={setvisiblePVSystems}
+          visiblePVSystems={visiblePVSystems}
+        />
+      )}
+      {selectedMesh.length > 0 && (
+        <Button
+          className="button-high-prio"
+          onClick={async () =>
+            await simulationForNewBuilding({
+              selectedMesh,
+              setSelectedMesh,
+              geometries,
+              displayedSimulationMesh,
+              setDisplayedSimulationMesh,
+              deletedSurroundingMeshes,
+              deletedBackgroundMeshes,
+              geoLocation,
+            })
+          }
+        >
+          Gebäude simulieren
+        </Button>
+      )}
+      <Stack spacing="24px">
         <Drawer
           isOpen={isOpen}
           placement="left"
@@ -87,13 +98,11 @@ function Overlay({
                   onCloseDrawer={onClose}
                 />
               )}
-
-              <p>Weitere Optionen</p>
             </DrawerBody>
           </DrawerContent>
         </Drawer>
-      </div>
-    </div>
+      </Stack>
+    </Box>
   )
 }
 
