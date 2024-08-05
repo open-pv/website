@@ -11,8 +11,10 @@
     "text": "Simulationsradius [m]:"
   },
 
-  "yes": "ja",
-  "no": "nein",
+  "yes": "Ja",
+  "no": "Nein",
+  "next": "Nächste",
+  "previous": "Vorherige",
   "searchField": {
     "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Lange Point 20, Freising"
   },
@@ -50,5 +52,9 @@
   "errorMessage": {
     "tooManyUniforms": "Leider ist das ausgewählte Gebiet zu groß, um auf deinem PC simuliert zu werden. Du kannst den Gebäuderadius mit dem Slider auf der linken Seite kleiner stellen, um dieses Problem zu beheben.",
     "wrongAdress": "Adresse wurde nicht gefunden oder liegt nicht innerhalb von Bayern. Leider können wir aktuell nur Häuser in Bayern simulieren. Alternativ kannst du auch die Koordinaten in Google Maps per Rechtsklick bestimmen und in das Suchfeld eingeben."
+  },
+  "WelcomeMessage": {
+    "title": "Anleitung",
+    "firstPage": "Geben Sie ihre Adresse oder Koordinaten im Suchfeld ein"
   }
 }

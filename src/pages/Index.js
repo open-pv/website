@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import WrongAdress from "../components/ErrorMessages/WrongAdress"
 import SearchField from "../components/PVSimulation/SearchField"
 import LoadingBar from "../components/Template/LoadingBar"
+import WelcomeMessage from "../components/Template/WelcomeMessage"
 import Footer from "../components/ThreeViewer/Footer"
 import Map from "../components/ThreeViewer/Map"
 import OverlayDrawPV from "../components/ThreeViewer/OverlayDrawPV"
@@ -56,6 +57,7 @@ function Index() {
         </div>
       </header>
       <div className="content">
+        <WelcomeMessage />
         {frontendState == "ErrorAdress" && <WrongAdress />}
         {frontendState == "Map" && <Map />}
         {frontendState == "Results" && (
