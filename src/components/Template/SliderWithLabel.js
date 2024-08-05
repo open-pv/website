@@ -26,7 +26,7 @@ const SliderWithLabel = ({ sliderProps, label, hoverHelpLabel }) => {
         colorScheme="teal"
         onChange={(v) => {
           setSliderValue(v)
-          window.numSimulation = v //TODO: A Slider might also change some other values
+          window.numSimulations = v //TODO: A Slider might also change some other values
           // besides the numSimulation
         }}
         onMouseEnter={() => setShowTooltip(true)}

@@ -5,8 +5,6 @@ import { downloadBuildings } from "./download"
 import { requestLocation } from "./location"
 import { processGeometries } from "./preprocessing"
 
-window.numSimulations = 5
-
 export async function mainSimulation(
   inputValue,
   inputChanged,
@@ -114,6 +112,11 @@ export async function simulationForNewBuilding(props) {
   geometries.surrounding.forEach((geom) => {
     shadingScene.addShadingGeometry(geom)
   })
+
+  let numSimulations
+  window.numSimulations
+    ? (numSimulations = window.numSimulations)
+    : (numSimulations = 80)
 
   let simulationMesh = await shadingScene.calculate(
     numSimulations,
