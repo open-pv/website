@@ -54,7 +54,10 @@
     "wrongAdress": "Adresse wurde nicht gefunden oder liegt nicht innerhalb von Bayern. Leider können wir aktuell nur Häuser in Bayern simulieren. Alternativ kannst du auch die Koordinaten in Google Maps per Rechtsklick bestimmen und in das Suchfeld eingeben."
   },
   "WelcomeMessage": {
-    "title": "Anleitung",
-    "firstPage": "Geben Sie ihre Adresse oder Koordinaten im Suchfeld ein"
+    "title": "Willkommen bei OpenPV",
+    "firstPage": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten bestimmen. Dafür geben Sie ihre Adresse im Suchfeld ein und klicken Sie auf Start.",
+    "secondPage": "Auf der Karte können Sie das Ergebnis der Verschattungssimulation betrachten. Mit Doppelklick können Sie weitere Gebäude für die Simulation auswählen.",
+    "thirdPage": "Mit Optionen -> PV Anlage einzeichnen können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
+    "fourthPage": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Cookies!"
   }
 }
