@@ -40,6 +40,7 @@ const Scene = ({
         up: [0, 0, 1],
         ref: cameraRef,
       }}
+      style={{ background: "#e5edf5" }}
     >
       <ambientLight intensity={2} />
       <directionalLight intensity={1} position={[0, 1, -10]} />
