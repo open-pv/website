@@ -5,7 +5,7 @@ import { downloadBuildings } from "./download"
 import { requestLocation } from "./location"
 import { processGeometries } from "./preprocessing"
 
-window.numSimulations = 90
+window.numSimulations = 5
 
 export async function mainSimulation(
   inputValue,

@@ -57,6 +57,7 @@ function SearchField({
         value={inputValue}
         onChange={handleChange}
         margin={"5px"}
+        onSubmit={handleSubmit}
       />
       <Button
         type="submit"

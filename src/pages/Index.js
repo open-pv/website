@@ -5,8 +5,7 @@ import LoadingBar from "../components/Template/LoadingBar"
 import WelcomeMessage from "../components/Template/WelcomeMessage"
 import Footer from "../components/ThreeViewer/Footer"
 import Map from "../components/ThreeViewer/Map"
-import OverlayDrawPV from "../components/ThreeViewer/OverlayDrawPV"
-import OverlayResults from "../components/ThreeViewer/OverlayResults"
+import Overlay from "../components/ThreeViewer/Overlay"
 import Scene from "../components/ThreeViewer/Scene"
 import Main from "../Main"
 
@@ -58,10 +57,10 @@ function Index() {
       </header>
       <div className="content">
         <WelcomeMessage />
-        {frontendState == "ErrorAdress" && <WrongAdress />}
-        {frontendState == "Map" && <Map />}
-        {frontendState == "Results" && (
-          <OverlayResults
+
+        {(frontendState == "Results" || frontendState == "DrawPV") && (
+          <Overlay
+            frontendState={frontendState}
             setFrontendState={setFrontendState}
             showTerrain={showTerrain}
             setShowTerrain={setShowTerrain}
@@ -73,14 +72,13 @@ function Index() {
             deletedSurroundingMeshes={deletedSurroundingMeshes}
             deletedBackgroundMeshes={deletedBackgroundMeshes}
             geoLocation={geoLocation}
-          />
-        )}
-        {frontendState == "DrawPV" && (
-          <OverlayDrawPV
             setvisiblePVSystems={setvisiblePVSystems}
             visiblePVSystems={visiblePVSystems}
           />
         )}
+        {frontendState == "ErrorAdress" && <WrongAdress />}
+        {frontendState == "Map" && <Map />}
+
         {(frontendState == "Results" || frontendState == "DrawPV") && (
           <Scene
             geometries={geometries}

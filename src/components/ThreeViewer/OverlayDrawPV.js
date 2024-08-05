@@ -15,11 +15,9 @@ export default function OverlayDrawPV({
   }
 
   return (
-    <div className="overlay">
-      <div className="overlay-buttons">
-        <Button onClick={handleCreatePVButtonClick}>PV-Anlage erstellen</Button>
-        <Button onClick={handleAbortButtonClick}>Abbrechen</Button>
-      </div>
-    </div>
+    <>
+      <Button onClick={handleCreatePVButtonClick}>PV-Anlage erstellen</Button>
+      <Button onClick={handleAbortButtonClick}>Abbrechen</Button>
+    </>
   )
 }
