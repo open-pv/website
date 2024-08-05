@@ -158,7 +158,7 @@ const CustomDrawer = ({
                   _hover={{ color: "blue.500" }}
                   onClick={() => {
                     setFrontendState("DrawPV")
-                    onCloseDrawer()
+                    onClose()
                   }}
                 >
                   PV Anlage einzeichnen
