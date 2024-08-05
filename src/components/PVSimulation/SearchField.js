@@ -1,3 +1,4 @@
+import { Button, FormControl, Input } from "@chakra-ui/react"
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
 import * as THREE from "three"
@@ -43,21 +44,17 @@ function SearchField({
   }
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", alignItems: "center" }}
-        id="search-field"
-      >
-        <input
-          type="text"
-          placeholder={t("searchField.placeholder")}
-          value={inputValue}
-          onChange={handleChange}
-        />
-        <button type="submit">Start</button>
-      </form>
-    </>
+    <FormControl style={{ display: "flex", alignItems: "center" }}>
+      <Input
+        type="text"
+        placeholder={t("searchField.placeholder")}
+        value={inputValue}
+        onChange={handleChange}
+      />
+      <Button type="submit" minWidth={"150px"} onClick={handleSubmit}>
+        Start
+      </Button>
+    </FormControl>
   )
 }
 
