@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import WrongAdress from "../components/ErrorMessages/WrongAdress"
+import SavingCalculation from "../components/PVSimulation/SavingsCalculation"
 import SearchField from "../components/PVSimulation/SearchField"
 import LoadingBar from "../components/Template/LoadingBar"
 import WelcomeMessage from "../components/Template/WelcomeMessage"
@@ -48,6 +49,7 @@ function Index() {
       <header>
         <div className="title">
           <SearchField
+            frontendState={frontendState}
             setFrontendState={setFrontendState}
             setGeometries={setGeometries}
             displayedSimulationMesh={displayedSimulationMesh}

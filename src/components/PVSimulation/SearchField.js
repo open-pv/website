@@ -5,6 +5,7 @@ import * as THREE from "three"
 import { mainSimulation } from "../../simulation/main"
 
 function SearchField({
+  frontendState,
   setFrontendState,
   setGeometries,
   displayedSimulationMesh,
@@ -44,12 +45,13 @@ function SearchField({
   }
 
   return (
-    <FormControl
+    <form
       style={{
         display: "flex",
         alignItems: "center",
         padding: "5px",
       }}
+      onSubmit={handleSubmit}
     >
       <Input
         type="text"
@@ -57,17 +59,17 @@ function SearchField({
         value={inputValue}
         onChange={handleChange}
         margin={"5px"}
-        onSubmit={handleSubmit}
       />
       <Button
+        isLoading={frontendState == "Loading"}
         type="submit"
         minWidth={"150px"}
         margin={"5px"}
-        onClick={handleSubmit}
+        loadingText="Loading"
       >
         Start
       </Button>
-    </FormControl>
+    </form>
   )
 }
 
