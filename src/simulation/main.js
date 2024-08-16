@@ -141,11 +141,6 @@ export async function simulationForNewBuilding(props) {
     ...props.selectedMesh.map((obj) => obj.name),
   ])
 
-  window.setDeletedBackgroundMeshes([
-    ...props.deletedBackgroundMeshes,
-    ...props.selectedMesh.map((obj) => obj.name),
-  ])
-
   props.setSelectedMesh([])
 
   // Neuen Radius erstellen anhand von Radius Simulation Mesh plus Puffer

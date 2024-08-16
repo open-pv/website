@@ -36,7 +36,6 @@ function Overlay({
   setDisplayedSimulationMesh,
   displayedSimulationMesh,
   deletedSurroundingMeshes,
-  deletedBackgroundMeshes,
   geoLocation,
   visiblePVSystems,
   setvisiblePVSystems,
@@ -76,7 +75,6 @@ function Overlay({
               displayedSimulationMesh,
               setDisplayedSimulationMesh,
               deletedSurroundingMeshes,
-              deletedBackgroundMeshes,
               geoLocation,
             })
           }

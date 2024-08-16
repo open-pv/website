@@ -3,7 +3,6 @@ import { Canvas } from "react-three-fiber"
 
 import CustomMapControl from "./Controls/CustomMapControl"
 import DrawPVControl from "./Controls/DrawPVControl"
-import BackgroundMesh from "./Meshes/BackgroundMesh"
 import { HighlightedMesh } from "./Meshes/HiglightedMesh"
 import PVSystems from "./Meshes/PVSystems"
 import SimulationMesh from "./Meshes/SimulationMesh"
@@ -20,7 +19,6 @@ const Scene = ({
   selectedMesh,
   setSelectedMesh,
   deletedSurroundingMeshes,
-  deletedBackgroundMeshes,
 }) => {
   const [pvPoints, setPVPoints] = useState([])
   window.setPVPoints = setPVPoints
@@ -48,13 +46,12 @@ const Scene = ({
         <SurroundingMesh
           geometries={geometries.surrounding}
           deletedSurroundingMeshes={deletedSurroundingMeshes}
-          deletedBackgroundMeshes={deletedBackgroundMeshes}
         />
       )}
       {geometries.background.length > 0 && (
-        <BackgroundMesh
+        <SurroundingMesh
           geometries={geometries.background}
-          deletedBackgroundMeshes={deletedBackgroundMeshes}
+          deletedSurroundingMeshes={deletedSurroundingMeshes}
         />
       )}
 

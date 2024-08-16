@@ -28,8 +28,7 @@ function CustomMapControl(props) {
       if (!intersectedMesh) return
       if (
         intersectedMesh.name &&
-        (intersectedMesh.name.includes("SurroundingMesh") ||
-          intersectedMesh.name.includes("BackgroundMesh"))
+        intersectedMesh.name.includes("SurroundingMesh")
       ) {
         const existingIndex = props.selectedMesh.findIndex(
           (mesh) => mesh.name === intersectedMesh.name
