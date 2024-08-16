@@ -1,5 +1,3 @@
-import proj4 from "proj4"
-
 /** x, y tile coordinates in WebMercator XYZ tiling at zoom level X=15
  */
 export var coordinatesXY15, coordinatesLonLat

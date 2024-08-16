@@ -31,15 +31,6 @@
   "simulationStatus": {
     "waitingForAdress": "Waiting for address input"
   },
-  "driver": {
-    "button": "Instructions",
-    "searchfieldTitle": "Insert your adress",
-    "searchFieldDescription": "Here you enter an address. Try 'Hauptstrasse 7, Erlangen' or 'Gasteig München'. Then click on 'START'.",
-    "moreInformationTitle": "More information",
-    "moreInformationDescription": "How does this tool work? We answer that here!",
-    "sliderTitle": "Change simulation parameters",
-    "sliderDescription": "Here you can adjust the parameters of the simulation. A larger 'Number of Simulations' will provide more accurate results, while a larger 'Simulation Radius' will show the potential in a broader area."
-  },
   "loadingMessage": {
     "tip1": "Double-click to select a different building on the map and restart the simulation.",
     "tip2": "The shadow calculation is done in your browser. If you have selected a large building or are using an old PC, the calculation will take longer.",
