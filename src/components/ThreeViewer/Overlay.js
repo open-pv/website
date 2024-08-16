@@ -10,10 +10,11 @@ import {
   FormLabel,
   Stack,
   Switch,
+  Text,
   useDisclosure,
 } from "@chakra-ui/react"
+import { useTranslation } from "react-i18next"
 import { simulationForNewBuilding } from "../../simulation/main"
-
 import HoverHelp from "../Template/HoverHelp"
 import SliderWithLabel from "../Template/SliderWithLabel"
 
@@ -38,6 +39,7 @@ function Overlay({
   setvisiblePVSystems,
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
   const btnRef = React.useRef()
 
   return (
@@ -141,6 +143,7 @@ const OverlayWrapper = ({ children }) => {
 }
 
 const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
+  const { t } = useTranslation()
   return (
     <Stack spacing="24px">
       <Drawer isOpen={isOpen} placement="left" onClose={onClose} size={"xs"}>
@@ -151,6 +154,9 @@ const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
 
           <DrawerBody>
             <>
+              <Text as="b">{t("sidebar.header")}</Text>
+              <Text>{t("sidebar.mainText")}</Text>
+
               <Button variant={"link"} _hover={{ color: "blue.500" }}>
                 Baum erstellen
               </Button>
