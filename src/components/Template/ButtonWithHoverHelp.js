@@ -8,12 +8,7 @@ export default function ButtonWithHoverHelp({
 }) {
   return (
     <Tooltip label={hoverText}>
-      <Button
-        variant={"link"}
-        colorScheme="teal"
-        _hover={{ color: "blue.500" }}
-        onClick={onClick}
-      >
+      <Button variant={"link"} colorScheme="teal" onClick={onClick}>
         {buttonLabel}
       </Button>
     </Tooltip>

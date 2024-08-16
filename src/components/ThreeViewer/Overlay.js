@@ -157,9 +157,7 @@ const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
               <Text as="b">{t("sidebar.header")}</Text>
               <Text>{t("sidebar.mainText")}</Text>
 
-              <Button variant={"link"} _hover={{ color: "blue.500" }}>
-                Baum erstellen
-              </Button>
+              <Button variant={"link"}>Baum erstellen</Button>
               <HoverHelp
                 label={
                   "Lege einen Baum an, um diesen in der nächsten Simulation zu berücksichtigen."
