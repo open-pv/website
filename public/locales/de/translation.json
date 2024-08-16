@@ -35,15 +35,6 @@
   "simulationStatus": {
     "waitingForAdress": "Warte auf Adresseeingabe"
   },
-  "driver": {
-    "button": "Anleitung",
-    "searchfieldTitle": "Eingabe der Adresse",
-    "searchFieldDescription": "Hier gibst du eine Adresse ein. Versuche doch mal 'Hauptstrasse 7, Erlangen' oder 'Gasteig München'. Klicke anschließend auf 'START'.",
-    "moreInformationTitle": "Weitere Informationen",
-    "moreInformationDescription": "Wie funktioniert dieses Tool? Das beantworten wir hier!",
-    "sliderTitle": "Ändere die Simulation",
-    "sliderDescription": "Hier kannst du die Parameter der Simulation anpassen. Mit einer größeren 'Anzahl Simulationen' wird das Ergebnis genauer, ein größerer 'Simulationsradius' zeigt das Potential auf einem größeren Gebiet."
-  },
   "loadingMessage": {
     "tip1": "Mit Doppelklick kannst du ein anderes Gebäude auf der Karte auswählen und die Simulation neu starten.",
     "tip2": "Die Berechnung der Verschattung findet bei dir im Browser statt. Hast du ein großes Gebäude ausgewählt oder nutzt du einen alten PC, dann dauert die Berechnung länger.",
