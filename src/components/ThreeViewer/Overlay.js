@@ -95,8 +95,6 @@ function Overlay({
       <CustomDrawer
         isOpen={isOpen}
         onClose={onClose}
-        frontendState={frontendState}
-        setFrontendState={setFrontendState}
         showTerrain={showTerrain}
         setShowTerrain={setShowTerrain}
       />
@@ -142,14 +140,7 @@ const OverlayWrapper = ({ children }) => {
   )
 }
 
-const CustomDrawer = ({
-  isOpen,
-  onClose,
-  frontendState,
-  setFrontendState,
-  showTerrain,
-  setShowTerrain,
-}) => {
+const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
   return (
     <Stack spacing="24px">
       <Drawer isOpen={isOpen} placement="left" onClose={onClose} size={"xs"}>
@@ -159,34 +150,32 @@ const CustomDrawer = ({
           <DrawerHeader>Optionen</DrawerHeader>
 
           <DrawerBody>
-            {frontendState == "Results" && (
-              <>
-                <Button variant={"link"} _hover={{ color: "blue.500" }}>
-                  Baum erstellen
-                </Button>
-                <HoverHelp
-                  label={
-                    "Lege einen Baum an, um diesen in der nächsten Simulation zu berücksichtigen."
-                  }
-                />
+            <>
+              <Button variant={"link"} _hover={{ color: "blue.500" }}>
+                Baum erstellen
+              </Button>
+              <HoverHelp
+                label={
+                  "Lege einen Baum an, um diesen in der nächsten Simulation zu berücksichtigen."
+                }
+              />
 
-                <FormLabel>
-                  Karte anzeigen
-                  <Switch
-                    isChecked={showTerrain}
-                    onChange={() => setShowTerrain((prev) => !prev)}
-                    colorScheme="teal"
-                    margin={"5px"}
-                  />
-                </FormLabel>
-
-                <SliderWithLabel
-                  sliderProps={{ min: 1, max: 200 }}
-                  label={"Anzahl Simulationen"}
-                  hoverHelpLabel={"Hi"}
+              <FormLabel>
+                Karte anzeigen
+                <Switch
+                  isChecked={showTerrain}
+                  onChange={() => setShowTerrain((prev) => !prev)}
+                  colorScheme="teal"
+                  margin={"5px"}
                 />
-              </>
-            )}
+              </FormLabel>
+
+              <SliderWithLabel
+                sliderProps={{ min: 1, max: 200 }}
+                label={"Anzahl Simulationen"}
+                hoverHelpLabel={"Hi"}
+              />
+            </>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
