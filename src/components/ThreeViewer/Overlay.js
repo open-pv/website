@@ -190,25 +190,12 @@ const CustomDrawer = ({
                     margin={"5px"}
                   />
                 </FormLabel>
-                <Accordion defaultIndex={[]}>
-                  <AccordionItem>
-                    <h2>
-                      <AccordionButton>
-                        <Box as="span" flex="1" textAlign="left">
-                          Weitere Optionen
-                        </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                    </h2>
-                    <AccordionPanel pb={4}>
-                      <SliderWithLabel
-                        sliderProps={{ min: 1, max: 200 }}
-                        label={"Anzahl Simulationen"}
-                        hoverHelpLabel={"Hi"}
-                      />
-                    </AccordionPanel>
-                  </AccordionItem>
-                </Accordion>
+
+                <SliderWithLabel
+                  sliderProps={{ min: 1, max: 200 }}
+                  label={"Anzahl Simulationen"}
+                  hoverHelpLabel={"Hi"}
+                />
               </>
             )}
           </DrawerBody>
