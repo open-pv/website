@@ -16,8 +16,21 @@ export default function OverlayDrawPV({
 
   return (
     <>
-      <Button onClick={handleCreatePVButtonClick}>PV-Anlage erstellen</Button>
-      <Button onClick={handleAbortButtonClick}>Abbrechen</Button>
+      <Button
+        onClick={handleCreatePVButtonClick}
+        variant={"link"}
+        colorScheme="teal"
+      >
+        {" "}
+        PV-Anlage erstellen
+      </Button>
+      <Button
+        onClick={handleAbortButtonClick}
+        variant={"link"}
+        colorScheme="teal"
+      >
+        Abbrechen
+      </Button>
     </>
   )
 }

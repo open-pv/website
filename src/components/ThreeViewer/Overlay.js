@@ -59,6 +59,7 @@ function Overlay({
           </Button>
           <Button
             variant={"link"}
+            colorScheme="teal"
             _hover={{ color: "blue.500" }}
             onClick={() => {
               setFrontendState("DrawPV")
