@@ -1,7 +1,7 @@
 {
   "sidebar": {
     "header": "Ziel des Tools",
-    "mainText": "Im Suchfeld deine Adresse oder Koordinaten eingeben. Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche. Der Service funktioniert aktuell nur für Gebäude in Bayern."
+    "mainText": "Im Suchfeld deine Adresse oder Koordinaten eingeben. Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche."
   },
   "datesSlider": {
     "text": "Anzahl Simulationen: "
