@@ -53,5 +53,6 @@
     "title": "Keine Ergebnisse",
     "description": "Die Ortssuche lieferte keine Ergebnisse."
   },
-  "startSimulation": "Simulation starten"
+  "startSimulation": "Simulation starten",
+  "Search": "Suchen"
 }

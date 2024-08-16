@@ -40,7 +40,7 @@ function SearchField({ callback }) {
         margin={"5px"}
         loadingText="Loading"
       >
-        Start
+        { t('Search') }
       </Button>
     </form>
   )

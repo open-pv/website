@@ -44,5 +44,6 @@
     "title": "No Results",
     "description": "The location search did not yield any results."
   },
-  "startSimulation": "Start simulation"
+  "startSimulation": "Start simulation",
+  "Search": "Search"
 }
