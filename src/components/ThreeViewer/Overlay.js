@@ -47,15 +47,27 @@ function Overlay({
   return (
     <OverlayWrapper>
       {frontendState == "Results" && (
-        <Button
-          ref={btnRef}
-          colorScheme="teal"
-          onClick={onOpen}
-          variant={"link"}
-          zIndex={100}
-        >
-          Optionen
-        </Button>
+        <>
+          <Button
+            ref={btnRef}
+            colorScheme="teal"
+            onClick={onOpen}
+            variant={"link"}
+            zIndex={100}
+          >
+            Optionen
+          </Button>
+          <Button
+            variant={"link"}
+            _hover={{ color: "blue.500" }}
+            onClick={() => {
+              setFrontendState("DrawPV")
+              onClose()
+            }}
+          >
+            PV Anlage einzeichnen
+          </Button>
+        </>
       )}
       {frontendState == "DrawPV" && (
         <OverlayDrawPV
@@ -153,16 +165,6 @@ const CustomDrawer = ({
           <DrawerBody>
             {frontendState == "Results" && (
               <>
-                <Button
-                  variant={"link"}
-                  _hover={{ color: "blue.500" }}
-                  onClick={() => {
-                    setFrontendState("DrawPV")
-                    onClose()
-                  }}
-                >
-                  PV Anlage einzeichnen
-                </Button>
                 <HoverHelp
                   label={
                     "PV-Anlage in der Karte einzeichnen und Jahresbetrag berechnen."
