@@ -1,9 +1,4 @@
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
   Box,
   Button,
   Drawer,
@@ -23,6 +18,7 @@ import HoverHelp from "../Template/HoverHelp"
 import SliderWithLabel from "../Template/SliderWithLabel"
 
 import React from "react"
+import ButtonWithHoverHelp from "../Template/ButtonWithHoverHelp"
 import OverlayDrawPV from "./OverlayDrawPV"
 
 function Overlay({
@@ -57,17 +53,16 @@ function Overlay({
           >
             Optionen
           </Button>
-          <Button
-            variant={"link"}
-            colorScheme="teal"
-            _hover={{ color: "blue.500" }}
+          <ButtonWithHoverHelp
+            buttonLabel={"PV Anlage einzeichnen"}
             onClick={() => {
               setFrontendState("DrawPV")
               onClose()
             }}
-          >
-            PV Anlage einzeichnen
-          </Button>
+            hoverText={
+              "PV-Anlage in der Karte einzeichnen und Jahresbetrag berechnen."
+            }
+          />
         </>
       )}
       {frontendState == "DrawPV" && (
@@ -166,12 +161,6 @@ const CustomDrawer = ({
           <DrawerBody>
             {frontendState == "Results" && (
               <>
-                <HoverHelp
-                  label={
-                    "PV-Anlage in der Karte einzeichnen und Jahresbetrag berechnen."
-                  }
-                />
-
                 <Button variant={"link"} _hover={{ color: "blue.500" }}>
                   Baum erstellen
                 </Button>
