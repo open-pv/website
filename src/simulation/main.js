@@ -5,15 +5,7 @@ import { downloadBuildings } from "./download"
 import { requestLocation } from "./location"
 import { processGeometries } from "./preprocessing"
 
-export async function mainSimulation(
-  inputValue,
-  inputChanged,
-  oldLocation,
-  setGeometries
-) {
-  const location = await requestLocation(inputValue, inputChanged, oldLocation)
-  window.setGeoLocation({ lat: location.lat, lon: location.lon })
-
+export async function mainSimulation(location, setGeometries) {
   // Clear previous attributions if any
   if (window.setAttribution) {
     for (let attributionSetter of Object.values(window.setAttribution)) {

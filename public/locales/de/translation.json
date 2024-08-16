@@ -50,5 +50,10 @@
     "secondPage": "Auf der Karte können Sie das Ergebnis der Verschattungssimulation betrachten. Mit Doppelklick können Sie weitere Gebäude für die Simulation auswählen.",
     "thirdPage": "Mit Optionen -> PV Anlage einzeichnen können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
     "fourthPage": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Cookies!"
-  }
+  },
+  "noSearchResults": {
+    "title": "Keine Ergebnisse",
+    "description": "Die Ortssuche lieferte keine Ergebnisse."
+  },
+  "startSimulation": "Simulation starten"
 }

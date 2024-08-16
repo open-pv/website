@@ -1,105 +1,107 @@
-import React, { useState } from "react"
-import WrongAdress from "../components/ErrorMessages/WrongAdress"
-import SavingCalculation from "../components/PVSimulation/SavingsCalculation"
-import SearchField from "../components/PVSimulation/SearchField"
-import LoadingBar from "../components/Template/LoadingBar"
-import WelcomeMessage from "../components/Template/WelcomeMessage"
-import Footer from "../components/ThreeViewer/Footer"
-import Map from "../components/ThreeViewer/Map"
-import Overlay from "../components/ThreeViewer/Overlay"
-import Scene from "../components/ThreeViewer/Scene"
+import React, { useRef, useState } from "react"
 import Main from "../Main"
 
+import { useTranslation } from "react-i18next"
+import SearchField from "../components/PVSimulation/SearchField"
+import { Map, Source, Layer, AttributionControl, Marker, Popup } from 'react-map-gl/maplibre';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import { useToast } from "@chakra-ui/react";
+import MapPopup from "../components/MapPopup";
+import WelcomeMessage from "../components/Template/WelcomeMessage";
+
 function Index() {
-  // frontendState defines the general state of the frontend (Map, Results, Loading, DrawPV)
-  const [frontendState, setFrontendState] = useState("Map")
-  // showTerrain decides if the underlying Map is visible or not
-  const [showTerrain, setShowTerrain] = useState(true)
-  // simulationProgress is used for the loading bar
-  const [simulationProgress, setSimulationProgress] = useState(0)
-  // A list of visible PV Systems - they get visible after they are drawn on a building and calculated
-  const [visiblePVSystems, setvisiblePVSystems] = useState([])
-  // When a building is selected from the Background/Surrounding to be simulated, it needs to be deleted
-  // from the background/surrounding mesh. These two states collect a list of names that should not be rendered
-  // Elements are for example "SurroundingMesh-37"
-  const [deletedSurroundingMeshes, setDeletedSurroundingMeshes] = useState([])
-  const [deletedBackgroundMeshes, setDeletedBackgroundMeshes] = useState([])
-  window.setDeletedSurroundingMeshes = setDeletedSurroundingMeshes
-  window.setDeletedBackgroundMeshes = setDeletedBackgroundMeshes
-  // The federal State where the material comes from, ie "BY"
-  const [federalState, setFederalState] = useState(false)
-  window.setFederalState = setFederalState
+  const { t, i18n } = useTranslation()
 
-  // Simulation States
-  const [geometries, setGeometries] = useState({
-    surrounding: [],
-    background: [],
-  })
-  const [displayedSimulationMesh, setDisplayedSimulationMesh] = useState([])
-  const [selectedMesh, setSelectedMesh] = useState([])
-  //geoLocation is an object with lat, lon
-  const [geoLocation, setGeoLocation] = useState()
-  window.setGeoLocation = setGeoLocation
+  const basemap_source = {
+    id: 'basemap-source',
+    type: 'raster',
+    tiles: ['https://sgx.geodatenzentrum.de/wmts_basemapde/tile/1.0.0/de_basemapde_web_raster_farbe/default/GLOBAL_WEBMERCATOR/{z}/{y}/{x}.png'],
+    attribution: `
+        Basiskarte &copy;
+        <a href="https://www.bkg.bund.de" target="_blank">
+          BKG
+        </a>
+        &nbsp;(
+        <a href="https://www.govdata.de/dl-de/by-2-0" target="_blank">
+          dl-de/by-2-0
+        </a>
+        )
+    `
+  }
+  const basemap_layer = {
+    id: 'basemap',
+    type: 'raster',
+    source: 'basemap-source',
+    minzoom: 0,
+    maxzoom: 19,
+  }
 
-  window.setFrontendState = setFrontendState
-  window.setSimulationProgress = setSimulationProgress
+  const [viewState, setViewState] = useState({
+    bounds: [5.98865807458, 47.3024876979, 15.0169958839, 54.983104153],
+  });
+
+  const [mapMarkers, setMapMarkers] = useState([])
+
+  const toast = useToast();
+
+  const searchCallback = (locations) => {
+    console.log('callback');
+    console.log(locations);
+    if(locations.length == 0) {
+      console.error("No search results!");
+      toast({
+        title: t('noSearchResults.title'),
+        description: t('noSearchResults.description'),
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
+    } else {
+      const lons = locations.map(loc => loc.lon);
+      const lats = locations.map(loc => loc.lat);
+
+      const bounds = [
+        Math.min(...lons),
+        Math.min(...lats),
+        Math.max(...lons),
+        Math.max(...lats),
+      ];
+      mapRef.current.fitBounds(bounds, {
+        maxZoom: 17,
+        speed: 2,
+      });
+    }
+    setMapMarkers(locations.map(location =>
+      <MapPopup key={location.key} { ...location } />
+    ));
+  }
+
+  const mapRef = useRef();
 
   return (
     <Main description={"Berechne das Potential deiner Solaranlage."}>
       <header>
         <div className="title">
-          <SearchField
-            frontendState={frontendState}
-            setFrontendState={setFrontendState}
-            setGeometries={setGeometries}
-            displayedSimulationMesh={displayedSimulationMesh}
-            setDisplayedSimulationMesh={setDisplayedSimulationMesh}
-          />
+          <SearchField callback={ searchCallback } />
         </div>
       </header>
-      <div className="content">
-        <WelcomeMessage />
-
-        {(frontendState == "Results" || frontendState == "DrawPV") && (
-          <Overlay
-            frontendState={frontendState}
-            setFrontendState={setFrontendState}
-            showTerrain={showTerrain}
-            setShowTerrain={setShowTerrain}
-            selectedMesh={selectedMesh}
-            setSelectedMesh={setSelectedMesh}
-            geometries={geometries}
-            displayedSimulationMesh={displayedSimulationMesh}
-            setDisplayedSimulationMesh={setDisplayedSimulationMesh}
-            deletedSurroundingMeshes={deletedSurroundingMeshes}
-            deletedBackgroundMeshes={deletedBackgroundMeshes}
-            geoLocation={geoLocation}
-            setvisiblePVSystems={setvisiblePVSystems}
-            visiblePVSystems={visiblePVSystems}
-          />
-        )}
-        {frontendState == "ErrorAdress" && <WrongAdress />}
-        {frontendState == "Map" && <Map />}
-
-        {(frontendState == "Results" || frontendState == "DrawPV") && (
-          <Scene
-            geometries={geometries}
-            simulationMesh={displayedSimulationMesh}
-            showTerrain={showTerrain}
-            frontendState={frontendState}
-            visiblePVSystems={visiblePVSystems}
-            selectedMesh={selectedMesh}
-            setSelectedMesh={setSelectedMesh}
-            deletedSurroundingMeshes={deletedSurroundingMeshes}
-            deletedBackgroundMeshes={deletedBackgroundMeshes}
-          />
-        )}
-
-        {frontendState == "Loading" && (
-          <LoadingBar progress={simulationProgress} />
-        )}
-        <Footer federalState={federalState} frontendState={frontendState} />
-      </div>
+      <WelcomeMessage />
+      <Map
+        ref={ mapRef }
+        { ...viewState }
+        style={{width: "100%", height: "100%"}}
+        onMove={evt => setViewState(evt.viewState)}
+      >
+        <Layer id='background' type='background' paint={{
+          'background-color': 'lightgray'
+        }} />
+        <Source { ...basemap_source } >
+          <Layer { ...basemap_layer } />
+        </Source>
+        <>
+          { mapMarkers }
+        </>
+      </Map>
     </Main>
   )
 }
