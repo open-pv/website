@@ -174,7 +174,7 @@ const CustomDrawer = ({
                 </Button>
                 <HoverHelp
                   label={
-                    "Legen sie einen Baum an, um diesen in der nächsten Simulation zu berücksichtigen."
+                    "Lege einen Baum an, um diesen in der nächsten Simulation zu berücksichtigen."
                   }
                 />
 
