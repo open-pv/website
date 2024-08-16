@@ -6,20 +6,15 @@
   "datesSlider": {
     "text": "Anzahl Simulationen: "
   },
-  "distanceSlider": {
-    "text": "Schrittweite auf Karte [m]:"
-  },
+
   "radiusSlider": {
     "text": "Simulationsradius [m]:"
   },
-  "visualizeLaserPointsSlider": {
-    "text": "Gezeigte Laserpunkte [%]:"
-  },
-  "enableLaserPointsSlider": {
-    "text": "Baumverschattung einbeziehen"
-  },
-  "yes": "ja",
-  "no": "nein",
+
+  "yes": "Ja",
+  "no": "Nein",
+  "next": "Nächste",
+  "previous": "Vorherige",
   "searchField": {
     "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Lange Point 20, Freising"
   },
@@ -46,16 +41,23 @@
     "searchFieldDescription": "Hier gibst du eine Adresse ein. Versuche doch mal 'Hauptstrasse 7, Erlangen' oder 'Gasteig München'. Klicke anschließend auf 'START'.",
     "moreInformationTitle": "Weitere Informationen",
     "moreInformationDescription": "Wie funktioniert dieses Tool? Das beantworten wir hier!",
-    "useLaserPointsDescription": "Du willst ein noch genaueres Ergebnis? Stelle die Verschattungsberechnung mit Bäumen an!",
     "sliderTitle": "Ändere die Simulation",
-    "sliderDescription": "Hier kannst du die Parameter der Simulation anpassen. Mit einer größeren 'Anzahl Simulationen' wird das Ergebnis genauer, ein größerer 'Simulationsradius' zeigt das Potential auf einem größeren Gebiet. Mit der 'Schrittweite auf Karte' kannst du die Bewegung durch die Pfeiltasten in der Karte verändern. Mit 'Baumverschattung einbeziehen' werden zusätzliche Laserdaten geladen, durch die Verschattung durch Bäume und andere Objekte außerhalb der Pläne mit simuliert. Diese Laserpunkte können durch erhöhen von 'Gezeigte Laserpunkte' auch anzeigt werden."
+    "sliderDescription": "Hier kannst du die Parameter der Simulation anpassen. Mit einer größeren 'Anzahl Simulationen' wird das Ergebnis genauer, ein größerer 'Simulationsradius' zeigt das Potential auf einem größeren Gebiet."
   },
   "loadingMessage": {
-    "warningUseLaserpoints": "Du berechnest dein PV-Potential mit Verschattung von Bäumen. Dies kann bis zu einer Minute dauern. Gib der Simulation etwas Zeit oder stelle die Verwendung der Baumverschattung in den Einstellungen aus.",
-    "warningUseNoLaserpoints": "Du kannst die Genaugikeit der Simulation verbessern, indem du die Baumverschattung in den Parametern anstellst."
+    "tip1": "Mit Doppelklick kannst du ein anderes Gebäude auf der Karte auswählen und die Simulation neu starten.",
+    "tip2": "Die Berechnung der Verschattung findet bei dir im Browser statt. Hast du ein großes Gebäude ausgewählt oder nutzt du einen alten PC, dann dauert die Berechnung länger.",
+    "tip3": "Manchmal werden Teile des Gebäudes unter der Karte angezeigt. In diesem Fall kannst du die Karte ausblenden, um das ganze Gebäude zu sehen."
   },
   "errorMessage": {
     "tooManyUniforms": "Leider ist das ausgewählte Gebiet zu groß, um auf deinem PC simuliert zu werden. Du kannst den Gebäuderadius mit dem Slider auf der linken Seite kleiner stellen, um dieses Problem zu beheben.",
     "wrongAdress": "Adresse wurde nicht gefunden oder liegt nicht innerhalb von Bayern. Leider können wir aktuell nur Häuser in Bayern simulieren. Alternativ kannst du auch die Koordinaten in Google Maps per Rechtsklick bestimmen und in das Suchfeld eingeben."
+  },
+  "WelcomeMessage": {
+    "title": "Willkommen bei OpenPV",
+    "firstPage": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten bestimmen. Dafür geben Sie ihre Adresse im Suchfeld ein und klicken Sie auf Start.",
+    "secondPage": "Auf der Karte können Sie das Ergebnis der Verschattungssimulation betrachten. Mit Doppelklick können Sie weitere Gebäude für die Simulation auswählen.",
+    "thirdPage": "Mit Optionen -> PV Anlage einzeichnen können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
+    "fourthPage": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Cookies!"
   }
 }

@@ -32,16 +32,6 @@ export const Driver = () => {
           },
         },
         {
-          element: "#enableLaserPointsSlider",
-          popover: {
-            title: t("driver.sliderTitle"),
-            description: t("driver.useLaserPointsDescription"),
-            side: "right",
-            align: "start",
-          },
-        },
-
-        {
           element: 'a[href="/about"]',
           popover: {
             title: t("driver.moreInformationTitle"),

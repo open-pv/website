@@ -6,17 +6,8 @@
   "datesSlider": {
     "text": "Number of Simulations:"
   },
-  "distanceSlider": {
-    "text": "Step Size on Map [m]:"
-  },
   "radiusSlider": {
     "text": "Simulation Radius [m]:"
-  },
-  "visualizeLaserPointsSlider": {
-    "text": "Shown Laserpoints [%]:"
-  },
-  "enableLaserPointsSlider": {
-    "text": "Tree Shades"
   },
   "yes": "yes",
   "no": "no",
@@ -46,13 +37,13 @@
     "searchFieldDescription": "Here you enter an address. Try 'Hauptstrasse 7, Erlangen' or 'Gasteig München'. Then click on 'START'.",
     "moreInformationTitle": "More information",
     "moreInformationDescription": "How does this tool work? We answer that here!",
-    "useLaserPointsDescription": "You want an even more accurate result? Enable the tree shading calculation!",
     "sliderTitle": "Change simulation parameters",
-    "sliderDescription": "Here you can adjust the parameters of the simulation. A larger 'Number of Simulations' will provide more accurate results, while a larger 'Simulation Radius' will show the potential in a broader area. You can change the movement on the map using the 'Step Size on Map' with the arrow keys. With 'Enable Tree Shades' you can include shades from non-buildings like trees via laser point data. This data can also be visualized by increasing 'Shown Laserpoints'."
+    "sliderDescription": "Here you can adjust the parameters of the simulation. A larger 'Number of Simulations' will provide more accurate results, while a larger 'Simulation Radius' will show the potential in a broader area."
   },
   "loadingMessage": {
-    "warningUseLaserpoints": "You calculate your PV potential with tree shading. This can take up to a minute. Give the simulation some time or disable the use of tree shading in the settings.",
-    "warningUseNoLaserpoints": "You can improve the accuracy of the simulation by enabling tree shading in the parameters."
+    "tip1": "Double-click to select a different building on the map and restart the simulation.",
+    "tip2": "The shadow calculation is done in your browser. If you have selected a large building or are using an old PC, the calculation will take longer.",
+    "tip3": "Sometimes parts of the building are displayed below the map. In this case, you can hide the map to see the entire building."
   },
   "errorMessage": {
     "tooManyUniforms": "Unfortunately, the selected area is too large to be simulated on your PC. You can reduce the building radius using the slider on the left side to resolve this issue.",

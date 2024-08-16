@@ -8,5 +8,6 @@
     "source.fixAll": "explicit",
     "source.sortImports": "explicit"
   },
-  "prettier.semi": false
+  "prettier.semi": false,
+  "prettier.jsxSingleQuote": false
 }

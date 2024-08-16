@@ -1,39 +1,41 @@
+import { Button, FormControl, Input } from "@chakra-ui/react"
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
-import DotLoader from "react-spinners/DotLoader"
-import { setLocation } from "../../simulation/download"
-import TooManyUniforms from "../ErrorMessages/TooManyUniforms"
-import WrongAdress from "../ErrorMessages/WrongAdress"
+import * as THREE from "three"
+import { mainSimulation } from "../../simulation/main"
 
-const override = {
-  display: "block",
-  margin: "auto",
-  borderColor: "red",
-}
-
-function SearchField() {
-  const [inputValue, setInputValue] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [showErrorMessage, setShowErrorMessage] = useState(false)
+function SearchField({
+  frontendState,
+  setFrontendState,
+  setGeometries,
+  displayedSimulationMesh,
+  setDisplayedSimulationMesh,
+}) {
+  const [inputValue, setInputValue] = useState("Arnulfstraße 138, Münche")
+  window.searchFieldInput = inputValue
   const [inputChanged, setInputChanged] = useState(false)
   const { t, i18n } = useTranslation()
-  const [showTooManyUniformsError, setShowTooManyUniformsError] =
-    useState(false)
-  window.setShowErrorMessage = setShowErrorMessage
-  window.setShowTooManyUniformsError = setShowTooManyUniformsError
-  window.setLoading = setLoading
-  const handleSubmit = (event) => {
-    setLoading(!loading)
-    window.setShowViridisLegend(false)
+
+  const handleSubmit = async (event) => {
+    setFrontendState("Loading")
     event.preventDefault()
-    window.setShowThreeViewer(true)
-    setLocation(inputValue, inputChanged, window.mapLocation)
-    window.numRadiusSimulationChanged = false
-    window.numSimulationsChanged = false
-    window.mapLocationChanged = false
-    setShowErrorMessage(false)
-    setShowTooManyUniformsError(false)
-    setInputChanged(false)
+
+    const { simulationMesh, geometries } = await mainSimulation(
+      inputValue,
+      inputChanged,
+      window.mapLocation,
+      setGeometries
+    )
+    if (simulationMesh) {
+      let middle = new THREE.Vector3()
+      simulationMesh.geometry.computeBoundingBox()
+      simulationMesh.geometry.boundingBox.getCenter(middle)
+      simulationMesh.middle = middle
+
+      setGeometries(geometries)
+      setDisplayedSimulationMesh([...displayedSimulationMesh, simulationMesh])
+      setFrontendState("Results")
+    }
   }
   const handleChange = (event) => {
     if (inputValue != event.target.value) {
@@ -43,43 +45,31 @@ function SearchField() {
   }
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", alignItems: "center" }}
-        id="search-field"
-      >
-        <input
-          type="text"
-          placeholder={t("searchField.placeholder")}
-          value={inputValue}
-          onChange={handleChange}
-        />
-        <button type="submit">Start</button>
-      </form>
-      {showErrorMessage && <WrongAdress />}
-      {showTooManyUniformsError && <TooManyUniforms />}
-      <DotLoader
-        color="MediumAquaMarine"
-        cssOverride={override}
-        loading={loading}
-        size={60}
+    <form
+      style={{
+        display: "flex",
+        alignItems: "center",
+        padding: "5px",
+      }}
+      onSubmit={handleSubmit}
+    >
+      <Input
+        type="text"
+        placeholder={t("searchField.placeholder")}
+        value={inputValue}
+        onChange={handleChange}
+        margin={"5px"}
       />
-      {window.enableLaserPoints && loading && (
-        <div style={{ padding: "30px" }}>
-          <p style={{ textAlign: "center" }}>
-            {t("loadingMessage.warningUseLaserpoints")}
-          </p>
-        </div>
-      )}
-      {!window.enableLaserPoints && loading && (
-        <div style={{ padding: "30px" }}>
-          <p style={{ textAlign: "center" }}>
-            {t("loadingMessage.warningUseNoLaserpoints")}
-          </p>
-        </div>
-      )}
-    </>
+      <Button
+        isLoading={frontendState == "Loading"}
+        type="submit"
+        minWidth={"150px"}
+        margin={"5px"}
+        loadingText="Loading"
+      >
+        Start
+      </Button>
+    </form>
   )
 }
 

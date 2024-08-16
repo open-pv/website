@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next"
 function WrongAdress() {
   const { t, i18n } = useTranslation()
   return (
-    <div style={{ alignItems: "center" }}>
+    <div className="error-message">
       <p>{t("errorMessage.wrongAdress")}</p>
       <img
         src="images/googleMaps.gif"
