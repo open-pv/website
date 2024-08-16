@@ -21,7 +21,6 @@
     "three": "^0.163.0"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.22.7",
     "@babel/preset-env": "^7.22.9",
     "@babel/preset-react": "^7.22.5",
     "babel-jest": "^29.6.2",
