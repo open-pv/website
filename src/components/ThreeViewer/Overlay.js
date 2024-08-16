@@ -39,7 +39,7 @@ function Overlay({
   setvisiblePVSystems,
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
-
+  const { t } = useTranslation()
   const btnRef = React.useRef()
 
   return (
@@ -53,7 +53,7 @@ function Overlay({
             variant={"link"}
             zIndex={100}
           >
-            Optionen
+            {t("button.options")}
           </Button>
           <ButtonWithHoverHelp
             buttonLabel={"PV Anlage einzeichnen"}
@@ -91,7 +91,7 @@ function Overlay({
             })
           }
         >
-          Gebäude simulieren
+          {t("button.simulateBuilding")}
         </Button>
       )}
       <CustomDrawer
@@ -150,7 +150,7 @@ const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
         <DrawerOverlay />
         <DrawerContent height={"100%"}>
           <DrawerCloseButton />
-          <DrawerHeader>Optionen</DrawerHeader>
+          <DrawerHeader>{t("button.options")}</DrawerHeader>
 
           <DrawerBody>
             <>
@@ -165,7 +165,7 @@ const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
               />
 
               <FormLabel>
-                Karte anzeigen
+                {t("button.showMap")}
                 <Switch
                   isChecked={showTerrain}
                   onChange={() => setShowTerrain((prev) => !prev)}
