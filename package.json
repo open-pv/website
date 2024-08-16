@@ -23,8 +23,7 @@
   "devDependencies": {
     "gh-pages": "^6.1.1",
     "react-scripts": "^5.0.1",
-    "rimraf": "^5.0.0",
-    "source-map-explorer": "^2.5.3"
+    "rimraf": "^5.0.0"
   },
   "browserslist": {
     "production": [
