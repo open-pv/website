@@ -57,13 +57,13 @@ export async function mainSimulation(
       return window.setSimulationProgress(progress)
     }
 
-    let simulationMesh = await scene.calculate(
-      numSimulations,
-      undefined,
-      0.2,
-      1400 * 0.2,
-      loadingBarWrapperFunction
-    )
+    let simulationMesh = await scene.calculate({
+      numberSimulations: numSimulations,
+      diffuseIrradianceURL: undefined,
+      pvCellEfficiency: 0.2,
+      maxYieldPerSquareMeter: 1400 * 0.2,
+      progressCallback: loadingBarWrapperFunction,
+    })
 
     const material = new THREE.MeshLambertMaterial({
       vertexColors: true,
@@ -118,13 +118,13 @@ export async function simulationForNewBuilding(props) {
     ? (numSimulations = window.numSimulations)
     : (numSimulations = 80)
 
-  let simulationMesh = await shadingScene.calculate(
-    numSimulations,
-    undefined,
-    0.2,
-    1400 * 0.2,
-    (progress, total) => console.log("Simulation Progress is ", progress)
-  )
+  let simulationMesh = await shadingScene.calculate({
+    numberSimulations: numSimulations,
+    pvCellEfficiency: 0.2,
+    maxYieldPerSquareMeter: 1400 * 0.2,
+    progressCallback: (progress, total) =>
+      console.log("Simulation Progress is ", progress),
+  })
   console.log("SimulationMesh", simulationMesh)
   const material = new THREE.MeshLambertMaterial({
     vertexColors: true,
