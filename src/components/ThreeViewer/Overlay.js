@@ -144,6 +144,7 @@ const OverlayWrapper = ({ children }) => {
 
 const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
   const { t } = useTranslation()
+  const [sliderValue, setSliderValue] = React.useState(window.numSimulations)
   return (
     <Stack spacing="24px">
       <Drawer isOpen={isOpen} placement="left" onClose={onClose} size={"xs"}>
@@ -178,6 +179,11 @@ const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
                 sliderProps={{ min: 1, max: 200 }}
                 label={"Anzahl Simulationen"}
                 hoverHelpLabel={"Hi"}
+                sliderValue={sliderValue}
+                setSliderValue={(newValue) => {
+                  setSliderValue(newValue)
+                  window.numSimulations = newValue
+                }}
               />
             </>
           </DrawerBody>
