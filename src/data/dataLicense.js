@@ -77,4 +77,5 @@ export const licenseLinks = {
   "dl-de/by-2-0": "https://www.govdata.de/dl-de/by-2-0",
   "dl-de/zero-2-0": "https://www.govdata.de/dl-de/zero-2-0",
   "cc/by-4-0": "https://creativecommons.org/licenses/by/4.0/deed",
+  "cc/by-3-0": "https://creativecommons.org/licenses/by/3.0/deed",
 }
