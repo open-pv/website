@@ -1,27 +1,36 @@
-# website
+# The OpenPV website
+This is the base repository for the website [openpv.de](https://www.openpv.de). The website is built using
+* [React](https://react.dev/)
+* [Chakra-UI](https://v2.chakra-ui.com)
+* [Three.js](https://threejs.org/)
 
-Rewriting everything to react, because why not?
+The whole site is **static**, reducing the hosting costs as much as possible. The shading simulation happens in the browser, using
+our npm package [simshady](https://github.com/open-pv/simshady).
 
-For the first time, run
-```shell
-npm install
-```
+## Setup
 
-To compile and start a live server, run
-```shell
-npm start
-```
+If you want to deploy this website locally, you need to follow these steps:
 
-# Build issues:
-## Proper pull
-```
-eval $(ssh-agent -s)
-ssh-add ~/.ssh/id_ed22519
-git pull
-```
+1. Clone the repository and enter it.
+2. Make sure that you have [node](https://nodejs.org/en) and the node package manager npm installed. Check this by running
+    ```
+    node --version
+    npm --version
+    ```
+3. Install all required packages from `package.json` by running
+    ```shell
+    npm install
+    ```
+4. To build the code and host it in a development environment, run
+    ```shell
+    npm start
+    ```
+    and visit [localhost:3000](http://localhost:3000).
 
-## Soft linking the data in the build folder
 
-```
-~/pv-total-react/build$ ln -s ../../dataset/ data
-```
+## Funding
+We thank our sponsors.
+
+<a href="https://prototypefund.de/">
+  <img src='https://github.com/open-pv/.github/assets/74312290/9dfa1ce4-adaf-4638-9cbc-e519b033331b' width='300'>
+</a>
