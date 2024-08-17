@@ -41,8 +41,13 @@ function Footer({ federalState, frontendState }) {
         )}
         <p className="copyright">
           &copy; Erstellt vom{" "}
-          <a href="https://github.com/open-pv">Team OpenPV</a>, {" | "}
-          <a href="https://html5up.net">Website Template</a>
+          <a href="https://github.com/open-pv" target="_blank">
+            Team OpenPV
+          </a>
+          , {" | "}
+          <a href="https://html5up.net" target="_blank">
+            Website Template
+          </a>
           {" | "}
           <a href="/Impressum">Impressum</a>
           {" | "}
