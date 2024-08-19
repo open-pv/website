@@ -12,6 +12,7 @@ const { PUBLIC_URL } = process.env
 // NOTE that some of these chunks are very small. We should optimize
 // which pages are lazy loaded in the future.
 const Index = lazy(() => import("./pages/Index"))
+const Simulation = lazy(() => import("./pages/Simulation"))
 const NotFound = lazy(() => import("./pages/NotFound"))
 const Impressum = lazy(() => import("./pages/Impressum"))
 const Datenschutz = lazy(() => import("./pages/Datenschutz"))
@@ -25,6 +26,7 @@ const StrictApp = () => (
         <Suspense fallback={<Main />}>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/simulation/:lon/:lat" element={<Simulation />} />
             <Route path="/anleitung" element={<About />} />
             <Route path="/about" element={<About />} />
             <Route path="/impressum" element={<Impressum />} />
