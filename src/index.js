@@ -11,7 +11,7 @@ const { PUBLIC_URL } = process.env
 // Every route - we lazy load so that each page can be chunked
 // NOTE that some of these chunks are very small. We should optimize
 // which pages are lazy loaded in the future.
-const Index = lazy(() => import("./pages/Index"))
+const Map = lazy(() => import("./pages/Map"))
 const Simulation = lazy(() => import("./pages/Simulation"))
 const NotFound = lazy(() => import("./pages/NotFound"))
 const Impressum = lazy(() => import("./pages/Impressum"))
@@ -25,7 +25,7 @@ const StrictApp = () => (
       <BrowserRouter basename={PUBLIC_URL}>
         <Suspense fallback={<Main />}>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Map />} />
             <Route path="/simulation/:lon/:lat" element={<Simulation />} />
             <Route path="/anleitung" element={<About />} />
             <Route path="/about" element={<About />} />
