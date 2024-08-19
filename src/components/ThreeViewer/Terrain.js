@@ -92,10 +92,12 @@ const TerrainTile = (props) => {
       geometry.setIndex(new THREE.BufferAttribute(indices, 1))
 
       setGeometry(geometry)
+      const map = await mapFuture;
+      map.colorSpace = THREE.SRGBColorSpace;
       setMaterial(
         new THREE.MeshBasicMaterial({
           map: await mapFuture,
-          side: THREE.DoubleSide,
+          side: THREE.FrontSide,
         })
       )
       setMeshLoaded(true)
