@@ -3,14 +3,10 @@
     "header": "Goal of this website",
     "mainText": "Enter your address or coordinates in the search field. The tool will then calculate the potential for a solar system on your roof and facade area."
   },
-  "datesSlider": {
-    "text": "Number of Simulations:"
-  },
-  "radiusSlider": {
-    "text": "Simulation Radius [m]:"
-  },
   "yes": "yes",
   "no": "no",
+  "next": "Next",
+  "previous": "Previous",
   "searchField": {
     "placeholder": "Enter your address or coordinates - e.g. Lange Point 20, Freising"
   },
@@ -28,9 +24,6 @@
     "h3-5": "More details",
     "p-5": "Once the 3D building data has been downloaded, the website begins the calculation of the solar potential. This is achieved through ray tracing to determine the angle of sunlight incidence on the roof and facade. The data used in this project is sourced from the OpenData Portal of the Bavarian Surveying Authority and is available under the CC BY 4.0 license: https://geodaten.bayern.de/opengeodata/OpenDataDetail.html?pn=lod2. The LOD2 data from March 2023 was used for this purpose. We express our gratitude to the source for providing these data, which have contributed to the realization of this project."
   },
-  "simulationStatus": {
-    "waitingForAdress": "Waiting for address input"
-  },
   "loadingMessage": {
     "tip1": "Double-click to select a different building on the map and restart the simulation.",
     "tip2": "The shadow calculation is done in your browser. If you have selected a large building or are using an old PC, the calculation will take longer.",
@@ -39,5 +32,21 @@
   "errorMessage": {
     "tooManyUniforms": "Unfortunately, the selected area is too large to be simulated on your PC. You can reduce the building radius using the slider on the left side to resolve this issue.",
     "wrongAdress": "Address was not found or is not within Bavaria. Unfortunately, we can currently only simulate houses in Bavaria. Alternatively, you can determine the coordinates in Google Maps by right-clicking and enter them in the search field."
+  },
+  "WelcomeMessage": {
+    "title": "Welcome to OpenPV",
+    "firstPage": "Is a solar system worth it for my roof or balcony? With OpenPV, you can determine the solar potential of your building in just a few steps. Simply enter your address in the search field and click Start.",
+    "secondPage": "On the map, you can view the results of the shading simulation. You can select additional buildings for simulation by double-clicking.",
+    "thirdPage": "In Options -> Draw PV System, you can create a solar system and calculate the annual yield.",
+    "fourthPage": "The best thing about OpenPV: We are open-source, free, store no data, and use no cookies!"
+  },
+  "button": {
+    "showMap": "Show Map",
+    "start": "Start",
+    "options": "Options",
+    "simulateBuilding": "Simulate Building",
+    "createPVSystem": "Create PV System",
+    "cancel": "Cancel",
+    "deleteLastPoint": "Delete Last Point"
   }
 }
