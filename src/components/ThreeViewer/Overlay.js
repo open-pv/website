@@ -1,9 +1,4 @@
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
   Box,
   Button,
   Drawer,
@@ -15,14 +10,16 @@ import {
   FormLabel,
   Stack,
   Switch,
+  Text,
   useDisclosure,
 } from "@chakra-ui/react"
+import { useTranslation } from "react-i18next"
 import { simulationForNewBuilding } from "../../simulation/main"
-
 import HoverHelp from "../Template/HoverHelp"
 import SliderWithLabel from "../Template/SliderWithLabel"
 
 import React from "react"
+import ButtonWithHoverHelp from "../Template/ButtonWithHoverHelp"
 import OverlayDrawPV from "./OverlayDrawPV"
 
 function Overlay({
@@ -42,20 +39,33 @@ function Overlay({
   setvisiblePVSystems,
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { t } = useTranslation()
   const btnRef = React.useRef()
 
   return (
     <OverlayWrapper>
       {frontendState == "Results" && (
-        <Button
-          ref={btnRef}
-          colorScheme="teal"
-          onClick={onOpen}
-          variant={"link"}
-          zIndex={100}
-        >
-          Optionen
-        </Button>
+        <>
+          <Button
+            ref={btnRef}
+            colorScheme="teal"
+            onClick={onOpen}
+            variant={"link"}
+            zIndex={100}
+          >
+            {t("button.options")}
+          </Button>
+          <ButtonWithHoverHelp
+            buttonLabel={"PV Anlage einzeichnen"}
+            onClick={() => {
+              setFrontendState("DrawPV")
+              onClose()
+            }}
+            hoverText={
+              "PV-Anlage in der Karte einzeichnen und Jahresbetrag berechnen."
+            }
+          />
+        </>
       )}
       {frontendState == "DrawPV" && (
         <OverlayDrawPV
@@ -81,14 +91,12 @@ function Overlay({
             })
           }
         >
-          Gebäude simulieren
+          {t("button.simulateBuilding")}
         </Button>
       )}
       <CustomDrawer
         isOpen={isOpen}
         onClose={onClose}
-        frontendState={frontendState}
-        setFrontendState={setFrontendState}
         showTerrain={showTerrain}
         setShowTerrain={setShowTerrain}
       />
@@ -134,80 +142,50 @@ const OverlayWrapper = ({ children }) => {
   )
 }
 
-const CustomDrawer = ({
-  isOpen,
-  onClose,
-  frontendState,
-  setFrontendState,
-  showTerrain,
-  setShowTerrain,
-}) => {
+const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
+  const { t } = useTranslation()
+  const [sliderValue, setSliderValue] = React.useState(window.numSimulations)
   return (
     <Stack spacing="24px">
       <Drawer isOpen={isOpen} placement="left" onClose={onClose} size={"xs"}>
         <DrawerOverlay />
         <DrawerContent height={"100%"}>
           <DrawerCloseButton />
-          <DrawerHeader>Optionen</DrawerHeader>
+          <DrawerHeader>{t("button.options")}</DrawerHeader>
 
           <DrawerBody>
-            {frontendState == "Results" && (
-              <>
-                <Button
-                  variant={"link"}
-                  _hover={{ color: "blue.500" }}
-                  onClick={() => {
-                    setFrontendState("DrawPV")
-                    onClose()
-                  }}
-                >
-                  PV Anlage einzeichnen
-                </Button>
-                <HoverHelp
-                  label={
-                    "PV-Anlage in der Karte einzeichnen und Jahresbetrag berechnen."
-                  }
-                />
+            <>
+              <Text as="b">{t("sidebar.header")}</Text>
+              <Text>{t("sidebar.mainText")}</Text>
 
-                <Button variant={"link"} _hover={{ color: "blue.500" }}>
-                  Baum erstellen
-                </Button>
-                <HoverHelp
-                  label={
-                    "Lege einen Baum an, um diesen in der nächsten Simulation zu berücksichtigen."
-                  }
-                />
+              <Button variant={"link"}>Baum erstellen</Button>
+              <HoverHelp
+                label={
+                  "Lege einen Baum an, um diesen in der nächsten Simulation zu berücksichtigen."
+                }
+              />
 
-                <FormLabel>
-                  Karte anzeigen
-                  <Switch
-                    isChecked={showTerrain}
-                    onChange={() => setShowTerrain((prev) => !prev)}
-                    colorScheme="teal"
-                    margin={"5px"}
-                  />
-                </FormLabel>
-                <Accordion defaultIndex={[]}>
-                  <AccordionItem>
-                    <h2>
-                      <AccordionButton>
-                        <Box as="span" flex="1" textAlign="left">
-                          Weitere Optionen
-                        </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                    </h2>
-                    <AccordionPanel pb={4}>
-                      <SliderWithLabel
-                        sliderProps={{ min: 1, max: 200 }}
-                        label={"Anzahl Simulationen"}
-                        hoverHelpLabel={"Hi"}
-                      />
-                    </AccordionPanel>
-                  </AccordionItem>
-                </Accordion>
-              </>
-            )}
+              <FormLabel>
+                {t("button.showMap")}
+                <Switch
+                  isChecked={showTerrain}
+                  onChange={() => setShowTerrain((prev) => !prev)}
+                  colorScheme="teal"
+                  margin={"5px"}
+                />
+              </FormLabel>
+
+              <SliderWithLabel
+                sliderProps={{ min: 1, max: 200 }}
+                label={"Anzahl Simulationen"}
+                hoverHelpLabel={"Hi"}
+                sliderValue={sliderValue}
+                setSliderValue={(newValue) => {
+                  setSliderValue(newValue)
+                  window.numSimulations = newValue
+                }}
+              />
+            </>
           </DrawerBody>
         </DrawerContent>
       </Drawer>

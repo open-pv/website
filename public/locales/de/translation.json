@@ -1,16 +1,8 @@
 {
   "sidebar": {
     "header": "Ziel des Tools",
-    "mainText": "Im Suchfeld deine Adresse oder Koordinaten eingeben. Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche. Der Service funktioniert aktuell nur für Gebäude in Bayern."
+    "mainText": "Im Suchfeld deine Adresse oder Koordinaten eingeben. Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche."
   },
-  "datesSlider": {
-    "text": "Anzahl Simulationen: "
-  },
-
-  "radiusSlider": {
-    "text": "Simulationsradius [m]:"
-  },
-
   "yes": "Ja",
   "no": "Nein",
   "next": "Nächste",
@@ -50,5 +42,11 @@
     "secondPage": "Auf der Karte können Sie das Ergebnis der Verschattungssimulation betrachten. Mit Doppelklick können Sie weitere Gebäude für die Simulation auswählen.",
     "thirdPage": "Mit Optionen -> PV Anlage einzeichnen können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
     "fourthPage": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Cookies!"
+  },
+  "button": {
+    "showMap": "Karte anzeigen",
+    "start": "Start",
+    "options": "Optionen",
+    "simulateBuilding": "Gebäude simulieren"
   }
 }

@@ -8,10 +8,13 @@ import {
 import React from "react"
 import HoverHelp from "./HoverHelp"
 
-const SliderWithLabel = ({ sliderProps, label, hoverHelpLabel }) => {
-  const defaultValue = 100
-  window.numSimulation = defaultValue
-  const [sliderValue, setSliderValue] = React.useState(defaultValue)
+const SliderWithLabel = ({
+  sliderProps,
+  label,
+  hoverHelpLabel,
+  sliderValue,
+  setSliderValue,
+}) => {
   const [showTooltip, setShowTooltip] = React.useState(false)
   return (
     <>
@@ -20,15 +23,11 @@ const SliderWithLabel = ({ sliderProps, label, hoverHelpLabel }) => {
       {hoverHelpLabel && <HoverHelp label={hoverHelpLabel} />}
       <Slider
         id="slider"
-        defaultValue={defaultValue}
+        defaultValue={sliderValue}
         min={sliderProps.min}
         max={sliderProps.max}
         colorScheme="teal"
-        onChange={(v) => {
-          setSliderValue(v)
-          window.numSimulations = v //TODO: A Slider might also change some other values
-          // besides the numSimulation
-        }}
+        onChange={setSliderValue}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
       >

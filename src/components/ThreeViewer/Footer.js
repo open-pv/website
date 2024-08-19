@@ -1,8 +1,12 @@
+import i18n from "i18next"
 import React from "react"
 import { attributions, licenseLinks } from "../../data/dataLicense"
 
 function Footer({ federalState, frontendState }) {
   const attr = federalState ? attributions[federalState] : undefined
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng)
+  }
 
   return (
     <div className="overlay">
@@ -53,11 +57,23 @@ function Footer({ federalState, frontendState }) {
           {" | "}
           <a href="/Datenschutz">Datenschutz</a>
           {" | "}
-          <a href="" onClick={() => changeLanguage("en")}>
+          <a
+            href=""
+            onClick={(e) => {
+              e.preventDefault()
+              changeLanguage("en")
+            }}
+          >
             English
           </a>
           {" | "}
-          <a href="" onClick={() => changeLanguage("de")}>
+          <a
+            href=""
+            onClick={(e) => {
+              e.preventDefault()
+              changeLanguage("de")
+            }}
+          >
             German
           </a>
         </p>

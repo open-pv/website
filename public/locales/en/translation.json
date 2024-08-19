@@ -1,7 +1,7 @@
 {
   "sidebar": {
     "header": "Goal of this website",
-    "mainText": "Enter your address or coordinates in the search field. The tool will then calculate the potential for a solar system on your roof and facade area. Currently, the service is only available for buildings in the German state of Bavaria."
+    "mainText": "Enter your address or coordinates in the search field. The tool will then calculate the potential for a solar system on your roof and facade area."
   },
   "datesSlider": {
     "text": "Number of Simulations:"
