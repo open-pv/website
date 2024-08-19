@@ -1,11 +1,11 @@
-import { Button } from "@chakra-ui/react"
+import { Button, Text } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Popup } from "react-map-gl/maplibre"
 import { useNavigate } from "react-router-dom"
 
 export default function MapPopup({lat, lon, display_name}) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   const navigate = useNavigate();
   const action = () => {
@@ -27,7 +27,7 @@ export default function MapPopup({lat, lon, display_name}) {
         closeOnClick={false}
         onClose={() => setVisible(false)}
       >
-          { display_name }
+          <Text>{ display_name }</Text>
           <Button onClick={action}>
             { t('startSimulation') }
           </Button>
