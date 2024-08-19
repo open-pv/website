@@ -56,5 +56,9 @@
     "description": "Die Ortssuche lieferte keine Ergebnisse."
   },
   "startSimulation": "Simulation starten",
-  "Search": "Suchen"
+  "Search": "Suchen",
+  "map": {
+    "coordinates": "Koordinaten",
+    "userSelection": "Manuelle Auswahl"
+  }
 }
