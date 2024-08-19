@@ -108,7 +108,7 @@ const TerrainTile = (props) => {
   return mesh
 }
 
-const Terrain = () => {
+const Terrain = ({visible}) => {
   const [x, y] = coordinatesXY15
   let tiles = []
   const tx = Math.floor(x * 16)
@@ -127,7 +127,11 @@ const Terrain = () => {
     tiles.push(<TerrainTile key={key} x={tx + dx} y={ty + dy} zoom={19} />)
   }
 
-  return <>{tiles}</>
+  console.log(`Terrain visible:`)
+  console.log(visible);
+  return <group visible={visible}>
+    {tiles}
+  </group>
 }
 
 export default Terrain

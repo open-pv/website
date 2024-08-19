@@ -79,7 +79,7 @@ const Scene = ({
         setPVPoints={setPVPoints}
       />
 
-      {simulationMesh != undefined && showTerrain && <Terrain />}
+      {simulationMesh != undefined && <Terrain visible={showTerrain}/>}
     </Canvas>
   )
 }
