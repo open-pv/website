@@ -16,25 +16,6 @@ function SearchField({ callback }) {
     const locations = await requestLocation(inputValue)
     console.warn(location);
     callback(locations);
-
-    /*
-    const { simulationMesh, geometries } = await mainSimulation(
-      inputValue,
-      inputChanged,
-      window.mapLocation,
-      setGeometries
-    )
-    if (simulationMesh) {
-      let middle = new THREE.Vector3()
-      simulationMesh.geometry.computeBoundingBox()
-      simulationMesh.geometry.boundingBox.getCenter(middle)
-      simulationMesh.middle = middle
-
-      setGeometries(geometries)
-      setDisplayedSimulationMesh([...displayedSimulationMesh, simulationMesh])
-      setFrontendState("Results")
-    }
-    */
   }
 
   return (
