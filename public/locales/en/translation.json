@@ -45,5 +45,9 @@
     "description": "The location search did not yield any results."
   },
   "startSimulation": "Start simulation",
-  "Search": "Search"
+  "Search": "Search",
+  "map": {
+    "coordinates": "Coordinates",
+    "userSelection": "Manual Selection"
+  }
 }
