@@ -8,6 +8,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { useToast } from "@chakra-ui/react";
 import MapPopup from "../components/MapPopup";
 import WelcomeMessage from "../components/Template/WelcomeMessage";
+import Footer from "../components/ThreeViewer/Footer";
 
 function Index() {
   const { t } = useTranslation()
@@ -101,30 +102,34 @@ function Index() {
         </div>
       </header>
       <WelcomeMessage />
-      <Map
-        ref={ setMapRef }
-        { ...viewState }
-        maxZoom={19}
-        style={{width: "100%", height: "100%"}}
-        onMove={evt => setViewState(evt.viewState)}
-        onClick={mapClick}
-      >
-        <Layer id='background' type='background' paint={{
-          'background-color': 'lightgray'
-        }} />
-        <Source { ...basemap_source } >
-          <Layer { ...basemap_layer } />
-        </Source>
-        <>
-          { mapMarkers }
-        </>
-        { clickPoint && <MapPopup
-          key="userSelectiion"
-          lat={clickPoint[0]}
-          lon={clickPoint[1]}
-          display_name={t("map.userSelection")} /> }
-        <NavigationControl position='bottom-right' />
-      </Map>
+      <div className="content">
+        <Map
+          ref={ setMapRef }
+          { ...viewState }
+          maxZoom={19}
+          style={{width: "100%", height: "100%"}}
+          onMove={evt => setViewState(evt.viewState)}
+          onClick={mapClick}
+          attributionControl={false}
+        >
+          <Layer id='background' type='background' paint={{
+            'background-color': 'lightgray'
+          }} />
+          <Source { ...basemap_source } >
+            <Layer { ...basemap_layer } />
+          </Source>
+          <>
+            { mapMarkers }
+          </>
+          { clickPoint && <MapPopup
+            key="userSelectiion"
+            lat={clickPoint[0]}
+            lon={clickPoint[1]}
+            display_name={t("map.userSelection")} /> }
+          <NavigationControl position='bottom-right' showCompass={false} />
+        </Map>
+        <Footer federalState="" frontendState="Map" />
+      </div>
     </Main>
   )
 }
