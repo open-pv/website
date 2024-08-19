@@ -19,14 +19,14 @@ const About = () => {
     <Main title={t("about.title")} description={t("about.description")}>
       <Card height="100%" overflow="auto">
         <CardHeader>
-          <Heading>{t("about.h2")}</Heading>
+          <Heading>{t("about.description")}</Heading>
         </CardHeader>
         <CardBody>
           <Stack spacing="4">
-            <TextBox heading={t("about.h3-2")} content={t("about.p-2")} />
-            <TextBox heading={t("about.h3-3")} content={t("about.p-3")} />
-            <TextBox heading={t("about.h3-4")} content={t("about.p-4")} />
-            <TextBox heading={t("about.h3-5")} content={t("about.p-5")} />
+            <TextBox heading={t("about.h1")} content={t("about.p1")} />
+            <TextBox heading={t("about.h2")} content={t("about.p2")} />
+            <TextBox heading={t("about.h3")} content={t("about.p3")} />
+            <TextBox heading={t("about.h4")} content={t("about.p4")} />
           </Stack>
         </CardBody>
       </Card>
