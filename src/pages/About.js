@@ -27,7 +27,7 @@ const About = () => {
             <TextBox heading={t("about.h1")} content={t("about.p1")} />
             <ImageRow
               images={[
-                "images/WelcomeMessage1.png",
+                "images/about/about1.png",
                 "images/WelcomeMessage2.png",
                 "images/WelcomeMessage3.png",
               ]}
