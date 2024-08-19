@@ -11,7 +11,7 @@ function Footer({ federalState, frontendState }) {
   return (
     <div className="overlay">
       <div className="attribution">
-        {(frontendState == "Results" || frontendState == "DrawPV") && (
+        {(frontendState == "Map" || frontendState == "Results" || frontendState == "DrawPV") && (
           <p key="map-attribution" className="copyright">
             Basiskarte &copy;{" "}
             <a href="https://www.bkg.bund.de" target="_blank">

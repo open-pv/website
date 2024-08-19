@@ -133,3 +133,12 @@ p.copyright {
 .button-high-prio {
   animation: blink 1s infinite;
 }
+
+button.maplibregl-popup-close-button {
+  font-size: 2em;
+  padding: 5px;
+}
+
+.maplibregl-popup-content {
+  font-size: 1.5em;
+}
