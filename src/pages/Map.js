@@ -55,6 +55,8 @@ function Index() {
         isClosable: true,
       });
     } else {
+      // Use only the first one
+      locations = [locations[0]];
       const lons = locations.map(loc => loc.lon);
       const lats = locations.map(loc => loc.lat);
 
