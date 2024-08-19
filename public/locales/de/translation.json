@@ -21,7 +21,12 @@
     "p3": "Wir sind ein kleines Team von vier Personen. Wir arbeiten alle nebenberulich an OpenPV.",
     "l3": "Das Team auf Github.",
     "h4": "Unsere Sponsoren",
-    "p4": "Wir danken unseren Sponsoren! Falls Sie ein neues Feature wünschen oder uns unterstützen möchten, kontaktieren Sie uns: info[at]openpv.de"
+    "p4": "Wir danken unseren Sponsoren! Falls Sie ein neues Feature wünschen oder uns unterstützen möchten, kontaktieren Sie uns: info[at]openpv.de",
+    "advantages": {
+      "1": "Direkte und diffuse Einstrahlung integriert",
+      "2": "Geländeverschattung integriert",
+      "3": "Verschattung durch Vegetation in einigen Bundesländern integriert"
+    }
   },
   "simulationStatus": {
     "waitingForAdress": "Warte auf Adresseeingabe"
