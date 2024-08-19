@@ -1,9 +1,9 @@
-import React, { useRef, useState } from "react"
+import React, { useCallback, useRef, useState } from "react"
 import Main from "../Main"
 
 import { useTranslation } from "react-i18next"
 import SearchField from "../components/PVSimulation/SearchField"
-import { Map, Source, Layer } from 'react-map-gl/maplibre';
+import { Map, Source, Layer, NavigationControl } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useToast } from "@chakra-ui/react";
 import MapPopup from "../components/MapPopup";
@@ -32,8 +32,8 @@ function Index() {
     id: 'basemap',
     type: 'raster',
     source: 'basemap-source',
-    minzoom: 0,
-    maxzoom: 19,
+    // minzoom: 0,
+    // maxzoom: 22,
   }
 
   const [viewState, setViewState] = useState({
@@ -75,6 +75,15 @@ function Index() {
   }
 
   const mapRef = useRef();
+  const setMapRef = useCallback((current) => {
+    mapRef.current = current;
+    console.log('current');
+    console.log(current);
+    if(current !== null) {
+      current.getMap().dragRotate.disable();
+      current.getMap().touchZoomRotate.disable();
+    }
+  }, []);
 
   return (
     <Main description={"Berechne das Potential deiner Solaranlage."}>
@@ -85,8 +94,9 @@ function Index() {
       </header>
       <WelcomeMessage />
       <Map
-        ref={ mapRef }
+        ref={ setMapRef }
         { ...viewState }
+        maxZoom={19}
         style={{width: "100%", height: "100%"}}
         onMove={evt => setViewState(evt.viewState)}
       >
@@ -99,6 +109,7 @@ function Index() {
         <>
           { mapMarkers }
         </>
+        <NavigationControl position='bottom-right' />
       </Map>
     </Main>
   )
