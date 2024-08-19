@@ -48,5 +48,15 @@
     "start": "Start",
     "options": "Optionen",
     "simulateBuilding": "Gebäude simulieren"
+  },
+  "noSearchResults": {
+    "title": "Keine Ergebnisse",
+    "description": "Die Ortssuche lieferte keine Ergebnisse."
+  },
+  "startSimulation": "Simulation starten",
+  "Search": "Suchen",
+  "map": {
+    "coordinates": "Koordinaten",
+    "userSelection": "Manuelle Auswahl"
   }
 }
