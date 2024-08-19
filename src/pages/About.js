@@ -5,9 +5,10 @@ import {
   CardHeader,
   Heading,
   Image,
+  Link,
   SimpleGrid,
-  Stack,
   Text,
+  VStack,
 } from "@chakra-ui/react"
 import React from "react"
 import { useTranslation } from "react-i18next"
@@ -23,7 +24,7 @@ const About = () => {
           <Heading>{t("about.description")}</Heading>
         </CardHeader>
         <CardBody>
-          <Stack spacing="4">
+          <VStack spacing="6" align="start">
             <TextBox heading={t("about.h1")} content={t("about.p1")} />
             <ImageRow
               images={[
@@ -33,9 +34,23 @@ const About = () => {
               ]}
             />
             <TextBox heading={t("about.h2")} content={t("about.p2")} />
-            <TextBox heading={t("about.h3")} content={t("about.p3")} />
+            <TextBox heading={t("about.h3")} content={t("about.p3")}>
+              <Link
+                href="https://github.com/orgs/open-pv/people"
+                isExternal
+                color="teal"
+              >
+                {t("about.l3")}
+              </Link>
+            </TextBox>
+
             <TextBox heading={t("about.h4")} content={t("about.p4")} />
-          </Stack>
+            <ImageRow
+              images={["images/about/ptf.png", "images/about/bmbf.jpg"]}
+              links={["https://prototypefund.de/", "https://www.bmbf.de"]}
+              objectFit="contain"
+            />
+          </VStack>
         </CardBody>
       </Card>
     </Main>
@@ -44,31 +59,44 @@ const About = () => {
 
 export default About
 
-function TextBox({ content, heading }) {
+function TextBox({ content, heading, children }) {
   return (
     <Box>
       <Heading as="h3" size="md">
         {heading}
       </Heading>
       <Text>{content}</Text>
+      {children}
     </Box>
   )
 }
 
-const ImageRow = ({ images }) => {
+const ImageRow = ({ images, links = [], objectFit = "cover" }) => {
   return (
     <SimpleGrid columns={images.length} spacing={4}>
-      {images.map((src, index) => (
-        <Box key={index} padding={2}>
+      {images.map((src, index) => {
+        const imageContent = (
           <Image
             src={src}
-            objectFit="cover"
+            objectFit={objectFit}
             width="100%"
             height="150px"
             borderRadius="md"
           />
-        </Box>
-      ))}
+        )
+
+        return (
+          <Box key={index} padding={2}>
+            {links[index] ? (
+              <Link href={links[index]} isExternal>
+                {imageContent}
+              </Link>
+            ) : (
+              imageContent
+            )}
+          </Box>
+        )
+      })}
     </SimpleGrid>
   )
 }
