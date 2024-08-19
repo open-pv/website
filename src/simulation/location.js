@@ -1,5 +1,3 @@
-import { useTranslation } from "react-i18next";
-
 /** x, y tile coordinates in WebMercator XYZ tiling at zoom level X=15
  */
 export var coordinatesXY15, coordinatesLonLat
@@ -13,8 +11,6 @@ export async function requestLocation(searchString) {
 }
 
 function extractLongitudeLatitude(searchString) {
-  const { t } = useTranslation();
-
   if(/^[-]?(\d+(\.\d+)?),\s*[-]?(\d+(\.\d+)?)$/.test(searchString)) {
     const [lat, lon] = searchString
       .split(",")
@@ -22,7 +18,7 @@ function extractLongitudeLatitude(searchString) {
     return [ {
       lat,
       lon,
-      display_name: `${t('map.coordinates')}: ${lat},${lon}`, 
+      display_name: `${lat},${lon}`, 
       key: 'coordinates',
     } ];
   } else {
