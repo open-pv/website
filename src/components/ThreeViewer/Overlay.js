@@ -36,6 +36,8 @@ function Overlay({
   geoLocation,
   visiblePVSystems,
   setvisiblePVSystems,
+  pvPoints,
+  setPVPoints,
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { t } = useTranslation()
@@ -70,6 +72,8 @@ function Overlay({
         <OverlayDrawPV
           setvisiblePVSystems={setvisiblePVSystems}
           visiblePVSystems={visiblePVSystems}
+          pvPoints={pvPoints}
+          setPVPoints={setPVPoints}
         />
       )}
       {selectedMesh.length > 0 && (
