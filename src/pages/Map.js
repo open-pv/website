@@ -77,13 +77,19 @@ function Index() {
   const mapRef = useRef();
   const setMapRef = useCallback((current) => {
     mapRef.current = current;
-    console.log('current');
-    console.log(current);
     if(current !== null) {
       current.getMap().dragRotate.disable();
       current.getMap().touchZoomRotate.disable();
     }
   }, []);
+
+  // Handling map click for manual location selection
+  const [clickPoint, setClickPoint] = useState(null);
+  const mapClick = useCallback((evt) => {
+    console.log(evt);
+    const {lng, lat} = evt.lngLat;
+    setClickPoint([lat, lng]);
+  })
 
   return (
     <Main description={"Berechne das Potential deiner Solaranlage."}>
@@ -99,6 +105,7 @@ function Index() {
         maxZoom={19}
         style={{width: "100%", height: "100%"}}
         onMove={evt => setViewState(evt.viewState)}
+        onClick={mapClick}
       >
         <Layer id='background' type='background' paint={{
           'background-color': 'lightgray'
@@ -109,6 +116,11 @@ function Index() {
         <>
           { mapMarkers }
         </>
+        { clickPoint && <MapPopup
+          key="userSelectiion"
+          lat={clickPoint[0]}
+          lon={clickPoint[1]}
+          display_name={t("map.userSelection")} /> }
         <NavigationControl position='bottom-right' />
       </Map>
     </Main>
