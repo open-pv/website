@@ -4,6 +4,8 @@ import React from "react"
 export default function OverlayDrawPV({
   visiblePVSystems,
   setvisiblePVSystems,
+  pvPoints,
+  setPVPoints,
 }) {
   const handleCreatePVButtonClick = () => {
     const nextIndex = visiblePVSystems.length
@@ -24,6 +26,17 @@ export default function OverlayDrawPV({
         {" "}
         PV-Anlage erstellen
       </Button>
+      {pvPoints.length > 0 && (
+        <Button
+          variant={"link"}
+          colorScheme="teal"
+          onClick={() => {
+            setPVPoints(pvPoints.slice(0, -1))
+          }}
+        >
+          Letzten Punkt löschen
+        </Button>
+      )}
       <Button
         onClick={handleAbortButtonClick}
         variant={"link"}

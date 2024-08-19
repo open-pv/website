@@ -19,6 +19,8 @@ function Index() {
   const [simulationProgress, setSimulationProgress] = useState(0)
   // A list of visible PV Systems - they get visible after they are drawn on a building and calculated
   const [visiblePVSystems, setvisiblePVSystems] = useState([])
+  // pvPoints are the red points that appear when drawing PV systems
+  const [pvPoints, setPVPoints] = useState([])
   // When a building is selected from the Surrounding to be simulated, it needs to be deleted
   // from the surrounding mesh. This state collects a list of names that should not be rendered
   // Elements are for example "SurroundingMesh-37"
@@ -73,6 +75,8 @@ function Index() {
             geoLocation={geoLocation}
             setvisiblePVSystems={setvisiblePVSystems}
             visiblePVSystems={visiblePVSystems}
+            pvPoints={pvPoints}
+            setPVPoints={setPVPoints}
           />
         )}
         {frontendState == "ErrorAdress" && <WrongAdress />}
@@ -88,6 +92,8 @@ function Index() {
             selectedMesh={selectedMesh}
             setSelectedMesh={setSelectedMesh}
             deletedSurroundingMeshes={deletedSurroundingMeshes}
+            pvPoints={pvPoints}
+            setPVPoints={setPVPoints}
           />
         )}
 
