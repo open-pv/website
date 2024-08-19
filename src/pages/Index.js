@@ -45,8 +45,6 @@ function Index() {
   const toast = useToast();
 
   const searchCallback = (locations) => {
-    console.log('callback');
-    console.log(locations);
     if(locations.length == 0) {
       console.error("No search results!");
       toast({

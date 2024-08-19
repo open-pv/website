@@ -1,8 +1,6 @@
-import { Button, FormControl, Input } from "@chakra-ui/react"
+import { Button, Input } from "@chakra-ui/react"
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
-import * as THREE from "three"
-import { mainSimulation } from "../../simulation/main"
 import { requestLocation } from "../../simulation/location"
 
 function SearchField({ callback }) {

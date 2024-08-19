@@ -2,51 +2,56 @@
  */
 export var coordinatesXY15, coordinatesLonLat
 
-export async function requestLocation(inputValue, inputChanged, loc) {
-  let newloc
-  window.mapLocationBaseChanged = true
-  if (inputChanged) {
-    newloc = await getCoordinatesFromSearchString(inputValue)
-    window.mapLocation = newloc
-  } else {
-    newloc = loc
+export async function requestLocation(searchString) {
+  let options = extractLongitudeLatitude(searchString);
+  if(options.length == 0) {
+    options = processAddress(searchString);
   }
-  return newloc
+  return options
 }
 
-export async function getCoordinatesFromSearchString(searchString) {
-  let coordinates
-  if (isLongitudeLatitude(searchString)) {
-    coordinates = processLongitudeLatitude(searchString)
+function extractLongitudeLatitude(searchString) {
+  if(/^[-]?(\d+(\.\d+)?),\s*[-]?(\d+(\.\d+)?)$/.test(searchString)) {
+    const [lat, lon] = searchString
+      .split(",")
+      .map((value) => parseFloat(value.trim()))
+    return [ {
+      lat,
+      lon,
+      display_name: `Coordinates: ${lat},${lon}`, 
+      key: 'coordinates',
+    } ];
   } else {
-    coordinates = await processAdress(searchString)
+    return [];
   }
-  return coordinates
 }
 
-function isLongitudeLatitude(searchString) {
-  return /^[-]?(\d+(\.\d+)?),\s*[-]?(\d+(\.\d+)?)$/.test(searchString)
-}
-
-function processLongitudeLatitude(searchString) {
-  const [lat, lon] = searchString
-    .split(",")
-    .map((value) => parseFloat(value.trim()))
-  return { lat, lon }
-}
-
-async function processAdress(searchString) {
-  let url = "https://nominatim.openstreetmap.org/search?format=json&q="
+async function processAddress(searchString) {
+  let url = "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q="
     .concat(searchString)
     .concat("+Germany")
   let response = await fetchCoordinates(url)
   if (!response) {
-    url = "https://nominatim.openstreetmap.org/search?format=json&q=".concat(
+    url = "https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=".concat(
       searchString.split(" ").join("+")
     )
     response = await fetchCoordinates(url)
   }
-  return response
+  return response.map(obj => ({
+    lat: obj.lat,
+    lon: obj.lon,
+    key: obj.place_id,
+    display_name: format_address(obj.address)
+  }));
+}
+
+function format_address(address) {
+  let addr = 
+    (address.road || '') + ' ' +
+    (address.house_number || '') + ', ' +
+    (address.postcode || '') + ' ' +
+    (address.city || '');
+  return addr
 }
 
 async function fetchCoordinates(url) {
@@ -55,15 +60,14 @@ async function fetchCoordinates(url) {
     if (!response.ok)
       throw new Error(`Request failed with status ${response.status}`)
     const responseData = await response.json()
-    return responseData.length > 0 ? responseData[0] : null
+    return responseData;
   } catch (error) {
     console.error("Error:", error)
-    return null
+    return [];
   }
 }
 
 export function projectToWebMercator(lon, lat) {
-  console.log(`Projecting ${lon}E ${lat}N`)
   coordinatesLonLat = [lon, lat]
   const lat_rad = (lat * Math.PI) / 180.0
   const n = Math.pow(2, 15)
@@ -71,7 +75,6 @@ export function projectToWebMercator(lon, lat) {
   const ytile =
     (n * (1 - Math.log(Math.tan(lat_rad) + 1 / Math.cos(lat_rad)) / Math.PI)) /
     2
-  console.log(`Tile ${xtile},${ytile}`)
   coordinatesXY15 = [xtile, ytile]
   return [xtile, ytile]
 }
