@@ -47,6 +47,16 @@
     "simulateBuilding": "Simulate Building",
     "createPVSystem": "Create PV System",
     "cancel": "Cancel",
-    "deleteLastPoint": "Delete Last Point"
+    "deleteLastPoint": "Delete Last Point",
+    "startSimulation": "Start simulation",
+    "Search": "Search"
+  },
+  "noSearchResults": {
+    "title": "No Results",
+    "description": "The location search did not yield any results."
+  },
+  "map": {
+    "coordinates": "Coordinates",
+    "userSelection": "Manual Selection"
   }
 }

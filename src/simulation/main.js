@@ -2,18 +2,9 @@ import ShadingScene from "@openpv/simshady"
 import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
 import { downloadBuildings } from "./download"
-import { requestLocation } from "./location"
 import { processGeometries } from "./preprocessing"
 
-export async function mainSimulation(
-  inputValue,
-  inputChanged,
-  oldLocation,
-  setGeometries
-) {
-  const location = await requestLocation(inputValue, inputChanged, oldLocation)
-  window.setGeoLocation({ lat: location.lat, lon: location.lon })
-
+export async function mainSimulation(location, setGeometries) {
   // Clear previous attributions if any
   if (window.setAttribution) {
     for (let attributionSetter of Object.values(window.setAttribution)) {
@@ -47,7 +38,6 @@ export async function mainSimulation(
       scene.addShadingGeometry(geom)
     })
 
-    //initializeViewer(geometries, inputChanged)
     let numSimulations
     window.numSimulations
       ? (numSimulations = window.numSimulations)
@@ -72,10 +62,6 @@ export async function mainSimulation(
     simulationMesh.material = material
     simulationMesh.name = "simulationMesh"
     return { simulationMesh, geometries }
-  }
-
-  if (inputChanged) {
-    window.mapLocationChanged = false
   }
 }
 

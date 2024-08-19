@@ -1,18 +1,20 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import * as THREE from "three"
+import { useParams } from "react-router-dom"
 import WrongAdress from "../components/ErrorMessages/WrongAdress"
 import SavingCalculation from "../components/PVSimulation/SavingsCalculation"
-import SearchField from "../components/PVSimulation/SearchField"
 import LoadingBar from "../components/Template/LoadingBar"
-import WelcomeMessage from "../components/Template/WelcomeMessage"
 import Footer from "../components/ThreeViewer/Footer"
-import Map from "../components/ThreeViewer/Map"
 import Overlay from "../components/ThreeViewer/Overlay"
 import Scene from "../components/ThreeViewer/Scene"
 import Main from "../Main"
+import { mainSimulation } from "../simulation/main"
 
 function Index() {
-  // frontendState defines the general state of the frontend (Map, Results, Loading, DrawPV)
-  const [frontendState, setFrontendState] = useState("Map")
+  const location = useParams();
+
+  // frontendState defines the general state of the frontend (Results, Loading, DrawPV)
+  const [frontendState, setFrontendState] = useState("Loading")
   // showTerrain decides if the underlying Map is visible or not
   const [showTerrain, setShowTerrain] = useState(true)
   // simulationProgress is used for the loading bar
@@ -37,29 +39,34 @@ function Index() {
   })
   const [displayedSimulationMesh, setDisplayedSimulationMesh] = useState([])
   const [selectedMesh, setSelectedMesh] = useState([])
-  //geoLocation is an object with lat, lon
-  const [geoLocation, setGeoLocation] = useState()
-  window.setGeoLocation = setGeoLocation
 
   window.setFrontendState = setFrontendState
   window.setSimulationProgress = setSimulationProgress
 
+  const loadAndSimulate = async () => {
+    const { simulationMesh, geometries } = await mainSimulation(
+      location,
+      setGeometries
+    )
+    if (simulationMesh) {
+      let middle = new THREE.Vector3()
+      simulationMesh.geometry.computeBoundingBox()
+      simulationMesh.geometry.boundingBox.getCenter(middle)
+      simulationMesh.middle = middle
+
+      setGeometries(geometries)
+      setDisplayedSimulationMesh([...displayedSimulationMesh, simulationMesh])
+      setFrontendState("Results")
+    }
+  }
+
+  useEffect(() => {
+    loadAndSimulate()
+  }, []);
+
   return (
     <Main description={"Berechne das Potential deiner Solaranlage."}>
-      <header>
-        <div className="title">
-          <SearchField
-            frontendState={frontendState}
-            setFrontendState={setFrontendState}
-            setGeometries={setGeometries}
-            displayedSimulationMesh={displayedSimulationMesh}
-            setDisplayedSimulationMesh={setDisplayedSimulationMesh}
-          />
-        </div>
-      </header>
       <div className="content">
-        <WelcomeMessage />
-
         {(frontendState == "Results" || frontendState == "DrawPV") && (
           <Overlay
             frontendState={frontendState}
@@ -72,7 +79,7 @@ function Index() {
             displayedSimulationMesh={displayedSimulationMesh}
             setDisplayedSimulationMesh={setDisplayedSimulationMesh}
             deletedSurroundingMeshes={deletedSurroundingMeshes}
-            geoLocation={geoLocation}
+            geoLocation={location}
             setvisiblePVSystems={setvisiblePVSystems}
             visiblePVSystems={visiblePVSystems}
             pvPoints={pvPoints}
@@ -80,7 +87,6 @@ function Index() {
           />
         )}
         {frontendState == "ErrorAdress" && <WrongAdress />}
-        {frontendState == "Map" && <Map />}
 
         {(frontendState == "Results" || frontendState == "DrawPV") && (
           <Scene
