@@ -12,7 +12,7 @@ const Main = (props) => (
     </Helmet>
     <div id="wrapper">
       <Navigation />
-      <div id="main">{props.children}</div>
+      <div id="main" class={props.class}>{props.children}</div>
     </div>
   </HelmetProvider>
 )

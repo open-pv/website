@@ -7,7 +7,7 @@ import Main from "../Main"
 const About = () => {
   const { t, i18n } = useTranslation()
   return (
-    <Main title={t("about.title")} description={t("about.description")}>
+    <Main class="text" title={t("about.title")} description={t("about.description")}>
       <Card>
         <CardHeader>
           <Heading>{t("about.h2")}</Heading>
