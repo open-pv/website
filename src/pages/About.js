@@ -29,7 +29,10 @@ const About = () => {
           </CardHeader>
           <CardBody>
             <VStack spacing="6" align="start">
-              <TextBox heading={t("about.h1")} content={t("about.p1")}>
+              <TextBox
+                heading={t("about.generalDescription.h")}
+                content={t("about.generalDescription.p")}
+              >
                 <Text>{t("about.advantages.introduction")}</Text>
                 <UnorderedList>
                   <ListItem>{t("about.advantages.1")}</ListItem>
@@ -44,18 +47,24 @@ const About = () => {
                   "images/WelcomeMessage3.png",
                 ]}
               />
-              <TextBox heading={t("about.h2")} content={t("about.p2")} />
-              <TextBox heading={t("about.h3")} content={t("about.p3")}>
+              <TextBox
+                heading={t("about.whyOpenSource.h")}
+                content={t("about.whyOpenSource.p")}
+              />
+              <TextBox heading={t("about.team.h")} content={t("about.team.p")}>
                 <Link
                   href="https://github.com/orgs/open-pv/people"
                   isExternal
                   color="teal"
                 >
-                  {t("about.l3")}
+                  {t("about.team.link")}
                 </Link>
               </TextBox>
 
-              <TextBox heading={t("about.h4")} content={t("about.p4")} />
+              <TextBox
+                heading={t("about.sponsors.h")}
+                content={t("about.sponsors.p")}
+              />
               <ImageRow
                 images={["images/about/ptf.png", "images/about/bmbf.jpg"]}
                 links={["https://prototypefund.de/", "https://www.bmbf.de"]}
