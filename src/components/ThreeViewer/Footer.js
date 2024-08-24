@@ -1,5 +1,6 @@
 import i18n from "i18next"
 import React from "react"
+import { useTranslation } from "react-i18next"
 import { attributions, licenseLinks } from "../../data/dataLicense"
 
 function Footer({ federalState, frontendState }) {
@@ -7,11 +8,14 @@ function Footer({ federalState, frontendState }) {
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng)
   }
+  const { t } = useTranslation()
 
   return (
     <div className="overlay">
       <div className="attribution">
-        {(frontendState == "Map" || frontendState == "Results" || frontendState == "DrawPV") && (
+        {(frontendState == "Map" ||
+          frontendState == "Results" ||
+          frontendState == "DrawPV") && (
           <p key="map-attribution" className="copyright">
             Basiskarte &copy;{" "}
             <a href="https://www.bkg.bund.de" target="_blank">
@@ -44,7 +48,7 @@ function Footer({ federalState, frontendState }) {
           </>
         )}
         <p className="copyright">
-          &copy; Erstellt vom{" "}
+          &copy;
           <a href="https://github.com/open-pv" target="_blank">
             Team OpenPV
           </a>
@@ -55,7 +59,7 @@ function Footer({ federalState, frontendState }) {
           {" | "}
           <a href="/Impressum">Impressum</a>
           {" | "}
-          <a href="/Datenschutz">Datenschutz</a>
+          <a href="/Datenschutz">{t("Footer.privacyPolicy")}</a>
           {" | "}
           <a
             href=""

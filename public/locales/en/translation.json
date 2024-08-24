@@ -49,5 +49,8 @@
   "map": {
     "coordinates": "Coordinates",
     "userSelection": "Manual Selection"
+  },
+  "Footer": {
+    "privacyPolicy": "Privacy Policy"
   }
 }
