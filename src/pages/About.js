@@ -30,6 +30,7 @@ const About = () => {
           <CardBody>
             <VStack spacing="6" align="start">
               <TextBox heading={t("about.h1")} content={t("about.p1")}>
+                <Text>{t("about.advantages.introduction")}</Text>
                 <UnorderedList>
                   <ListItem>{t("about.advantages.1")}</ListItem>
                   <ListItem>{t("about.advantages.2")}</ListItem>
