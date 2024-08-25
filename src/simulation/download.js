@@ -1,5 +1,8 @@
+import * as GeoTIFF from 'geotiff';
 import proj4 from "proj4";
 
+
+import * as pako from 'pako';
 import * as THREE from "three";
 import { Matrix4 } from "three";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
