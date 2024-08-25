@@ -1,13 +1,16 @@
-import * as THREE from "three"
-import { Matrix4 } from "three"
-import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js"
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js"
-import { attributions } from "../data/dataLicense"
+import { Canvas } from '@react-three/fiber';
+import proj4 from "proj4";
+import * as THREE from "three";
+import { Matrix4 } from "three";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { attributions } from "../data/dataLicense";
 import {
   coordinatesLonLat,
   coordinatesXY15,
   projectToWebMercator,
-} from "./location"
+} from "./location";
+
 
 export function tile2meters() {
   const lat = coordinatesLonLat[1]
@@ -196,3 +199,128 @@ export async function loadMapTile(tx, ty, zoom) {
 
   return new THREE.Mesh(geometry, material)
 }
+
+
+function get_utm32(x, y) {
+  const IN_PROJ = "EPSG:4326"
+  const OUT_PROJ = "EPSG:25832"
+
+  proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs")
+
+  const transformer = proj4(IN_PROJ, OUT_PROJ)
+
+  const [x_utm32, y_utm32] = transformer.forward([x, y])
+  loc_utm = [x_utm32, y_utm32]
+  return loc_utm
+}
+
+function get_file_names_vegetation_tif(x, y) {
+  const DIVISOR = 1000
+  const BUFFER_ZONE = 100
+  const loc_utm = get_utm32(x, y)
+  const x_utm32 = loc_utm[0]
+  const y_utm32 = loc_utm[1]
+
+  const x_rounded = Math.floor(x_utm32 / DIVISOR)
+  const y_rounded = Math.floor(y_utm32 / DIVISOR)
+
+  const load_tile_left = x_utm32 % DIVISOR < BUFFER_ZONE
+  const load_tile_right = x_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE
+  const load_tile_lower = y_utm32 % DIVISOR < BUFFER_ZONE
+  const load_tile_upper = y_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE
+
+  const file_list = [`${x_rounded}_${y_rounded}.tif.gz`]
+
+  if (load_tile_left) {
+    file_list.push(`${x_rounded - 2}_${y_rounded}.tif.gz`)
+  }
+  if (load_tile_right) {
+    file_list.push(`${x_rounded + 2}_${y_rounded}.tif.gz`)
+  }
+  if (load_tile_lower) {
+    file_list.push(`${x_rounded}_${y_rounded - 2}.tif.gz`)
+  }
+  if (load_tile_upper) {
+    file_list.push(`${x_rounded}_${y_rounded + 2}.tif.gz`)
+  }
+  if (load_tile_left && load_tile_lower) {
+    file_list.push(`${x_rounded - 2}_${y_rounded - 2}.tif.gz`)
+  }
+  if (load_tile_left && load_tile_upper) {
+    file_list.push(`${x_rounded - 2}_${y_rounded + 2}.tif.gz`)
+  }
+  if (load_tile_right && load_tile_lower) {
+    file_list.push(`${x_rounded + 2}_${y_rounded - 2}.tif.gz`)
+  }
+  if (load_tile_right && load_tile_upper) {
+    file_list.push(`${x_rounded + 2}_${y_rounded + 2}.tif.gz`)
+  }
+  return file_list
+}
+
+
+export async function retrieveDataVegetationTif(loc) {
+  const baseurl = "https://www.openpv.de/data/vegetation/";
+  var filenames = get_file_names_vegetation_tif(Number(loc.lon), Number(loc.lat));
+  
+  if (filenames.length === 0) {
+    return;
+  }
+
+  console.log("Location", loc);
+  const loc_utm32 = get_utm32(Number(loc.lon), Number(loc.lat));
+
+  // Iterate through all filenames
+  for (const filename of filenames) {
+    let url = baseurl + filename;
+    cached_file_found = false;
+    status_elem.textContent = "Loading from " + url;
+
+    try {
+      // Download the zipped STL file
+      let response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Request failed with status " + response.status);
+      }
+
+      const gzData = await response.arrayBuffer();
+
+      // Decompress the .gz file using pako
+      const decompressedData = pako.ungzip(new Uint8Array(gzData)).buffer;
+
+      // Parse the TIFF file using GeoTIFF.js
+      const tiff = await GeoTIFF.fromArrayBuffer(decompressedData);
+      const image = await tiff.getImage();
+      const rasterData = await image.readRasters();
+      console.log(rasterData)
+
+      function sumRasterData(rasterData) {
+        if (!Array.isArray(rasterData) || rasterData.length === 0) {
+          return 0;
+        }
+        
+        const data = rasterData[0];
+        let sum = 0;
+        
+        for (let i = 0; i < data.length; i++) {
+          if (!isNaN(data[i])) {
+            sum += data[i];
+          }
+        }
+        
+        return sum;
+      }
+      
+      // Usage
+      const sum = sumRasterData(rasterData);
+      console.log("Sum of raster data:", sum);
+
+
+    } catch (error) {
+      console.error("Error loading or processing file:", error);
+      status_elem.textContent = "Failed to load " + filename;
+    }
+  }
+return rasterData
+}
+

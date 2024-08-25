@@ -1,7 +1,10 @@
 import ShadingScene from "@openpv/simshady"
+import * as GeoTIFF from 'geotiff'
+import JSZip from "jszip"
+import * as pako from 'pako'
 import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
-import { downloadBuildings } from "./download"
+import { downloadBuildings, retrieveDataVegetationTif } from "./download"
 import { processGeometries } from "./preprocessing"
 
 export async function mainSimulation(location, setGeometries) {
@@ -14,6 +17,8 @@ export async function mainSimulation(location, setGeometries) {
 
   if (typeof location !== "undefined" && location != null) {
     const buildingGeometries = await downloadBuildings(location)
+
+    const vegetation_array = await retrieveDataVegetationTif(location)
 
     let geometries = processGeometries(
       buildingGeometries,
