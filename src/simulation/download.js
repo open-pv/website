@@ -1,5 +1,5 @@
-import { Canvas } from '@react-three/fiber';
 import proj4 from "proj4";
+
 import * as THREE from "three";
 import { Matrix4 } from "three";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
@@ -204,7 +204,7 @@ export async function loadMapTile(tx, ty, zoom) {
 function get_utm32(x, y) {
   const IN_PROJ = "EPSG:4326"
   const OUT_PROJ = "EPSG:25832"
-
+  let loc_utm
   proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs")
 
   const transformer = proj4(IN_PROJ, OUT_PROJ)
@@ -258,69 +258,62 @@ function get_file_names_vegetation_tif(x, y) {
   return file_list
 }
 
-
 export async function retrieveDataVegetationTif(loc) {
   const baseurl = "https://www.openpv.de/data/vegetation/";
   var filenames = get_file_names_vegetation_tif(Number(loc.lon), Number(loc.lat));
   
   if (filenames.length === 0) {
-    return;
+    return [];
   }
-
+  
   console.log("Location", loc);
-  const loc_utm32 = get_utm32(Number(loc.lon), Number(loc.lat));
+  
+  let fileRasterPairs = [];  // Array to store tuples of [filename, rasterData]
 
-  // Iterate through all filenames
   for (const filename of filenames) {
     let url = baseurl + filename;
-    cached_file_found = false;
-    status_elem.textContent = "Loading from " + url;
-
+    console.log("Loading from ", url);
+    
     try {
-      // Download the zipped STL file
       let response = await fetch(url);
       if (!response.ok) {
         throw new Error("Request failed with status " + response.status);
       }
-
+      
       const gzData = await response.arrayBuffer();
-
-      // Decompress the .gz file using pako
       const decompressedData = pako.ungzip(new Uint8Array(gzData)).buffer;
-
-      // Parse the TIFF file using GeoTIFF.js
       const tiff = await GeoTIFF.fromArrayBuffer(decompressedData);
       const image = await tiff.getImage();
       const rasterData = await image.readRasters();
-      console.log(rasterData)
-
+      
+      console.log(rasterData);
+      
       function sumRasterData(rasterData) {
         if (!Array.isArray(rasterData) || rasterData.length === 0) {
           return 0;
         }
-        
         const data = rasterData[0];
         let sum = 0;
-        
         for (let i = 0; i < data.length; i++) {
           if (!isNaN(data[i])) {
             sum += data[i];
           }
         }
-        
         return sum;
       }
       
-      // Usage
       const sum = sumRasterData(rasterData);
       console.log("Sum of raster data:", sum);
-
-
+      
+      fileRasterPairs.push([filename, rasterData]);  // Add tuple of [filename, rasterData] to our array
+      
     } catch (error) {
       console.error("Error loading or processing file:", error);
-      status_elem.textContent = "Failed to load " + filename;
+      console.error("Could not load:", filename);
+      // We continue to the next file instead of returning
     }
   }
-return rasterData
+  
+  // Return the list of tuples
+  return fileRasterPairs;
 }
-
