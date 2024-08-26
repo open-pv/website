@@ -61,6 +61,7 @@ const TerrainTile = (props) => {
   const zoom = props.zoom
   const tx = props.x
   const ty = props.y
+  const divisions = props.divisions;
 
   const url = `https://sgx.geodatenzentrum.de/wmts_basemapde/tile/1.0.0/de_basemapde_web_raster_farbe/default/GLOBAL_WEBMERCATOR/${zoom}/${ty}/${tx}.png`
 
@@ -83,15 +84,14 @@ const TerrainTile = (props) => {
       let indices = [];
       let i = 0;
 
-      const steps = 2;
-      const row = steps+1;
-      for (let ty = 0; ty <= steps; ty++) {
-        for (let tx = 0; tx <= steps; tx++) {
-          const x = x0 + tx / steps * (x1 - x0);
-          const y = y0 + ty / steps * (y1 - y0);
+      const row = divisions+1;
+      for (let ty = 0; ty <= divisions; ty++) {
+        for (let tx = 0; tx <= divisions; tx++) {
+          const x = x0 + tx / divisions * (x1 - x0);
+          const y = y0 + ty / divisions * (y1 - y0);
           points.push(ElevationManager.toPoint3D(x, y));
           // UV mapping for the texture
-          uvs = uvs.concat([tx / steps, 1.0 - ty / steps]);
+          uvs = uvs.concat([tx / divisions, 1.0 - ty / divisions]);
           // Triangle indices
           if(tx > 0 && ty > 0) {
             indices = indices.concat([
@@ -145,7 +145,7 @@ const Terrain = ({visible}) => {
   let xys = []
   for (let dx = -11; dx <= 11; dx++) {
     for (let dy = -11; dy <= 11; dy++) {
-      xys.push({ dx: dx, dy: dy })
+      xys.push({ dx, dy, divisions: 2 })
     }
   }
 
@@ -156,9 +156,9 @@ const Terrain = ({visible}) => {
     // Function to load tiles progressively
     const loadTiles = (index) => {
       if (index < xys.length) {
-        const { dx, dy } = xys[index];
+        const { dx, dy, divisions } = xys[index];
         const key = `${tx + dx}-${ty + dy}-${19}`;
-        currentTiles.push(<TerrainTile key={key} x={tx + dx} y={ty + dy} zoom={19} />);
+        currentTiles.push(<TerrainTile key={key} x={tx + dx} y={ty + dy} divisions={divisions} zoom={19} />);
 
         setTiles([...currentTiles]); // Update the state with the new set of tiles
 
