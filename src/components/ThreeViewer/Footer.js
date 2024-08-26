@@ -22,6 +22,21 @@ function Footer({ federalState, frontendState }) {
               dl-de/by-2-0
             </a>
             )
+
+          |
+
+            Geländemodell:&nbsp;
+            <a href="https://sonny.4lima.de" target="_blank">
+              &copy;&nbsp;Sonny
+            </a>
+            &nbsp;(
+            <a href="https://creativecommons.org/licenses/by/4.0/deed.en" target="_blank">
+              CC-BY-4.0
+            </a>
+            ), erstellt aus 
+            <a href="https://drive.google.com/file/d/1rgGA22Ha42ulQORK9Pfp4JPpPAIKFx6Q/view" target="_blank">
+              verschiedenen Quellen 
+            </a>
           </p>
         )}
         {federalState && (
