@@ -70,7 +70,7 @@ class ElevationManager {
   static async init() {
     this.instance = new ElevationManager();
     let me = this.instance
-    me.tiff = await geotiff.fromUrl('https://maps.heidler.info/sonny_dtm_20_cubic.tif');
+    me.tiff = await geotiff.fromUrl('https://maps.heidler.info/sonny_dtm_20.tif');
     me.image = await this.instance.tiff.getImage();
     me.pixelScale = me.image.fileDirectory.ModelPixelScale;
     me.tiepoint = me.image.fileDirectory.ModelTiepoint;
@@ -152,7 +152,6 @@ const TerrainTile = (props) => {
       geometry.setAttribute("normal", new THREE.BufferAttribute(normalBuffer, 3))
       geometry.setAttribute("uv", new THREE.BufferAttribute(uvBuffer, 2))
       geometry.setIndex(new THREE.BufferAttribute(indexBuffer, 1))
-      // geometry.computeVertexNormals();
 
       setGeometry(geometry)
       const map = await mapFuture;
