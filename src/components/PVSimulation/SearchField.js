@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next"
 import { requestLocation } from "../../simulation/location"
 
 function SearchField({ callback }) {
-  const [inputValue, setInputValue] = useState("Arnulfstraße 138, München")
+  const [inputValue, setInputValue] = useState("")
   window.searchFieldInput = inputValue
   const { t } = useTranslation()
 
