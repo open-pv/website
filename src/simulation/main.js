@@ -1,10 +1,11 @@
+import { background } from "@chakra-ui/react"
 import ShadingScene from "@openpv/simshady"
 import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
 import { downloadBuildings } from "./download"
 import { processGeometries } from "./preprocessing"
 
-export async function mainSimulation(location, setGeometries) {
+export async function mainSimulation(location) {
   // Clear previous attributions if any
   if (window.setAttribution) {
     for (let attributionSetter of Object.values(window.setAttribution)) {
@@ -20,7 +21,6 @@ export async function mainSimulation(location, setGeometries) {
       new THREE.Vector3(0, 0, 0),
       80
     )
-    setGeometries(geometries)
     if (geometries.simulation.length == 0) {
       window.setFrontendState("ErrorAdress")
       return { simulationMesh: undefined, geometries: undefined }
@@ -72,6 +72,7 @@ export async function simulationForNewBuilding(props) {
   let simulationGeometries = mergeGeometries(
     props.selectedMesh.map((mesh) => mesh.geometry)
   )
+
   simulationGeometries.computeBoundingBox()
   simulationGeometries.computeBoundingSphere()
   let simulationCenter = new THREE.Vector3()
@@ -88,12 +89,10 @@ export async function simulationForNewBuilding(props) {
     simulationCenter,
     radius
   )
-  console.log(geometries)
   const shadingScene = new ShadingScene(
     parseFloat(props.geoLocation.lat),
     parseFloat(props.geoLocation.lon)
   )
-  console.log("latitude longitute", props.geoLocation)
   shadingScene.addSimulationGeometry(simulationGeometries)
   geometries.surrounding.forEach((geom) => {
     shadingScene.addShadingGeometry(geom)
@@ -122,16 +121,25 @@ export async function simulationForNewBuilding(props) {
     ...props.displayedSimulationMesh,
     simulationMesh,
   ])
-  window.setDeletedSurroundingMeshes([
-    ...props.deletedSurroundingMeshes,
-    ...props.selectedMesh.map((obj) => obj.name),
-  ])
+  /// Delete the new simualted building from the background / surrounding geometries list
+
+  console.log("Selected Mesh in simulationForNewBuilding", props.selectedMesh)
+  console.log(
+    "Surrounding List in simulationForNewBuilding",
+    props.geometries.surrounding
+  )
+  const selectedMeshNames = props.selectedMesh.map((mesh) => mesh.geometry.name)
+
+  const updatedSurroundings = props.geometries.surrounding.filter(
+    (mesh) => !selectedMeshNames.includes(mesh.name)
+  )
+  const updatedBackground = props.geometries.background.filter(
+    (mesh) => !selectedMeshNames.includes(mesh.name)
+  )
+  window.setGeometries({
+    surrounding: updatedSurroundings,
+    background: updatedBackground,
+  })
 
   props.setSelectedMesh([])
-
-  // Neuen Radius erstellen anhand von Radius Simulation Mesh plus Puffer
-  // Alle Alten Geometries zusammenhauen
-  // shadingGeometries anhand von neuem Radius, neuem Mittelpunkt und allen alten Geometries erstellen
-  // simshady initialisieren und rechnen
-  // Neue Simulation Meshes anzeigen
 }

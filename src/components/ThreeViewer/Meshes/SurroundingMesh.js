@@ -1,24 +1,17 @@
 import * as THREE from "three"
 
-const SurroundingMesh = ({ geometries, deletedSurroundingMeshes }) => {
+const SurroundingMesh = ({ geometries, prefix }) => {
   return (
     <>
-      {geometries.map(
-        (geometry, index) =>
-          !deletedSurroundingMeshes.includes(`SurroundingMesh-${index}`) && (
-            <mesh
-              key={index}
-              geometry={geometry}
-              name={`SurroundingMesh-${index}`}
-            >
-              <meshLambertMaterial
-                vertexColors={false}
-                color={0xab9980}
-                side={THREE.DoubleSide}
-              />
-            </mesh>
-          )
-      )}
+      {geometries.map((geometry, index) => (
+        <mesh key={index} geometry={geometry} name={`${prefix}-${index}`}>
+          <meshLambertMaterial
+            vertexColors={false}
+            color={0xab9980}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+      ))}
     </>
   )
 }

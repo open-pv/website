@@ -18,7 +18,6 @@ const Scene = ({
   visiblePVSystems,
   selectedMesh,
   setSelectedMesh,
-  deletedSurroundingMeshes,
   pvPoints,
   setPVPoints,
 }) => {
@@ -46,13 +45,13 @@ const Scene = ({
       {geometries.surrounding.length > 0 && (
         <SurroundingMesh
           geometries={geometries.surrounding}
-          deletedSurroundingMeshes={deletedSurroundingMeshes}
+          prefix="surrounding"
         />
       )}
       {geometries.background.length > 0 && (
         <SurroundingMesh
           geometries={geometries.background}
-          deletedSurroundingMeshes={deletedSurroundingMeshes}
+          prefix="background"
         />
       )}
 
@@ -79,7 +78,7 @@ const Scene = ({
         setPVPoints={setPVPoints}
       />
 
-      {simulationMesh != undefined && <Terrain visible={showTerrain}/>}
+      {simulationMesh != undefined && <Terrain visible={showTerrain} />}
     </Canvas>
   )
 }

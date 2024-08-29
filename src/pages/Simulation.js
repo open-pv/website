@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react"
-import * as THREE from "three"
 import { useParams } from "react-router-dom"
+import * as THREE from "three"
 import WrongAdress from "../components/ErrorMessages/WrongAdress"
-import SavingCalculation from "../components/PVSimulation/SavingsCalculation"
 import LoadingBar from "../components/Template/LoadingBar"
 import Footer from "../components/ThreeViewer/Footer"
 import Overlay from "../components/ThreeViewer/Overlay"
@@ -11,7 +10,7 @@ import Main from "../Main"
 import { mainSimulation } from "../simulation/main"
 
 function Index() {
-  const location = useParams();
+  const location = useParams()
 
   // frontendState defines the general state of the frontend (Results, Loading, DrawPV)
   const [frontendState, setFrontendState] = useState("Loading")
@@ -23,11 +22,7 @@ function Index() {
   const [visiblePVSystems, setvisiblePVSystems] = useState([])
   // pvPoints are the red points that appear when drawing PV systems
   const [pvPoints, setPVPoints] = useState([])
-  // When a building is selected from the Surrounding to be simulated, it needs to be deleted
-  // from the surrounding mesh. This state collects a list of names that should not be rendered
-  // Elements are for example "SurroundingMesh-37"
-  const [deletedSurroundingMeshes, setDeletedSurroundingMeshes] = useState([])
-  window.setDeletedSurroundingMeshes = setDeletedSurroundingMeshes
+
   // The federal State where the material comes from, ie "BY"
   const [federalState, setFederalState] = useState(false)
   window.setFederalState = setFederalState
@@ -37,17 +32,21 @@ function Index() {
     surrounding: [],
     background: [],
   })
+
   const [displayedSimulationMesh, setDisplayedSimulationMesh] = useState([])
   const [selectedMesh, setSelectedMesh] = useState([])
 
+  // When a building is selected from the Surrounding to be simulated, it needs to be deleted
+  // from the surrounding mesh. This state collects a list of names that should not be rendered
+  // Elements are for example "SurroundingMesh-37"
+  const [simulationMeshes, setSimulationMeshes] = useState([])
+
+  window.setGeometries = setGeometries
   window.setFrontendState = setFrontendState
   window.setSimulationProgress = setSimulationProgress
 
   const loadAndSimulate = async () => {
-    const { simulationMesh, geometries } = await mainSimulation(
-      location,
-      setGeometries
-    )
+    const { simulationMesh, geometries } = await mainSimulation(location)
     if (simulationMesh) {
       let middle = new THREE.Vector3()
       simulationMesh.geometry.computeBoundingBox()
@@ -62,7 +61,7 @@ function Index() {
 
   useEffect(() => {
     loadAndSimulate()
-  }, []);
+  }, [])
 
   return (
     <Main description={"Berechne das Potential deiner Solaranlage."}>
@@ -78,7 +77,6 @@ function Index() {
             geometries={geometries}
             displayedSimulationMesh={displayedSimulationMesh}
             setDisplayedSimulationMesh={setDisplayedSimulationMesh}
-            deletedSurroundingMeshes={deletedSurroundingMeshes}
             geoLocation={location}
             setvisiblePVSystems={setvisiblePVSystems}
             visiblePVSystems={visiblePVSystems}
@@ -97,7 +95,6 @@ function Index() {
             visiblePVSystems={visiblePVSystems}
             selectedMesh={selectedMesh}
             setSelectedMesh={setSelectedMesh}
-            deletedSurroundingMeshes={deletedSurroundingMeshes}
             pvPoints={pvPoints}
             setPVPoints={setPVPoints}
           />
