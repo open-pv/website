@@ -1,4 +1,6 @@
 import proj4 from 'proj4';
+import * as THREE from 'three';
+
 
 function processVegetationHeightmapData(vegetationData) {
   // Define projections
@@ -101,4 +103,58 @@ function extractCoordinatesFromFilename(filename) {
   return [x * 1000, y * 1000]; // Convert km to meters
 }
 
-export { processVegetationHeightmapData };
+
+function processVegetationData(vegetationRaster, simulationCenter, shadingCutoff) {
+  const { data, minX, minY, maxX, maxY, width, height } = vegetationRaster;
+  
+  // Convert simulationCenter to local coordinates
+  const centerX = simulationCenter.x - minX;
+  const centerY = maxY - simulationCenter.y; // Flip Y-axis
+  
+  const cutoff2 = shadingCutoff * shadingCutoff;
+  let simulation = [];
+  let surrounding = [];
+  let background = [];
+  
+  // Size of each cell in meters
+  const cellSizeX = (maxX - minX) / width;
+  const cellSizeY = (maxY - minY) / height;
+  
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const height = data[y][x];
+      if (isNaN(height) || height <= 0) continue; // Skip non-vegetation or invalid data
+      
+      // Calculate center of this cell in local coordinates
+      const localX = (x + 0.5) * cellSizeX - centerX;
+      const localY = (y + 0.5) * cellSizeY - centerY;
+      
+      // Calculate distance from simulation center
+      const distanceSquared = localX * localX + localY * localY;
+      
+      // Create a simple geometry for this vegetation cell
+      const geometry = createVegetationGeometry(cellSizeX, cellSizeY, height);
+      geometry.translate(localX, localY, 0);
+      
+      if (distanceSquared <= cutoff2) {
+        simulation.push(geometry);
+      } else if (distanceSquared <= 4 * cutoff2) { // Extend surrounding area
+        surrounding.push(geometry);
+      } else {
+        background.push(geometry);
+      }
+    }
+  }
+  
+  return { simulation, surrounding, background };
+}
+
+function createVegetationGeometry(width, height, vegHeight) {
+  // Create a simple box geometry to represent vegetation
+  const geometry = new THREE.BoxGeometry(width, height, vegHeight);
+  geometry.translate(0, 0, vegHeight / 2); // Move base to z=0
+  return geometry;
+}
+
+export { processVegetationData, processVegetationHeightmapData };
+

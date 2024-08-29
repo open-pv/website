@@ -3,7 +3,7 @@ import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
 import { downloadBuildings, retrieveDataVegetationTif } from "./download"
 import { processGeometries } from "./preprocessing"
-import { processVegetationHeightmapData } from "./processVegetationTiffs"
+import { processVegetationData, processVegetationHeightmapData } from "./processVegetationTiffs"
 
 export async function mainSimulation(location, setGeometries) {
   // Clear previous attributions if any
@@ -42,14 +42,25 @@ export async function mainSimulation(location, setGeometries) {
 
 
 
+
     // Process vegetation heightmap data
-    console.log("Vegetation Data:");
+    console.log("Vegetation Data:", vegetationData);
+    const vegetationRaster = processVegetationHeightmapData(vegetationData);
+    console.log("Processed Vegetation Raster:", vegetationRaster);
 
-    console.log(vegetationData);
-    const { data,minX, minY, maxX, maxY, width, height } = processVegetationHeightmapData(vegetationData);
-    console.log("Processed Vegetation Points:");
+    // Process vegetation data for simulation
+    const vegetationGeometries = processVegetationData(vegetationRaster, new THREE.Vector3(0, 0, 0), 80);
+    console.log("Processed Vegetation Geometries:", vegetationGeometries);
 
-    console.log(data);
+
+    // Add vegetation geometries to the scene
+    vegetationGeometries.simulation.forEach((geom) => {
+      scene.addSimulationGeometry(geom)
+      scene.addShadingGeometry(geom)
+    })
+    //vegetationGeometries.surrounding.forEach((geom) => {
+    //  scene.addShadingGeometry(geom)
+    //})
     //scene.addVegetationRaster(rasterData)
 
 
