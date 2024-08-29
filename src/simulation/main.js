@@ -56,7 +56,7 @@ export async function mainSimulation(location, setGeometries) {
 
     let numSimulations = window.numSimulations || 80
     function loadingBarWrapperFunction(progress, total = 100) {
-      console.log("Simulation Progress is ", progress)
+      // console.log("Simulation Progress is ", progress)
       return window.setSimulationProgress(progress)
     }
 

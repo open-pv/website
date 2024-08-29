@@ -82,7 +82,7 @@ function Index() {
     mapRef.current = current;
     if(current !== null) {
       current.getMap().dragRotate.disable();
-      current.getMap().touchZoomRotate.disable();
+      current.getMap().touchZoomRotate.disableRotation();
     }
   }, []);
 

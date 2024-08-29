@@ -41,7 +41,7 @@ const Scene = ({
       }}
     >
       <ambientLight intensity={2} />
-      <directionalLight intensity={1} position={[0, 1, -10]} />
+      <directionalLight intensity={2} position={[0, 1, -2]} />
 
       {geometries.surrounding.length > 0 && (
         <SurroundingMesh

@@ -10,14 +10,17 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { attributions } from "../data/dataLicense";
 import {
   coordinatesLonLat,
-  coordinatesXY15,
   projectToWebMercator,
 } from "./location";
 
 
 export function tile2meters() {
+  return 1222.992452 * mercator2meters();
+}
+
+export function mercator2meters() {
   const lat = coordinatesLonLat[1]
-  return 1222.992452 * Math.cos((lat * Math.PI) / 180.0)
+  return Math.cos((lat * Math.PI) / 180.0)
 }
 
 const dracoLoader = new DRACOLoader()
