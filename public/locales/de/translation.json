@@ -43,9 +43,6 @@
       "3": "und die Verschattung durch Vegetation in einigen Bundesländern integriert."
     }
   },
-  "simulationStatus": {
-    "waitingForAdress": "Warte auf Adresseeingabe"
-  },
   "loadingMessage": {
     "tip1": "Mit Doppelklick kannst du ein anderes Gebäude auf der Karte auswählen und die Simulation neu starten.",
     "tip2": "Die Berechnung der Verschattung findet bei dir im Browser statt. Hast du ein großes Gebäude ausgewählt oder nutzt du einen alten PC, dann dauert die Berechnung länger.",
@@ -66,7 +63,10 @@
     "showMap": "Karte anzeigen",
     "start": "Start",
     "options": "Optionen",
-    "simulateBuilding": "Gebäude simulieren"
+    "simulateBuilding": "Gebäude simulieren",
+    "createPVSystem": "PV-Anlage erstellen",
+    "cancel": "Abbrechen",
+    "deleteLastPoint": "Letzen Punkt löschen"
   },
   "noSearchResults": {
     "title": "Keine Ergebnisse",

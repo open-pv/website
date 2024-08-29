@@ -1,6 +1,6 @@
 /** x, y tile coordinates in WebMercator XYZ tiling at zoom level X=15
  */
-export var coordinatesXY15, coordinatesLonLat
+export var coordinatesXY15, coordinatesLonLat, coordinatesWebMercator;
 
 export async function requestLocation(searchString) {
   let options = extractLongitudeLatitude(searchString);
@@ -76,5 +76,18 @@ export function projectToWebMercator(lon, lat) {
     (n * (1 - Math.log(Math.tan(lat_rad) + 1 / Math.cos(lat_rad)) / Math.PI)) /
     2
   coordinatesXY15 = [xtile, ytile]
+  coordinatesWebMercator = [1222.992452 * xtile - 20037508.34,
+                            20037508.34 - 1222.992452 * ytile];
   return [xtile, ytile]
+}
+
+export function xyzBounds(x, y, z) {
+  const map_size = 40075016.68;
+  const tile_size = map_size / Math.pow(2, z);
+  const x0 = (tile_size * x) - map_size / 2;
+  const x1 = x0 + tile_size;
+  const y0 = map_size / 2 - (tile_size * y);
+  const y1 = y0 - tile_size;
+
+  return [x0, y0, x1, y1];
 }

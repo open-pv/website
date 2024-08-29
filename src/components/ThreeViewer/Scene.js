@@ -19,8 +19,9 @@ const Scene = ({
   selectedMesh,
   setSelectedMesh,
   deletedSurroundingMeshes,
+  pvPoints,
+  setPVPoints,
 }) => {
-  const [pvPoints, setPVPoints] = useState([])
   window.setPVPoints = setPVPoints
   const position = [
     simulationMesh[0].middle.x,
@@ -78,7 +79,7 @@ const Scene = ({
         setPVPoints={setPVPoints}
       />
 
-      {simulationMesh != undefined && showTerrain && <Terrain />}
+      {simulationMesh != undefined && <Terrain visible={showTerrain}/>}
     </Canvas>
   )
 }
