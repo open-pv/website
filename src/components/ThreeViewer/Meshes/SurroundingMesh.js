@@ -11,10 +11,9 @@ const SurroundingMesh = ({ geometries, deletedSurroundingMeshes }) => {
               geometry={geometry}
               name={`SurroundingMesh-${index}`}
             >
-              <meshStandardMaterial
+              <meshLambertMaterial
                 vertexColors={false}
-                color={0xd1bea4}
-                metalness={0}
+                color={0xab9980}
                 side={THREE.DoubleSide}
               />
             </mesh>
