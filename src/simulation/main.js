@@ -139,6 +139,7 @@ export async function simulationForNewBuilding(props) {
   window.setGeometries({
     surrounding: updatedSurroundings,
     background: updatedBackground,
+    simulation: props.geometries.simulation,
   })
 
   props.setSelectedMesh([])
