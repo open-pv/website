@@ -64,6 +64,7 @@
     "title": "Bedienungsanleitung",
     "leftMouse": "Linke Maustaste: Bewegung auf der Karte",
     "rightMouse": "Rechte Maustaste: Rotation der Karte",
-    "wheel": "Mausrad: Vergrößern und Verkleinern"
+    "wheel": "Mausrad: Vergrößern und Verkleinern",
+    "doubleClick": "Doppelklick: Weiteres Gebäude für Simulation auswählen"
   }
 }

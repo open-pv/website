@@ -64,6 +64,7 @@
     "title": "User Manual",
     "leftMouse": "Left Mouse Button: Move on the map",
     "rightMouse": "Right Mouse Button: Rotate the map",
-    "wheel": "Mouse Wheel: Zoom in and out"
+    "wheel": "Mouse Wheel: Zoom in and out",
+    "doubleClick": "Double click: Choose another building for a simulation"
   }
 }
