@@ -30,8 +30,8 @@
     "tip3": "Manchmal werden Teile des Gebäudes unter der Karte angezeigt. In diesem Fall kannst du die Karte ausblenden, um das ganze Gebäude zu sehen."
   },
   "errorMessage": {
-    "tooManyUniforms": "Leider ist das ausgewählte Gebiet zu groß, um auf deinem PC simuliert zu werden. Du kannst den Gebäuderadius mit dem Slider auf der linken Seite kleiner stellen, um dieses Problem zu beheben.",
-    "wrongAdress": "Adresse wurde nicht gefunden oder liegt nicht innerhalb von Bayern. Leider können wir aktuell nur Häuser in Bayern simulieren. Alternativ kannst du auch die Koordinaten in Google Maps per Rechtsklick bestimmen und in das Suchfeld eingeben."
+    "header": "Ein Fehler ist aufgetreten.",
+    "wrongAdress": "Für den angegebenen Ort konnten keine Gebäude gefunden werden. Dies kann mehrere Gründe haben: 1. Am ausgewählten Ort steht kein Gebäude. 2. Am ausgewählten Ort steht ein neues Gebäude, welches noch nicht in unseren Daten vorhanden ist. 3. Der ausgewählte Ort liegt außerhalb von Deutschland oder in den Bundesländern Saarland / Mecklenburg-Vorpommern. Für diese Bundesländer haben wir leider keine Gebäudedaten."
   },
   "WelcomeMessage": {
     "title": "Willkommen bei OpenPV",

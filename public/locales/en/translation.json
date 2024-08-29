@@ -30,8 +30,8 @@
     "tip3": "Sometimes parts of the building are displayed below the map. In this case, you can hide the map to see the entire building."
   },
   "errorMessage": {
-    "tooManyUniforms": "Unfortunately, the selected area is too large to be simulated on your PC. You can reduce the building radius using the slider on the left side to resolve this issue.",
-    "wrongAdress": "Address was not found or is not within Bavaria. Unfortunately, we can currently only simulate houses in Bavaria. Alternatively, you can determine the coordinates in Google Maps by right-clicking and enter them in the search field."
+    "header": "An Error occured.",
+    "wrongAdress": "No buildings could be found for the specified location. This could be due to several reasons: 1. There is no building at the selected location. 2. There is a new building at the selected location that is not yet included in our data. 3. The selected location is outside of Germany or in the federal states of Saarland or Mecklenburg-Vorpommern. Unfortunately, we do not have building data for these federal states."
   },
   "WelcomeMessage": {
     "title": "Welcome to OpenPV",
