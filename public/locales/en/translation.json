@@ -31,7 +31,7 @@
   },
   "errorMessage": {
     "header": "An Error occured.",
-    "wrongAdress": "Address was not found or is not within Bavaria. Unfortunately, we can currently only simulate houses in Bavaria. Alternatively, you can determine the coordinates in Google Maps by right-clicking and enter them in the search field."
+    "wrongAdress": "No buildings could be found for the specified location. This could be due to several reasons: 1. There is no building at the selected location. 2. There is a new building at the selected location that is not yet included in our data. 3. The selected location is outside of Germany or in the federal states of Saarland or Mecklenburg-Vorpommern. Unfortunately, we do not have building data for these federal states."
   },
   "WelcomeMessage": {
     "title": "Welcome to OpenPV",
