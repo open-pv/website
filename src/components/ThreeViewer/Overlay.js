@@ -224,17 +224,25 @@ export default Overlay
 
 const ModalControls = ({ isOpen, onClose }) => {
   const { t } = useTranslation()
+  const touchDeviceText = window.isTouch ? "touch." : ""
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t("mapControlHelp.title")}</ModalHeader>
+        <ModalHeader>{t(`mapControlHelp.title`)}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <UnorderedList>
-            <ListItem>{t("mapControlHelp.leftMouse")}</ListItem>
-            <ListItem>{t("mapControlHelp.rightMouse")}</ListItem>
-            <ListItem>{t("mapControlHelp.wheel")}</ListItem>
+            <ListItem>
+              {t(`mapControlHelp.${touchDeviceText}leftMouse`)}
+            </ListItem>
+            <ListItem>
+              {t(`mapControlHelp.${touchDeviceText}rightMouse`)}
+            </ListItem>
+            <ListItem>{t(`mapControlHelp.${touchDeviceText}wheel`)}</ListItem>
+            <ListItem>
+              {t(`mapControlHelp.${touchDeviceText}doubleClick`)}
+            </ListItem>
           </UnorderedList>
         </ModalBody>
       </ModalContent>
