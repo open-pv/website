@@ -9,18 +9,7 @@ function WrongAdress() {
       <CardHeader>
         <Heading>{t("errorMessage.header")}</Heading>
       </CardHeader>
-      <CardBody>
-        {t("errorMessage.wrongAdress")}
-        <br />
-        <br />
-        <Image
-          src="/images/googleMaps.gif"
-          width="100%"
-          maxWidth="500px"
-          borderRadius="md"
-          alt="A GIF that shows how you can get coordinates using Google Maps."
-        />
-      </CardBody>
+      <CardBody>{t("errorMessage.wrongAdress")}</CardBody>
     </Card>
   )
 }
