@@ -6,7 +6,7 @@ const SimulationMesh = ({ meshes }) => {
     <>
       {meshes.map((mesh, index) => (
         <mesh key={index} geometry={mesh.geometry} name={`SimulationMesh`}>
-          <meshStandardMaterial vertexColors={true} side={THREE.DoubleSide} />
+          <meshLambertMaterial vertexColors={true} side={THREE.DoubleSide} />
         </mesh>
       ))}
     </>
