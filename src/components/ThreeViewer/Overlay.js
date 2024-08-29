@@ -8,9 +8,17 @@ import {
   DrawerHeader,
   DrawerOverlay,
   FormLabel,
+  ListItem,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   Stack,
   Switch,
   Text,
+  UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react"
 import { useTranslation } from "react-i18next"
@@ -39,7 +47,16 @@ function Overlay({
   pvPoints,
   setPVPoints,
 }) {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isOpenDrawer,
+    onOpen: onOpenDrawer,
+    onClose: onCloseDrawer,
+  } = useDisclosure()
+  const {
+    isOpen: isOpenModalControls,
+    onOpen: onOpenModalControls,
+    onClose: onCloseModalControls,
+  } = useDisclosure()
   const { t } = useTranslation()
   const btnRef = React.useRef()
 
@@ -50,7 +67,7 @@ function Overlay({
           <Button
             ref={btnRef}
             colorScheme="teal"
-            onClick={onOpen}
+            onClick={onOpenDrawer}
             variant={"link"}
             zIndex={100}
           >
@@ -60,7 +77,7 @@ function Overlay({
             buttonLabel={"PV Anlage einzeichnen"}
             onClick={() => {
               setFrontendState("DrawPV")
-              onClose()
+              onCloseDrawer()
             }}
             hoverText={
               "PV-Anlage in der Karte einzeichnen und Jahresbetrag berechnen."
@@ -97,9 +114,16 @@ function Overlay({
           {t("button.simulateBuilding")}
         </Button>
       )}
+      <Button onClick={onOpenModalControls} colorScheme="teal" variant={"link"}>
+        {t("mapControlHelp.button")}
+      </Button>
+      <ModalControls
+        isOpen={isOpenModalControls}
+        onClose={onCloseModalControls}
+      />
       <CustomDrawer
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={isOpenDrawer}
+        onClose={onCloseDrawer}
         showTerrain={showTerrain}
         setShowTerrain={setShowTerrain}
       />
@@ -197,3 +221,23 @@ const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
 }
 
 export default Overlay
+
+const ModalControls = ({ isOpen, onClose }) => {
+  const { t } = useTranslation()
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>{t("mapControlHelp.title")}</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <UnorderedList>
+            <ListItem>{t("mapControlHelp.leftMouse")}</ListItem>
+            <ListItem>{t("mapControlHelp.rightMouse")}</ListItem>
+            <ListItem>{t("mapControlHelp.wheel")}</ListItem>
+          </UnorderedList>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  )
+}
