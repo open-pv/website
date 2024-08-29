@@ -217,6 +217,7 @@ function get_utm32(x, y) {
   return loc_utm
 }
 
+
 function get_file_names_vegetation_tif(x, y) {
   const DIVISOR = 1000
   const BUFFER_ZONE = 100
@@ -261,6 +262,8 @@ function get_file_names_vegetation_tif(x, y) {
   return file_list
 }
 
+
+//The tiles are in UTM32 (EPSG:25832)
 export async function retrieveDataVegetationTif(loc) {
   const baseurl = "https://www.openpv.de/data/vegetation/";
   var filenames = get_file_names_vegetation_tif(Number(loc.lon), Number(loc.lat));

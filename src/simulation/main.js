@@ -3,6 +3,7 @@ import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
 import { downloadBuildings, retrieveDataVegetationTif } from "./download"
 import { processGeometries } from "./preprocessing"
+import { processVegetationHeightmapData } from "./processVegetationTiffs"
 
 export async function mainSimulation(location, setGeometries) {
   // Clear previous attributions if any
@@ -39,10 +40,13 @@ export async function mainSimulation(location, setGeometries) {
       scene.addShadingGeometry(geom)
     })
 
-    // Add heightmap data to the scene
-    vegetationData.forEach(([filename, rasterData]) => {
-      scene.addVegetationHeightmapData(filename, rasterData)
-    })
+
+
+    // Process vegetation heightmap data
+    const rasterData = processVegetationHeightmapData(vegetationData)
+    scene.addVegetationRaster(rasterData)
+
+
 
     let numSimulations = window.numSimulations || 80
     function loadingBarWrapperFunction(progress, total = 100) {
