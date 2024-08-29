@@ -52,6 +52,10 @@ export async function mainSimulation(location, setGeometries) {
       diffuseIrradianceURL: undefined,
       pvCellEfficiency: 0.2,
       maxYieldPerSquareMeter: 1400 * 0.2,
+      urlDirectIrrandianceTIF:
+        "https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif",
+      urlDiffuseIrrandianceTIF:
+        "https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif",
       progressCallback: loadingBarWrapperFunction,
     })
 
@@ -108,6 +112,10 @@ export async function simulationForNewBuilding(props) {
     numberSimulations: numSimulations,
     pvCellEfficiency: 0.2,
     maxYieldPerSquareMeter: 1400 * 0.2,
+    urlDirectIrrandianceTIF:
+      "https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif",
+    urlDiffuseIrrandianceTIF:
+      "https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif",
     progressCallback: (progress, total) =>
       console.log("Simulation Progress is ", progress),
   })
