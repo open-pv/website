@@ -47,10 +47,36 @@ const About = () => {
                   "images/WelcomeMessage3.png",
                 ]}
               />
+              <TextBox heading={t("about.data.h")}>
+                {t("about.data.p1")}{" "}
+                <Link
+                  href="https://www.dwd.de/DE/leistungen/cdc/climate-data-center.html"
+                  isExternal
+                  color="teal"
+                >
+                  {"[CC-BY-4.0]"}
+                </Link>
+                {", "}
+                {t("about.data.p2")}{" "}
+                <Link href="https://sonny.4lima.de/" isExternal color="teal">
+                  {"[CC-BY-4.0]"}
+                </Link>
+                {", "}
+                {t("about.data.p3")}{" "}
+                <Link
+                  href="https://www.bkg.bund.de/DE/Home/home.html"
+                  isExternal
+                  color="teal"
+                >
+                  {"[DL-DE/BY-2-0]"}
+                </Link>
+                .
+              </TextBox>
               <TextBox
                 heading={t("about.whyOpenSource.h")}
                 content={t("about.whyOpenSource.p")}
               />
+
               <TextBox heading={t("about.team.h")} content={t("about.team.p")}>
                 <Link
                   href="https://github.com/orgs/open-pv/people"
