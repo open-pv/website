@@ -33,7 +33,7 @@ function CustomMapControl(props) {
           intersectedMesh.geometry.name.includes("background"))
       ) {
         const existingIndex = props.selectedMesh.findIndex(
-          (mesh) => mesh.name === intersectedMesh.name
+          (mesh) => mesh.geometry.name === intersectedMesh.geometry.name
         )
         if (existingIndex > -1) {
           // Remove the mesh from the list if it already exists
@@ -46,7 +46,6 @@ function CustomMapControl(props) {
           props.setSelectedMesh([
             ...props.selectedMesh,
             {
-              name: intersectedMesh.name,
               geometry: intersectedMesh.geometry,
               material: intersectedMesh.material,
             },
