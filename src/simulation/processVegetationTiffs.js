@@ -11,14 +11,14 @@ function processVegetationHeightmapData(vegetationData) {
 
   // Find bounding box of all raster patches
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  
+
   vegetationData.forEach(([filename, rasterData]) => {
     const [x, y] = extractCoordinatesFromFilename(filename);
     minX = Math.min(minX, x);
     minY = Math.min(minY, y);
     maxX = Math.max(maxX, x + 1000); // Assuming 1km x 1km tiles
     maxY = Math.max(maxY, y + 1000);
-  });   
+  });
 
   // Create a merged raster with 1m resolution
   const width = maxX - minX;
@@ -30,7 +30,7 @@ function processVegetationHeightmapData(vegetationData) {
     const [x, y] = extractCoordinatesFromFilename(filename);
     const offsetX = x - minX;
     const offsetY = y - minY;
-    
+
     for (let i = 0; i < 1000; i++) {
       for (let j = 0; j < 1000; j++) {
         const value = rasterData[0][i * 1000 + j];
@@ -60,10 +60,15 @@ function processVegetationHeightmapData(vegetationData) {
   ]);
   const centerPoint = new THREE.Vector3(centerX, centerY, 0);
 
-  // Adjust points relative to the center
-  const adjustedPoints = mercatorPoints.map(point => point.sub(centerPoint));
-
-  return adjustedPoints;
+  // Return both the absolute positioned points and the center point
+  return {
+    points: mercatorPoints,
+    center: centerPoint,
+    boundingBox: {
+      min: new THREE.Vector3(minX, minY, 0),
+      max: new THREE.Vector3(maxX, maxY, 0)
+    }
+  };
 }
 
 function extractCoordinatesFromFilename(filename) {

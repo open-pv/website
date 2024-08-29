@@ -43,8 +43,14 @@ export async function mainSimulation(location, setGeometries) {
 
 
     // Process vegetation heightmap data
-    const rasterData = processVegetationHeightmapData(vegetationData)
-    scene.addVegetationRaster(rasterData)
+    console.log("Vegetation Data:");
+
+    console.log(vegetationData);
+    const { vegetationCartesianPoints,vegetationCenter, vegetationBoundingBox } = processVegetationHeightmapData(vegetationData);
+    console.log("Processed Vegetation Points:");
+
+    console.log(vegetationCartesianPoints);
+    //scene.addVegetationRaster(rasterData)
 
 
 
