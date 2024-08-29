@@ -1,7 +1,4 @@
 import ShadingScene from "@openpv/simshady"
-import * as GeoTIFF from 'geotiff'
-import JSZip from "jszip"
-import * as pako from 'pako'
 import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
 import { downloadBuildings, retrieveDataVegetationTif } from "./download"
@@ -17,8 +14,7 @@ export async function mainSimulation(location, setGeometries) {
 
   if (typeof location !== "undefined" && location != null) {
     const buildingGeometries = await downloadBuildings(location)
-
-    const vegetation_array = await retrieveDataVegetationTif(location)
+    const vegetationData = await retrieveDataVegetationTif(location)
 
     let geometries = processGeometries(
       buildingGeometries,
@@ -43,10 +39,12 @@ export async function mainSimulation(location, setGeometries) {
       scene.addShadingGeometry(geom)
     })
 
-    let numSimulations
-    window.numSimulations
-      ? (numSimulations = window.numSimulations)
-      : (numSimulations = 80)
+    // Add heightmap data to the scene
+    vegetationData.forEach(([filename, rasterData]) => {
+      scene.addVegetationHeightmapData(filename, rasterData)
+    })
+
+    let numSimulations = window.numSimulations || 80
     function loadingBarWrapperFunction(progress, total = 100) {
       console.log("Simulation Progress is ", progress)
       return window.setSimulationProgress(progress)
@@ -72,8 +70,6 @@ export async function mainSimulation(location, setGeometries) {
 
 export async function simulationForNewBuilding(props) {
   console.log(props)
-  // Get all geometries from the list and put it in one big simulation geometries. This needs
-  // to be done since multiple buildings can be part of selectedMesh
   let simulationGeometries = mergeGeometries(
     props.selectedMesh.map((mesh) => mesh.geometry)
   )
@@ -98,16 +94,13 @@ export async function simulationForNewBuilding(props) {
     parseFloat(props.geoLocation.lat),
     parseFloat(props.geoLocation.lon)
   )
-  console.log("latitude longitute", props.geoLocation)
+  console.log("latitude longitude", props.geoLocation)
   shadingScene.addSimulationGeometry(simulationGeometries)
   geometries.surrounding.forEach((geom) => {
     shadingScene.addShadingGeometry(geom)
   })
 
-  let numSimulations
-  window.numSimulations
-    ? (numSimulations = window.numSimulations)
-    : (numSimulations = 80)
+  let numSimulations = window.numSimulations || 80
 
   let simulationMesh = await shadingScene.calculate({
     numberSimulations: numSimulations,
@@ -133,10 +126,4 @@ export async function simulationForNewBuilding(props) {
   ])
 
   props.setSelectedMesh([])
-
-  // Neuen Radius erstellen anhand von Radius Simulation Mesh plus Puffer
-  // Alle Alten Geometries zusammenhauen
-  // shadingGeometries anhand von neuem Radius, neuem Mittelpunkt und allen alten Geometries erstellen
-  // simshady initialisieren und rechnen
-  // Neue Simulation Meshes anzeigen
 }
