@@ -59,6 +59,10 @@
     "coordinates": "Coordinates",
     "userSelection": "Manual Selection"
   },
+
+  "Footer": {
+    "privacyPolicy": "Privacy Policy"
+  }
   "mapControlHelp": {
     "button": "How to control the Map?",
     "title": "User Manual",
