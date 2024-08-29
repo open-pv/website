@@ -1,5 +1,4 @@
 import proj4 from 'proj4';
-import * as THREE from 'three';
 
 function processVegetationHeightmapData(vegetationData) {
   // Define projections
@@ -9,9 +8,8 @@ function processVegetationHeightmapData(vegetationData) {
   // Function to convert UTM32 to Web Mercator (EPSG:3857)
   const utm32ToWebMercator = proj4("EPSG:25832", "EPSG:3857");
 
-  // Find bounding box of all raster patches
+  // Find bounding box of all raster patches in UTM32
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-
   vegetationData.forEach(([filename, rasterData]) => {
     const [x, y] = extractCoordinatesFromFilename(filename);
     minX = Math.min(minX, x);
@@ -20,53 +18,80 @@ function processVegetationHeightmapData(vegetationData) {
     maxY = Math.max(maxY, y + 1000);
   });
 
-  // Create a merged raster with 1m resolution
-  const width = maxX - minX;
-  const height = maxY - minY;
-  const mergedRaster = new Float32Array(width * height).fill(NaN);
+  // Create 2D array for merged raster in UTM32 coordinates
+  const utmWidth = maxX - minX;
+  const utmHeight = maxY - minY;
+  const utmRaster = Array(utmHeight).fill().map(() => Array(utmWidth).fill(NaN));
 
-  // Merge raster data
+  // Stitch patches in UTM32
   vegetationData.forEach(([filename, rasterData]) => {
     const [x, y] = extractCoordinatesFromFilename(filename);
-    const offsetX = x - minX;
-    const offsetY = y - minY;
-
-    for (let i = 0; i < 1000; i++) {
-      for (let j = 0; j < 1000; j++) {
-        const value = rasterData[0][i * 1000 + j];
-        if (!isNaN(value)) {
-          mergedRaster[(offsetY + i) * width + (offsetX + j)] = value;
+    const tileWidth = Math.sqrt(rasterData[0].length); // Assuming square tiles
+    for (let i = 0; i < tileWidth; i++) {
+      for (let j = 0; j < tileWidth; j++) {
+        const utmX = Math.floor(x + j * (1000 / tileWidth) - minX);
+        const utmY = Math.floor(maxY - (y + i * (1000 / tileWidth)));
+        if (utmX >= 0 && utmX < utmWidth && utmY >= 0 && utmY < utmHeight) {
+          utmRaster[utmY][utmX] = rasterData[0][i * tileWidth + j];
         }
       }
     }
   });
 
-  // Convert merged raster to Web Mercator coordinates
-  const mercatorPoints = [];
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const value = mergedRaster[y * width + x];
-      if (!isNaN(value)) {
-        const [mercX, mercY] = utm32ToWebMercator.forward([minX + x, minY + y]);
-        mercatorPoints.push(new THREE.Vector3(mercX, mercY, value));
+  // Convert bounding box to Web Mercator
+  const [minMercX, minMercY] = utm32ToWebMercator.forward([minX, minY]);
+  const [maxMercX, maxMercY] = utm32ToWebMercator.forward([maxX, maxY]);
+
+  // Calculate dimensions in Web Mercator
+  const mercWidth = Math.ceil(maxMercX - minMercX);
+  const mercHeight = Math.ceil(maxMercY - minMercY);
+
+  // Create 2D array for merged raster in Web Mercator coordinates
+  const mergedRaster = Array(mercHeight).fill().map(() => Array(mercWidth).fill(NaN));
+
+  // Transform and interpolate to 1x1m resolution in Web Mercator
+  for (let mercY = 0; mercY < mercHeight; mercY++) {
+    for (let mercX = 0; mercX < mercWidth; mercX++) {
+      const [utmX, utmY] = proj4("EPSG:3857", "EPSG:25832").forward([minMercX + mercX, maxMercY - mercY]);
+      const utmIndexX = Math.floor(utmX - minX);
+      const utmIndexY = Math.floor(maxY - utmY);
+
+      if (utmIndexX >= 0 && utmIndexX < utmWidth && utmIndexY >= 0 && utmIndexY < utmHeight) {
+        // Bilinear interpolation
+        const x0 = Math.floor(utmIndexX);
+        const x1 = Math.min(x0 + 1, utmWidth - 1);
+        const y0 = Math.floor(utmIndexY);
+        const y1 = Math.min(y0 + 1, utmHeight - 1);
+
+        const q11 = utmRaster[y0][x0];
+        const q21 = utmRaster[y0][x1];
+        const q12 = utmRaster[y1][x0];
+        const q22 = utmRaster[y1][x1];
+
+        const x = utmIndexX - x0;
+        const y = utmIndexY - y0;
+
+        const value = (1 - x) * (1 - y) * q11 + x * (1 - y) * q21 + (1 - x) * y * q12 + x * y * q22;
+        mergedRaster[mercY][mercX] = value; // Replace NaN with 0 or another suitable value
       }
     }
   }
 
-  // Calculate the center point in Web Mercator coordinates
-  const [centerX, centerY] = utm32ToWebMercator.forward([
-    (minX + maxX) / 2,
-    (minY + maxY) / 2
-  ]);
-  const centerPoint = new THREE.Vector3(centerX, centerY, 0);
-
-  // Return both the absolute positioned points and the center point
   return {
-    points: mercatorPoints,
-    center: centerPoint,
-    boundingBox: {
-      min: new THREE.Vector3(minX, minY, 0),
-      max: new THREE.Vector3(maxX, maxY, 0)
+    data: mergedRaster,
+    minX: minMercX,
+    minY: minMercY,
+    maxX: maxMercX,
+    maxY: maxMercY,
+    width: mercWidth,
+    height: mercHeight,
+    getHeight: function(x, y) {
+      const indexX = Math.floor(x - this.minX);
+      const indexY = Math.floor(this.maxY - y); // Flip Y-axis
+      if (indexX >= 0 && indexX < this.width && indexY >= 0 && indexY < this.height) {
+        return this.data[indexY][indexX];
+      }
+      return 0; // Return 0 for out-of-bounds or NaN values
     }
   };
 }
