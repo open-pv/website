@@ -112,8 +112,9 @@ function processVegetationData(vegetationRaster, simulationCenter, vegetationSim
   const [cx, cy] = coordinatesWebMercator;
   
   const geometries = {
-    simulation: [],
-    viewing: []
+    simulation:[],
+    surrounding: [],
+    background: []
   };
 
   const minX = Math.floor(vegetationRaster.minX);
@@ -139,12 +140,14 @@ function processVegetationData(vegetationRaster, simulationCenter, vegetationSim
           (center.y - simulationCenter.y) ** 2;
         
         if (d2 <= vegetationSimulationCutoff * vegetationSimulationCutoff) {
-          geometries.simulation.push(vegGeometry);
+          geometries.surrounding.push(vegGeometry);
         }
-        if (d2 <= vegetationViewingCutoff * vegetationViewingCutoff) {
-          geometries.viewing.push(vegGeometry);
+        else{
+          if (d2 <= vegetationViewingCutoff * vegetationViewingCutoff) {
+          geometries.background.push(vegGeometry);
         }
       }
+    }
     }
   }
 

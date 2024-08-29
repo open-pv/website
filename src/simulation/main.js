@@ -49,14 +49,13 @@ export async function mainSimulation(location, setGeometries) {
     console.log("Processed Vegetation Raster:", vegetationRaster);
 
     // Process vegetation data for simulation
-    const vegetationGeometries = processVegetationData(vegetationRaster, new THREE.Vector3(0, 0, 0), 80);
+    const vegetationGeometries = processVegetationData(vegetationRaster, new THREE.Vector3(0, 0, 0), 30,80);
     console.log("Processed Vegetation Geometries:", vegetationGeometries);
+    window.setVegetationGeometries(vegetationGeometries);
 
 
-    // Add vegetation geometries to the scene
-    vegetationGeometries.simulation.forEach((geom) => {
-      scene.addSimulationGeometry(geom)
-      scene.addShadingGeometry(geom)
+    vegetationGeometries.surrounding.forEach((geom) => {
+    scene.addShadingGeometry(geom)
     })
     //vegetationGeometries.surrounding.forEach((geom) => {
     //  scene.addShadingGeometry(geom)
@@ -86,7 +85,7 @@ export async function mainSimulation(location, setGeometries) {
     simulationMesh.material = material
     simulationMesh.name = "simulationMesh"
     return { simulationMesh, geometries }
-  }
+    }
 }
 
 export async function simulationForNewBuilding(props) {
