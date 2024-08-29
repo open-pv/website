@@ -7,15 +7,17 @@ export default function OverlayDrawPV({
   setvisiblePVSystems,
   pvPoints,
   setPVPoints,
+  setFrontendState,
 }) {
   const { t } = useTranslation()
   const handleCreatePVButtonClick = () => {
     const nextIndex = visiblePVSystems.length
     setvisiblePVSystems([...visiblePVSystems, nextIndex])
+    setFrontendState("Results")
   }
 
   const handleAbortButtonClick = () => {
-    window.setFrontendState("Results")
+    setFrontendState("Results")
   }
 
   return (

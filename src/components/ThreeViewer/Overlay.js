@@ -74,6 +74,7 @@ function Overlay({
           visiblePVSystems={visiblePVSystems}
           pvPoints={pvPoints}
           setPVPoints={setPVPoints}
+          setFrontendState={setFrontendState}
         />
       )}
       {selectedMesh.length > 0 && (
