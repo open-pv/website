@@ -30,6 +30,7 @@
     "tip3": "Sometimes parts of the building are displayed below the map. In this case, you can hide the map to see the entire building."
   },
   "errorMessage": {
+    "header": "An Error occured.",
     "tooManyUniforms": "Unfortunately, the selected area is too large to be simulated on your PC. You can reduce the building radius using the slider on the left side to resolve this issue.",
     "wrongAdress": "Address was not found or is not within Bavaria. Unfortunately, we can currently only simulate houses in Bavaria. Alternatively, you can determine the coordinates in Google Maps by right-clicking and enter them in the search field."
   },
