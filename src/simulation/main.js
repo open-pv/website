@@ -1,4 +1,3 @@
-import { background } from "@chakra-ui/react"
 import ShadingScene from "@openpv/simshady"
 import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
@@ -21,9 +20,10 @@ export async function mainSimulation(location) {
       new THREE.Vector3(0, 0, 0),
       80
     )
+    window.setGeometries(geometries)
     if (geometries.simulation.length == 0) {
       window.setFrontendState("ErrorAdress")
-      return { simulationMesh: undefined, geometries: undefined }
+      return { simulationMesh: undefined }
     }
 
     const scene = new ShadingScene(
@@ -61,24 +61,24 @@ export async function mainSimulation(location) {
     })
     simulationMesh.material = material
     simulationMesh.name = "simulationMesh"
-    return { simulationMesh, geometries }
+    return { simulationMesh }
   }
 }
 
 export async function simulationForNewBuilding(props) {
-  console.log(props)
+  console.log("props", props)
   // Get all geometries from the list and put it in one big simulation geometries. This needs
   // to be done since multiple buildings can be part of selectedMesh
-  let simulationGeometries = mergeGeometries(
+  let newSimulationGeometries = mergeGeometries(
     props.selectedMesh.map((mesh) => mesh.geometry)
   )
 
-  simulationGeometries.computeBoundingBox()
-  simulationGeometries.computeBoundingSphere()
+  newSimulationGeometries.computeBoundingBox()
+  newSimulationGeometries.computeBoundingSphere()
   let simulationCenter = new THREE.Vector3()
-  simulationGeometries.boundingBox.getCenter(simulationCenter)
+  newSimulationGeometries.boundingBox.getCenter(simulationCenter)
 
-  const radius = simulationGeometries.boundingSphere.radius + 80
+  const radius = newSimulationGeometries.boundingSphere.radius + 80
   const allBuildingGeometries = [
     ...props.geometries.surrounding,
     ...props.geometries.background,
@@ -93,7 +93,7 @@ export async function simulationForNewBuilding(props) {
     parseFloat(props.geoLocation.lat),
     parseFloat(props.geoLocation.lon)
   )
-  shadingScene.addSimulationGeometry(simulationGeometries)
+  shadingScene.addSimulationGeometry(newSimulationGeometries)
   geometries.surrounding.forEach((geom) => {
     shadingScene.addShadingGeometry(geom)
   })
@@ -128,6 +128,7 @@ export async function simulationForNewBuilding(props) {
     "Surrounding List in simulationForNewBuilding",
     props.geometries.surrounding
   )
+  console.log(props.geometries.simulation)
   const selectedMeshNames = props.selectedMesh.map((mesh) => mesh.geometry.name)
 
   const updatedSurroundings = props.geometries.surrounding.filter(
@@ -136,11 +137,33 @@ export async function simulationForNewBuilding(props) {
   const updatedBackground = props.geometries.background.filter(
     (mesh) => !selectedMeshNames.includes(mesh.name)
   )
+
+  // get the lowest available index from simulation geometries
+  const existingSimulationNames = props.geometries.simulation.map(
+    (mesh) => mesh.name
+  )
+  let index = 0
+  while (existingSimulationNames.includes(`simulation-${index}`)) {
+    index++
+  }
+
+  const renamedSelectedMeshes = props.selectedMesh.map((mesh) => {
+    mesh.geometry.name = `simulation-${index++}`
+    return mesh.geometry
+  })
+
+  const updatedSimulation = [
+    ...props.geometries.simulation,
+    ...renamedSelectedMeshes,
+  ]
+
   window.setGeometries({
     surrounding: updatedSurroundings,
     background: updatedBackground,
-    simulation: props.geometries.simulation,
+    simulation: updatedSimulation,
   })
+
+  console.log("updated simulation", updatedSimulation)
 
   props.setSelectedMesh([])
 }

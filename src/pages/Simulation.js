@@ -29,6 +29,7 @@ function Index() {
 
   // Simulation States
   const [geometries, setGeometries] = useState({
+    simulation: [],
     surrounding: [],
     background: [],
   })
@@ -46,14 +47,12 @@ function Index() {
   window.setSimulationProgress = setSimulationProgress
 
   const loadAndSimulate = async () => {
-    const { simulationMesh, geometries } = await mainSimulation(location)
+    const { simulationMesh } = await mainSimulation(location)
     if (simulationMesh) {
       let middle = new THREE.Vector3()
       simulationMesh.geometry.computeBoundingBox()
       simulationMesh.geometry.boundingBox.getCenter(middle)
       simulationMesh.middle = middle
-
-      setGeometries(geometries)
       setDisplayedSimulationMesh([...displayedSimulationMesh, simulationMesh])
       setFrontendState("Results")
     }

@@ -40,7 +40,6 @@ function Overlay({
   geometries,
   setDisplayedSimulationMesh,
   displayedSimulationMesh,
-  surroundingMeshes,
   geoLocation,
   visiblePVSystems,
   setvisiblePVSystems,
