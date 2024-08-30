@@ -1,10 +1,10 @@
 import * as THREE from "three"
 
-const SurroundingMesh = ({ geometries, prefix }) => {
+const SurroundingMesh = ({ geometries }) => {
   return (
     <>
       {geometries.map((geometry, index) => (
-        <mesh key={index} geometry={geometry} name={`${prefix}-${index}`}>
+        <mesh key={index} geometry={geometry}>
           <meshLambertMaterial
             vertexColors={false}
             color={0xab9980}
