@@ -49,7 +49,7 @@ export async function mainSimulation(location, setGeometries) {
 
     let simulationMesh = await scene.calculate({
       numberSimulations: numSimulations,
-      diffuseIrradianceURL: undefined,
+      diffuseIrradianceURL: "https://www.openpv.de/data/irradiance/",
       pvCellEfficiency: 0.2,
       maxYieldPerSquareMeter: 1400 * 0.2,
       progressCallback: loadingBarWrapperFunction,
@@ -106,6 +106,7 @@ export async function simulationForNewBuilding(props) {
 
   let simulationMesh = await shadingScene.calculate({
     numberSimulations: numSimulations,
+    diffuseIrradianceURL: "https://www.openpv.de/data/irradiance/",
     pvCellEfficiency: 0.2,
     maxYieldPerSquareMeter: 1400 * 0.2,
     progressCallback: (progress, total) =>
