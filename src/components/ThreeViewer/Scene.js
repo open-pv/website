@@ -43,16 +43,10 @@ const Scene = ({
       <directionalLight intensity={2} position={[0, 1, -2]} />
 
       {geometries.surrounding.length > 0 && (
-        <SurroundingMesh
-          geometries={geometries.surrounding}
-          prefix="surrounding"
-        />
+        <SurroundingMesh geometries={geometries.surrounding} />
       )}
       {geometries.background.length > 0 && (
-        <SurroundingMesh
-          geometries={geometries.background}
-          prefix="background"
-        />
+        <SurroundingMesh geometries={geometries.background} />
       )}
 
       {simulationMeshes.length > 0 && (
