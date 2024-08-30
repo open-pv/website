@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
-import * as THREE from "three"
 import { useParams } from "react-router-dom"
+import * as THREE from "three"
 import WrongAdress from "../components/ErrorMessages/WrongAdress"
 import SavingCalculation from "../components/PVSimulation/SavingsCalculation"
 import LoadingBar from "../components/Template/LoadingBar"
@@ -11,7 +11,7 @@ import Main from "../Main"
 import { mainSimulation } from "../simulation/main"
 
 function Index() {
-  const location = useParams();
+  const location = useParams()
 
   // frontendState defines the general state of the frontend (Results, Loading, DrawPV)
   const [frontendState, setFrontendState] = useState("Loading")
@@ -43,6 +43,9 @@ function Index() {
   window.setFrontendState = setFrontendState
   window.setSimulationProgress = setSimulationProgress
 
+  const [vegetationGeometries, setVegetationGeometries] = useState([])
+  window.setVegetationGeometries = setVegetationGeometries
+
   const loadAndSimulate = async () => {
     const { simulationMesh, geometries } = await mainSimulation(
       location,
@@ -62,7 +65,7 @@ function Index() {
 
   useEffect(() => {
     loadAndSimulate()
-  }, []);
+  }, [])
 
   return (
     <Main description={"Berechne das Potential deiner Solaranlage."}>
@@ -100,6 +103,7 @@ function Index() {
             deletedSurroundingMeshes={deletedSurroundingMeshes}
             pvPoints={pvPoints}
             setPVPoints={setPVPoints}
+            vegetationGeometries={vegetationGeometries}
           />
         )}
 

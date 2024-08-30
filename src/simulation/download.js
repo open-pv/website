@@ -178,8 +178,8 @@ function get_file_names_vegetation_tif(x, y) {
   return file_list
 }
 
-//The tiles are in UTM32 (EPSG:25832)
-export async function retrieveDataVegetationTif(loc) {
+// Returns vegetation Geotiff as a 2d raster for given location
+export async function retrieveVegetationRasters(loc) {
   const baseurl = "https://www.openpv.de/data/vegetation/"
   var filenames = get_file_names_vegetation_tif(
     Number(loc.lon),

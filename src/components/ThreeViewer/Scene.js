@@ -7,6 +7,7 @@ import { HighlightedMesh } from "./Meshes/HiglightedMesh"
 import PVSystems from "./Meshes/PVSystems"
 import SimulationMesh from "./Meshes/SimulationMesh"
 import SurroundingMesh from "./Meshes/SurroundingMesh"
+import VegetationMesh from "./Meshes/VegetationMesh"
 import Points from "./Points"
 import Terrain from "./Terrain"
 
@@ -21,6 +22,7 @@ const Scene = ({
   deletedSurroundingMeshes,
   pvPoints,
   setPVPoints,
+  vegetationGeometries,
 }) => {
   window.setPVPoints = setPVPoints
   const position = [
@@ -57,6 +59,9 @@ const Scene = ({
       )}
 
       {simulationMesh.length > 0 && <SimulationMesh meshes={simulationMesh} />}
+      {vegetationGeometries.background.length > 0 && (
+        <VegetationMesh geometries={vegetationGeometries.background} />
+      )}
       {selectedMesh && <HighlightedMesh meshes={selectedMesh} />}
       {simulationMesh.length > 0 && frontendState == "Results" && (
         <CustomMapControl
@@ -79,7 +84,7 @@ const Scene = ({
         setPVPoints={setPVPoints}
       />
 
-      {simulationMesh != undefined && <Terrain visible={showTerrain}/>}
+      {simulationMesh != undefined && <Terrain visible={showTerrain} />}
     </Canvas>
   )
 }

@@ -1,9 +1,12 @@
 import ShadingScene from "@openpv/simshady"
 import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
-import { downloadBuildings, retrieveDataVegetationTif } from "./download"
+import { downloadBuildings, retrieveVegetationRasters } from "./download"
 import { processGeometries } from "./preprocessing"
-import { processVegetationData, processVegetationHeightmapData } from "./processVegetationTiffs"
+import {
+  processVegetationData,
+  processVegetationHeightmapData,
+} from "./processVegetationTiffs"
 
 export async function mainSimulation(location, setGeometries) {
   // Clear previous attributions if any
@@ -15,7 +18,7 @@ export async function mainSimulation(location, setGeometries) {
 
   if (typeof location !== "undefined" && location != null) {
     const buildingGeometries = await downloadBuildings(location)
-    const vegetationData = await retrieveDataVegetationTif(location)
+    const vegetationData = await retrieveVegetationRasters(location)
 
     let geometries = processGeometries(
       buildingGeometries,
@@ -40,29 +43,28 @@ export async function mainSimulation(location, setGeometries) {
       scene.addShadingGeometry(geom)
     })
 
-
-
-
     // Process vegetation heightmap data
-    console.log("Vegetation Data:", vegetationData);
-    const vegetationRaster = processVegetationHeightmapData(vegetationData);
-    console.log("Processed Vegetation Raster:", vegetationRaster);
+    console.log("Vegetation Data:", vegetationData)
+    const vegetationRaster = processVegetationHeightmapData(vegetationData)
+    console.log("Processed Vegetation Raster:", vegetationRaster)
 
     // Process vegetation data for simulation
-    const vegetationGeometries = processVegetationData(vegetationRaster, new THREE.Vector3(0, 0, 0), 30,80);
-    console.log("Processed Vegetation Geometries:", vegetationGeometries);
-    window.setVegetationGeometries(vegetationGeometries);
-
+    const vegetationGeometries = processVegetationData(
+      vegetationRaster,
+      new THREE.Vector3(0, 0, 0),
+      30,
+      80
+    )
+    console.log("Processed Vegetation Geometries:", vegetationGeometries)
+    window.setVegetationGeometries(vegetationGeometries)
 
     vegetationGeometries.surrounding.forEach((geom) => {
-    scene.addShadingGeometry(geom)
+      scene.addShadingGeometry(geom)
     })
     //vegetationGeometries.surrounding.forEach((geom) => {
     //  scene.addShadingGeometry(geom)
     //})
     //scene.addVegetationRaster(rasterData)
-
-
 
     let numSimulations = window.numSimulations || 80
     function loadingBarWrapperFunction(progress, total = 100) {
@@ -85,7 +87,7 @@ export async function mainSimulation(location, setGeometries) {
     simulationMesh.material = material
     simulationMesh.name = "simulationMesh"
     return { simulationMesh, geometries }
-    }
+  }
 }
 
 export async function simulationForNewBuilding(props) {
