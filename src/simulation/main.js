@@ -56,6 +56,11 @@ export async function mainSimulation(location) {
       progressCallback: loadingBarWrapperFunction,
     })
 
+    let middle = new THREE.Vector3()
+    simulationMesh.geometry.computeBoundingBox()
+    simulationMesh.geometry.boundingBox.getCenter(middle)
+    simulationMesh.middle = middle
+
     return { simulationMesh }
   }
 }
@@ -131,32 +136,10 @@ export async function simulationForNewBuilding(props) {
     (mesh) => !selectedMeshNames.includes(mesh.name)
   )
 
-  // get the lowest available index from simulation geometries
-  const existingSimulationNames = props.geometries.simulation.map(
-    (mesh) => mesh.name
-  )
-  let index = 0
-  while (existingSimulationNames.includes(`simulation-${index}`)) {
-    index++
-  }
-
-  const renamedSelectedMeshes = props.selectedMesh.map((mesh) => {
-    mesh.geometry.name = `simulation-${index++}`
-    return mesh.geometry
-  })
-
-  const updatedSimulation = [
-    ...props.geometries.simulation,
-    ...renamedSelectedMeshes,
-  ]
-
   window.setGeometries({
     surrounding: updatedSurroundings,
     background: updatedBackground,
-    simulation: updatedSimulation,
   })
-
-  console.log("updated simulation", updatedSimulation)
 
   props.setSelectedMesh([])
 }

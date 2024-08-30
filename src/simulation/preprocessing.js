@@ -34,14 +34,7 @@ export function processGeometries(geometries, simulationCenter, shadingCutoff) {
     }
   }
   surrounding.splice(indexOfSimulationInSurrounding, 1)
-  simulation.forEach((geom, index) => {
-    geom.name = `simulation-${index}`
-    geom.computeBoundingBox()
-    let middle = new THREE.Vector3()
-    geom.boundingBox.getCenter(middle)
-    geom.middle = middle
-  })
-
+  simulation.forEach((geom, index) => (geom.name = `simulation-${index}`))
   surrounding.forEach((geom, index) => (geom.name = `surrounding-${index}`))
   background.forEach((geom, index) => (geom.name = `background-${index}`))
 
