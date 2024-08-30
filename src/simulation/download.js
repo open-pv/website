@@ -1,21 +1,16 @@
-import * as GeoTIFF from 'geotiff';
-import proj4 from "proj4";
+import * as GeoTIFF from "geotiff"
+import proj4 from "proj4"
 
-
-import * as pako from 'pako';
-import * as THREE from "three";
-import { Matrix4 } from "three";
-import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { attributions } from "../data/dataLicense";
-import {
-  coordinatesLonLat,
-  projectToWebMercator,
-} from "./location";
-
+import * as pako from "pako"
+import * as THREE from "three"
+import { Matrix4 } from "three"
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js"
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js"
+import { attributions } from "../data/dataLicense"
+import { coordinatesLonLat, projectToWebMercator } from "./location"
 
 export function tile2meters() {
-  return 1222.992452 * mercator2meters();
+  return 1222.992452 * mercator2meters()
 }
 
 export function mercator2meters() {
@@ -126,87 +121,6 @@ async function downloadFile(download_spec) {
   }
 }
 
-/** Load an OSM map tile and return it as a THREE Mesh
- */
-export async function loadMapTile(tx, ty, zoom) {
-  // const url = `https://tile.openstreetmap.org/${zoom}/${tx}/${ty}.png`;
-  const url = `https://sgx.geodatenzentrum.de/wmts_basemapde/tile/1.0.0/de_basemapde_web_raster_farbe/default/GLOBAL_WEBMERCATOR/${zoom}/${ty}/${tx}.png`
-  const mapFuture = new THREE.TextureLoader().loadAsync(url)
-
-  if (zoom < 12) {
-    console.error("DEM is broken for zoom < 12!")
-  }
-
-  const shift = zoom - 12
-  // const dem_url = `https://maps.heidler.info/dem-tiles-12/12/${tx >> shift}/${ty >> shift}.png`;
-  const dem_url = `https://web3d.basemap.de/maplibre/dgm5-rgb/12/${
-    tx >> shift
-  }/${ty >> shift}.png`
-  const demFuture = new THREE.TextureLoader().loadAsync(dem_url)
-
-  // DEM Processing
-  const canvas = document.createElement("canvas")
-  const context = canvas.getContext("2d")
-  const dem = await demFuture
-  canvas.width = dem.image.width
-  canvas.height = dem.image.height
-  context.drawImage(dem.image, 0, 0, canvas.width, canvas.height)
-
-  function sampleDEM(fraction_x, fraction_y) {
-    // Ensure x and y are within bounds
-    if (
-      fraction_x >= 0 &&
-      fraction_x <= 1 &&
-      fraction_y >= 0 &&
-      fraction_y <= 1
-    ) {
-      const x0 = tx - ((tx >> shift) << shift)
-      const y0 = ty - ((ty >> shift) << shift)
-      const s = 1 << shift
-      const x = Math.round(((fraction_x + x0) / s) * (canvas.width - 1))
-      const y = Math.round(((fraction_y + y0) / s) * (canvas.height - 1))
-      // Get image data at the specific (x, y) location
-      const pixelData = context.getImageData(x, y, 1, 1).data
-      const [r, g, b, _] = pixelData
-      const height = -10000 + (r * 256 * 256 + g * 256 + b) * 0.1
-      return height
-    }
-  }
-
-  const scale = 1 << (zoom - 15)
-  // TODO: Subdivide
-  const corners = [
-    [0, 0],
-    [1, 0],
-    [0, 1],
-    [1, 1],
-  ]
-  const vertices = corners.flatMap(([x, y]) => [
-    // [[tx, ty], [tx+1, ty], [tx, ty+1], [tx+1, ty+1]];
-    tile2meters() * ((tx + x) / scale - coordinatesXY15[0]),
-    -tile2meters() * ((ty + y) / scale - coordinatesXY15[1]),
-    sampleDEM(x, y),
-  ])
-
-  const vertexBuffer = new Float32Array(vertices)
-  // UV mapping for the texture
-  const uvs = new Float32Array([0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0])
-  // Triangle indices
-  const indices = new Uint32Array([0, 2, 1, 1, 2, 3])
-  const geometry = new THREE.BufferGeometry()
-  geometry.setAttribute("position", new THREE.BufferAttribute(vertexBuffer, 3))
-  geometry.setAttribute("uv", new THREE.BufferAttribute(uvs, 2))
-  geometry.setIndex(new THREE.BufferAttribute(indices, 1))
-
-  const material = new THREE.MeshBasicMaterial({
-    map: await mapFuture,
-    side: THREE.DoubleSide,
-  })
-
-  return new THREE.Mesh(geometry, material)
-}
-
-
 function get_utm32(x, y) {
   const IN_PROJ = "EPSG:4326"
   const OUT_PROJ = "EPSG:25832"
@@ -219,7 +133,6 @@ function get_utm32(x, y) {
   loc_utm = [x_utm32, y_utm32]
   return loc_utm
 }
-
 
 function get_file_names_vegetation_tif(x, y) {
   const DIVISOR = 1000
@@ -265,64 +178,65 @@ function get_file_names_vegetation_tif(x, y) {
   return file_list
 }
 
-
 //The tiles are in UTM32 (EPSG:25832)
 export async function retrieveDataVegetationTif(loc) {
-  const baseurl = "https://www.openpv.de/data/vegetation/";
-  var filenames = get_file_names_vegetation_tif(Number(loc.lon), Number(loc.lat));
-  
+  const baseurl = "https://www.openpv.de/data/vegetation/"
+  var filenames = get_file_names_vegetation_tif(
+    Number(loc.lon),
+    Number(loc.lat)
+  )
+
   if (filenames.length === 0) {
-    return [];
+    return []
   }
-  
-  console.log("Location", loc);
-  
-  let fileRasterPairs = [];  // Array to store tuples of [filename, rasterData]
+
+  console.log("Location", loc)
+
+  let fileRasterPairs = [] // Array to store tuples of [filename, rasterData]
 
   for (const filename of filenames) {
-    let url = baseurl + filename;
-    console.log("Loading from ", url);
-    
+    let url = baseurl + filename
+    console.log("Loading from ", url)
+
     try {
-      let response = await fetch(url);
+      let response = await fetch(url)
       if (!response.ok) {
-        throw new Error("Request failed with status " + response.status);
+        throw new Error("Request failed with status " + response.status)
       }
-      
-      const gzData = await response.arrayBuffer();
-      const decompressedData = pako.ungzip(new Uint8Array(gzData)).buffer;
-      const tiff = await GeoTIFF.fromArrayBuffer(decompressedData);
-      const image = await tiff.getImage();
-      const rasterData = await image.readRasters();
-      
-      console.log(rasterData);
-      
+
+      const gzData = await response.arrayBuffer()
+      const decompressedData = pako.ungzip(new Uint8Array(gzData)).buffer
+      const tiff = await GeoTIFF.fromArrayBuffer(decompressedData)
+      const image = await tiff.getImage()
+      const rasterData = await image.readRasters()
+
+      console.log(rasterData)
+
       function sumRasterData(rasterData) {
         if (!Array.isArray(rasterData) || rasterData.length === 0) {
-          return 0;
+          return 0
         }
-        const data = rasterData[0];
-        let sum = 0;
+        const data = rasterData[0]
+        let sum = 0
         for (let i = 0; i < data.length; i++) {
           if (!isNaN(data[i])) {
-            sum += data[i];
+            sum += data[i]
           }
         }
-        return sum;
+        return sum
       }
-      
-      const sum = sumRasterData(rasterData);
-      console.log("Sum of raster data:", sum);
-      
-      fileRasterPairs.push([filename, rasterData]);  // Add tuple of [filename, rasterData] to our array
-      
+
+      const sum = sumRasterData(rasterData)
+      console.log("Sum of raster data:", sum)
+
+      fileRasterPairs.push([filename, rasterData]) // Add tuple of [filename, rasterData] to our array
     } catch (error) {
-      console.error("Error loading or processing file:", error);
-      console.error("Could not load:", filename);
+      console.error("Error loading or processing file:", error)
+      console.error("Could not load:", filename)
       // We continue to the next file instead of returning
     }
   }
-  
+
   // Return the list of tuples
-  return fileRasterPairs;
+  return fileRasterPairs
 }
