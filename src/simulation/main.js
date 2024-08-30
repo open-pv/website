@@ -1,4 +1,4 @@
-import ShadingScene from "@openpv/simshady"
+import { ShadingScene } from "@openpv/simshady"
 import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
 import { downloadBuildings } from "./download"
