@@ -155,17 +155,16 @@ function processVegetationData(vegetationRaster, simulationCenter, vegetationSim
 }
 
 function createVegetationGeometry(x, y, vegHeight, xyscale, cx, cy) {
-  const baseHeight = 0; // Ground level
-  const width = tile2meters();
-  const depth = tile2meters();
+  const width = 1;
+  const depth = 1;
 
-  const geometry = new THREE.BoxGeometry(width, depth, vegHeight - baseHeight).toNonIndexed() ;
+  const geometry = new THREE.BoxGeometry(width, depth, 20).toNonIndexed() ;
   
   // Translate the geometry so that its base is at the ground level and it's positioned correctly
   geometry.translate(
     xyscale * (x - cx),
     xyscale * (y - cy),
-    baseHeight + (vegHeight - baseHeight) / 2
+    (vegHeight - 10)
   );
 
   return geometry;
