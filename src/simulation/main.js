@@ -58,9 +58,9 @@ export async function mainSimulation(location, setGeometries) {
     console.log("Processed Vegetation Geometries:", vegetationGeometries)
     window.setVegetationGeometries(vegetationGeometries)
 
-    vegetationGeometries.surrounding.forEach((geom) => {
-      scene.addShadingGeometry(geom)
-    })
+    //vegetationGeometries.surrounding.forEach((geom) => {
+    //  scene.addShadingGeometry(geom)
+    //})
     //vegetationGeometries.surrounding.forEach((geom) => {
     //  scene.addShadingGeometry(geom)
     //})
