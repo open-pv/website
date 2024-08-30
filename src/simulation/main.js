@@ -1,4 +1,4 @@
-import { ShadingScene } from "@openpv/simshady"
+import { ShadingScene, colormaps } from "@openpv/simshady"
 import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
 import { downloadBuildings } from "./download"
@@ -38,6 +38,10 @@ export async function mainSimulation(location) {
     geometries.surrounding.forEach((geom) => {
       scene.addShadingGeometry(geom)
     })
+
+    scene.addColorMap(
+      colormaps.interpolateTwoColors({ c0: [0.1, 0.2, 1], c1: [1, 1, 0.1] })
+    )
 
     let numSimulations
     window.numSimulations
@@ -96,6 +100,9 @@ export async function simulationForNewBuilding(props) {
     parseFloat(props.geoLocation.lat),
     parseFloat(props.geoLocation.lon)
   )
+  shadingScene.addColorMap(
+    colormaps.interpolateTwoColors({ c0: [0.1, 0.2, 1], c1: [1, 1, 0.1] })
+  )
   shadingScene.addSimulationGeometry(newSimulationGeometries)
   geometries.surrounding.forEach((geom) => {
     shadingScene.addShadingGeometry(geom)
@@ -105,6 +112,8 @@ export async function simulationForNewBuilding(props) {
   window.numSimulations
     ? (numSimulations = window.numSimulations)
     : (numSimulations = 80)
+
+  shadingScene.addColorMap
 
   let simulationMesh = await shadingScene.calculate({
     numberSimulations: numSimulations,
