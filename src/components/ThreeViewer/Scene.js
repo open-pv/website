@@ -11,8 +11,8 @@ import Points from "./Points"
 import Terrain from "./Terrain"
 
 const Scene = ({
-  simulationMesh,
   geometries,
+  simulationMeshes,
   showTerrain,
   frontendState,
   visiblePVSystems,
@@ -23,9 +23,9 @@ const Scene = ({
 }) => {
   window.setPVPoints = setPVPoints
   const position = [
-    simulationMesh[0].middle.x,
-    simulationMesh[0].middle.y - 40,
-    simulationMesh[0].middle.z + 80,
+    geometries.simulation[0].middle.x,
+    geometries.simulation[0].middle.y - 40,
+    geometries.simulation[0].middle.z + 80,
   ]
   const cameraRef = useRef()
   return (
@@ -55,18 +55,20 @@ const Scene = ({
         />
       )}
 
-      {simulationMesh.length > 0 && <SimulationMesh meshes={simulationMesh} />}
+      {simulationMeshes.length > 0 && (
+        <SimulationMesh meshes={simulationMeshes} />
+      )}
       {selectedMesh && <HighlightedMesh meshes={selectedMesh} />}
-      {simulationMesh.length > 0 && frontendState == "Results" && (
+      {geometries.simulation.length > 0 && frontendState == "Results" && (
         <CustomMapControl
-          middle={simulationMesh[0].middle}
+          middle={geometries.simulation[0].middle}
           selectedMesh={selectedMesh}
           setSelectedMesh={setSelectedMesh}
         />
       )}
       {frontendState == "DrawPV" && (
         <DrawPVControl
-          middle={simulationMesh[0].middle}
+          middle={geometries.simulation[0].middle}
           setPVPoints={setPVPoints}
         />
       )}
@@ -78,7 +80,7 @@ const Scene = ({
         setPVPoints={setPVPoints}
       />
 
-      {simulationMesh != undefined && <Terrain visible={showTerrain} />}
+      {geometries.simulation.length > 0 && <Terrain visible={showTerrain} />}
     </Canvas>
   )
 }

@@ -20,6 +20,7 @@ export async function mainSimulation(location) {
       new THREE.Vector3(0, 0, 0),
       80
     )
+
     window.setGeometries(geometries)
     if (geometries.simulation.length == 0) {
       window.setFrontendState("ErrorAdress")
@@ -47,7 +48,7 @@ export async function mainSimulation(location) {
       return window.setSimulationProgress(progress)
     }
 
-    let simulationMesh = await scene.calculate({
+    const simulationMesh = await scene.calculate({
       numberSimulations: numSimulations,
       diffuseIrradianceURL: undefined,
       pvCellEfficiency: 0.2,
@@ -55,12 +56,6 @@ export async function mainSimulation(location) {
       progressCallback: loadingBarWrapperFunction,
     })
 
-    const material = new THREE.MeshLambertMaterial({
-      vertexColors: true,
-      side: THREE.DoubleSide,
-    })
-    simulationMesh.material = material
-    simulationMesh.name = "simulationMesh"
     return { simulationMesh }
   }
 }
@@ -117,10 +112,8 @@ export async function simulationForNewBuilding(props) {
   })
   simulationMesh.material = material
   simulationMesh.name = "simulationMesh"
-  props.setDisplayedSimulationMesh([
-    ...props.displayedSimulationMesh,
-    simulationMesh,
-  ])
+
+  props.setSimulationMeshes([...props.simulationMeshes, simulationMesh])
   /// Delete the new simualted building from the background / surrounding geometries list
 
   console.log("Selected Mesh in simulationForNewBuilding", props.selectedMesh)

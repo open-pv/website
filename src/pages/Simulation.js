@@ -34,7 +34,6 @@ function Index() {
     background: [],
   })
 
-  const [displayedSimulationMesh, setDisplayedSimulationMesh] = useState([])
   const [selectedMesh, setSelectedMesh] = useState([])
 
   // When a building is selected from the Surrounding to be simulated, it needs to be deleted
@@ -49,11 +48,7 @@ function Index() {
   const loadAndSimulate = async () => {
     const { simulationMesh } = await mainSimulation(location)
     if (simulationMesh) {
-      let middle = new THREE.Vector3()
-      simulationMesh.geometry.computeBoundingBox()
-      simulationMesh.geometry.boundingBox.getCenter(middle)
-      simulationMesh.middle = middle
-      setDisplayedSimulationMesh([...displayedSimulationMesh, simulationMesh])
+      setSimulationMeshes([...simulationMeshes, simulationMesh])
       setFrontendState("Results")
     }
   }
@@ -74,13 +69,13 @@ function Index() {
             selectedMesh={selectedMesh}
             setSelectedMesh={setSelectedMesh}
             geometries={geometries}
-            displayedSimulationMesh={displayedSimulationMesh}
-            setDisplayedSimulationMesh={setDisplayedSimulationMesh}
             geoLocation={location}
             setvisiblePVSystems={setvisiblePVSystems}
             visiblePVSystems={visiblePVSystems}
             pvPoints={pvPoints}
             setPVPoints={setPVPoints}
+            simulationMeshes={simulationMeshes}
+            setSimulationMeshes={setSimulationMeshes}
           />
         )}
         {frontendState == "ErrorAdress" && <WrongAdress />}
@@ -88,7 +83,7 @@ function Index() {
         {(frontendState == "Results" || frontendState == "DrawPV") && (
           <Scene
             geometries={geometries}
-            simulationMesh={displayedSimulationMesh}
+            simulationMeshes={simulationMeshes}
             showTerrain={showTerrain}
             frontendState={frontendState}
             visiblePVSystems={visiblePVSystems}

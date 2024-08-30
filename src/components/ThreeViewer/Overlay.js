@@ -38,13 +38,13 @@ function Overlay({
   selectedMesh,
   setSelectedMesh,
   geometries,
-  setDisplayedSimulationMesh,
-  displayedSimulationMesh,
   geoLocation,
   visiblePVSystems,
   setvisiblePVSystems,
   pvPoints,
   setPVPoints,
+  simulationMeshes,
+  setSimulationMeshes,
 }) {
   const {
     isOpen: isOpenDrawer,
@@ -102,9 +102,9 @@ function Overlay({
             await simulationForNewBuilding({
               selectedMesh,
               setSelectedMesh,
+              simulationMeshes,
+              setSimulationMeshes,
               geometries,
-              displayedSimulationMesh,
-              setDisplayedSimulationMesh,
               geoLocation,
             })
           }
