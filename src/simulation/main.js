@@ -1,4 +1,4 @@
-import ShadingScene from "@openpv/simshady"
+import { ShadingScene, colormaps } from "@openpv/simshady"
 import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
 import { downloadBuildings } from "./download"
@@ -38,6 +38,10 @@ export async function mainSimulation(location, setGeometries) {
       scene.addShadingGeometry(geom)
     })
 
+    scene.addColorMap(
+      colormaps.interpolateTwoColors({ c0: [0.1, 0.2, 1], c1: [1, 1, 0.1] })
+    )
+
     let numSimulations
     window.numSimulations
       ? (numSimulations = window.numSimulations)
@@ -52,6 +56,10 @@ export async function mainSimulation(location, setGeometries) {
       diffuseIrradianceURL: undefined,
       pvCellEfficiency: 0.2,
       maxYieldPerSquareMeter: 1400 * 0.2,
+      urlDiffuseIrrandianceTIF:
+        "https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif",
+      urlDirectIrrandianceTIF:
+        "https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif",
       progressCallback: loadingBarWrapperFunction,
     })
 
@@ -95,6 +103,9 @@ export async function simulationForNewBuilding(props) {
   )
   console.log("latitude longitute", props.geoLocation)
   shadingScene.addSimulationGeometry(simulationGeometries)
+  shadingScene.addColorMap(
+    colormaps.interpolateTwoColors({ c0: [0.1, 0.2, 1], c1: [1, 1, 0.1] })
+  )
   geometries.surrounding.forEach((geom) => {
     shadingScene.addShadingGeometry(geom)
   })
@@ -104,10 +115,16 @@ export async function simulationForNewBuilding(props) {
     ? (numSimulations = window.numSimulations)
     : (numSimulations = 80)
 
+  shadingScene.addColorMap
+
   let simulationMesh = await shadingScene.calculate({
     numberSimulations: numSimulations,
     pvCellEfficiency: 0.2,
     maxYieldPerSquareMeter: 1400 * 0.2,
+    urlDiffuseIrrandianceTIF:
+      "https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif",
+    urlDirectIrrandianceTIF:
+      "https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif",
     progressCallback: (progress, total) =>
       console.log("Simulation Progress is ", progress),
   })
