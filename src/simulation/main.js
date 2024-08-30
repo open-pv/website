@@ -76,7 +76,7 @@ export async function simulationForNewBuilding(props) {
   newSimulationGeometries.computeBoundingSphere()
   let simulationCenter = new THREE.Vector3()
   newSimulationGeometries.boundingBox.getCenter(simulationCenter)
-
+  console.log(props.geometries)
   const radius = newSimulationGeometries.boundingSphere.radius + 80
   const allBuildingGeometries = [
     ...props.geometries.surrounding,
@@ -131,6 +131,9 @@ export async function simulationForNewBuilding(props) {
   window.setGeometries({
     surrounding: updatedSurroundings,
     background: updatedBackground,
+    simulation: props.geometries.simulation, // right now this is not updated
+    // The information on simulation geometries is stored in the simulationMeshes
+    // React state
   })
 
   props.setSelectedMesh([])
