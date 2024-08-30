@@ -78,6 +78,7 @@ const Scene = ({
         visiblePVSystems={visiblePVSystems}
         pvPoints={pvPoints}
         setPVPoints={setPVPoints}
+        simulationMeshes={simulationMeshes}
       />
 
       {geometries.simulation.length > 0 && <Terrain visible={showTerrain} />}

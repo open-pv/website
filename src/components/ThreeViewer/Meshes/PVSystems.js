@@ -1,9 +1,15 @@
 import { useThree } from "@react-three/fiber"
 import React, { useEffect, useState } from "react"
 import * as THREE from "three"
+import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
 import PVSystem from "./PVSystem"
 
-const PVSystems = ({ visiblePVSystems, pvPoints, setPVPoints }) => {
+const PVSystems = ({
+  visiblePVSystems,
+  pvPoints,
+  setPVPoints,
+  simulationMeshes,
+}) => {
   const points = pvPoints.map((obj) => obj.point) // pvPoints is a list of objects, each object has a point and a normal
 
   const { scene } = useThree()
@@ -65,14 +71,21 @@ const PVSystems = ({ visiblePVSystems, pvPoints, setPVPoints }) => {
         subdivideTriangle(triangle, triangleSubdivisionThreshold)
       )
     })
-    const simulationMesh = scene.getObjectByName("SimulationMesh")
-    if (!simulationMesh) {
-      console.error("No Simulation Mesh was found in the scene.")
-      return
-    }
+
+    const geometries = []
+
+    simulationMeshes.forEach((mesh) => {
+      const geom = mesh.geometry.clone()
+      geom.applyMatrix4(mesh.matrixWorld)
+      geometries.push(geom)
+    })
+    const simulationGeometry = BufferGeometryUtils.mergeGeometries(
+      geometries,
+      true
+    )
     const polygonPrefilteringCutoff = 10
     const prefilteredPolygons = filterPolygonsByDistance(
-      simulationMesh,
+      simulationGeometry,
       points,
       polygonPrefilteringCutoff
     )
@@ -216,10 +229,9 @@ function findClosestPolygon(vertex, polygons, polygonPrefilteringCutoff) {
   return closestPolygon
 }
 
-function filterPolygonsByDistance(mesh, points, threshold) {
+function filterPolygonsByDistance(geometry, points, threshold) {
   const filteredPolygons = []
 
-  const geometry = mesh.geometry
   if (!geometry.isBufferGeometry) return
 
   const positions = geometry.attributes.position.array
