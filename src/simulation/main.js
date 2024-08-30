@@ -66,7 +66,6 @@ export async function mainSimulation(location) {
 }
 
 export async function simulationForNewBuilding(props) {
-  console.log("props", props)
   // Get all geometries from the list and put it in one big simulation geometries. This needs
   // to be done since multiple buildings can be part of selectedMesh
   let newSimulationGeometries = mergeGeometries(
@@ -120,13 +119,6 @@ export async function simulationForNewBuilding(props) {
 
   props.setSimulationMeshes([...props.simulationMeshes, simulationMesh])
   /// Delete the new simualted building from the background / surrounding geometries list
-
-  console.log("Selected Mesh in simulationForNewBuilding", props.selectedMesh)
-  console.log(
-    "Surrounding List in simulationForNewBuilding",
-    props.geometries.surrounding
-  )
-  console.log(props.geometries.simulation)
   const selectedMeshNames = props.selectedMesh.map((mesh) => mesh.geometry.name)
 
   const updatedSurroundings = props.geometries.surrounding.filter(
