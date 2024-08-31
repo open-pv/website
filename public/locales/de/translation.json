@@ -1,7 +1,9 @@
 {
   "sidebar": {
     "header": "Ziel des Tools",
-    "mainText": "Im Suchfeld deine Adresse oder Koordinaten eingeben. Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche."
+    "mainText": "Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche.",
+    "numberSimulations": "Anzahl an gemittelten Sonnenständen",
+    "numberSimulationsHover": "Für die Simulation mitteln wir über verschiedene Sonnenstände, welche gleichmäßig über das Jahr verteilt sind. Je größer du diese Zahl wählst, desto genauer wird die Simulation. Allerdings dauert die Simulation auch länger."
   },
   "yes": "Ja",
   "no": "Nein",

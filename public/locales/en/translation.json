@@ -1,7 +1,9 @@
 {
   "sidebar": {
     "header": "Goal of this website",
-    "mainText": "Enter your address or coordinates in the search field. The tool will then calculate the potential for a solar system on your roof and facade area."
+    "mainText": "The tool will then calculate the potential for a solar system on your roof and facade area.",
+    "numberSimulations": "Number of Sun positions to average",
+    "numberSimulationsHover": "For the simulation, we average over different sun positions, which are evenly distributed throughout the year. The larger you choose this number, the more accurate the simulation becomes. However, the simulation also takes longer."
   },
   "yes": "yes",
   "no": "no",
@@ -46,6 +48,8 @@
     "options": "Options",
     "simulateBuilding": "Simulate Building",
     "createPVSystem": "Create PV System",
+    "drawPVSystem": "Draw a new PV system",
+    "drawPVSystemHover": "Create new edges of the PV system by clicking. Afterwards click on the 'Create PV System' button.",
     "cancel": "Cancel",
     "deleteLastPoint": "Delete Last Point",
     "startSimulation": "Start simulation",

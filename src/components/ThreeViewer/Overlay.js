@@ -26,7 +26,6 @@ import { useTranslation } from "react-i18next"
 import { simulationForNewBuilding } from "../../simulation/main"
 import SavingCalculation from "../PVSimulation/SavingsCalculation"
 import ButtonWithHoverHelp from "../Template/ButtonWithHoverHelp"
-import HoverHelp from "../Template/HoverHelp"
 import SliderWithLabel from "../Template/SliderWithLabel"
 import { createPVSystem } from "./Meshes/PVSystems"
 
@@ -270,8 +269,8 @@ const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
 
               <SliderWithLabel
                 sliderProps={{ min: 1, max: 200 }}
-                label={"Anzahl Simulationen"}
-                hoverHelpLabel={"Hi"}
+                label={t("sidebar.numberSimulations")}
+                hoverHelpLabel={t("sidebar.numberSimulationsHover")}
                 sliderValue={sliderValue}
                 setSliderValue={(newValue) => {
                   setSliderValue(newValue)
