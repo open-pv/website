@@ -29,7 +29,6 @@ import ButtonWithHoverHelp from "../Template/ButtonWithHoverHelp"
 import HoverHelp from "../Template/HoverHelp"
 import SliderWithLabel from "../Template/SliderWithLabel"
 import { createPVSystem } from "./Meshes/PVSystems"
-import OverlayDrawPV from "./OverlayDrawPV"
 
 function Overlay({
   frontendState,
