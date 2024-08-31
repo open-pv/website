@@ -180,22 +180,20 @@ function get_file_names_vegetation_tif(x, y) {
 
 
 export async function downloadVegetationHeightmap(bbox) {
-  const url = 'http://188.245.158.226/data/vegetation_heightmap_webmercator.tif'
-  
+  const url = 'http://188.245.158.226/data/vegetation_heightmap_webmercator.tif';
+
   try {
     console.log("Attempting to open GeoTIFF file...");
-    const tiff = await GeoTIFF.fromUrl(url);
+    const tiff = await GeoTIFF.fromUrl(url, { allowHttpRangeRequests: true });  // Enable HTTP range requests
     console.log("GeoTIFF file opened successfully");
-
     const image = await tiff.getImage();
     console.log("Image metadata retrieved");
 
     const fileDirectory = image.getFileDirectory();
     const [imageWidth, imageHeight] = [image.getWidth(), image.getHeight()];
     const [tileWidth, tileHeight] = [image.getTileWidth(), image.getTileHeight()];
-
     console.log("Image dimensions:", imageWidth, "x", imageHeight);
-    console.log("Tile dimensions:", tileWidth, "x", tileHeight);
+    console.log("Tile dimensions:", tileWidth, tileHeight);
 
     const geoKeys = fileDirectory.GeoKeyDirectory;
     if (geoKeys) {
@@ -204,38 +202,33 @@ export async function downloadVegetationHeightmap(bbox) {
 
     const tiepoint = fileDirectory.ModelTiepoint;
     const scale = fileDirectory.ModelPixelScale;
-
     if (!tiepoint || !scale) {
       throw new Error("Missing tiepoint or scale information");
     }
-
     console.log("Tiepoint:", tiepoint);
     console.log("Scale:", scale);
 
     const [i, j, k, x, y, z] = tiepoint;
     const [scaleX, scaleY, scaleZ] = scale;
 
-    const transform = [
-      scaleX, 0, 0, x,
-      0, -scaleY, 0, y,
-      0, 0, scaleZ, z,
-      0, 0, 0, 1
-    ];
-
-    console.log("Calculated transform:", transform);
-
     const [minX, minY, maxX, maxY] = image.getBoundingBox();
     console.log("GeoTIFF bounding box:", [minX, minY, maxX, maxY]);
     console.log("Requested bounding box:", bbox);
 
-    // Calculate pixel coordinates for our area of interest
-    const startX = Math.max(0, Math.floor((bbox[0] - x) / scaleX));
-    const startY = Math.max(0, Math.floor((y - bbox[3]) / scaleY));
-    const endX = Math.min(imageWidth, Math.ceil((bbox[2] - x) / scaleX));
-    const endY = Math.min(imageHeight, Math.ceil((y - bbox[1]) / scaleY));
+    // Calculate pixel coordinates
+    let startX = Math.floor((bbox[0] - x) / scaleX);
+    let startY = Math.floor((y - bbox[3]) / scaleY);
+    let endX = Math.ceil((bbox[2] - x) / scaleX);
+    let endY = Math.ceil((y - bbox[1]) / scaleY);
 
-    const windowWidth = endX - startX;
-    const windowHeight = endY - startY;
+    // Ensure the window is within the image bounds
+    startX = Math.max(0, startX);
+    startY = Math.max(0, startY);
+    endX = Math.min(imageWidth - 1, endX);
+    endY = Math.min(imageHeight - 1, endY);
+
+    let windowWidth = endX - startX;
+    let windowHeight = endY - startY;
 
     console.log(`Calculated window: [${startX}, ${startY}, ${windowWidth}, ${windowHeight}]`);
 
@@ -243,12 +236,11 @@ export async function downloadVegetationHeightmap(bbox) {
       throw new Error("Invalid window dimensions");
     }
 
-    const window = [startX, startY, windowWidth, windowHeight];
+    const window = [startX, startY, endX + 1, endY + 1];
 
     // Read the raster data for the specified window
     console.log("Reading raster data...");
     const [rasterData] = await image.readRasters({ window });
-
     console.log("Raster data read successfully");
     console.log(`Raster data shape: ${windowWidth}x${windowHeight}`);
 
@@ -256,8 +248,8 @@ export async function downloadVegetationHeightmap(bbox) {
       data: rasterData,
       bbox: [
         x + startX * scaleX,
-        y - endY * scaleY,
-        x + endX * scaleX,
+        y - (startY + windowHeight) * scaleY,
+        x + (startX + windowWidth) * scaleX,
         y - startY * scaleY
       ],
       width: windowWidth,
@@ -267,7 +259,6 @@ export async function downloadVegetationHeightmap(bbox) {
     };
 
     console.log("Result:", JSON.stringify(result, null, 2));
-
     return result;
   } catch (error) {
     console.error("Error loading or processing GeoTIFF:", error);
@@ -275,5 +266,6 @@ export async function downloadVegetationHeightmap(bbox) {
     return null;
   }
 }
+
 
 // Keep other functions in this file as they are
