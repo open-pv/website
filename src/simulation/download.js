@@ -236,7 +236,7 @@ export async function downloadVegetationHeightmap(bbox) {
       throw new Error("Invalid window dimensions");
     }
 
-    const window = [startX, startY, endX + 1, endY + 1];
+    const window = [startX, startY, endX, endY];
 
     // Read the raster data for the specified window
     console.log("Reading raster data...");
