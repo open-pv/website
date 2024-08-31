@@ -67,7 +67,7 @@ function processVegetationHeightmapData(vegetationData) {
         const y0 = Math.floor(utmIndexY);
         const y1 = Math.min(y0 + 1, utmHeight - 1);
 
-        const q11 = utmRaster[y0][x0];
+        const q11 = utmRaster[y0][x0];  
         const q21 = utmRaster[y0][x1];
         const q12 = utmRaster[y1][x0];
         const q22 = utmRaster[y1][x1];
@@ -76,7 +76,7 @@ function processVegetationHeightmapData(vegetationData) {
         const y = utmIndexY - y0;
 
         const value = (1 - x) * (1 - y) * q11 + x * (1 - y) * q21 + (1 - x) * y * q12 + x * y * q22;
-        mergedRaster[mercY][mercX] = value; // Replace NaN with 0 or another suitable value
+        mergedRaster[mercY][mercX] = value; // Todo Replace NaN with 0 or another suitable value
       }
     }
   }
@@ -159,9 +159,7 @@ function createVegetationGeometry(x, y, vegHeight, xyscale, cx, cy) {
   const depth = 1;
 
   const geometry = new THREE.BoxGeometry(width, depth, 20).toNonIndexed() ;
-  
-  // Translate the geometry so that its base is at the ground level and it's positioned correctly
-  geometry.translate(
+    geometry.translate(
     xyscale * (x - cx),
     xyscale * (y - cy),
     (vegHeight - 10)
