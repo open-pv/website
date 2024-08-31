@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { coordinatesWebMercator } from './location';
 
-function processVegetationHeightmapData(heightmapData) {
+export function processVegetationHeightmapData(heightmapData) {
   if (!heightmapData || !heightmapData.bbox || !heightmapData.data) {
     console.error("Invalid heightmap data, missing bbox or data");
     return null;
@@ -20,7 +20,7 @@ function processVegetationHeightmapData(heightmapData) {
   };
 }
 
-function processVegetationData(vegetationRaster, simulationCenter, vegetationSimulationCutoff, vegetationViewingCutoff) {
+export function processVegetationData(vegetationRaster, simulationCenter, vegetationSimulationCutoff, vegetationViewingCutoff) {
   console.log("Processing vegetation data...");
   console.log("Vegetation raster dimensions:", vegetationRaster.width, "x", vegetationRaster.height);
   console.log("Vegetation raster bbox:", vegetationRaster.bbox);
@@ -75,10 +75,8 @@ function createVegetationGeometry(x, y, vegHeight) {
   geometry.translate(
     x - cx,
     y - cy,
-    (vegHeight - 10)
+    vegHeight - 10,
   );
 
   return geometry;
 }
-
-export { processVegetationData, processVegetationHeightmapData };
