@@ -178,65 +178,102 @@ function get_file_names_vegetation_tif(x, y) {
   return file_list
 }
 
-// Returns vegetation Geotiff as a 2d raster for given location
-export async function retrieveVegetationRasters(loc) {
-  const baseurl = "https://www.openpv.de/data/vegetation/"
-  var filenames = get_file_names_vegetation_tif(
-    Number(loc.lon),
-    Number(loc.lat)
-  )
 
-  if (filenames.length === 0) {
-    return []
-  }
+export async function downloadVegetationHeightmap(bbox) {
+  const url = 'http://188.245.158.226/data/vegetation_heightmap_webmercator.tif'
+  
+  try {
+    console.log("Attempting to open GeoTIFF file...");
+    const tiff = await GeoTIFF.fromUrl(url);
+    console.log("GeoTIFF file opened successfully");
 
-  console.log("Location", loc)
+    const image = await tiff.getImage();
+    console.log("Image metadata retrieved");
 
-  let fileRasterPairs = [] // Array to store tuples of [filename, rasterData]
+    const fileDirectory = image.getFileDirectory();
+    const [imageWidth, imageHeight] = [image.getWidth(), image.getHeight()];
+    const [tileWidth, tileHeight] = [image.getTileWidth(), image.getTileHeight()];
 
-  for (const filename of filenames) {
-    let url = baseurl + filename
-    console.log("Loading from ", url)
+    console.log("Image dimensions:", imageWidth, "x", imageHeight);
+    console.log("Tile dimensions:", tileWidth, "x", tileHeight);
 
-    try {
-      let response = await fetch(url)
-      if (!response.ok) {
-        throw new Error("Request failed with status " + response.status)
-      }
-
-      const gzData = await response.arrayBuffer()
-      const decompressedData = pako.ungzip(new Uint8Array(gzData)).buffer
-      const tiff = await GeoTIFF.fromArrayBuffer(decompressedData)
-      const image = await tiff.getImage()
-      const rasterData = await image.readRasters()
-
-      console.log(rasterData)
-
-      function sumRasterData(rasterData) {
-        if (!Array.isArray(rasterData) || rasterData.length === 0) {
-          return 0
-        }
-        const data = rasterData[0]
-        let sum = 0
-        for (let i = 0; i < data.length; i++) {
-          if (!isNaN(data[i])) {
-            sum += data[i]
-          }
-        }
-        return sum
-      }
-
-      const sum = sumRasterData(rasterData)
-      console.log("Sum of raster data:", sum)
-
-      fileRasterPairs.push([filename, rasterData]) // Add tuple of [filename, rasterData] to our array
-    } catch (error) {
-      console.error("Error loading or processing file:", error)
-      console.error("Could not load:", filename)
-      // We continue to the next file instead of returning
+    const geoKeys = fileDirectory.GeoKeyDirectory;
+    if (geoKeys) {
+      console.log("GeoKeys:", geoKeys);
     }
-  }
 
-  // Return the list of tuples
-  return fileRasterPairs
+    const tiepoint = fileDirectory.ModelTiepoint;
+    const scale = fileDirectory.ModelPixelScale;
+
+    if (!tiepoint || !scale) {
+      throw new Error("Missing tiepoint or scale information");
+    }
+
+    console.log("Tiepoint:", tiepoint);
+    console.log("Scale:", scale);
+
+    const [i, j, k, x, y, z] = tiepoint;
+    const [scaleX, scaleY, scaleZ] = scale;
+
+    const transform = [
+      scaleX, 0, 0, x,
+      0, -scaleY, 0, y,
+      0, 0, scaleZ, z,
+      0, 0, 0, 1
+    ];
+
+    console.log("Calculated transform:", transform);
+
+    const [minX, minY, maxX, maxY] = image.getBoundingBox();
+    console.log("GeoTIFF bounding box:", [minX, minY, maxX, maxY]);
+    console.log("Requested bounding box:", bbox);
+
+    // Calculate pixel coordinates for our area of interest
+    const startX = Math.max(0, Math.floor((bbox[0] - x) / scaleX));
+    const startY = Math.max(0, Math.floor((y - bbox[3]) / scaleY));
+    const endX = Math.min(imageWidth, Math.ceil((bbox[2] - x) / scaleX));
+    const endY = Math.min(imageHeight, Math.ceil((y - bbox[1]) / scaleY));
+
+    const windowWidth = endX - startX;
+    const windowHeight = endY - startY;
+
+    console.log(`Calculated window: [${startX}, ${startY}, ${windowWidth}, ${windowHeight}]`);
+
+    if (windowWidth <= 0 || windowHeight <= 0) {
+      throw new Error("Invalid window dimensions");
+    }
+
+    const window = [startX, startY, windowWidth, windowHeight];
+
+    // Read the raster data for the specified window
+    console.log("Reading raster data...");
+    const [rasterData] = await image.readRasters({ window });
+
+    console.log("Raster data read successfully");
+    console.log(`Raster data shape: ${windowWidth}x${windowHeight}`);
+
+    const result = {
+      data: rasterData,
+      bbox: [
+        x + startX * scaleX,
+        y - endY * scaleY,
+        x + endX * scaleX,
+        y - startY * scaleY
+      ],
+      width: windowWidth,
+      height: windowHeight,
+      xResolution: scaleX,
+      yResolution: scaleY
+    };
+
+    console.log("Result:", JSON.stringify(result, null, 2));
+
+    return result;
+  } catch (error) {
+    console.error("Error loading or processing GeoTIFF:", error);
+    console.error("Error stack:", error.stack);
+    return null;
+  }
 }
+
+// Keep other functions in this file as they are
