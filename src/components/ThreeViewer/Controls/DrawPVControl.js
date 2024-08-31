@@ -42,6 +42,13 @@ const DrawPVControl = ({ middle, setPVPoints }) => {
       const intersection = intersects[0]
 
       const point = intersection.point
+      if (!intersection.face) {
+        // Catch the error where sometimes the intersection
+        // is undefined. By this no dot is drawn, but also
+        // no error is thrown
+        console.log("Intersaction.face was null.")
+        return undefined
+      }
       const normal = intersection.face.normal
         .clone()
         .transformDirection(intersection.object.matrixWorld)
