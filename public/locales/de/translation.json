@@ -94,5 +94,22 @@
       "wheel": "Zwei Finger: Vergrößern und Verkleinern",
       "doubleClick": "Zweimal kurz auf Gebäude tippen: Weiteres Gebäude für Simulation auswählen"
     }
+  },
+  "savingsCalculation": {
+    "button": "Wirtschaftlichkeit der Anlage berechnen",
+    "consumptionTitle": "Jährlicher Stromverbrauch",
+    "consumptionHelper": "Als grober Schätzwert gilt: Rechne pro Person im Haushalt mit 800 kWh, für eine Wärmepumpe 2000 kWh und pro Elektroauto weitere 2000 kWh.",
+    "consumptionPlaceholder": "Jährlicher Stromverbrauch in kWh",
+    "storageTitle": "Stromspeicher",
+    "storagePlaceholder": "Speicherkapazität in kWh",
+    "electricityPriceTitle": "Strompreis in cent",
+    "electricityPricePlaceholder": "Preis pro kWh in cent",
+    "disclaimer": "Die berechneten Erträge und Einsparungen dienen nur als grobe Orientierung. Die Angaben sind ohne Gewähr und ersetzen keine individuelle Berechnung und Beratung vor Ort!",
+    "results": {
+      "production": "Jährliche Stromerzeugung der Solaranlage: ",
+      "consumption": "Jährlicher Eigenverbrauch: ",
+      "savings": "Jährliche Einsparungen: "
+    },
+    "calculate": "Berechnen"
   }
 }

@@ -19,7 +19,7 @@ function Index() {
   // simulationProgress is used for the loading bar
   const [simulationProgress, setSimulationProgress] = useState(0)
   // A list of visible PV Systems - they get visible after they are drawn on a building and calculated
-  const [visiblePVSystems, setvisiblePVSystems] = useState([])
+  const [pvSystems, setPVSystems] = useState([])
   // pvPoints are the red points that appear when drawing PV systems
   const [pvPoints, setPVPoints] = useState([])
 
@@ -33,12 +33,9 @@ function Index() {
     surrounding: [],
     background: [],
   })
-
+  // highlighted meshes for resimulation
   const [selectedMesh, setSelectedMesh] = useState([])
-
-  // When a building is selected from the Surrounding to be simulated, it needs to be deleted
-  // from the surrounding mesh. This state collects a list of names that should not be rendered
-  // Elements are for example "SurroundingMesh-37"
+  // meshes that were simulated
   const [simulationMeshes, setSimulationMeshes] = useState([])
 
   window.setGeometries = setGeometries
@@ -70,8 +67,8 @@ function Index() {
             setSelectedMesh={setSelectedMesh}
             geometries={geometries}
             geoLocation={location}
-            setvisiblePVSystems={setvisiblePVSystems}
-            visiblePVSystems={visiblePVSystems}
+            setPVSystems={setPVSystems}
+            pvSystems={pvSystems}
             pvPoints={pvPoints}
             setPVPoints={setPVPoints}
             simulationMeshes={simulationMeshes}
@@ -86,7 +83,8 @@ function Index() {
             simulationMeshes={simulationMeshes}
             showTerrain={showTerrain}
             frontendState={frontendState}
-            visiblePVSystems={visiblePVSystems}
+            pvSystems={pvSystems}
+            setPVSystems={setPVSystems}
             selectedMesh={selectedMesh}
             setSelectedMesh={setSelectedMesh}
             pvPoints={pvPoints}

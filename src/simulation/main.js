@@ -4,6 +4,9 @@ import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js
 import { downloadBuildings } from "./download"
 import { processGeometries } from "./preprocessing"
 
+const c0 = [0, 0.05, 0.2]
+const c1 = [1, 0.1, 0.1]
+
 export async function mainSimulation(location) {
   // Clear previous attributions if any
   if (window.setAttribution) {
@@ -39,16 +42,13 @@ export async function mainSimulation(location) {
       scene.addShadingGeometry(geom)
     })
 
-    scene.addColorMap(
-      colormaps.interpolateTwoColors({ c0: [0.1, 0.2, 1], c1: [1, 1, 0.1] })
-    )
+    scene.addColorMap(colormaps.interpolateTwoColors({ c0: c0, c1: c1 }))
 
     let numSimulations
     window.numSimulations
       ? (numSimulations = window.numSimulations)
       : (numSimulations = 80)
     function loadingBarWrapperFunction(progress, total = 100) {
-      // console.log("Simulation Progress is ", progress)
       return window.setSimulationProgress(progress)
     }
 
@@ -100,9 +100,7 @@ export async function simulationForNewBuilding(props) {
     parseFloat(props.geoLocation.lat),
     parseFloat(props.geoLocation.lon)
   )
-  shadingScene.addColorMap(
-    colormaps.interpolateTwoColors({ c0: [0.1, 0.2, 1], c1: [1, 1, 0.1] })
-  )
+  shadingScene.addColorMap(colormaps.interpolateTwoColors({ c0: c0, c1: c1 }))
   shadingScene.addSimulationGeometry(newSimulationGeometries)
   geometries.surrounding.forEach((geom) => {
     shadingScene.addShadingGeometry(geom)
@@ -126,7 +124,6 @@ export async function simulationForNewBuilding(props) {
     progressCallback: (progress, total) =>
       console.log("Simulation Progress is ", progress),
   })
-  console.log("SimulationMesh", simulationMesh)
   const material = new THREE.MeshLambertMaterial({
     vertexColors: true,
     side: THREE.DoubleSide,

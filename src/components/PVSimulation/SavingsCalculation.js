@@ -1,13 +1,9 @@
 import {
-  Box,
   Button,
-  Checkbox,
-  CheckboxGroup,
-  Circle,
-  Flex,
   FormControl,
   FormLabel,
   Input,
+  ListItem,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -15,66 +11,186 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Radio,
-  RadioGroup,
-  Stack,
+  Text,
+  UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react"
-
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
+import HoverHelp from "../Template/HoverHelp"
 
-function SavingCalculation() {
-  const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true })
-  const [currentPage, setCurrentPage] = useState(1)
-  const { t, i18n } = useTranslation()
-
-  const calculateSaving = () => {
-    console.log("Savings")
+function SavingCalculation({ pvSystems }) {
+  const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false })
+  const { t } = useTranslation()
+  const [annualConsumption, setAnnualConsumption] = useState("")
+  const [storageCapacity, setStorageCapacity] = useState("")
+  const [electricityPrice, setElectricityPrice] = useState(25)
+  const [selfConsumption, setSelfConsumption] = useState(0)
+  const [annualSavings, setAnnualSavings] = useState(0)
+  let pvProduction
+  if (pvSystems.length > 0) {
+    pvProduction = Math.round(
+      pvSystems.reduce((previous, current) => previous + current.annualYield, 0)
+    )
   }
+
+  async function handleCalculateSaving() {
+    async function calculateSaving({
+      pvProduction,
+      consumptionHousehold,
+      storageCapacity,
+      electricityPrice,
+      setSelfConsumption,
+      setAnnualSavings,
+    }) {
+      const response = await fetch(
+        "https://www.openpv.de/data/savings_calculation/cons_prod.json"
+      )
+      const data = await response.json()
+
+      const normalizedConsumption = data["Consumption"]
+      const normalizedProduction = data["Production"]
+
+      const result = {}
+      let currentStorageLevel = 0
+      for (const timestamp in normalizedConsumption) {
+        const consumptionValue =
+          (normalizedConsumption[timestamp] * consumptionHousehold) / 1000
+        const productionValue =
+          (normalizedProduction[timestamp] * pvProduction) / 1000
+
+        let selfConsumption = 0
+        let excessProduction = 0
+
+        if (productionValue > consumptionValue) {
+          selfConsumption = consumptionValue
+          excessProduction = productionValue - consumptionValue
+
+          // Charge the storage
+          const availableStorageSpace = storageCapacity - currentStorageLevel
+          const chargedAmount = Math.min(
+            excessProduction,
+            availableStorageSpace
+          )
+          currentStorageLevel += chargedAmount
+        } else {
+          const productionDeficit = consumptionValue - productionValue
+
+          // Use storage if available
+          const usedFromStorage = Math.min(
+            productionDeficit,
+            currentStorageLevel
+          )
+          currentStorageLevel -= usedFromStorage
+
+          selfConsumption = productionValue + usedFromStorage
+        }
+
+        result[timestamp] = selfConsumption
+      }
+
+      let selfConsumedElectricity = Object.values(result).reduce(
+        (acc, val) => acc + val,
+        0
+      )
+
+      setSelfConsumption(Math.round(selfConsumedElectricity))
+      setAnnualSavings(
+        Math.round((selfConsumedElectricity * electricityPrice) / 100)
+      )
+    }
+
+    await calculateSaving({
+      pvProduction: pvProduction,
+      consumptionHousehold: parseFloat(annualConsumption),
+      storageCapacity: storageCapacity,
+      electricityPrice: electricityPrice,
+      setSelfConsumption: setSelfConsumption,
+      setAnnualSavings: setAnnualSavings,
+    })
+  }
+
   const initialRef = React.useRef(null)
-  const finalRef = React.useRef(null)
-  const [value, setValue] = React.useState("1")
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{"Wirtschaftlichkeit berechnen"}</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <>
-            <FormControl>
-              <FormLabel>Jährlicher Stromverbrauch</FormLabel>
-              <Input
-                ref={initialRef}
-                placeholder="Jährlicher Stromverbrauch in kWh"
-              />
-            </FormControl>
-            <br />
-            Wann verbrauche ich meinen Strom?
-            <RadioGroup onChange={setValue} value={value} colorScheme="teal">
-              <Stack direction="column">
-                <Radio value="1">Morgens und Abends</Radio>
-                <Radio value="2">Morgens, Mittags und Abends</Radio>
-              </Stack>
-            </RadioGroup>
-            <br />
-            Ich besitze oder plane den Kauf
-            <Stack spacing={5} direction="row">
-              <Checkbox colorScheme="teal">einer Wärmepumpe</Checkbox>
-              <Checkbox colorScheme="teal">eines Elektroautos</Checkbox>
-            </Stack>
-          </>
-        </ModalBody>
+    <>
+      {pvSystems.length > 0 && (
+        <Button onClick={onOpen} className="button-high-prio">
+          {t("savingsCalculation.button")}
+        </Button>
+      )}
+      <Modal isOpen={isOpen} onClose={onClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{"Wirtschaftlichkeit berechnen"}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <>
+              <FormControl>
+                <FormLabel>
+                  {t("savingsCalculation.consumptionTitle")}
+                  <HoverHelp
+                    label={t("savingsCalculation.consumptionHelper")}
+                  />
+                </FormLabel>
+                <Input
+                  ref={initialRef}
+                  placeholder={t("savingsCalculation.consumptionPlaceholder")}
+                  value={annualConsumption}
+                  onChange={(e) => setAnnualConsumption(e.target.value)}
+                />
+              </FormControl>
+              <br />
+              <FormControl>
+                <FormLabel>{t("savingsCalculation.storageTitle")}</FormLabel>
+                <Input
+                  ref={initialRef}
+                  placeholder={t("savingsCalculation.storagePlaceholder")}
+                  value={storageCapacity}
+                  onChange={(e) => setStorageCapacity(e.target.value)}
+                />
+              </FormControl>
+              <br />
+              <FormControl>
+                <FormLabel>
+                  {t("savingsCalculation.electricityPriceTitle")}
+                </FormLabel>
+                <Input
+                  ref={initialRef}
+                  placeholder={t(
+                    "savingsCalculation.electricityPricePlaceholder"
+                  )}
+                  value={electricityPrice}
+                  onChange={(e) => setElectricityPrice(e.target.value)}
+                />
+              </FormControl>
 
-        <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={calculateSaving}>
-            Berechnen
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+              <br />
+              <Text>{t("savingsCalculation.disclaimer")}</Text>
+              <UnorderedList>
+                <ListItem>
+                  {t("savingsCalculation.results.production")}
+                  {pvProduction} kWh
+                </ListItem>
+                <ListItem>
+                  {t("savingsCalculation.results.consumption")}{" "}
+                  {selfConsumption} kWh
+                </ListItem>
+                <ListItem>
+                  {t("savingsCalculation.results.savings")} {annualSavings} €
+                </ListItem>
+              </UnorderedList>
+            </>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="teal" mr={3} onClick={handleCalculateSaving}>
+              {t("savingsCalculation.calculate")}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   )
 }
 

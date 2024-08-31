@@ -4,7 +4,7 @@ import { Canvas } from "react-three-fiber"
 import CustomMapControl from "./Controls/CustomMapControl"
 import DrawPVControl from "./Controls/DrawPVControl"
 import { HighlightedMesh } from "./Meshes/HiglightedMesh"
-import PVSystems from "./Meshes/PVSystems"
+import { PVSystems } from "./Meshes/PVSystems"
 import SimulationMesh from "./Meshes/SimulationMesh"
 import SurroundingMesh from "./Meshes/SurroundingMesh"
 import Points from "./Points"
@@ -15,7 +15,7 @@ const Scene = ({
   simulationMeshes,
   showTerrain,
   frontendState,
-  visiblePVSystems,
+  pvSystems,
   selectedMesh,
   setSelectedMesh,
   pvPoints,
@@ -68,12 +68,7 @@ const Scene = ({
       )}
       {frontendState == "DrawPV" && <Points points={pvPoints} />}
 
-      <PVSystems
-        visiblePVSystems={visiblePVSystems}
-        pvPoints={pvPoints}
-        setPVPoints={setPVPoints}
-        simulationMeshes={simulationMeshes}
-      />
+      {pvSystems.length > 0 && <PVSystems pvSystems={pvSystems} />}
 
       {simulationMeshes.length > 0 && <Terrain visible={showTerrain} />}
     </Canvas>

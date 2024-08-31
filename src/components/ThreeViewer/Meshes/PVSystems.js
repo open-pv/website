@@ -1,144 +1,10 @@
-import { useThree } from "@react-three/fiber"
-import React, { useEffect, useState } from "react"
+import React, { useRef } from "react"
+import { useFrame } from "react-three-fiber"
 import * as THREE from "three"
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
-import PVSystem from "./PVSystem"
+import TextSprite from "../TextSprite"
 
-const PVSystems = ({
-  visiblePVSystems,
-  pvPoints,
-  setPVPoints,
-  simulationMeshes,
-}) => {
-  const points = pvPoints.map((obj) => obj.point) // pvPoints is a list of objects, each object has a point and a normal
-
-  const { scene } = useThree()
-  const [pvSystems, setPVSystems] = useState([])
-
-  useEffect(() => {
-    if (visiblePVSystems.length === 0 || pvPoints.length < 3) {
-      console.log("Not enough points to create a polygon")
-      return
-    }
-    const geometry = new THREE.BufferGeometry()
-    const vertices = []
-    points.forEach((point) => {
-      vertices.push(point.x, point.y, point.z)
-    })
-
-    const triangles = []
-    const bufferTriangles = []
-    const normalOffset = 0.1 // Adjust this value as needed
-
-    for (let i = 1; i < pvPoints.length - 1; i++) {
-      const v0 = pvPoints[0]
-      const v1 = pvPoints[i]
-      const v2 = pvPoints[i + 1]
-
-      const shift = (element) => ({
-        x: element.point.x + element.normal.x * normalOffset,
-        y: element.point.y + element.normal.y * normalOffset,
-        z: element.point.z + element.normal.z * normalOffset,
-      })
-
-      const sv0 = shift(v0)
-      const sv1 = shift(v1)
-      const sv2 = shift(v2)
-
-      triangles.push({ a: v0.point, b: v1.point, c: v2.point })
-      bufferTriangles.push(
-        sv0.x,
-        sv0.y,
-        sv0.z,
-        sv1.x,
-        sv1.y,
-        sv1.z,
-        sv2.x,
-        sv2.y,
-        sv2.z
-      )
-    }
-
-    geometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(bufferTriangles, 3)
-    )
-
-    let subdividedTriangles = []
-    const triangleSubdivisionThreshold = 0.8
-    triangles.forEach((triangle) => {
-      subdividedTriangles = subdividedTriangles.concat(
-        subdivideTriangle(triangle, triangleSubdivisionThreshold)
-      )
-    })
-
-    const geometries = []
-
-    simulationMeshes.forEach((mesh) => {
-      const geom = mesh.geometry.clone()
-      geom.applyMatrix4(mesh.matrixWorld)
-      geometries.push(geom)
-    })
-    const simulationGeometry = BufferGeometryUtils.mergeGeometries(
-      geometries,
-      true
-    )
-    const polygonPrefilteringCutoff = 10
-    const prefilteredPolygons = filterPolygonsByDistance(
-      simulationGeometry,
-      points,
-      polygonPrefilteringCutoff
-    )
-    const newVertices = []
-    const newColors = []
-    const newIntensities = []
-    subdividedTriangles.forEach((triangle) => {
-      newVertices.push(triangle.a.x, triangle.a.y, triangle.a.z)
-      newVertices.push(triangle.b.x, triangle.b.y, triangle.b.z)
-      newVertices.push(triangle.c.x, triangle.c.y, triangle.c.z)
-    })
-    for (let i = 0; i < newVertices.length; i += 3) {
-      const vertex = new THREE.Vector3(
-        newVertices[i],
-        newVertices[i + 1],
-        newVertices[i + 2]
-      )
-      const closestPolygon = findClosestPolygon(
-        vertex,
-        prefilteredPolygons,
-        polygonPrefilteringCutoff
-      )
-      if (closestPolygon) {
-        const projectedVertex = projectOntoTriangle(vertex, closestPolygon)
-        const color = getColorAtPointOnTriangle(projectedVertex, closestPolygon)
-        const intensity = getIntensityAtPointOnTriangle(
-          projectedVertex,
-          closestPolygon
-        )
-        newColors.push(color.r, color.g, color.b)
-        newIntensities.push(intensity)
-      } else {
-        newColors.push(1, 1, 1)
-        newIntensities.push(-1)
-      }
-    }
-    const polygonArea = calculatePolygonArea(triangles)
-    const polygonIntensity = calculatePolygonIntensity(
-      newVertices,
-      newIntensities
-    )
-    const annualYield = polygonArea * polygonIntensity
-
-    const newPVSystem = {
-      geometry: geometry,
-      annualYield: annualYield,
-      area: polygonArea,
-    }
-
-    setPVSystems((prevSystems) => [...prevSystems, newPVSystem])
-    setPVPoints([])
-  }, [visiblePVSystems])
-
+export const PVSystems = ({ pvSystems }) => {
   return (
     <>
       {pvSystems.map((system, index) => (
@@ -153,7 +19,182 @@ const PVSystems = ({
   )
 }
 
-export default PVSystems
+export function createPVSystem({
+  setPVSystems,
+  pvPoints,
+  setPVPoints,
+  simulationMeshes,
+}) {
+  const points = pvPoints.map((obj) => obj.point)
+  if (pvPoints.length < 3) {
+    console.log("Not enough points to create a polygon")
+    return
+  }
+  const geometry = new THREE.BufferGeometry()
+  const vertices = []
+  points.forEach((point) => {
+    vertices.push(point.x, point.y, point.z)
+  })
+
+  const triangles = []
+  const bufferTriangles = []
+  const normalOffset = 0.1 // Adjust this value as needed
+
+  for (let i = 1; i < pvPoints.length - 1; i++) {
+    const v0 = pvPoints[0]
+    const v1 = pvPoints[i]
+    const v2 = pvPoints[i + 1]
+
+    const shift = (element) => ({
+      x: element.point.x + element.normal.x * normalOffset,
+      y: element.point.y + element.normal.y * normalOffset,
+      z: element.point.z + element.normal.z * normalOffset,
+    })
+
+    const sv0 = shift(v0)
+    const sv1 = shift(v1)
+    const sv2 = shift(v2)
+
+    triangles.push({ a: v0.point, b: v1.point, c: v2.point })
+    bufferTriangles.push(
+      sv0.x,
+      sv0.y,
+      sv0.z,
+      sv1.x,
+      sv1.y,
+      sv1.z,
+      sv2.x,
+      sv2.y,
+      sv2.z
+    )
+  }
+
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(bufferTriangles, 3)
+  )
+
+  let subdividedTriangles = []
+  const triangleSubdivisionThreshold = 0.8
+  triangles.forEach((triangle) => {
+    subdividedTriangles = subdividedTriangles.concat(
+      subdivideTriangle(triangle, triangleSubdivisionThreshold)
+    )
+  })
+
+  const geometries = []
+
+  simulationMeshes.forEach((mesh) => {
+    const geom = mesh.geometry.clone()
+    geom.applyMatrix4(mesh.matrixWorld)
+    geometries.push(geom)
+  })
+  const simulationGeometry = BufferGeometryUtils.mergeGeometries(
+    geometries,
+    true
+  )
+  const polygonPrefilteringCutoff = 10
+  const prefilteredPolygons = filterPolygonsByDistance(
+    simulationGeometry,
+    points,
+    polygonPrefilteringCutoff
+  )
+  const newVertices = []
+  const newColors = []
+  const newIntensities = []
+  subdividedTriangles.forEach((triangle) => {
+    newVertices.push(triangle.a.x, triangle.a.y, triangle.a.z)
+    newVertices.push(triangle.b.x, triangle.b.y, triangle.b.z)
+    newVertices.push(triangle.c.x, triangle.c.y, triangle.c.z)
+  })
+  for (let i = 0; i < newVertices.length; i += 3) {
+    const vertex = new THREE.Vector3(
+      newVertices[i],
+      newVertices[i + 1],
+      newVertices[i + 2]
+    )
+    const closestPolygon = findClosestPolygon(
+      vertex,
+      prefilteredPolygons,
+      polygonPrefilteringCutoff
+    )
+    if (closestPolygon) {
+      const projectedVertex = projectOntoTriangle(vertex, closestPolygon)
+      const color = getColorAtPointOnTriangle(projectedVertex, closestPolygon)
+      const intensity = getIntensityAtPointOnTriangle(
+        projectedVertex,
+        closestPolygon
+      )
+      newColors.push(color.r, color.g, color.b)
+      newIntensities.push(intensity)
+    } else {
+      newColors.push(1, 1, 1)
+      newIntensities.push(-1)
+    }
+  }
+  const polygonArea = calculatePolygonArea(triangles)
+  const polygonIntensity = calculatePolygonIntensity(
+    newVertices,
+    newIntensities
+  )
+  const annualYield = polygonArea * polygonIntensity
+
+  const newPVSystem = {
+    geometry: geometry,
+    annualYield: annualYield,
+    area: polygonArea,
+  }
+
+  setPVSystems((prevSystems) => [...prevSystems, newPVSystem])
+  setPVPoints([])
+}
+
+const PVSystem = ({ geometry, annualYield, area }) => {
+  const textRef = useRef()
+
+  const center = calculateCenter(geometry.attributes.position.array)
+
+  useFrame(({ camera }) => {
+    if (textRef.current) {
+      textRef.current.quaternion.copy(camera.quaternion)
+    }
+  })
+
+  return (
+    <>
+      <mesh
+        geometry={geometry}
+        material={
+          new THREE.MeshStandardMaterial({
+            color: "#2b2c40",
+            transparent: true,
+            opacity: 0.5,
+            metalness: 1,
+          })
+        }
+      />
+
+      <TextSprite
+        text={`Jahresertrag: ${Math.round(annualYield).toLocaleString(
+          "de"
+        )} kWh pro Jahr\nFläche: ${area.toPrecision(3)}m²`}
+        position={center}
+      />
+    </>
+  )
+}
+
+const calculateCenter = (points) => {
+  const length = points.length / 3
+  const sum = points.reduce(
+    (acc, value, index) => {
+      acc[index % 3] += value
+      return acc
+    },
+    [0, 0, 0]
+  )
+  return new THREE.Vector3(sum[0] / length, sum[1] / length, sum[2] / length)
+}
 
 function subdivideTriangle(triangle, threshold) {
   const distance = (p1, p2) =>
@@ -297,8 +338,6 @@ function filterPolygonsByDistance(geometry, points, threshold) {
       })
     }
   }
-
-  console.log("Filtered polygons:", filteredPolygons)
 
   return filteredPolygons
 }

@@ -8,7 +8,7 @@ const Points = ({ points }) => {
         point.point,
       ])
       const pointMaterial = new THREE.PointsMaterial({
-        color: 0xff0000,
+        color: "#333333",
         size: 5,
         sizeAttenuation: false,
       })
