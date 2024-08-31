@@ -57,6 +57,11 @@ export function processVegetationData(vegetationRaster, simulationCenter, vegeta
         const simX = minX + x  - cx;
         const simY = minY + y  - cy; 
 
+        if ((x+y)%100000 == 0){
+          console.log(simX,simY);
+        }
+
+
         // Calculate distance squared from simulation center
         const distanceSquared = (simX - centerX) * (simX - centerX) + (simY - centerY) * (simY - centerY);
 
