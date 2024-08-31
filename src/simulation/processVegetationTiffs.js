@@ -38,8 +38,6 @@ export function processVegetationData(vegetationRaster, simulationCenter, vegeta
   const [minX, minY, maxX, maxY] = vegetationRaster.bbox;
   const [cx, cy] = coordinatesWebMercator;
 
-  const xResolution = (maxX - minX) / vegetationRaster.width;
-  const yResolution = (maxY - minY) / vegetationRaster.height;
 
   const simulationCutoffSquared = vegetationSimulationCutoff * vegetationSimulationCutoff;
   const viewingCutoffSquared = vegetationViewingCutoff * vegetationViewingCutoff;
@@ -54,10 +52,10 @@ export function processVegetationData(vegetationRaster, simulationCenter, vegeta
 
       if (height > 0) {
         // Convert from raster coordinates to simulation coordinates
-        const simX = minX + x  - cx;
-        const simY = minY + y  - cy; 
+        const simX = (x-vegetationRaster.width/2);
+        const simY = -(y-vegetationRaster.height/2); 
 
-        if ((x+y)%100000 == 0){
+        if ((x%100)+(y%100) == 0){
           console.log(simX,simY);
         }
 
