@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { coordinatesWebMercator } from './location';
+import { mercator2meters } from './download';
 
 export function processVegetationHeightmapData(heightmapData) {
   if (!heightmapData || !heightmapData.bbox || !heightmapData.data) {
@@ -38,7 +39,6 @@ export function processVegetationData(vegetationRaster, simulationCenter, vegeta
   const [minX, minY, maxX, maxY] = vegetationRaster.bbox;
   const [cx, cy] = coordinatesWebMercator;
 
-
   const simulationCutoffSquared = vegetationSimulationCutoff * vegetationSimulationCutoff;
   const viewingCutoffSquared = vegetationViewingCutoff * vegetationViewingCutoff;
 
@@ -52,8 +52,10 @@ export function processVegetationData(vegetationRaster, simulationCenter, vegeta
 
       if (height > 0) {
         // Convert from raster coordinates to simulation coordinates
-        const simX = (x-vegetationRaster.width/2);
-        const simY = -(y-vegetationRaster.height/2); 
+        const webMercatorX = vegetationRaster.bbox[0] + (vegetationRaster.bbox[2] - vegetationRaster.bbox[0]) * (x / vegetationRaster.width);
+        const webMercatorY = vegetationRaster.bbox[3] + (vegetationRaster.bbox[1] - vegetationRaster.bbox[3]) * (y / vegetationRaster.height);
+        const simX = (webMercatorX - cx) * mercator2meters();
+        const simY = (webMercatorY - cy) * mercator2meters();
 
         if ((x%100)+(y%100) == 0){
           console.log(simX,simY);
