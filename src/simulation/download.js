@@ -180,7 +180,7 @@ function get_file_names_vegetation_tif(x, y) {
 
 
 export async function downloadVegetationHeightmap(bbox) {
-  const url = 'http://188.245.158.226/data/vegetation_heightmap_webmercator.tif';
+  const url = 'http://188.245.158.226/data/vegetation_heightmap_webmercator_bigtiff.tif';
 
   try {
     console.log("Attempting to open GeoTIFF file...");
