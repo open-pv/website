@@ -11,6 +11,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Text,
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react"
@@ -23,7 +24,7 @@ function SavingCalculation({ pvSystems }) {
   const { t } = useTranslation()
   const [annualConsumption, setAnnualConsumption] = useState("")
   const [storageCapacity, setStorageCapacity] = useState("")
-  const [electricityPrice, setElectricityPrice] = useState(0.25)
+  const [electricityPrice, setElectricityPrice] = useState(25)
   const [selfConsumption, setSelfConsumption] = useState(0)
   const [annualSavings, setAnnualSavings] = useState(0)
   let pvProduction
@@ -94,7 +95,9 @@ function SavingCalculation({ pvSystems }) {
       )
 
       setSelfConsumption(Math.round(selfConsumedElectricity))
-      setAnnualSavings(Math.round(selfConsumedElectricity * electricityPrice))
+      setAnnualSavings(
+        Math.round((selfConsumedElectricity * electricityPrice) / 100)
+      )
     }
 
     await calculateSaving({
@@ -113,7 +116,7 @@ function SavingCalculation({ pvSystems }) {
     <>
       {pvSystems.length > 0 && (
         <Button onClick={onOpen} className="button-high-prio">
-          Wirtschaftlichkeit der Anlage berechnen
+          {t("savingsCalculation.button")}
         </Button>
       )}
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
@@ -125,55 +128,64 @@ function SavingCalculation({ pvSystems }) {
             <>
               <FormControl>
                 <FormLabel>
-                  Jährlicher Stromverbrauch{" "}
+                  {t("savingsCalculation.consumptionTitle")}
                   <HoverHelp
-                    label={
-                      "Schätzwert: Pro Person im Haushalt 800kWh, Wärmepumpe 2000 kWh, Elektroauto 2000 kWh"
-                    }
+                    label={t("savingsCalculation.consumptionHelper")}
                   />
                 </FormLabel>
                 <Input
                   ref={initialRef}
-                  placeholder="Jährlicher Stromverbrauch in kWh"
+                  placeholder={t("savingsCalculation.consumptionPlaceholder")}
                   value={annualConsumption}
                   onChange={(e) => setAnnualConsumption(e.target.value)}
                 />
               </FormControl>
               <br />
               <FormControl>
-                <FormLabel>Stromspeicher</FormLabel>
+                <FormLabel>{t("savingsCalculation.storageTitle")}</FormLabel>
                 <Input
                   ref={initialRef}
-                  placeholder="Speicherkapazität in kWh"
+                  placeholder={t("savingsCalculation.storagePlaceholder")}
                   value={storageCapacity}
                   onChange={(e) => setStorageCapacity(e.target.value)}
                 />
               </FormControl>
               <br />
               <FormControl>
-                <FormLabel>Preis pro kWh in €</FormLabel>
+                <FormLabel>
+                  {t("savingsCalculation.electricityPriceTitle")}
+                </FormLabel>
                 <Input
                   ref={initialRef}
-                  placeholder="Preis pro kWh in €"
+                  placeholder={t(
+                    "savingsCalculation.electricityPricePlaceholder"
+                  )}
                   value={electricityPrice}
                   onChange={(e) => setElectricityPrice(e.target.value)}
                 />
               </FormControl>
 
               <br />
+              <Text>{t("savingsCalculation.disclaimer")}</Text>
               <UnorderedList>
                 <ListItem>
-                  Jährliche Stromerzeugung durch PV: {pvProduction} kWh
+                  {t("savingsCalculation.results.production")}
+                  {pvProduction} kWh
                 </ListItem>
-                <ListItem>Eigenverbrauch: {selfConsumption} kWh</ListItem>
-                <ListItem>Jährliche Einsparungen: {annualSavings} €</ListItem>
+                <ListItem>
+                  {t("savingsCalculation.results.consumption")}{" "}
+                  {selfConsumption} kWh
+                </ListItem>
+                <ListItem>
+                  {t("savingsCalculation.results.savings")} {annualSavings} €
+                </ListItem>
               </UnorderedList>
             </>
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleCalculateSaving}>
-              Berechnen
+            <Button colorScheme="teal" mr={3} onClick={handleCalculateSaving}>
+              {t("savingsCalculation.calculate")}
             </Button>
           </ModalFooter>
         </ModalContent>
