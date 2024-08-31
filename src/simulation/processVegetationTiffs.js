@@ -44,27 +44,21 @@ export function processVegetationData(vegetationRaster, simulationCenter, vegeta
   const simulationCutoffSquared = vegetationSimulationCutoff * vegetationSimulationCutoff;
   const viewingCutoffSquared = vegetationViewingCutoff * vegetationViewingCutoff;
 
-  // Ensure simulationCenter has lat and lon properties
-  const centerLat = simulationCenter.lat || simulationCenter.y || 0;
-  const centerLon = simulationCenter.lon || simulationCenter.x || 0;
+  // Ensure simulationCenter has x and y properties
+  const centerX = simulationCenter.x || 0;
+  const centerY = simulationCenter.y || 0;
 
   for (let y = 0; y < vegetationRaster.height; y++) {
     for (let x = 0; x < vegetationRaster.width; x++) {
       const height = vegetationRaster.data[y * vegetationRaster.width + x];
 
       if (height > 0) {
-        // Convert from raster (Web Mercator) to world coordinates
-        const mercatorX = minX + x * xResolution;
-        const mercatorY = maxY - y * yResolution;  // Flip Y-axis
-
-        // Convert Mercator to lat/lon
-        const [lat, lon] = mercatorToLatLng(mercatorX, mercatorY);
+        // Convert from raster coordinates to simulation coordinates
+        const simX = minX + x  - cx;
+        const simY = minY + y  - cy; 
 
         // Calculate distance squared from simulation center
-        const distanceSquared = haversineDistanceSquared(lat, lon, centerLat, centerLon);
-        
-        const simX = minX + x * xResolution - cx;
-        const simY = maxY - y * yResolution - cy;  // Flip Y-axis
+        const distanceSquared = (simX - centerX) * (simX - centerX) + (simY - centerY) * (simY - centerY);
 
         if (distanceSquared <= viewingCutoffSquared) {
           const vegGeometry = createVegetationGeometry(simX, simY, height);
@@ -85,6 +79,7 @@ export function processVegetationData(vegetationRaster, simulationCenter, vegeta
 
   return geometries;
 }
+
 
 function haversineDistanceSquared(lat1, lon1, lat2, lon2) {
   const R = 6371e3; // Earth's radius in meters
