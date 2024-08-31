@@ -48,7 +48,6 @@ export async function mainSimulation(location) {
       ? (numSimulations = window.numSimulations)
       : (numSimulations = 80)
     function loadingBarWrapperFunction(progress, total = 100) {
-      // console.log("Simulation Progress is ", progress)
       return window.setSimulationProgress(progress)
     }
 
@@ -126,7 +125,6 @@ export async function simulationForNewBuilding(props) {
     progressCallback: (progress, total) =>
       console.log("Simulation Progress is ", progress),
   })
-  console.log("SimulationMesh", simulationMesh)
   const material = new THREE.MeshLambertMaterial({
     vertexColors: true,
     side: THREE.DoubleSide,

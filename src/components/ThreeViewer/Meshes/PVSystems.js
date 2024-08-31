@@ -5,7 +5,6 @@ import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
 import TextSprite from "../TextSprite"
 
 export const PVSystems = ({ pvSystems }) => {
-  console.log("PVSystems in three module", pvSystems)
   return (
     <>
       {pvSystems.map((system, index) => (
@@ -145,7 +144,6 @@ export function createPVSystem({
     annualYield: annualYield,
     area: polygonArea,
   }
-  console.log("newPVSystem", newPVSystem)
 
   setPVSystems((prevSystems) => [...prevSystems, newPVSystem])
   setPVPoints([])
@@ -340,8 +338,6 @@ function filterPolygonsByDistance(geometry, points, threshold) {
       })
     }
   }
-
-  console.log("Filtered polygons:", filteredPolygons)
 
   return filteredPolygons
 }

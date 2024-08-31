@@ -27,7 +27,6 @@ function SavingCalculation({ pvSystems }) {
   const [selfConsumption, setSelfConsumption] = useState(0)
   const [annualSavings, setAnnualSavings] = useState(0)
   let pvProduction
-  console.log("pvSystems", pvSystems)
   if (pvSystems.length > 0) {
     pvProduction = Math.round(
       pvSystems.reduce((previous, current) => previous + current.annualYield, 0)
@@ -92,11 +91,6 @@ function SavingCalculation({ pvSystems }) {
       let selfConsumedElectricity = Object.values(result).reduce(
         (acc, val) => acc + val,
         0
-      )
-
-      console.log(
-        selfConsumedElectricity,
-        "kWh are self consumed in the household"
       )
 
       setSelfConsumption(Math.round(selfConsumedElectricity))
