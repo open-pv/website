@@ -73,16 +73,6 @@ function Overlay({
             >
               {t("button.options")}
             </Button>
-            <ButtonWithHoverHelp
-              buttonLabel={"PV Anlage einzeichnen"}
-              onClick={() => {
-                setFrontendState("DrawPV")
-                onCloseDrawer()
-              }}
-              hoverText={
-                "PV-Anlage in der Karte einzeichnen und Jahresbetrag berechnen."
-              }
-            />
           </>
         )}
         {frontendState == "DrawPV" && (
@@ -132,6 +122,17 @@ function Overlay({
         />
       </OverlayWrapper>
       <HighPrioWrapper>
+        {frontendState == "Results" && (
+          <ButtonWithHoverHelp
+            buttonLabel={t("button.createPVSystem")}
+            onClick={() => {
+              setFrontendState("DrawPV")
+              onCloseDrawer()
+            }}
+            className={pvSystems.length == 0 ? "button-high-prio" : ""}
+            hoverText={t("button.createPVSystemHover")}
+          />
+        )}
         <SavingCalculation pvSystems={pvSystems} />
       </HighPrioWrapper>
     </>
