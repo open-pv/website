@@ -33,12 +33,9 @@ function Index() {
     surrounding: [],
     background: [],
   })
-
+  // highlighted meshes for resimulation
   const [selectedMesh, setSelectedMesh] = useState([])
-
-  // When a building is selected from the Surrounding to be simulated, it needs to be deleted
-  // from the surrounding mesh. This state collects a list of names that should not be rendered
-  // Elements are for example "SurroundingMesh-37"
+  // meshes that were simulated
   const [simulationMeshes, setSimulationMeshes] = useState([])
 
   window.setGeometries = setGeometries
