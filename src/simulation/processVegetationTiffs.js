@@ -9,14 +9,7 @@ export function processVegetationHeightmapData(heightmapData) {
 
   return {
     ...heightmapData,
-    getHeight: function(x, y) {
-      const indexX = Math.floor((x - this.bbox[0]) / this.xResolution);
-      const indexY = Math.floor((this.bbox[3] - y) / this.yResolution);
-      if (indexX >= 0 && indexX < this.width && indexY >= 0 && indexY < this.height) {
-        return this.data[indexY * this.width + indexX];
-      }
-      return 0; // Return 0 for out-of-bounds or NaN values
-    }
+    data: new Float32Array(heightmapData.data)
   };
 }
 
@@ -26,34 +19,39 @@ export function processVegetationData(vegetationRaster, simulationCenter, vegeta
   console.log("Vegetation raster bbox:", vegetationRaster.bbox);
 
   const geometries = {
-    simulation: [],
     surrounding: [],
     background: []
   };
 
   const [minX, minY, maxX, maxY] = vegetationRaster.bbox;
+  const [cx, cy] = coordinatesWebMercator;
+
+  // Calculate raster resolution
+  const xResolution = (maxX - minX) / vegetationRaster.width;
+  const yResolution = (maxY - minY) / vegetationRaster.height;
+
+  const simulationCutoffSquared = vegetationSimulationCutoff * vegetationSimulationCutoff;
+  const viewingCutoffSquared = vegetationViewingCutoff * vegetationViewingCutoff;
 
   for (let y = 0; y < vegetationRaster.height; y++) {
     for (let x = 0; x < vegetationRaster.width; x++) {
-      const worldX = minX + x * vegetationRaster.xResolution;
-      const worldY = maxY - y * vegetationRaster.yResolution;
-      const height = vegetationRaster.getHeight(worldX, worldY);
+      const height = vegetationRaster.data[y * vegetationRaster.width + x];
 
       if (height > 0) {
-        const vegGeometry = createVegetationGeometry(worldX, worldY, height);
-        
-        const center = new THREE.Vector3();
-        vegGeometry.computeBoundingBox();
-        vegGeometry.boundingBox.getCenter(center);
-        
-        const d2 = 
-          (center.x - simulationCenter.x) ** 2 +
-          (center.y - simulationCenter.y) ** 2;
-        
-        if (d2 <= vegetationSimulationCutoff * vegetationSimulationCutoff) {
-          geometries.surrounding.push(vegGeometry);
-        } else if (d2 <= vegetationViewingCutoff * vegetationViewingCutoff) {
-          geometries.background.push(vegGeometry);
+        // Calculate world coordinates
+        const worldX = minX + x * xResolution - cx;
+        const worldY = maxY - y * yResolution - cy;  // Flip Y-axis
+
+        const distanceSquared = worldX * worldX + worldY * worldY;
+
+        if (distanceSquared <= viewingCutoffSquared) {
+          const vegGeometry = createVegetationGeometry(worldX, worldY, height);
+
+          if (distanceSquared <= simulationCutoffSquared) {
+            geometries.surrounding.push(vegGeometry);
+          } else {
+            geometries.background.push(vegGeometry);
+          }
         }
       }
     }
@@ -69,14 +67,9 @@ export function processVegetationData(vegetationRaster, simulationCenter, vegeta
 function createVegetationGeometry(x, y, vegHeight) {
   const width = 1;
   const depth = 1;
-  const [cx, cy] = coordinatesWebMercator;
 
-  const geometry = new THREE.BoxGeometry(width, depth, 20).toNonIndexed();
-  geometry.translate(
-    x - cx,
-    y - cy,
-    vegHeight - 10,
-  );
+  const geometry = new THREE.BoxGeometry(width, depth, vegHeight).toNonIndexed();
+  geometry.translate(x, y, vegHeight / 2);
 
   return geometry;
 }
