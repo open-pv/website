@@ -84,25 +84,7 @@ function Overlay({
             simulationMeshes={simulationMeshes}
           />
         )}
-        {selectedMesh.length > 0 && (
-          <Button
-            colorScheme="teal"
-            variant={"link"}
-            className="button-high-prio"
-            onClick={async () =>
-              await simulationForNewBuilding({
-                selectedMesh,
-                setSelectedMesh,
-                simulationMeshes,
-                setSimulationMeshes,
-                geometries,
-                geoLocation,
-              })
-            }
-          >
-            {t("button.simulateBuilding")}
-          </Button>
-        )}
+
         <Button
           onClick={onOpenModalControls}
           colorScheme="teal"
@@ -134,6 +116,23 @@ function Overlay({
           />
         )}
         <SavingCalculation pvSystems={pvSystems} />
+        {selectedMesh.length > 0 && (
+          <Button
+            className="button-high-prio"
+            onClick={async () =>
+              await simulationForNewBuilding({
+                selectedMesh,
+                setSelectedMesh,
+                simulationMeshes,
+                setSimulationMeshes,
+                geometries,
+                geoLocation,
+              })
+            }
+          >
+            {t("button.simulateBuilding")}
+          </Button>
+        )}
       </HighPrioWrapper>
     </>
   )
@@ -144,9 +143,8 @@ const OverlayWrapper = ({ children }) => {
     <>
       <Box
         display="flex"
-        flexDirection="column" // First direction Column and second Box flexDirection
-        // row pushes buttons to the upper left corner
-        justifyContent="space-between"
+        flexDirection="row"
+        justifyContent="flex-start"
         pointerEvents="none"
         zIndex={100}
         minWidth={0}
@@ -160,12 +158,13 @@ const OverlayWrapper = ({ children }) => {
       >
         <Box
           display="flex"
-          flexDirection="row"
+          flexDirection="column"
+          alignItems="flex-start" // Add this line
           gap="20px"
           padding="10px"
-          width="fit-content"
-          maxWidth="100%"
-          flexWrap="wrap"
+          height="fit-content"
+          maxHeight="100%"
+          flexWrap="nowrap"
           minWidth={0}
           minHeight={0}
           overflow="hidden"
