@@ -18,7 +18,7 @@ import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
 import HoverHelp from "../Template/HoverHelp"
 
-function SavingCalculation({ PVSystems }) {
+function SavingCalculation({ pvSystems }) {
   const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false })
   const { t } = useTranslation()
   const [annualConsumption, setAnnualConsumption] = useState("")
@@ -26,16 +26,23 @@ function SavingCalculation({ PVSystems }) {
   const [electricityPrice, setElectricityPrice] = useState(0.25)
   const [selfConsumption, setSelfConsumption] = useState(0)
   const [annualSavings, setAnnualSavings] = useState(0)
+  let pvProduction
+  console.log("pvSystems", pvSystems)
+  if (pvSystems.length > 0) {
+    pvProduction = Math.round(
+      pvSystems.reduce((previous, current) => previous + current.annualYield, 0)
+    )
+  }
 
   async function handleCalculateSaving() {
     async function calculateSaving({
+      pvProduction,
       consumptionHousehold,
       storageCapacity,
       electricityPrice,
       setSelfConsumption,
       setAnnualSavings,
     }) {
-      const pvProduction = 6000
       const response = await fetch(
         "https://www.openpv.de/data/savings_calculation/cons_prod.json"
       )
@@ -97,6 +104,7 @@ function SavingCalculation({ PVSystems }) {
     }
 
     await calculateSaving({
+      pvProduction: pvProduction,
       consumptionHousehold: parseFloat(annualConsumption),
       storageCapacity: storageCapacity,
       electricityPrice: electricityPrice,
@@ -106,11 +114,10 @@ function SavingCalculation({ PVSystems }) {
   }
 
   const initialRef = React.useRef(null)
-  console.log("PVSystems", PVSystems)
 
   return (
     <>
-      {PVSystems.length > 0 && (
+      {pvSystems.length > 0 && (
         <Button onClick={onOpen} className="button-high-prio">
           Wirtschaftlichkeit der Anlage berechnen
         </Button>
@@ -161,6 +168,9 @@ function SavingCalculation({ PVSystems }) {
 
               <br />
               <UnorderedList>
+                <ListItem>
+                  Jährliche Stromerzeugung durch PV: {pvProduction} kWh
+                </ListItem>
                 <ListItem>Eigenverbrauch: {selfConsumption} kWh</ListItem>
                 <ListItem>Jährliche Einsparungen: {annualSavings} €</ListItem>
               </UnorderedList>

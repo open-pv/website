@@ -132,7 +132,7 @@ function Overlay({
         />
       </OverlayWrapper>
       <HighPrioWrapper>
-        <SavingCalculation PVSystems={pvSystems} />
+        <SavingCalculation pvSystems={pvSystems} />
       </HighPrioWrapper>
     </>
   )
