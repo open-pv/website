@@ -1,18 +1,23 @@
 import { Button } from "@chakra-ui/react"
 import React from "react"
 import { useTranslation } from "react-i18next"
+import { createPVSystem } from "./Meshes/PVSystems"
 
 export default function OverlayDrawPV({
-  visiblePVSystems,
-  setvisiblePVSystems,
+  setPVSystems,
   pvPoints,
   setPVPoints,
   setFrontendState,
+  simulationMeshes,
 }) {
   const { t } = useTranslation()
   const handleCreatePVButtonClick = () => {
-    const nextIndex = visiblePVSystems.length
-    setvisiblePVSystems([...visiblePVSystems, nextIndex])
+    createPVSystem({
+      setPVSystems,
+      pvPoints,
+      setPVPoints,
+      simulationMeshes,
+    })
     setFrontendState("Results")
   }
 

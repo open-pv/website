@@ -21,13 +21,13 @@ import {
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react"
+import React from "react"
 import { useTranslation } from "react-i18next"
 import { simulationForNewBuilding } from "../../simulation/main"
+import SavingCalculation from "../PVSimulation/SavingsCalculation"
+import ButtonWithHoverHelp from "../Template/ButtonWithHoverHelp"
 import HoverHelp from "../Template/HoverHelp"
 import SliderWithLabel from "../Template/SliderWithLabel"
-
-import React from "react"
-import ButtonWithHoverHelp from "../Template/ButtonWithHoverHelp"
 import OverlayDrawPV from "./OverlayDrawPV"
 
 function Overlay({
@@ -39,8 +39,8 @@ function Overlay({
   setSelectedMesh,
   geometries,
   geoLocation,
-  visiblePVSystems,
-  setvisiblePVSystems,
+  pvSystems,
+  setPVSystems,
   pvPoints,
   setPVPoints,
   simulationMeshes,
@@ -60,72 +60,81 @@ function Overlay({
   const btnRef = React.useRef()
 
   return (
-    <OverlayWrapper>
-      {frontendState == "Results" && (
-        <>
-          <Button
-            ref={btnRef}
-            colorScheme="teal"
-            onClick={onOpenDrawer}
-            variant={"link"}
-            zIndex={100}
-          >
-            {t("button.options")}
-          </Button>
-          <ButtonWithHoverHelp
-            buttonLabel={"PV Anlage einzeichnen"}
-            onClick={() => {
-              setFrontendState("DrawPV")
-              onCloseDrawer()
-            }}
-            hoverText={
-              "PV-Anlage in der Karte einzeichnen und Jahresbetrag berechnen."
-            }
+    <>
+      <OverlayWrapper>
+        {frontendState == "Results" && (
+          <>
+            <Button
+              ref={btnRef}
+              colorScheme="teal"
+              onClick={onOpenDrawer}
+              variant={"link"}
+              zIndex={100}
+            >
+              {t("button.options")}
+            </Button>
+            <ButtonWithHoverHelp
+              buttonLabel={"PV Anlage einzeichnen"}
+              onClick={() => {
+                setFrontendState("DrawPV")
+                onCloseDrawer()
+              }}
+              hoverText={
+                "PV-Anlage in der Karte einzeichnen und Jahresbetrag berechnen."
+              }
+            />
+          </>
+        )}
+        {frontendState == "DrawPV" && (
+          <OverlayDrawPV
+            setPVSystems={setPVSystems}
+            pvPoints={pvPoints}
+            setPVPoints={setPVPoints}
+            setFrontendState={setFrontendState}
+            simulationMeshes={simulationMeshes}
           />
-        </>
-      )}
-      {frontendState == "DrawPV" && (
-        <OverlayDrawPV
-          setvisiblePVSystems={setvisiblePVSystems}
-          visiblePVSystems={visiblePVSystems}
-          pvPoints={pvPoints}
-          setPVPoints={setPVPoints}
-          setFrontendState={setFrontendState}
-        />
-      )}
-      {selectedMesh.length > 0 && (
+        )}
+        {selectedMesh.length > 0 && (
+          <Button
+            colorScheme="teal"
+            variant={"link"}
+            className="button-high-prio"
+            onClick={async () =>
+              await simulationForNewBuilding({
+                selectedMesh,
+                setSelectedMesh,
+                simulationMeshes,
+                setSimulationMeshes,
+                geometries,
+                geoLocation,
+              })
+            }
+          >
+            {t("button.simulateBuilding")}
+          </Button>
+        )}
         <Button
+          onClick={onOpenModalControls}
           colorScheme="teal"
           variant={"link"}
-          className="button-high-prio"
-          onClick={async () =>
-            await simulationForNewBuilding({
-              selectedMesh,
-              setSelectedMesh,
-              simulationMeshes,
-              setSimulationMeshes,
-              geometries,
-              geoLocation,
-            })
-          }
         >
-          {t("button.simulateBuilding")}
+          {t("mapControlHelp.button")}
         </Button>
-      )}
-      <Button onClick={onOpenModalControls} colorScheme="teal" variant={"link"}>
-        {t("mapControlHelp.button")}
-      </Button>
-      <ModalControls
-        isOpen={isOpenModalControls}
-        onClose={onCloseModalControls}
-      />
-      <CustomDrawer
-        isOpen={isOpenDrawer}
-        onClose={onCloseDrawer}
-        showTerrain={showTerrain}
-        setShowTerrain={setShowTerrain}
-      />
-    </OverlayWrapper>
+        <ModalControls
+          isOpen={isOpenModalControls}
+          onClose={onCloseModalControls}
+        />
+        <CustomDrawer
+          isOpen={isOpenDrawer}
+          onClose={onCloseDrawer}
+          showTerrain={showTerrain}
+          setShowTerrain={setShowTerrain}
+        />
+      </OverlayWrapper>
+      <HighPrioWrapper>
+        <SavingCalculation PVSystems={pvSystems} />
+      </HighPrioWrapper>
+    </>
   )
 }
 
@@ -159,6 +168,45 @@ const OverlayWrapper = ({ children }) => {
           minWidth={0}
           minHeight={0}
           overflow="hidden"
+        >
+          {children}
+        </Box>
+      </Box>
+    </>
+  )
+}
+
+const HighPrioWrapper = ({ children }) => {
+  return (
+    <>
+      <Box
+        display="flex"
+        flexDirection="column" // First direction Column and second Box flexDirection
+        // row pushes buttons to the upper left corner
+        justifyContent="space-between"
+        pointerEvents="none"
+        zIndex={100}
+        minWidth={0}
+        minHeight={0}
+        overflow="hidden"
+        sx={{
+          "> *": {
+            pointerEvents: "auto",
+          },
+        }}
+      >
+        <Box
+          display="flex"
+          flexDirection="row"
+          gap="20px"
+          padding="10px"
+          width="fit-content"
+          maxWidth="100%"
+          flexWrap="wrap"
+          minWidth={0}
+          minHeight={0}
+          overflow="hidden"
+          marginLeft="auto" // Add this line
         >
           {children}
         </Box>
