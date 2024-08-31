@@ -184,7 +184,7 @@ function SavingCalculation({ pvSystems }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="teal" mr={3} onClick={handleCalculateSaving}>
+            <Button mr={3} onClick={handleCalculateSaving}>
               {t("savingsCalculation.calculate")}
             </Button>
           </ModalFooter>

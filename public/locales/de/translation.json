@@ -65,7 +65,8 @@
     "options": "Optionen",
     "simulateBuilding": "Gebäude simulieren",
     "createPVSystem": "PV-Anlage erstellen",
-    "createPVSystemHover": "Ecken der PV-Anlage mit Klicks in der Karte einzeichnen und anschließend die Anlage erstellen.",
+    "drawPVSystem": "Neue PV-Anlage einzeichnen",
+    "drawPVSystemHover": "Ecken der PV-Anlage mit Klicks in der Karte einzeichnen und anschließend die Anlage erstellen.",
     "cancel": "Abbrechen",
     "deleteLastPoint": "Letzen Punkt löschen"
   },
