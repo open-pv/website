@@ -83,9 +83,9 @@ export async function mainSimulation(location, setGeometries) {
       console.log("Processing vegetation geometries...");
       const vegetationGeometries = processVegetationData(
         vegetationRaster,
-        new THREE.Vector3(0, 0, 0),
+        { lat: location.lat, lon: location.lon },
         30,
-        50,
+        300,
       );
       
       console.log("Vegetation Geometries processed successfully");
