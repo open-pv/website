@@ -49,7 +49,8 @@ export async function mainSimulation(location) {
       scene.addShadingGeometry(geom)
     })
 
-    scene.addColorMap(colormaps.interpolateTwoColors({ c0: c0, c1: c1 }))
+    //scene.addColorMap(colormaps.interpolateTwoColors({ c0: c0, c1: c1 }))
+    scene.addColorMap(colormaps.viridis)
 
     if (getFederalState() == "BY"){
     const [cx, cy] = coordinatesWebMercator;
@@ -102,7 +103,7 @@ export async function mainSimulation(location) {
   
       console.log("Adding vegetation geometries to the scene...");
       vegetationGeometries.surrounding.forEach((geom) => {
-        //scene.addShadingGeometry(geom);
+        scene.addShadingGeometry(geom);
       });
       console.log("Vegetation geometries added to the scene");
   
@@ -178,7 +179,7 @@ export async function simulationForNewBuilding(props) {
     parseFloat(props.geoLocation.lon)
   )
   shadingScene.addColorMap(colormaps.interpolateTwoColors({ c0: c0, c1: c1 }))
-  
+
   shadingScene.addSimulationGeometry(newSimulationGeometries)
   geometries.surrounding.forEach((geom) => {
     shadingScene.addShadingGeometry(geom)

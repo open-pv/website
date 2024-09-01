@@ -107,7 +107,7 @@ function createVegetationGeometry(x, y, vegHeight) {
   const width = 1;
   const depth = 1;
 
-  const geometry = new THREE.BoxGeometry(width, depth, 20).toNonIndexed();
+  const geometry = new THREE.BoxGeometry(width, depth, 20).toNonIndexed().deleteAttribute("uv");
   geometry.translate(x, y, vegHeight-10);
 
   return geometry;
