@@ -42,7 +42,7 @@ function WelcomeMessage() {
   const [currentPage, setCurrentPage] = useState(1)
   const { t, i18n } = useTranslation()
 
-  const numPages = 4
+  const numPages = 5
 
   const nextPage = () => {
     if (currentPage < numPages) setCurrentPage(currentPage + 1)
@@ -87,7 +87,16 @@ function WelcomeMessage() {
             />
           )}
           {currentPage === 4 && (
-            <WelcomeMessageBoxElement text={t("WelcomeMessage.fourthPage")} />
+            <WelcomeMessageBoxElement
+              image={{
+                src: "images/WelcomeMessage4.png",
+                alt: "Screenshot from a possible Simulation Result, where a PV system was created and the annual result was calculated.",
+              }}
+              text={t("WelcomeMessage.fourthPage")}
+            />
+          )}
+          {currentPage === 5 && (
+            <WelcomeMessageBoxElement text={t("WelcomeMessage.fifthPage")} />
           )}
         </ModalBody>
 
@@ -95,13 +104,20 @@ function WelcomeMessage() {
           <Button mr={3} onClick={prevPage} isDisabled={currentPage === 1}>
             {t("previous")}
           </Button>
-          <Button
-            mr={3}
-            onClick={nextPage}
-            isDisabled={currentPage === numPages}
-          >
-            {t("next")}
-          </Button>
+          {currentPage != 5 && (
+            <Button
+              mr={3}
+              onClick={nextPage}
+              isDisabled={currentPage === numPages}
+            >
+              {t("next")}
+            </Button>
+          )}
+          {currentPage == 5 && (
+            <Button mr={3} onClick={onClose}>
+              {t("close")}
+            </Button>
+          )}
         </ModalFooter>
         <Flex justifyContent="center" mb={4}>
           {Array.from({ length: numPages }, (_, i) => i + 1).map((page) => (

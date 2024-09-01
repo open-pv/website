@@ -9,6 +9,7 @@
   "no": "Nein",
   "next": "Nächste",
   "previous": "Vorherige",
+  "close": "Schließen",
   "searchField": {
     "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Lange Point 20, Freising"
   },
@@ -56,10 +57,11 @@
   },
   "WelcomeMessage": {
     "title": "Willkommen bei OpenPV",
-    "firstPage": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten bestimmen. Dafür geben Sie ihre Adresse im Suchfeld ein und klicken Sie auf Start.",
+    "firstPage": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten bestimmen. Dafür geben Sie ihre Adresse im Suchfeld ein und klicken Sie auf 'Simulation starten'.",
     "secondPage": "Auf der Karte können Sie das Ergebnis der Verschattungssimulation betrachten. Mit Doppelklick können Sie weitere Gebäude für die Simulation auswählen.",
-    "thirdPage": "Mit Optionen -> PV Anlage einzeichnen können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
-    "fourthPage": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Cookies!"
+    "thirdPage": "Über 'Neue PV-Anlage einzeichnen' können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
+    "fourthPage": "Anschließend können Sie mit dem Button 'Wirtschaftlichkeit der Anlage berechnen' die jährlichen Einnahmen der Anlage abschätzen.",
+    "fifthPage": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Tracking-Cookies!"
   },
   "button": {
     "showMap": "Karte anzeigen",
