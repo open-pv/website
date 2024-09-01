@@ -22,8 +22,8 @@ import { useTranslation } from "react-i18next"
 function SavingCalculation({ pvSystems }) {
   const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false })
   const { t } = useTranslation()
-  const [annualConsumption, setAnnualConsumption] = useState("")
-  const [storageCapacity, setStorageCapacity] = useState("")
+  const [annualConsumption, setAnnualConsumption] = useState(3000)
+  const [storageCapacity, setStorageCapacity] = useState(0)
   const [electricityPrice, setElectricityPrice] = useState(25)
   const [selfConsumption, setSelfConsumption] = useState(0)
   const [annualSavings, setAnnualSavings] = useState(0)
@@ -139,7 +139,6 @@ function SavingCalculation({ pvSystems }) {
                 </FormLabel>
                 <Input
                   ref={initialRef}
-                  placeholder={t("savingsCalculation.consumptionPlaceholder")}
                   value={annualConsumption}
                   onChange={(e) => setAnnualConsumption(e.target.value)}
                 />
@@ -149,7 +148,6 @@ function SavingCalculation({ pvSystems }) {
                 <FormLabel>{t("savingsCalculation.storageTitle")}</FormLabel>
                 <Input
                   ref={initialRef}
-                  placeholder={t("savingsCalculation.storagePlaceholder")}
                   value={storageCapacity}
                   onChange={(e) => setStorageCapacity(e.target.value)}
                 />
