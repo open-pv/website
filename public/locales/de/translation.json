@@ -104,7 +104,8 @@
   "savingsCalculation": {
     "button": "Wirtschaftlichkeit der Anlage berechnen",
     "consumptionTitle": "Jährlicher Stromverbrauch",
-    "consumptionHelper": "Als grober Schätzwert gilt: Rechne pro Person im Haushalt mit 800 kWh, für eine Wärmepumpe 2000 kWh und pro Elektroauto weitere 2000 kWh.",
+    "consumptionHelperInfo": "Als grober Schätzwert gilt: Rechne pro Person im Haushalt mit 800 kWh, für eine Wärmepumpe 2000 kWh und pro Elektroauto weitere 2000 kWh.",
+    "consumptionHelperLabel": "[So berechnen Sie ihren Stromverbrauch]",
     "consumptionPlaceholder": "Jährlicher Stromverbrauch in kWh",
     "storageTitle": "Stromspeicher",
     "storagePlaceholder": "Speicherkapazität in kWh",

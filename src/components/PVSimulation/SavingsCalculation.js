@@ -12,12 +12,12 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  Tooltip,
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react"
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
-import HoverHelp from "../Template/HoverHelp"
 
 function SavingCalculation({ pvSystems }) {
   const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false })
@@ -129,9 +129,13 @@ function SavingCalculation({ pvSystems }) {
               <FormControl>
                 <FormLabel>
                   {t("savingsCalculation.consumptionTitle")}
-                  <HoverHelp
-                    label={t("savingsCalculation.consumptionHelper")}
-                  />
+                  <Tooltip
+                    label={t("savingsCalculation.consumptionHelperInfo")}
+                  >
+                    <Text color="teal" fontSize="xs">
+                      {t("savingsCalculation.consumptionHelperLabel")}
+                    </Text>
+                  </Tooltip>
                 </FormLabel>
                 <Input
                   ref={initialRef}

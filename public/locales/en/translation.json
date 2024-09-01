@@ -85,7 +85,8 @@
   "savingsCalculation": {
     "button": "Calculate Earnings",
     "consumptionTitle": "Annual electricity consumption",
-    "consumptionHelper": "As a rough estimate: Calculate 800 kWh per person in the household, 2000 kWh for a heat pump, and an additional 2000 kWh per electric car.",
+    "consumptionHelperInfo": "As a rough estimate: Calculate 800 kWh per person in the household, 2000 kWh for a heat pump, and an additional 2000 kWh per electric car.",
+    "consumptionHelperLabel": "[Calculate your electricity consumption]",
     "consumptionPlaceholder": "Annual electricity consumption in kWh",
     "storageTitle": "Electricity storage",
     "storagePlaceholder": "Storage capacity in kWh",
