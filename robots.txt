@@ -1,2 +1,4 @@
 User-agent: *
-Disallow: /api
+Disallow: /data
+
+Sitemap: https://openpv.de/sitemap.xml
