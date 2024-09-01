@@ -1,28 +1,50 @@
 {
   "sidebar": {
     "header": "Ziel des Tools",
-    "mainText": "Im Suchfeld deine Adresse oder Koordinaten eingeben. Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche."
+    "mainText": "Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche.",
+    "numberSimulations": "Anzahl an gemittelten Sonnenständen",
+    "numberSimulationsHover": "Für die Simulation mitteln wir über verschiedene Sonnenstände, welche gleichmäßig über das Jahr verteilt sind. Je größer du diese Zahl wählst, desto genauer wird die Simulation. Allerdings dauert die Simulation auch länger."
   },
   "yes": "Ja",
   "no": "Nein",
   "next": "Nächste",
   "previous": "Vorherige",
+  "close": "Schließen",
   "searchField": {
     "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Lange Point 20, Freising"
   },
   "about": {
     "title": "Informationen",
     "description": "Weitere Informationen zu openpv.de",
-    "h2": "Weitere Informationen zu openpv.de",
-    "p-1": "Die folgende Anleitung zeigt dir, wie du die Website bedienen können, um das Potenzial für eine Solaranlage zu berechnen.",
-    "h3-2": "1. Eingabe deiner Adresse oder Koordinaten",
-    "p-2": "Auf der Startseite findest du ein Suchfeld. Gebe entweder die Adresse des gewünschten Ortes oder die entsprechenden Koordinaten in das Suchfeld ein. Leider haben wir nicht alle Adressen in Bayern hinterlegt, dann müssen die Koordinaten verwendet werden. Die Koordinaten kannst du zum Beispiel in Google Maps herausfinden. Mit Enter bestätigst du die Eingabe und startest die Simulation.",
-    "h3-3": "2. Herunterladen der 3D-Gebäudedaten",
-    "p-3": "Die Website lädt automatisch die 3D-Gebäudedaten für den angegebenen Ort herunter. Anschließend startet die Simulation. Dieser Vorgang kann je nach Leistung deines Gerätes und Größe der Gebäudeaten einige Sekunden dauern. Bitte habe etwas Geduld. Falls es zu lange dauert, verringere die Anzahl der Simulationen oder den Gebäuderadius auf der linken Seite.",
-    "h3-4": "3. Ergebnisse ansehen",
-    "p-4": "Nach Abschluss der Solaranlagen-Potenzialberechnung werden das Dach und die Fassade des Gebäudes eingefärbt. Gelb steht für ein sehr gutes Potenzial für eine Solaranlage, während Blau ein schlechtes Potenzial anzeigt. Du kannst in der dargestellten 3D-Ansicht mit Hilfe von linker und rechter Maustaste sowie deinem Mausrad navigieren.",
-    "h3-5": "Weitere Details",
-    "p-5": "Sobald die 3D-Gebäudedaten heruntergeladen wurden, beginnt die Website mit der Berechnung des Potenzials für eine Solaranlage. Dies geschieht durch Raytracing, um den Einfallswinkel des Sonnenlichts auf das Dach und die Fassade zu bestimmen. Die in diesem Projekt verwendeten Daten stammen aus dem OpenData Portal der Bayerischen Vermessungsverwaltung1 und stehen unter der CC BY 4.0 Lizenz: https://geodaten.bayern.de/opengeodata/OpenDataDetail.html?pn=lod2. Dabei wurden die LOD2 Daten vom Stand März 2023 verwendet. Wir danken der Quelle für die Bereitstellung dieser Daten, die zur Realisierung dieses Projekts beigetragen haben."
+    "generalDescription": {
+      "h": "Wie funktioniert openpv.de?",
+      "p": "Auf der Startseite kannst du dein Gebäude entweder über das Suchfeld oder die Karte auwählen. Mit einem Klick auf 'Start' werden die Gebäude des gewählten Standorts geladen und die Verschattungssimulation in deinem Browser ausgeführt. Nach erfolgreichem Abschluss der Simulation wird das PV-Potential deines Gebäudes angezeigt - gelb steht für ein gutes Potential, dunkelblau für ein schlechtes Potential mit viel Verschattung. Anschließend kannst du eine PV-Anlage einzeichnen oder die Optionen der Simulation anpassen."
+    },
+    "data": {
+      "h": "Welche Daten verwenden wir?",
+      "p1": "Wir nutzen verschiedene offene Datensätze für die PV-Simulation. Dies sind die 3D-Gebäudedaten (LOD2-Daten) der verschiedenen Landesvermessungsämter, Die jährlichen Einstrahlungsdaten für Deutschland der direkten und diffusen Strahlung des DWD",
+      "p2": "das Geländemodell von sonny",
+      "p3": "sowie die Basiskarte des BKG"
+    },
+    "whyOpenSource": {
+      "h": "Warum ist OpenPV Open Source?",
+      "p": "Public Money, Public Code! Die Erstellung unserer Website wurde durch öffentliche Gelder ermöglicht, deshalb steht der Code öffentlich zur Verfügung. Open Source Code steigert außerdem das Vertrauen in die Website und die Simulationsergebnisse. Auch können andere Personen den Code anpassen und weiterverwenden."
+    },
+    "team": {
+      "h": "Wer sind wir?",
+      "p": "Wir sind ein kleines Team von vier Personen. Wir arbeiten alle nebenberulich an OpenPV.",
+      "link": "Das Team auf Github."
+    },
+    "sponsors": {
+      "h": "Unsere Sponsoren",
+      "p": "Wir danken unseren Sponsoren! Falls Sie ein neues Feature wünschen oder uns unterstützen möchten, kontaktieren Sie uns: info[at]openpv.de"
+    },
+    "advantages": {
+      "introduction": "Bei OpenPV haben wir",
+      "1": "direkte und diffuse Einstrahlung integriert,",
+      "2": "Geländeverschattung integriert,",
+      "3": "und die Verschattung durch Vegetation in einigen Bundesländern integriert."
+    }
   },
   "loadingMessage": {
     "tip1": "Mit Doppelklick kannst du ein anderes Gebäude auf der Karte auswählen und die Simulation neu starten.",
@@ -30,15 +52,16 @@
     "tip3": "Manchmal werden Teile des Gebäudes unter der Karte angezeigt. In diesem Fall kannst du die Karte ausblenden, um das ganze Gebäude zu sehen."
   },
   "errorMessage": {
-    "tooManyUniforms": "Leider ist das ausgewählte Gebiet zu groß, um auf deinem PC simuliert zu werden. Du kannst den Gebäuderadius mit dem Slider auf der linken Seite kleiner stellen, um dieses Problem zu beheben.",
-    "wrongAdress": "Adresse wurde nicht gefunden oder liegt nicht innerhalb von Bayern. Leider können wir aktuell nur Häuser in Bayern simulieren. Alternativ kannst du auch die Koordinaten in Google Maps per Rechtsklick bestimmen und in das Suchfeld eingeben."
+    "header": "Ein Fehler ist aufgetreten.",
+    "wrongAdress": "Für den angegebenen Ort konnten keine Gebäude gefunden werden. Dies kann mehrere Gründe haben: 1. Am ausgewählten Ort steht kein Gebäude. 2. Am ausgewählten Ort steht ein neues Gebäude, welches noch nicht in unseren Daten vorhanden ist. 3. Der ausgewählte Ort liegt außerhalb von Deutschland oder in den Bundesländern Saarland / Mecklenburg-Vorpommern. Für diese Bundesländer haben wir leider keine Gebäudedaten."
   },
   "WelcomeMessage": {
     "title": "Willkommen bei OpenPV",
-    "firstPage": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten bestimmen. Dafür geben Sie ihre Adresse im Suchfeld ein und klicken Sie auf Start.",
+    "firstPage": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten bestimmen. Dafür geben Sie ihre Adresse im Suchfeld ein und klicken Sie auf 'Simulation starten'.",
     "secondPage": "Auf der Karte können Sie das Ergebnis der Verschattungssimulation betrachten. Mit Doppelklick können Sie weitere Gebäude für die Simulation auswählen.",
-    "thirdPage": "Mit Optionen -> PV Anlage einzeichnen können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
-    "fourthPage": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Cookies!"
+    "thirdPage": "Über 'Neue PV-Anlage einzeichnen' können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
+    "fourthPage": "Anschließend können Sie mit dem Button 'Wirtschaftlichkeit der Anlage berechnen' die jährlichen Einnahmen der Anlage abschätzen.",
+    "fifthPage": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Tracking-Cookies!"
   },
   "button": {
     "showMap": "Karte anzeigen",
@@ -46,6 +69,8 @@
     "options": "Optionen",
     "simulateBuilding": "Gebäude simulieren",
     "createPVSystem": "PV-Anlage erstellen",
+    "drawPVSystem": "Neue PV-Anlage einzeichnen",
+    "drawPVSystemHover": "Ecken der PV-Anlage mit Klicks in der Karte einzeichnen und anschließend die Anlage erstellen.",
     "cancel": "Abbrechen",
     "deleteLastPoint": "Letzen Punkt löschen"
   },
@@ -58,5 +83,38 @@
   "map": {
     "coordinates": "Koordinaten",
     "userSelection": "Manuelle Auswahl"
+  },
+  "Footer": {
+    "privacyPolicy": "Datenschutz"
+  },
+  "mapControlHelp": {
+    "button": "Wie bediene ich die Karte?",
+    "title": "Bedienungsanleitung",
+    "leftMouse": "Linke Maustaste: Bewegung auf der Karte",
+    "rightMouse": "Rechte Maustaste: Rotation der Karte",
+    "wheel": "Mausrad: Vergrößern und Verkleinern",
+    "doubleClick": "Doppelklick: Weiteres Gebäude für Simulation auswählen",
+    "touch": {
+      "leftMouse": "Ein Finger: Bewegung auf der Karte",
+      "rightMouse": "Zwei Finger: Rotation der Karte",
+      "wheel": "Zwei Finger: Vergrößern und Verkleinern",
+      "doubleClick": "Zweimal kurz auf Gebäude tippen: Weiteres Gebäude für Simulation auswählen"
+    }
+  },
+  "savingsCalculation": {
+    "button": "Wirtschaftlichkeit der Anlage berechnen",
+    "consumptionTitle": "Jährlicher Stromverbrauch in kWh",
+    "consumptionHelperInfo": "Als grober Schätzwert gilt: Rechne pro Person im Haushalt mit 800 kWh, für eine Wärmepumpe 2000 kWh und pro Elektroauto weitere 2000 kWh.",
+    "consumptionHelperLabel": "[So berechnen Sie ihren Stromverbrauch]",
+    "storageTitle": "Batteriekapazität in kWh",
+    "electricityPriceTitle": "Strompreis in Cent",
+    "electricityPricePlaceholder": "Preis pro kWh in cent",
+    "disclaimer": "Die berechneten Erträge und Einsparungen dienen nur als grobe Orientierung. Die Angaben sind ohne Gewähr und ersetzen keine individuelle Berechnung und Beratung vor Ort!",
+    "results": {
+      "production": "Jährliche Stromerzeugung der Solaranlage: ",
+      "consumption": "Jährlicher Eigenverbrauch: ",
+      "savings": "Jährliche Einsparungen: "
+    },
+    "calculate": "Berechnen"
   }
 }

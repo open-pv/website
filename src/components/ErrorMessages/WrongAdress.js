@@ -1,17 +1,16 @@
+import { Card, CardBody, CardHeader, Heading, Image } from "@chakra-ui/react"
 import React from "react"
 import { useTranslation } from "react-i18next"
 
 function WrongAdress() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   return (
-    <div className="error-message">
-      <p>{t("errorMessage.wrongAdress")}</p>
-      <img
-        src="images/googleMaps.gif"
-        alt="Showing how to get coordinates from Google Maps"
-        style={{ width: "100%", maxWidth: "500px" }}
-      />
-    </div>
+    <Card>
+      <CardHeader>
+        <Heading>{t("errorMessage.header")}</Heading>
+      </CardHeader>
+      <CardBody>{t("errorMessage.wrongAdress")}</CardBody>
+    </Card>
   )
 }
 

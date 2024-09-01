@@ -1,10 +1,13 @@
-import ShadingScene from "@openpv/simshady"
+import { ShadingScene, colormaps } from "@openpv/simshady"
 import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
 import { downloadBuildings } from "./download"
 import { processGeometries } from "./preprocessing"
 
-export async function mainSimulation(location, setGeometries) {
+const c0 = [0, 0.05, 0.2]
+const c1 = [1, 0.1, 0.1]
+
+export async function mainSimulation(location) {
   // Clear previous attributions if any
   if (window.setAttribution) {
     for (let attributionSetter of Object.values(window.setAttribution)) {
@@ -20,10 +23,11 @@ export async function mainSimulation(location, setGeometries) {
       new THREE.Vector3(0, 0, 0),
       80
     )
-    setGeometries(geometries)
+
+    window.setGeometries(geometries)
     if (geometries.simulation.length == 0) {
       window.setFrontendState("ErrorAdress")
-      return { simulationMesh: undefined, geometries: undefined }
+      return { simulationMesh: undefined }
     }
 
     const scene = new ShadingScene(
@@ -38,46 +42,50 @@ export async function mainSimulation(location, setGeometries) {
       scene.addShadingGeometry(geom)
     })
 
+    scene.addColorMap(colormaps.interpolateTwoColors({ c0: c0, c1: c1 }))
+
     let numSimulations
     window.numSimulations
       ? (numSimulations = window.numSimulations)
       : (numSimulations = 80)
     function loadingBarWrapperFunction(progress, total = 100) {
-      // console.log("Simulation Progress is ", progress)
       return window.setSimulationProgress(progress)
     }
 
-    let simulationMesh = await scene.calculate({
+    const simulationMesh = await scene.calculate({
       numberSimulations: numSimulations,
       diffuseIrradianceURL: undefined,
       pvCellEfficiency: 0.15,
       maxYieldPerSquareMeter: 1400 * 0.15,
+      urlDirectIrrandianceTIF:
+        "https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif",
+      urlDiffuseIrrandianceTIF:
+        "https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif",
       progressCallback: loadingBarWrapperFunction,
     })
 
-    const material = new THREE.MeshLambertMaterial({
-      vertexColors: true,
-      side: THREE.DoubleSide,
-    })
-    simulationMesh.material = material
-    simulationMesh.name = "simulationMesh"
-    return { simulationMesh, geometries }
+    let middle = new THREE.Vector3()
+    simulationMesh.geometry.computeBoundingBox()
+    simulationMesh.geometry.boundingBox.getCenter(middle)
+    simulationMesh.middle = middle
+
+    return { simulationMesh }
   }
 }
 
 export async function simulationForNewBuilding(props) {
-  console.log(props)
   // Get all geometries from the list and put it in one big simulation geometries. This needs
   // to be done since multiple buildings can be part of selectedMesh
-  let simulationGeometries = mergeGeometries(
+  let newSimulationGeometries = mergeGeometries(
     props.selectedMesh.map((mesh) => mesh.geometry)
   )
-  simulationGeometries.computeBoundingBox()
-  simulationGeometries.computeBoundingSphere()
-  let simulationCenter = new THREE.Vector3()
-  simulationGeometries.boundingBox.getCenter(simulationCenter)
 
-  const radius = simulationGeometries.boundingSphere.radius + 80
+  newSimulationGeometries.computeBoundingBox()
+  newSimulationGeometries.computeBoundingSphere()
+  let simulationCenter = new THREE.Vector3()
+  newSimulationGeometries.boundingBox.getCenter(simulationCenter)
+  console.log(props.geometries)
+  const radius = newSimulationGeometries.boundingSphere.radius + 80
   const allBuildingGeometries = [
     ...props.geometries.surrounding,
     ...props.geometries.background,
@@ -88,13 +96,12 @@ export async function simulationForNewBuilding(props) {
     simulationCenter,
     radius
   )
-  console.log(geometries)
   const shadingScene = new ShadingScene(
     parseFloat(props.geoLocation.lat),
     parseFloat(props.geoLocation.lon)
   )
-  console.log("latitude longitute", props.geoLocation)
-  shadingScene.addSimulationGeometry(simulationGeometries)
+  shadingScene.addColorMap(colormaps.interpolateTwoColors({ c0: c0, c1: c1 }))
+  shadingScene.addSimulationGeometry(newSimulationGeometries)
   geometries.surrounding.forEach((geom) => {
     shadingScene.addShadingGeometry(geom)
   })
@@ -104,34 +111,44 @@ export async function simulationForNewBuilding(props) {
     ? (numSimulations = window.numSimulations)
     : (numSimulations = 80)
 
+  shadingScene.addColorMap
+
   let simulationMesh = await shadingScene.calculate({
     numberSimulations: numSimulations,
     pvCellEfficiency: 0.15,
     maxYieldPerSquareMeter: 1400 * 0.15,
+    urlDirectIrrandianceTIF:
+      "https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif",
+    urlDiffuseIrrandianceTIF:
+      "https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif",
     progressCallback: (progress, total) =>
       console.log("Simulation Progress is ", progress),
   })
-  console.log("SimulationMesh", simulationMesh)
   const material = new THREE.MeshLambertMaterial({
     vertexColors: true,
     side: THREE.DoubleSide,
   })
   simulationMesh.material = material
   simulationMesh.name = "simulationMesh"
-  props.setDisplayedSimulationMesh([
-    ...props.displayedSimulationMesh,
-    simulationMesh,
-  ])
-  window.setDeletedSurroundingMeshes([
-    ...props.deletedSurroundingMeshes,
-    ...props.selectedMesh.map((obj) => obj.name),
-  ])
+
+  props.setSimulationMeshes([...props.simulationMeshes, simulationMesh])
+  /// Delete the new simualted building from the background / surrounding geometries list
+  const selectedMeshNames = props.selectedMesh.map((mesh) => mesh.geometry.name)
+
+  const updatedSurroundings = props.geometries.surrounding.filter(
+    (mesh) => !selectedMeshNames.includes(mesh.name)
+  )
+  const updatedBackground = props.geometries.background.filter(
+    (mesh) => !selectedMeshNames.includes(mesh.name)
+  )
+
+  window.setGeometries({
+    surrounding: updatedSurroundings,
+    background: updatedBackground,
+    simulation: props.geometries.simulation, // right now this is not updated
+    // The information on simulation geometries is stored in the simulationMeshes
+    // React state
+  })
 
   props.setSelectedMesh([])
-
-  // Neuen Radius erstellen anhand von Radius Simulation Mesh plus Puffer
-  // Alle Alten Geometries zusammenhauen
-  // shadingGeometries anhand von neuem Radius, neuem Mittelpunkt und allen alten Geometries erstellen
-  // simshady initialisieren und rechnen
-  // Neue Simulation Meshes anzeigen
 }

@@ -8,19 +8,26 @@ import {
   DrawerHeader,
   DrawerOverlay,
   FormLabel,
+  ListItem,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   Stack,
   Switch,
   Text,
+  UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react"
+import React from "react"
 import { useTranslation } from "react-i18next"
 import { simulationForNewBuilding } from "../../simulation/main"
-import HoverHelp from "../Template/HoverHelp"
-import SliderWithLabel from "../Template/SliderWithLabel"
-
-import React from "react"
+import SavingCalculation from "../PVSimulation/SavingsCalculation"
 import ButtonWithHoverHelp from "../Template/ButtonWithHoverHelp"
-import OverlayDrawPV from "./OverlayDrawPV"
+import SliderWithLabel from "../Template/SliderWithLabel"
+import { createPVSystem } from "./Meshes/PVSystems"
 
 function Overlay({
   frontendState,
@@ -30,83 +37,173 @@ function Overlay({
   selectedMesh,
   setSelectedMesh,
   geometries,
-  setDisplayedSimulationMesh,
-  displayedSimulationMesh,
-  deletedSurroundingMeshes,
   geoLocation,
-  visiblePVSystems,
-  setvisiblePVSystems,
+  pvSystems,
+  setPVSystems,
   pvPoints,
   setPVPoints,
+  simulationMeshes,
+  setSimulationMeshes,
 }) {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isOpenDrawer,
+    onOpen: onOpenDrawer,
+    onClose: onCloseDrawer,
+  } = useDisclosure()
+  const {
+    isOpen: isOpenModalControls,
+    onOpen: onOpenModalControls,
+    onClose: onCloseModalControls,
+  } = useDisclosure()
   const { t } = useTranslation()
   const btnRef = React.useRef()
+  const handleCreatePVButtonClick = () => {
+    createPVSystem({
+      setPVSystems,
+      pvPoints,
+      setPVPoints,
+      simulationMeshes,
+    })
+    setFrontendState("Results")
+  }
+
+  const handleAbortButtonClick = () => {
+    setFrontendState("Results")
+  }
 
   return (
-    <OverlayWrapper>
-      {frontendState == "Results" && (
-        <>
-          <Button
-            ref={btnRef}
-            colorScheme="teal"
-            onClick={onOpen}
-            variant={"link"}
-            zIndex={100}
-          >
-            {t("button.options")}
-          </Button>
-          <ButtonWithHoverHelp
-            buttonLabel={"PV Anlage einzeichnen"}
-            onClick={() => {
-              setFrontendState("DrawPV")
-              onClose()
-            }}
-            hoverText={
-              "PV-Anlage in der Karte einzeichnen und Jahresbetrag berechnen."
-            }
-          />
-        </>
-      )}
-      {frontendState == "DrawPV" && (
-        <OverlayDrawPV
-          setvisiblePVSystems={setvisiblePVSystems}
-          visiblePVSystems={visiblePVSystems}
-          pvPoints={pvPoints}
-          setPVPoints={setPVPoints}
-        />
-      )}
-      {selectedMesh.length > 0 && (
+    <>
+      <OverlayWrapper>
+        {frontendState == "Results" && (
+          <>
+            <Button
+              ref={btnRef}
+              colorScheme="teal"
+              onClick={onOpenDrawer}
+              variant={"link"}
+              zIndex={100}
+            >
+              {t("button.options")}
+            </Button>
+          </>
+        )}
+
         <Button
+          onClick={onOpenModalControls}
           colorScheme="teal"
           variant={"link"}
-          className="button-high-prio"
-          onClick={async () =>
-            await simulationForNewBuilding({
-              selectedMesh,
-              setSelectedMesh,
-              geometries,
-              displayedSimulationMesh,
-              setDisplayedSimulationMesh,
-              deletedSurroundingMeshes,
-              geoLocation,
-            })
-          }
         >
-          {t("button.simulateBuilding")}
+          {t("mapControlHelp.button")}
         </Button>
-      )}
-      <CustomDrawer
-        isOpen={isOpen}
-        onClose={onClose}
-        showTerrain={showTerrain}
-        setShowTerrain={setShowTerrain}
-      />
-    </OverlayWrapper>
+        <ModalControls
+          isOpen={isOpenModalControls}
+          onClose={onCloseModalControls}
+        />
+        <CustomDrawer
+          isOpen={isOpenDrawer}
+          onClose={onCloseDrawer}
+          showTerrain={showTerrain}
+          setShowTerrain={setShowTerrain}
+        />
+      </OverlayWrapper>
+      <HighPrioWrapper>
+        {frontendState == "Results" && (
+          <ButtonWithHoverHelp
+            buttonLabel={t("button.drawPVSystem")}
+            onClick={() => {
+              setFrontendState("DrawPV")
+              onCloseDrawer()
+            }}
+            className={pvSystems.length == 0 ? "button-high-prio" : ""}
+            hoverText={t("button.drawPVSystemHover")}
+          />
+        )}
+        <SavingCalculation pvSystems={pvSystems} />
+        {selectedMesh.length > 0 && (
+          <Button
+            className="button-high-prio"
+            onClick={async () =>
+              await simulationForNewBuilding({
+                selectedMesh,
+                setSelectedMesh,
+                simulationMeshes,
+                setSimulationMeshes,
+                geometries,
+                geoLocation,
+              })
+            }
+          >
+            {t("button.simulateBuilding")}
+          </Button>
+        )}
+        {frontendState == "DrawPV" && (
+          <>
+            {pvPoints.length > 0 && (
+              <>
+                <Button
+                  className="button-high-prio"
+                  onClick={handleCreatePVButtonClick}
+                >
+                  {t("button.createPVSystem")}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setPVPoints(pvPoints.slice(0, -1))
+                  }}
+                >
+                  {t("button.deleteLastPoint")}
+                </Button>
+              </>
+            )}
+            <Button onClick={handleAbortButtonClick}>
+              {t("button.cancel")}
+            </Button>
+          </>
+        )}
+      </HighPrioWrapper>
+    </>
   )
 }
 
 const OverlayWrapper = ({ children }) => {
+  return (
+    <>
+      <Box
+        display="flex"
+        flexDirection="row"
+        justifyContent="flex-start"
+        pointerEvents="none"
+        zIndex={100}
+        minWidth={0}
+        minHeight={0}
+        overflow="hidden"
+        sx={{
+          "> *": {
+            pointerEvents: "auto",
+          },
+        }}
+      >
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="flex-start" // Add this line
+          gap="20px"
+          padding="10px"
+          height="fit-content"
+          maxHeight="100%"
+          flexWrap="nowrap"
+          minWidth={0}
+          minHeight={0}
+          overflow="hidden"
+        >
+          {children}
+        </Box>
+      </Box>
+    </>
+  )
+}
+
+const HighPrioWrapper = ({ children }) => {
   return (
     <>
       <Box
@@ -136,6 +233,7 @@ const OverlayWrapper = ({ children }) => {
           minWidth={0}
           minHeight={0}
           overflow="hidden"
+          marginLeft="auto" // Add this line
         >
           {children}
         </Box>
@@ -159,14 +257,6 @@ const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
             <>
               <Text as="b">{t("sidebar.header")}</Text>
               <Text>{t("sidebar.mainText")}</Text>
-
-              <Button variant={"link"}>Baum erstellen</Button>
-              <HoverHelp
-                label={
-                  "Lege einen Baum an, um diesen in der nächsten Simulation zu berücksichtigen."
-                }
-              />
-
               <FormLabel>
                 {t("button.showMap")}
                 <Switch
@@ -179,8 +269,8 @@ const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
 
               <SliderWithLabel
                 sliderProps={{ min: 1, max: 200 }}
-                label={"Anzahl Simulationen"}
-                hoverHelpLabel={"Hi"}
+                label={t("sidebar.numberSimulations")}
+                hoverHelpLabel={t("sidebar.numberSimulationsHover")}
                 sliderValue={sliderValue}
                 setSliderValue={(newValue) => {
                   setSliderValue(newValue)
@@ -196,3 +286,43 @@ const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
 }
 
 export default Overlay
+
+const ModalControls = ({ isOpen, onClose }) => {
+  const { t } = useTranslation()
+  const touchDeviceText = window.isTouch ? "touch." : ""
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>{t(`mapControlHelp.title`)}</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <UnorderedList>
+            <ListItem>
+              {t(`mapControlHelp.${touchDeviceText}leftMouse`)}
+            </ListItem>
+            <ListItem>
+              {t(`mapControlHelp.${touchDeviceText}rightMouse`)}
+            </ListItem>
+            <ListItem>{t(`mapControlHelp.${touchDeviceText}wheel`)}</ListItem>
+            <ListItem>
+              {t(`mapControlHelp.${touchDeviceText}doubleClick`)}
+            </ListItem>
+          </UnorderedList>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
+  )
+}
+
+function OverlayDrawPV({
+  setPVSystems,
+  pvPoints,
+  setPVPoints,
+  setFrontendState,
+  simulationMeshes,
+}) {
+  const { t } = useTranslation()
+
+  return <></>
+}
