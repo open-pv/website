@@ -26,7 +26,6 @@ import { useTranslation } from "react-i18next"
 import { simulationForNewBuilding } from "../../simulation/main"
 import SavingCalculation from "../PVSimulation/SavingsCalculation"
 import ButtonWithHoverHelp from "../Template/ButtonWithHoverHelp"
-import HoverHelp from "../Template/HoverHelp"
 import SliderWithLabel from "../Template/SliderWithLabel"
 import { createPVSystem } from "./Meshes/PVSystems"
 
@@ -58,6 +57,19 @@ function Overlay({
   } = useDisclosure()
   const { t } = useTranslation()
   const btnRef = React.useRef()
+  const handleCreatePVButtonClick = () => {
+    createPVSystem({
+      setPVSystems,
+      pvPoints,
+      setPVPoints,
+      simulationMeshes,
+    })
+    setFrontendState("Results")
+  }
+
+  const handleAbortButtonClick = () => {
+    setFrontendState("Results")
+  }
 
   return (
     <>
@@ -73,46 +85,9 @@ function Overlay({
             >
               {t("button.options")}
             </Button>
-            <ButtonWithHoverHelp
-              buttonLabel={"PV Anlage einzeichnen"}
-              onClick={() => {
-                setFrontendState("DrawPV")
-                onCloseDrawer()
-              }}
-              hoverText={
-                "PV-Anlage in der Karte einzeichnen und Jahresbetrag berechnen."
-              }
-            />
           </>
         )}
-        {frontendState == "DrawPV" && (
-          <OverlayDrawPV
-            setPVSystems={setPVSystems}
-            pvPoints={pvPoints}
-            setPVPoints={setPVPoints}
-            setFrontendState={setFrontendState}
-            simulationMeshes={simulationMeshes}
-          />
-        )}
-        {selectedMesh.length > 0 && (
-          <Button
-            colorScheme="teal"
-            variant={"link"}
-            className="button-high-prio"
-            onClick={async () =>
-              await simulationForNewBuilding({
-                selectedMesh,
-                setSelectedMesh,
-                simulationMeshes,
-                setSimulationMeshes,
-                geometries,
-                geoLocation,
-              })
-            }
-          >
-            {t("button.simulateBuilding")}
-          </Button>
-        )}
+
         <Button
           onClick={onOpenModalControls}
           colorScheme="teal"
@@ -132,7 +107,59 @@ function Overlay({
         />
       </OverlayWrapper>
       <HighPrioWrapper>
+        {frontendState == "Results" && (
+          <ButtonWithHoverHelp
+            buttonLabel={t("button.drawPVSystem")}
+            onClick={() => {
+              setFrontendState("DrawPV")
+              onCloseDrawer()
+            }}
+            className={pvSystems.length == 0 ? "button-high-prio" : ""}
+            hoverText={t("button.drawPVSystemHover")}
+          />
+        )}
         <SavingCalculation pvSystems={pvSystems} />
+        {selectedMesh.length > 0 && (
+          <Button
+            className="button-high-prio"
+            onClick={async () =>
+              await simulationForNewBuilding({
+                selectedMesh,
+                setSelectedMesh,
+                simulationMeshes,
+                setSimulationMeshes,
+                geometries,
+                geoLocation,
+              })
+            }
+          >
+            {t("button.simulateBuilding")}
+          </Button>
+        )}
+        {frontendState == "DrawPV" && (
+          <>
+            {pvPoints.length > 0 && (
+              <>
+                <Button
+                  className="button-high-prio"
+                  onClick={handleCreatePVButtonClick}
+                >
+                  {t("button.createPVSystem")}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setPVPoints(pvPoints.slice(0, -1))
+                  }}
+                >
+                  {t("button.deleteLastPoint")}
+                </Button>
+              </>
+            )}
+            <Button onClick={handleAbortButtonClick}>
+              {t("button.cancel")}
+            </Button>
+          </>
+        )}
       </HighPrioWrapper>
     </>
   )
@@ -143,9 +170,8 @@ const OverlayWrapper = ({ children }) => {
     <>
       <Box
         display="flex"
-        flexDirection="column" // First direction Column and second Box flexDirection
-        // row pushes buttons to the upper left corner
-        justifyContent="space-between"
+        flexDirection="row"
+        justifyContent="flex-start"
         pointerEvents="none"
         zIndex={100}
         minWidth={0}
@@ -159,12 +185,13 @@ const OverlayWrapper = ({ children }) => {
       >
         <Box
           display="flex"
-          flexDirection="row"
+          flexDirection="column"
+          alignItems="flex-start" // Add this line
           gap="20px"
           padding="10px"
-          width="fit-content"
-          maxWidth="100%"
-          flexWrap="wrap"
+          height="fit-content"
+          maxHeight="100%"
+          flexWrap="nowrap"
           minWidth={0}
           minHeight={0}
           overflow="hidden"
@@ -230,14 +257,6 @@ const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
             <>
               <Text as="b">{t("sidebar.header")}</Text>
               <Text>{t("sidebar.mainText")}</Text>
-
-              <Button variant={"link"}>Baum erstellen</Button>
-              <HoverHelp
-                label={
-                  "Lege einen Baum an, um diesen in der nächsten Simulation zu berücksichtigen."
-                }
-              />
-
               <FormLabel>
                 {t("button.showMap")}
                 <Switch
@@ -250,8 +269,8 @@ const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
 
               <SliderWithLabel
                 sliderProps={{ min: 1, max: 200 }}
-                label={"Anzahl Simulationen"}
-                hoverHelpLabel={"Hi"}
+                label={t("sidebar.numberSimulations")}
+                hoverHelpLabel={t("sidebar.numberSimulationsHover")}
                 sliderValue={sliderValue}
                 setSliderValue={(newValue) => {
                   setSliderValue(newValue)
@@ -304,48 +323,6 @@ function OverlayDrawPV({
   simulationMeshes,
 }) {
   const { t } = useTranslation()
-  const handleCreatePVButtonClick = () => {
-    createPVSystem({
-      setPVSystems,
-      pvPoints,
-      setPVPoints,
-      simulationMeshes,
-    })
-    setFrontendState("Results")
-  }
 
-  const handleAbortButtonClick = () => {
-    setFrontendState("Results")
-  }
-
-  return (
-    <>
-      <Button
-        onClick={handleCreatePVButtonClick}
-        variant={"link"}
-        colorScheme="teal"
-      >
-        {" "}
-        {t("button.createPVSystem")}
-      </Button>
-      {pvPoints.length > 0 && (
-        <Button
-          variant={"link"}
-          colorScheme="teal"
-          onClick={() => {
-            setPVPoints(pvPoints.slice(0, -1))
-          }}
-        >
-          {t("button.deleteLastPoint")}
-        </Button>
-      )}
-      <Button
-        onClick={handleAbortButtonClick}
-        variant={"link"}
-        colorScheme="teal"
-      >
-        {t("button.cancel")}
-      </Button>
-    </>
-  )
+  return <></>
 }

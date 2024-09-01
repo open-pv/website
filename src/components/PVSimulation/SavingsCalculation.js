@@ -122,7 +122,7 @@ function SavingCalculation({ pvSystems }) {
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{"Wirtschaftlichkeit berechnen"}</ModalHeader>
+          <ModalHeader>{t("savingsCalculation.button")}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <>
@@ -184,7 +184,7 @@ function SavingCalculation({ pvSystems }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="teal" mr={3} onClick={handleCalculateSaving}>
+            <Button mr={3} onClick={handleCalculateSaving}>
               {t("savingsCalculation.calculate")}
             </Button>
           </ModalFooter>

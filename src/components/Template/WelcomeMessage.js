@@ -92,16 +92,10 @@ function WelcomeMessage() {
         </ModalBody>
 
         <ModalFooter>
-          <Button
-            colorScheme="blue"
-            mr={3}
-            onClick={prevPage}
-            isDisabled={currentPage === 1}
-          >
+          <Button mr={3} onClick={prevPage} isDisabled={currentPage === 1}>
             {t("previous")}
           </Button>
           <Button
-            colorScheme="blue"
             mr={3}
             onClick={nextPage}
             isDisabled={currentPage === numPages}
