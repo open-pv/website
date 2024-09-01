@@ -1,12 +1,15 @@
 {
   "sidebar": {
     "header": "Goal of this website",
-    "mainText": "Enter your address or coordinates in the search field. The tool will then calculate the potential for a solar system on your roof and facade area."
+    "mainText": "The tool will then calculate the potential for a solar system on your roof and facade area.",
+    "numberSimulations": "Number of Sun positions to average",
+    "numberSimulationsHover": "For the simulation, we average over different sun positions, which are evenly distributed throughout the year. The larger you choose this number, the more accurate the simulation becomes. However, the simulation also takes longer."
   },
   "yes": "yes",
   "no": "no",
   "next": "Next",
   "previous": "Previous",
+  "close": "Close",
   "searchField": {
     "placeholder": "Enter your address or coordinates - e.g. Lange Point 20, Freising"
   },
@@ -46,6 +49,8 @@
     "options": "Options",
     "simulateBuilding": "Simulate Building",
     "createPVSystem": "Create PV System",
+    "drawPVSystem": "Draw a new PV system",
+    "drawPVSystemHover": "Create new edges of the PV system by clicking. Afterwards click on the 'Create PV System' button.",
     "cancel": "Cancel",
     "deleteLastPoint": "Delete Last Point",
     "startSimulation": "Start simulation",
@@ -58,5 +63,39 @@
   "map": {
     "coordinates": "Coordinates",
     "userSelection": "Manual Selection"
+  },
+
+  "Footer": {
+    "privacyPolicy": "Privacy Policy"
+  },
+  "mapControlHelp": {
+    "button": "How to control the Map?",
+    "title": "User Manual",
+    "leftMouse": "Left Mouse Button: Move on the map",
+    "rightMouse": "Right Mouse Button: Rotate the map",
+    "wheel": "Mouse Wheel: Zoom in and out",
+    "doubleClick": "Double click: Choose another building for a simulation",
+    "touch": {
+      "leftMouse": "One finger: Move on the map",
+      "rightMouse": "Two fingers: Rotate the map",
+      "wheel": "Two fingers: Zoom in and out",
+      "doubleClick": "Double-tap on a building: Select another building for simulation"
+    }
+  },
+  "savingsCalculation": {
+    "button": "Calculate Earnings",
+    "consumptionTitle": "Annual electricity consumption in kWh",
+    "consumptionHelperInfo": "As a rough estimate: Calculate 800 kWh per person in the household, 2000 kWh for a heat pump, and an additional 2000 kWh per electric car.",
+    "consumptionHelperLabel": "[Calculate your electricity consumption]",
+    "storageTitle": "Electricity Storage capacity in kWh",
+    "electricityPriceTitle": "Electricity price in cents",
+    "electricityPricePlaceholder": "Price per kWh in cents",
+    "disclaimer": "The calculated yields and savings are only for rough guidance. The information is without guarantee and does not replace individual calculation and on-site consultation!",
+    "results": {
+      "production": "Annual electricity generation of the solar system: ",
+      "consumption": "Annual self-consumption: ",
+      "savings": "Annual savings: "
+    },
+    "calculate": "Calculate"
   }
 }

@@ -5,10 +5,11 @@ export default function ButtonWithHoverHelp({
   buttonLabel,
   onClick,
   hoverText,
+  className,
 }) {
   return (
     <Tooltip label={hoverText}>
-      <Button variant={"link"} colorScheme="teal" onClick={onClick}>
+      <Button onClick={onClick} className={className}>
         {buttonLabel}
       </Button>
     </Tooltip>
