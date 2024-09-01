@@ -30,7 +30,7 @@ function Index() {
   window.setDeletedSurroundingMeshes = setDeletedSurroundingMeshes
   // The federal State where the material comes from, ie "BY"
   const [federalState, setFederalState] = useState(false)
-  window.setFederalState = setFederalState
+  window.setFederalState = setFederalState;
 
   // Simulation States
   const [geometries, setGeometries] = useState({

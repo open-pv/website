@@ -9,6 +9,12 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js"
 import { attributions } from "../data/dataLicense"
 import { coordinatesLonLat, projectToWebMercator } from "./location"
 
+let federalState = null;
+
+export function getFederalState(){
+  return federalState;
+}
+
 export function tile2meters() {
   return 1222.992452 * mercator2meters()
 }
@@ -110,7 +116,8 @@ async function downloadFile(download_spec) {
     const ids = new TextDecoder().decode(buffer)
     for (const bundesland of Object.keys(attributions)) {
       if (ids.includes(`DE${bundesland}`)) {
-        window.setFederalState(bundesland)
+        window.setFederalState(bundesland);
+        federalState = bundesland;
       }
     }
 

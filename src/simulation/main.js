@@ -1,7 +1,7 @@
 import ShadingScene from "@openpv/simshady"
 import * as THREE from "three"
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
-import { downloadBuildings, downloadVegetationHeightmap } from "./download"
+import { downloadBuildings, downloadVegetationHeightmap, getFederalState } from "./download"
 import { coordinatesWebMercator } from './location'
 import { processGeometries } from "./preprocessing"
 
@@ -45,7 +45,7 @@ export async function mainSimulation(location, setGeometries) {
       scene.addShadingGeometry(geom)
     })
 
-
+    if (getFederalState() == "BY"){
     const [cx, cy] = coordinatesWebMercator;
     console.log("coordinatesWebMercator:"+coordinatesWebMercator)
     const bufferDistance = 200; // 1km buffer, adjust as needed
@@ -107,7 +107,7 @@ export async function mainSimulation(location, setGeometries) {
     }
   
     console.log("Vegetation processing completed");
-
+  }
   
 
     //vegetationGeometries.surrounding.forEach((geom) => {

@@ -63,11 +63,15 @@ const Scene = ({
 
       {simulationMesh.length > 0 && <SimulationMesh meshes={simulationMesh} />}
 
-      {vegetationGeometries.background.length > 0 && (
-        <VegetationMesh geometries={vegetationGeometries.background} />
-      )}
-      {vegetationGeometries.surrounding.length > 0 && (
-        <VegetationMesh geometries={vegetationGeometries.surrounding} />
+      {vegetationGeometries && (
+        <>
+          {vegetationGeometries.background && vegetationGeometries.background.length > 0 && (
+            <VegetationMesh geometries={vegetationGeometries.background} />
+          )}
+          {vegetationGeometries.surrounding && vegetationGeometries.surrounding.length > 0 && (
+            <VegetationMesh geometries={vegetationGeometries.surrounding} />
+          )}
+        </>
       )}
 
       {selectedMesh && <HighlightedMesh meshes={selectedMesh} />}
