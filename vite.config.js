@@ -16,16 +16,6 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: "dist",
-      rollupOptions: {
-        onwarn(warning, warn) {
-          // Ignore certain warnings
-          if (warning.code === "DEPRECATED") return
-
-          // Use default for everything else
-          warn(warning)
-        },
-      },
     },
-    logLevel: "error", // Only show errors, not warnings
   }
 })
