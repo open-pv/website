@@ -3,7 +3,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist -b build"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",
