@@ -49,8 +49,7 @@ export async function mainSimulation(location) {
       scene.addShadingGeometry(geom)
     })
 
-    //scene.addColorMap(colormaps.interpolateTwoColors({ c0: c0, c1: c1 }))
-    scene.addColorMap(colormaps.viridis)
+    scene.addColorMap(colormaps.interpolateTwoColors({ c0: c0, c1: c1 }))
 
     if (getFederalState() == "BY"){
     const [cx, cy] = coordinatesWebMercator;
