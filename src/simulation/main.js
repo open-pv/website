@@ -133,7 +133,7 @@ export async function mainSimulation(location) {
       numberSimulations: numSimulations,
       diffuseIrradianceURL: undefined,
       pvCellEfficiency: 0.2,
-      maxYieldPerSquareMeter: 1400 * 0.2,
+      maxYieldPerSquareMeter: 1500 * 0.2,
       urlDirectIrrandianceTIF:
         "https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif",
       urlDiffuseIrrandianceTIF:
