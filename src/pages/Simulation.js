@@ -25,7 +25,7 @@ function Index() {
 
   // The federal State where the material comes from, ie "BY"
   const [federalState, setFederalState] = useState(false)
-  window.setFederalState = setFederalState
+  window.setFederalState = setFederalState;
 
   // Simulation States
   const [geometries, setGeometries] = useState({
@@ -41,6 +41,9 @@ function Index() {
   window.setGeometries = setGeometries
   window.setFrontendState = setFrontendState
   window.setSimulationProgress = setSimulationProgress
+
+  const [vegetationGeometries, setVegetationGeometries] = useState([])
+  window.setVegetationGeometries = setVegetationGeometries
 
   const loadAndSimulate = async () => {
     const { simulationMesh } = await mainSimulation(location)
@@ -89,6 +92,7 @@ function Index() {
             setSelectedMesh={setSelectedMesh}
             pvPoints={pvPoints}
             setPVPoints={setPVPoints}
+            vegetationGeometries={vegetationGeometries}
           />
         )}
 
