@@ -9,6 +9,7 @@
   "no": "Nein",
   "next": "Nächste",
   "previous": "Vorherige",
+  "close": "Schließen",
   "searchField": {
     "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Lange Point 20, Freising"
   },
@@ -56,10 +57,11 @@
   },
   "WelcomeMessage": {
     "title": "Willkommen bei OpenPV",
-    "firstPage": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten bestimmen. Dafür geben Sie ihre Adresse im Suchfeld ein und klicken Sie auf Start.",
+    "firstPage": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten bestimmen. Dafür geben Sie ihre Adresse im Suchfeld ein und klicken Sie auf 'Simulation starten'.",
     "secondPage": "Auf der Karte können Sie das Ergebnis der Verschattungssimulation betrachten. Mit Doppelklick können Sie weitere Gebäude für die Simulation auswählen.",
-    "thirdPage": "Mit Optionen -> PV Anlage einzeichnen können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
-    "fourthPage": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Cookies!"
+    "thirdPage": "Über 'Neue PV-Anlage einzeichnen' können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
+    "fourthPage": "Anschließend können Sie mit dem Button 'Wirtschaftlichkeit der Anlage berechnen' die jährlichen Einnahmen der Anlage abschätzen.",
+    "fifthPage": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Tracking-Cookies!"
   },
   "button": {
     "showMap": "Karte anzeigen",
@@ -101,12 +103,11 @@
   },
   "savingsCalculation": {
     "button": "Wirtschaftlichkeit der Anlage berechnen",
-    "consumptionTitle": "Jährlicher Stromverbrauch",
-    "consumptionHelper": "Als grober Schätzwert gilt: Rechne pro Person im Haushalt mit 800 kWh, für eine Wärmepumpe 2000 kWh und pro Elektroauto weitere 2000 kWh.",
-    "consumptionPlaceholder": "Jährlicher Stromverbrauch in kWh",
-    "storageTitle": "Stromspeicher",
-    "storagePlaceholder": "Speicherkapazität in kWh",
-    "electricityPriceTitle": "Strompreis in cent",
+    "consumptionTitle": "Jährlicher Stromverbrauch in kWh",
+    "consumptionHelperInfo": "Als grober Schätzwert gilt: Rechne pro Person im Haushalt mit 800 kWh, für eine Wärmepumpe 2000 kWh und pro Elektroauto weitere 2000 kWh.",
+    "consumptionHelperLabel": "[So berechnen Sie ihren Stromverbrauch]",
+    "storageTitle": "Batteriekapazität in kWh",
+    "electricityPriceTitle": "Strompreis in Cent",
     "electricityPricePlaceholder": "Preis pro kWh in cent",
     "disclaimer": "Die berechneten Erträge und Einsparungen dienen nur als grobe Orientierung. Die Angaben sind ohne Gewähr und ersetzen keine individuelle Berechnung und Beratung vor Ort!",
     "results": {

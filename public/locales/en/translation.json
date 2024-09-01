@@ -9,6 +9,7 @@
   "no": "no",
   "next": "Next",
   "previous": "Previous",
+  "close": "Close",
   "searchField": {
     "placeholder": "Enter your address or coordinates - e.g. Lange Point 20, Freising"
   },
@@ -83,11 +84,10 @@
   },
   "savingsCalculation": {
     "button": "Calculate Earnings",
-    "consumptionTitle": "Annual electricity consumption",
-    "consumptionHelper": "As a rough estimate: Calculate 800 kWh per person in the household, 2000 kWh for a heat pump, and an additional 2000 kWh per electric car.",
-    "consumptionPlaceholder": "Annual electricity consumption in kWh",
-    "storageTitle": "Electricity storage",
-    "storagePlaceholder": "Storage capacity in kWh",
+    "consumptionTitle": "Annual electricity consumption in kWh",
+    "consumptionHelperInfo": "As a rough estimate: Calculate 800 kWh per person in the household, 2000 kWh for a heat pump, and an additional 2000 kWh per electric car.",
+    "consumptionHelperLabel": "[Calculate your electricity consumption]",
+    "storageTitle": "Electricity Storage capacity in kWh",
     "electricityPriceTitle": "Electricity price in cents",
     "electricityPricePlaceholder": "Price per kWh in cents",
     "disclaimer": "The calculated yields and savings are only for rough guidance. The information is without guarantee and does not replace individual calculation and on-site consultation!",
