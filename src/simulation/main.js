@@ -50,8 +50,8 @@ export async function mainSimulation(location, setGeometries) {
     let simulationMesh = await scene.calculate({
       numberSimulations: numSimulations,
       diffuseIrradianceURL: undefined,
-      pvCellEfficiency: 0.2,
-      maxYieldPerSquareMeter: 1400 * 0.2,
+      pvCellEfficiency: 0.15,
+      maxYieldPerSquareMeter: 1400 * 0.15,
       progressCallback: loadingBarWrapperFunction,
     })
 
@@ -106,8 +106,8 @@ export async function simulationForNewBuilding(props) {
 
   let simulationMesh = await shadingScene.calculate({
     numberSimulations: numSimulations,
-    pvCellEfficiency: 0.2,
-    maxYieldPerSquareMeter: 1400 * 0.2,
+    pvCellEfficiency: 0.15,
+    maxYieldPerSquareMeter: 1400 * 0.15,
     progressCallback: (progress, total) =>
       console.log("Simulation Progress is ", progress),
   })
