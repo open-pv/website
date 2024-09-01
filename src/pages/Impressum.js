@@ -12,7 +12,7 @@ const Impressum = () => {
         </CardHeader>
         <CardBody>
           <p>
-            Florian Kotthoff <br />
+            Martin Großhauser <br />
             Arnulfstraße 138 <br />
             80634 München <br />
             info@openpv.de <br />
