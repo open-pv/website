@@ -48,7 +48,7 @@ export async function mainSimulation(location, setGeometries) {
 
     const [cx, cy] = coordinatesWebMercator;
     console.log("coordinatesWebMercator:"+coordinatesWebMercator)
-    const bufferDistance = 1000; // 1km buffer, adjust as needed
+    const bufferDistance = 200; // 1km buffer, adjust as needed
     const bbox = [
       cx - bufferDistance,
       cy - bufferDistance,
@@ -85,7 +85,7 @@ export async function mainSimulation(location, setGeometries) {
         vegetationRaster,
         new THREE.Vector3(0, 0, 0),
         30,
-        300,
+        80,
       );
       
       console.log("Vegetation Geometries processed successfully");

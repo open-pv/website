@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { coordinatesWebMercator } from './location';
 import { mercator2meters } from './download';
+import { coordinatesWebMercator } from './location';
 
 export function processVegetationHeightmapData(heightmapData) {
   if (!heightmapData || !heightmapData.bbox || !heightmapData.data) {
@@ -108,7 +108,7 @@ function createVegetationGeometry(x, y, vegHeight) {
   const depth = 1;
 
   const geometry = new THREE.BoxGeometry(width, depth, 20).toNonIndexed();
-  geometry.translate(x, y, vegHeight-20);
+  geometry.translate(x, y, vegHeight-10);
 
   return geometry;
 }

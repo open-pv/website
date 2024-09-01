@@ -8,6 +8,8 @@ const VegetationMesh = ({ geometries }) => {
           <meshLambertMaterial
             vertexColors={false}
             color={"green"}
+            //transparent={true}
+            //opacity={0.1}
             side={THREE.DoubleSide}
           />
         </mesh>
