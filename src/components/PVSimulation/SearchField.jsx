@@ -7,7 +7,6 @@ export default function SearchField({ callback }) {
   const [inputValue, setInputValue] = useState("")
   const [suggestions, setSuggestions] = useState([])
   const [isSelectedAdress, setIsSelectedAdress] = useState(false)
-
   window.searchFieldInput = inputValue
   const { t } = useTranslation()
 
@@ -21,6 +20,17 @@ export default function SearchField({ callback }) {
       }
       if (inputValue.length > 2) {
         try {
+          const inputValueParts = inputValue.split(" ")
+          let streetAddressNumber = null
+
+          // Find the street address number
+          for (const inputPart of inputValueParts) {
+            if (/^\d+[a-zA-Z]?$/.test(inputPart)) {
+              streetAddressNumber = inputPart
+              break
+            }
+          }
+
           const response = await fetch(
             `https://photon.komoot.io/api/?q=${encodeURIComponent(
               inputValue
@@ -28,15 +38,20 @@ export default function SearchField({ callback }) {
           )
           const data = await response.json()
           console.log("data", data)
+
           setSuggestions(
-            data.features.map(
-              (feature) =>
-                feature.properties.name +
+            data.features.map((feature) => {
+              let suggestion = feature.properties.name
+              if (streetAddressNumber) {
+                suggestion += " " + streetAddressNumber
+              }
+              suggestion +=
                 ", " +
                 feature.properties.postcode +
                 " " +
                 feature.properties.city
-            )
+              return suggestion
+            })
           )
         } catch (error) {
           console.error("Error fetching suggestions:", error)
@@ -45,6 +60,7 @@ export default function SearchField({ callback }) {
         setSuggestions([])
       }
     }
+
     const debounceTimer = setTimeout(fetchSuggestions, 300)
     return () => clearTimeout(debounceTimer)
   }, [inputValue, isSelectedAdress])
