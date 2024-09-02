@@ -92,6 +92,7 @@ export default function SearchField({ callback }) {
       <div style={{ display: "flex", alignItems: "center" }}>
         <Input
           value={inputValue}
+          placeholder={t("searchField.placeholder")}
           onChange={(evt) => setInputValue(evt.target.value)}
           margin={"5px"}
         />
