@@ -102,6 +102,7 @@ function CustomMapControl(props) {
         RIGHT: THREE.MOUSE.ROTATE,
       }}
       screenSpacePanning={false}
+      dampingFactor={1}
       maxPolarAngle={Math.PI / 2}
     />
   )
