@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import * as THREE from "three"
 import WrongAdress from "../components/ErrorMessages/WrongAdress"
+import Footer from "../components/Footer"
 import LoadingBar from "../components/Template/LoadingBar"
-import Footer from "../components/ThreeViewer/Footer"
 import Overlay from "../components/ThreeViewer/Overlay"
 import Scene from "../components/ThreeViewer/Scene"
 import Main from "../Main"
@@ -25,7 +25,7 @@ function Index() {
 
   // The federal State where the material comes from, ie "BY"
   const [federalState, setFederalState] = useState(false)
-  window.setFederalState = setFederalState;
+  window.setFederalState = setFederalState
 
   // Simulation States
   const [geometries, setGeometries] = useState({

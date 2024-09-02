@@ -1,7 +1,7 @@
 import i18n from "i18next"
 import React from "react"
 import { useTranslation } from "react-i18next"
-import { attributions, licenseLinks } from "../../data/dataLicense"
+import { attributions, licenseLinks } from "../data/dataLicense"
 
 function Footer({ federalState, frontendState }) {
   const attr = federalState ? attributions[federalState] : undefined
@@ -25,21 +25,23 @@ function Footer({ federalState, frontendState }) {
             <a href="https://www.govdata.de/dl-de/by-2-0" target="_blank">
               dl-de/by-2-0
             </a>
-            )
-
-          |
-
-            Geländemodell:&nbsp;
+            ) | Geländemodell:&nbsp;
             <a href="https://sonny.4lima.de" target="_blank">
               &copy;&nbsp;Sonny
             </a>
             &nbsp;(
-            <a href="https://creativecommons.org/licenses/by/4.0/deed.en" target="_blank">
+            <a
+              href="https://creativecommons.org/licenses/by/4.0/deed.en"
+              target="_blank"
+            >
               CC-BY-4.0
             </a>
-            ), erstellt aus 
-            <a href="https://drive.google.com/file/d/1rgGA22Ha42ulQORK9Pfp4JPpPAIKFx6Q/view" target="_blank">
-              verschiedenen Quellen 
+            ), erstellt aus
+            <a
+              href="https://drive.google.com/file/d/1rgGA22Ha42ulQORK9Pfp4JPpPAIKFx6Q/view"
+              target="_blank"
+            >
+              verschiedenen Quellen
             </a>
           </p>
         )}

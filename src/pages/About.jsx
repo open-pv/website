@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react"
 import React from "react"
 import { useTranslation } from "react-i18next"
-import Footer from "../components/ThreeViewer/Footer"
+import Footer from "../components/Footer"
 
 import Main from "../Main"
 
