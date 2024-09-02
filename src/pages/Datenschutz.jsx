@@ -94,12 +94,15 @@ const Datenschutz = () => {
               Adresse und Koordinaten: Die Adresse, welche Sie in die Suchmaske
               eingeben, wird an Nominatim zur Koordinatenermittlung übermittelt.
               Weitere Infos zu Nominatim finden Sie unter dem Abschnitt "Plugins
-              und Tools". Die Koordinaten werden verwendet, um die relevanten
-              Gebäude und Geländedaten von unserem Server zu laden. Die genauen
-              Koordinaten werden nicht auf unserem Server gespeichert. Zu
-              statistischen Zwecken und zur Optimierung unseres Angebotes
-              speichern wir die Region (gerundete Koordinaten) der angefragten
-              Adresse (aufgelöst auf wenige Kilometer).
+              und Tools". Zur automatischen Adressvervollständigung wird die
+              Eingabe in das Suchfeld an https://photon.komoot.io/ gesendet.
+              Weitere Infos zu Photon von Komoot finden Sie unter dem Abschnitt
+              "Plugins und Tools". Die Koordinaten werden verwendet, um die
+              relevanten Gebäude und Geländedaten von unserem Server zu laden.
+              Die genauen Koordinaten werden nicht auf unserem Server
+              gespeichert. Zu statistischen Zwecken und zur Optimierung unseres
+              Angebotes speichern wir die Region (gerundete Koordinaten) der
+              angefragten Adresse (aufgelöst auf wenige Kilometer).
             </li>
           </ul>
           <p>
@@ -155,6 +158,14 @@ const Datenschutz = () => {
             im Sinne von Art. 6 Abs. 1 lit. f DSGVO dar. Mehr Informationen zum
             Umgang mit Nutzerdaten finden Sie in der Datenschutzerklärung von
             OpenStreetMaps: https://wiki.osmfoundation.org/wiki/Privacy_Policy
+          </p>
+          <br />
+          <p>
+            Photon von Komoot <br />
+            openpv nutzt die API von komoot zur automatischen
+            Adressvervollständigung. Dabei werden die eingegebenen Buchstaben an
+            https://photon.komoot.io/ gesendet. Die Auswahl einer finalen
+            Adresse wird nicht an komoot mitgeteilt.
           </p>
           <hr />
           <h2>Information über Ihr Widerspruchsrecht nach Art. 21 DSGVO</h2>
