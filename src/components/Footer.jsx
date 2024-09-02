@@ -1,10 +1,12 @@
 import {
+  Button,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  useDisclosure
 } from "@chakra-ui/react"
 import i18n from "i18next"
 import React from "react"
@@ -24,7 +26,8 @@ const WrapperForTouchDevice = ({ children }) => {
   return (
     <div className="overlay">
       <div className="attribution">
-        <Button onClick={onOpen}>License Information</Button>
+
+        <Button variant={"link"} onClick={onOpen}>License Information</Button>
 
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
@@ -34,7 +37,7 @@ const WrapperForTouchDevice = ({ children }) => {
             <ModalBody>{children}</ModalBody>
           </ModalContent>
         </Modal>
-      </div>
+        </div>
     </div>
   )
 }
@@ -46,7 +49,7 @@ export default function Footer({ federalState, frontendState }) {
   }
   const { t } = useTranslation()
 
-  const Wrapper = window.isTouch
+  const Wrapper = window.isTouchDevice
     ? WrapperForTouchDevice
     : WrapperForLaptopDevice
 
