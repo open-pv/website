@@ -289,7 +289,7 @@ export default Overlay
 
 const ModalControls = ({ isOpen, onClose }) => {
   const { t } = useTranslation()
-  const touchDeviceText = window.isTouch ? "touch." : ""
+  const touchDeviceText = window.isTouchDevice ? "touch." : ""
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -313,16 +313,4 @@ const ModalControls = ({ isOpen, onClose }) => {
       </ModalContent>
     </Modal>
   )
-}
-
-function OverlayDrawPV({
-  setPVSystems,
-  pvPoints,
-  setPVPoints,
-  setFrontendState,
-  simulationMeshes,
-}) {
-  const { t } = useTranslation()
-
-  return <></>
 }
