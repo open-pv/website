@@ -170,6 +170,7 @@ const PVSystem = ({ geometry, annualYield, area }) => {
             transparent: true,
             opacity: 0.5,
             metalness: 1,
+            side: THREE.DoubleSide,
           })
         }
       />
