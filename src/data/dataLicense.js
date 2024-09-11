@@ -1,11 +1,11 @@
-export const attributions = {
+ export const attributions = {
   BB: {
     attribution: "GeoBasis-DE/LGB",
     license: "dl-de/by-2-0",
     link: "https://geoportal.brandenburg.de/",
   },
   BY: {
-    attribution: "Bayerische Vermessungsverwaltung",
+    attribution: "Bayerische Vermessungsverwaltung – www.geodaten.bayern.de",
     license: "cc/by-4-0",
     link: "https://geodaten.bayern.de/opengeodata/OpenDataDetail.html?pn=lod2",
   },
@@ -37,12 +37,12 @@ export const attributions = {
     link: "https://metaver.de/trefferanzeige?docuuid=2C1F2EEC-CF9F-4D8B-ACAC-79D8C1334D5E&q=3D-Geb%C3%A4udemodell+LoD2&f=type%3Aopendata%3B",
   },
   MV: {
-    attribution: "GeoBasis-DE/M-V ",
+    attribution: "GeoBasis-DE/M-V",
     license: "cc/by-4-0",
     link: "https://www.geoportal-mv.de/portal/Geowebdienste/INSPIRE-Themen/Gebaeude",
   },
   NI: {
-    attribution: "LGLN 2024",
+    attribution: "Quelle: LGLN 2024",
     license: "cc/by-4-0",
     link: "https://metaver.de/trefferanzeige?docuuid=6c1ab9c0-02c0-4f0d-98af-caf9fec83cc3&q=3D-Geb%C3%A4udemodell+LoD2&rstart=10&f=type%3Aopendata%3B",
   },
