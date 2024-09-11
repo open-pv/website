@@ -110,20 +110,11 @@ function Index() {
           {...viewState}
           maxZoom={19}
           style={{ width: "100%", height: "100%" }}
+          mapStyle="https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json"
           onMove={(evt) => setViewState(evt.viewState)}
           onClick={mapClick}
           attributionControl={false}
         >
-          <Layer
-            id="background"
-            type="background"
-            paint={{
-              "background-color": "lightgray",
-            }}
-          />
-          <Source {...basemap_source}>
-            <Layer {...basemap_layer} />
-          </Source>
           <>{mapMarkers}</>
           {clickPoint && (
             <MapPopup
