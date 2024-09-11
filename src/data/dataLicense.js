@@ -36,6 +36,11 @@ export const attributions = {
     license: "dl-de/by-2-0",
     link: "https://metaver.de/trefferanzeige?docuuid=2C1F2EEC-CF9F-4D8B-ACAC-79D8C1334D5E&q=3D-Geb%C3%A4udemodell+LoD2&f=type%3Aopendata%3B",
   },
+  MV: {
+    attribution: "GeoBasis-DE/M-V ",
+    license: "cc/by-4-0",
+    link: "https://www.geoportal-mv.de/portal/Geowebdienste/INSPIRE-Themen/Gebaeude",
+  },
   NI: {
     attribution: "LGLN 2024",
     license: "cc/by-4-0",
@@ -45,6 +50,21 @@ export const attributions = {
     attribution: "Geobasis NRW",
     license: "dl-de/zero-2-0",
     link: "https://www.geoportal.nrw/?activetab=map#/datasets/iso/5d9a8abc-dfd0-4dda-b8fa-165cce4d8065",
+  },
+  SH: {
+    attribution: "GeoBasis-DE/LVermGeo SH",
+    license: "cc/by-4-0",
+    link: "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/dl-lod2.html",
+  },
+  SL: {
+    attribution: "GeoBasis DE/LVGL-SL (2024)",
+    license: "dl-de/by-2-0",
+    link: "https://geoportal.saarland.de/spatial-objects/407",
+  },
+  SN: {
+    attribution: "Landesamt für Geobasisinformation Sachsen (GeoSN)",
+    license: "dl-de/by-2-0",
+    link: "https://www.geodaten.sachsen.de/downloadbereich-digitale-3d-stadtmodelle-4875.html",
   },
   ST: {
     attribution: "GeoBasis-DE/LVermGeo ST",
@@ -60,16 +80,6 @@ export const attributions = {
     attribution: "GeoBasis-DE/LVermGeoRP (2024)",
     license: "dl-de/by-2-0",
     link: "https://metaportal.rlp.de/gui/html/0b28684d-b2ce-4b0b-b080-928025588c61",
-  },
-  SH: {
-    attribution: "GeoBasis-DE/LVermGeo SH",
-    license: "cc/by-4-0",
-    link: "https://geodaten.schleswig-holstein.de/gaialight-sh/_apps/dladownload/dl-lod2.html",
-  },
-  SN: {
-    attribution: "Landesamt für Geobasisinformation Sachsen (GeoSN)",
-    license: "dl-de/by-2-0",
-    link: "https://www.geodaten.sachsen.de/downloadbereich-digitale-3d-stadtmodelle-4875.html",
   },
 }
 
