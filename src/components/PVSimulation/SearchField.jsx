@@ -8,28 +8,28 @@ export default function SearchField({ callback }) {
   const [suggestions, setSuggestions] = useState([])
   const [suggestionsVisible, setSuggestionsVisible] = useState(false)
   const [isSelectedAdress, setIsSelectedAdress] = useState(false)
-  const suggestionsRef = useRef([]);
-  const inputRef = useRef();
-  const formRef = useRef();
-  const [focusedIndex, setFocusedIndex] = useState(-1);
+  const suggestionsRef = useRef([])
+  const inputRef = useRef()
+  const formRef = useRef()
+  const [focusedIndex, setFocusedIndex] = useState(-1)
   window.searchFieldInput = inputValue
   const { t } = useTranslation()
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (formRef.current && !formRef.current.contains(event.target)) {
-        setSuggestionsVisible(false);
-        setFocusedIndex(-1);
+        setSuggestionsVisible(false)
+        setFocusedIndex(-1)
       }
-    };
+    }
 
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("touchstart", handleClickOutside)
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
-    };
-  });
+      document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener("touchstart", handleClickOutside)
+    }
+  })
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -73,14 +73,14 @@ export default function SearchField({ callback }) {
                 feature.properties.city
               return suggestion
             })
-          );
+          )
         } catch (error) {
           console.error("Error fetching suggestions:", error)
         }
       } else {
         setSuggestions([])
       }
-      setSuggestionsVisible(suggestions.length > 0);
+      setSuggestionsVisible(suggestions.length > 0)
     }
 
     const debounceTimer = setTimeout(fetchSuggestions, 300)
@@ -96,7 +96,7 @@ export default function SearchField({ callback }) {
 
   const handleSuggestionClick = (suggestion) => {
     setInputValue(suggestion)
-    requestLocation(suggestion).then(locations => {
+    requestLocation(suggestion).then((locations) => {
       console.warn(locations)
       callback(locations)
     })
@@ -105,27 +105,27 @@ export default function SearchField({ callback }) {
   }
 
   const handleKeyDown = (event) => {
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      setFocusedIndex((prevIndex) => 
+    if (event.key === "ArrowDown") {
+      event.preventDefault()
+      setFocusedIndex((prevIndex) =>
         prevIndex < suggestions.length - 1 ? prevIndex + 1 : prevIndex
-      );
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      setFocusedIndex((prevIndex) => (prevIndex > -1 ? prevIndex - 1 : -1));
-    } else if (event.key === 'Enter' && focusedIndex > -1) {
-      event.preventDefault();
-      handleSuggestionClick(suggestions[focusedIndex]);
+      )
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault()
+      setFocusedIndex((prevIndex) => (prevIndex > -1 ? prevIndex - 1 : -1))
+    } else if (event.key === "Enter" && focusedIndex > -1) {
+      event.preventDefault()
+      handleSuggestionClick(suggestions[focusedIndex])
     }
-  };
-  
+  }
+
   useEffect(() => {
     if (focusedIndex > -1 && suggestionsRef.current[focusedIndex]) {
-      suggestionsRef.current[focusedIndex].focus();
+      suggestionsRef.current[focusedIndex].focus()
     } else if (focusedIndex === -1) {
-      inputRef.current.focus();
+      inputRef.current.focus()
     }
-  }, [focusedIndex]);
+  }, [focusedIndex])
 
   return (
     <form
@@ -147,6 +147,7 @@ export default function SearchField({ callback }) {
           onChange={(evt) => setInputValue(evt.target.value)}
           onKeyDown={handleKeyDown}
           margin={"5px"}
+          autoComplete="street-address"
         />
         <Button margin={"5px"} minWidth={"150px"} type="submit">
           {t("Search")}
@@ -154,7 +155,7 @@ export default function SearchField({ callback }) {
       </div>
       {suggestionsVisible && (
         <List
-          style={{paddingLeft: '0', marginTop: '0'}}
+          style={{ paddingLeft: "0", marginTop: "0" }}
           borderWidth={1}
           borderColor="gray.200"
           mt={2}
@@ -171,7 +172,7 @@ export default function SearchField({ callback }) {
               ref={(elem) => (suggestionsRef.current[index] = elem)}
               key={index}
               p={2}
-              style={{paddingLeft: '1em'}}
+              style={{ paddingLeft: "1em" }}
               cursor="pointer"
               _hover={{ backgroundColor: "gray.100" }}
               backgroundColor={focusedIndex === index ? "gray.100" : "white"}
