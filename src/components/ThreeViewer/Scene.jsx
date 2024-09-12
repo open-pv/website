@@ -8,7 +8,7 @@ import { PVSystems } from "./Meshes/PVSystems"
 import SimulationMesh from "./Meshes/SimulationMesh"
 import SurroundingMesh from "./Meshes/SurroundingMesh"
 import VegetationMesh from "./Meshes/VegetationMesh"
-import Points from "./Points"
+import PointsAndEdges from "./PointsAndEdges"
 import Terrain from "./Terrain"
 
 const Scene = ({
@@ -46,7 +46,6 @@ const Scene = ({
       <directionalLight intensity={0.5} position={[1, 0, -2]} />
       <directionalLight intensity={0.5} position={[-1, 0, -2]} />
 
-
       {geometries.surrounding.length > 0 && (
         <SurroundingMesh geometries={geometries.surrounding} />
       )}
@@ -54,7 +53,9 @@ const Scene = ({
         <SurroundingMesh geometries={geometries.background} />
       )}
 
-      {simulationMeshes.length > 0 && <SimulationMesh meshes={simulationMeshes} />}
+      {simulationMeshes.length > 0 && (
+        <SimulationMesh meshes={simulationMeshes} />
+      )}
       {selectedMesh && <HighlightedMesh meshes={selectedMesh} />}
       {simulationMeshes.length > 0 && frontendState == "Results" && (
         <CustomMapControl
@@ -69,21 +70,22 @@ const Scene = ({
           setPVPoints={setPVPoints}
         />
       )}
-      {frontendState == "DrawPV" && <Points points={pvPoints} />}
+      {frontendState == "DrawPV" && <PointsAndEdges points={pvPoints} />}
 
       {pvSystems.length > 0 && <PVSystems pvSystems={pvSystems} />}
 
       {vegetationGeometries && (
         <>
-          {vegetationGeometries.background && vegetationGeometries.background.length > 0 && (
-            <VegetationMesh geometries={vegetationGeometries.background} />
-          )}
-          {vegetationGeometries.surrounding && vegetationGeometries.surrounding.length > 0 && (
-            <VegetationMesh geometries={vegetationGeometries.surrounding} />
-          )}
+          {vegetationGeometries.background &&
+            vegetationGeometries.background.length > 0 && (
+              <VegetationMesh geometries={vegetationGeometries.background} />
+            )}
+          {vegetationGeometries.surrounding &&
+            vegetationGeometries.surrounding.length > 0 && (
+              <VegetationMesh geometries={vegetationGeometries.surrounding} />
+            )}
         </>
       )}
-
 
       {simulationMeshes.length > 0 && <Terrain visible={showTerrain} />}
     </Canvas>
