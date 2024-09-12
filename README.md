@@ -23,9 +23,9 @@ If you want to deploy this website locally, you need to follow these steps:
     ```
 4. To build the code and host it in a development environment, run
     ```shell
-    npm start
+    npm run dev
     ```
-    and visit [localhost:3000](http://localhost:3000).
+    and visit [localhost:5173](http://localhost:5173).
 
 
 ## Funding
