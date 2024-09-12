@@ -1,0 +1,4 @@
+# prettier config
+semi: false  # No semicolons
+singleQuote: false  # use single quotes in regular js files
+jsxSingleQuote: false  # use single quotes in jsx files
