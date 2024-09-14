@@ -39,8 +39,10 @@ function Index() {
     // maxzoom: 22,
   }
 
+  const boundingBox = [5.98, 47.3, 15.1, 55.0];
+
   const [viewState, setViewState] = useState({
-    bounds: [5.98865807458, 47.3024876979, 15.0169958839, 54.983104153],
+    bounds: boundingBox
   })
 
   const [mapMarkers, setMapMarkers] = useState([])
@@ -110,20 +112,12 @@ function Index() {
           {...viewState}
           maxZoom={19}
           style={{ width: "100%", height: "100%" }}
+          mapStyle="https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json"
           onMove={(evt) => setViewState(evt.viewState)}
           onClick={mapClick}
           attributionControl={false}
+          maxBounds={[-10, 35, 30, 65]}
         >
-          <Layer
-            id="background"
-            type="background"
-            paint={{
-              "background-color": "lightgray",
-            }}
-          />
-          <Source {...basemap_source}>
-            <Layer {...basemap_layer} />
-          </Source>
           <>{mapMarkers}</>
           {clickPoint && (
             <MapPopup
