@@ -1,5 +1,7 @@
 import {
+  Box,
   Button,
+  Collapse,
   FormControl,
   FormLabel,
   Input,
@@ -21,6 +23,8 @@ import { useTranslation } from "react-i18next"
 
 function SavingCalculation({ pvSystems }) {
   const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false })
+  const { isOpen: isOpenResultFade, onToggle: onToggleResultFade } =
+    useDisclosure({ defaultIsOpen: false })
   const { t } = useTranslation()
   const [annualConsumption, setAnnualConsumption] = useState(3000)
   const [storageCapacity, setStorageCapacity] = useState(0)
@@ -167,26 +171,55 @@ function SavingCalculation({ pvSystems }) {
                 />
               </FormControl>
 
+              <Collapse in={isOpenResultFade} animateOpacity>
+                <Box
+                  p="40px"
+                  color="white"
+                  mt="4"
+                  bg="teal"
+                  rounded="md"
+                  shadow="md"
+                >
+                  <Text>{t("savingsCalculation.disclaimer")}</Text>
+                  <UnorderedList>
+                    <ListItem>
+                      {t("savingsCalculation.results.production")}
+                      <Text as="b" color={"white"}>
+                        {pvProduction} kWh
+                      </Text>
+                    </ListItem>
+                    <ListItem>
+                      {t("savingsCalculation.results.consumption")}
+                      <Text as="b" color={"white"}>
+                        {selfConsumption} kWh
+                      </Text>
+                    </ListItem>
+                    <ListItem>
+                      {t("savingsCalculation.results.savings")}
+                      <Text as="b" color={"white"}>
+                        {annualSavings}€
+                      </Text>
+                    </ListItem>
+                  </UnorderedList>
+                </Box>
+              </Collapse>
+
               <br />
-              <Text>{t("savingsCalculation.disclaimer")}</Text>
-              <UnorderedList>
-                <ListItem>
-                  {t("savingsCalculation.results.production")}
-                  {pvProduction} kWh
-                </ListItem>
-                <ListItem>
-                  {t("savingsCalculation.results.consumption")}{" "}
-                  {selfConsumption} kWh
-                </ListItem>
-                <ListItem>
-                  {t("savingsCalculation.results.savings")} {annualSavings} €
-                </ListItem>
-              </UnorderedList>
             </>
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={handleCalculateSaving}>
+            <Button
+              mr={3}
+              onClick={() => {
+                handleCalculateSaving()
+                if (!isOpenResultFade) {
+                  //open the Fade only if it is not
+                  // already opened
+                  onToggleResultFade()
+                }
+              }}
+            >
               {t("savingsCalculation.calculate")}
             </Button>
           </ModalFooter>
