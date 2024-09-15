@@ -23,7 +23,9 @@ const LoadingBar = ({ progress }) => {
         height: "100%",
       }}
     >
-      <p>{t("loadingMessage.tip" + shownTip.toString())}</p>
+      <p style={{ margin: "20px" }}>
+        {t("loadingMessage.tip" + shownTip.toString())}
+      </p>
       <div style={{ width: "80%", maxWidth: "600px", margin: "0 auto" }}>
         <Progress value={progress} width="100%" hasStripe={true} />
       </div>
