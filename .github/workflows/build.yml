@@ -1,4 +1,4 @@
-name: GitHub Pages
+name: 👷‍♀️ Build website to deployment branch
 
 on:
   workflow_dispatch:
