@@ -7,6 +7,8 @@ export default function SearchField({ callback }) {
   const [inputValue, setInputValue] = useState("")
   const [suggestions, setSuggestions] = useState([])
   const [suggestionsVisible, setSuggestionsVisible] = useState(false)
+  // isSelectedAdress is used so that if an adress is already selected,
+  // the autocomplete does stop to run
   const [isSelectedAdress, setIsSelectedAdress] = useState(false)
   const suggestionsRef = useRef([])
   const inputRef = useRef()
@@ -33,7 +35,9 @@ export default function SearchField({ callback }) {
 
   useEffect(() => {
     const fetchSuggestions = async () => {
-      if (!inputValue) {
+      if (inputValue.length < 3) {
+        // If the input is deleted or replaced with one
+        // charakter, the autocomplete should start again
         setIsSelectedAdress(false)
       }
       if (isSelectedAdress) {
@@ -45,8 +49,17 @@ export default function SearchField({ callback }) {
           let streetAddressNumber = null
 
           // Find the street address number
-          for (const inputPart of inputValueParts) {
-            if (/^\d+[a-zA-Z]?$/.test(inputPart)) {
+          for (let inputPart of inputValueParts) {
+            if (inputPart[inputPart.length - 1] === ",") {
+              //drop last character (ie the comma)
+              inputPart = inputPart.slice(0, -1)
+            }
+            if (inputPart.length == 5) {
+              // continue if it has the length of a zip code
+              continue
+            }
+            if (/^\d{1,3}[a-zA-Z]?$/.test(inputPart)) {
+              // regex chatches numbers with 1-3 digits plus one charater
               streetAddressNumber = inputPart
               break
             }
@@ -83,7 +96,7 @@ export default function SearchField({ callback }) {
       setSuggestionsVisible(suggestions.length > 0)
     }
 
-    const debounceTimer = setTimeout(fetchSuggestions, 300)
+    const debounceTimer = setTimeout(fetchSuggestions, 200)
     return () => clearTimeout(debounceTimer)
   }, [inputValue, isSelectedAdress])
 
