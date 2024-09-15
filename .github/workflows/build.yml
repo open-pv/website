@@ -2,6 +2,9 @@ name: GitHub Pages
 
 on:
   workflow_dispatch:
+  release:
+    types: [published]
+
 jobs:
   deployment:
     runs-on: ubuntu-latest
