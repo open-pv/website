@@ -1,0 +1,101 @@
+{
+  "sidebar": {
+    "header": "Goal of this website",
+    "mainText": "The tool will then calculate the potential for a solar system on your roof and facade area.",
+    "numberSimulations": "Number of Sun positions to average",
+    "numberSimulationsHover": "For the simulation, we average over different sun positions, which are evenly distributed throughout the year. The larger you choose this number, the more accurate the simulation becomes. However, the simulation also takes longer."
+  },
+  "yes": "yes",
+  "no": "no",
+  "next": "Next",
+  "previous": "Previous",
+  "close": "Close",
+  "searchField": {
+    "placeholder": "Enter your address or coordinates - e.g. Lange Point 20, Freising"
+  },
+  "about": {
+    "title": "Information",
+    "description": "More information on openpv.de",
+    "h2": "More information on openpv.de",
+    "p-1": "The following instructions will show you how to use the website to calculate the potential for a solar system.",
+    "h3-2": "1. Insert your adress or coordinates",
+    "p-2": "On the homepage, you will find a search field. Enter either the address of the desired location or the corresponding coordinates in the search field. If we do not have all addresses in Bavaria stored, you can use the coordinates instead. You can find the coordinates, for example, in Google Maps. Press Enter to confirm the input and start the simulation.",
+    "h3-3": "Download the 3D buildings dataset",
+    "p-3": "The website automatically downloads the 3D building data for the specified location and then initiates the simulation. Depending on the performance of your device and the size of the building data, this process may take a few seconds. Please be patient. If it takes too long, you can reduce the number of simulations or the building radius on the left side.",
+    "h3-4": "Visualize the simulation results",
+    "p-4": "After completing the solar potential calculation, the roof and facade of the building will be colored. Yellow indicates a very high potential for a solar system, while blue indicates a lower potential. In the displayed 3D view, you can navigate using the left and right mouse buttons, as well as your mouse wheel.",
+    "h3-5": "More details",
+    "p-5": "Once the 3D building data has been downloaded, the website begins the calculation of the solar potential. This is achieved through ray tracing to determine the angle of sunlight incidence on the roof and facade. The data used in this project is sourced from the OpenData Portal of the Bavarian Surveying Authority and is available under the CC BY 4.0 license: https://geodaten.bayern.de/opengeodata/OpenDataDetail.html?pn=lod2. The LOD2 data from March 2023 was used for this purpose. We express our gratitude to the source for providing these data, which have contributed to the realization of this project."
+  },
+  "loadingMessage": {
+    "tip1": "Double-click to select a different building on the map and restart the simulation.",
+    "tip2": "The shadow calculation is done in your browser. If you have selected a large building or are using an old PC, the calculation will take longer.",
+    "tip3": "Sometimes parts of the building are displayed below the map. In this case, you can hide the map to see the entire building."
+  },
+  "errorMessage": {
+    "header": "An Error occured.",
+    "wrongAdress": "No buildings could be found for the specified location. This could be due to several reasons: 1. There is no building at the selected location. 2. There is a new building at the selected location that is not yet included in our data. 3. The selected location is outside of Germany or in the federal states of Saarland or Mecklenburg-Vorpommern. Unfortunately, we do not have building data for these federal states."
+  },
+  "WelcomeMessage": {
+    "title": "Welcome to OpenPV",
+    "firstPage": "Is a solar system worth it for my roof or balcony? With OpenPV, you can determine the solar potential of your building in just a few steps. Simply enter your address in the search field and click Start.",
+    "secondPage": "On the map, you can view the results of the shading simulation. You can select additional buildings for simulation by double-clicking.",
+    "thirdPage": "In Options -> Draw PV System, you can create a solar system and calculate the annual yield.",
+    "fourthPage": "The best thing about OpenPV: We are open-source, free, store no data, and use no cookies!"
+  },
+  "button": {
+    "showMap": "Show Map",
+    "start": "Start",
+    "options": "Options",
+    "simulateBuilding": "Simulate Building",
+    "createPVSystem": "Create PV System",
+    "drawPVSystem": "Draw a new PV system",
+    "drawPVSystemHover": "Create new edges of the PV system by clicking. Afterwards click on the 'Create PV System' button.",
+    "cancel": "Cancel",
+    "deleteLastPoint": "Delete Last Point",
+    "startSimulation": "Start simulation",
+    "Search": "Search"
+  },
+  "noSearchResults": {
+    "title": "No Results",
+    "description": "The location search did not yield any results."
+  },
+  "map": {
+    "coordinates": "Coordinates",
+    "userSelection": "Manual Selection"
+  },
+
+  "Footer": {
+    "privacyPolicy": "Privacy Policy"
+  },
+  "mapControlHelp": {
+    "button": "How to control the Map?",
+    "title": "User Manual",
+    "leftMouse": "Left Mouse Button: Move on the map",
+    "rightMouse": "Right Mouse Button: Rotate the map",
+    "wheel": "Mouse Wheel: Zoom in and out",
+    "doubleClick": "Double click: Choose another building for a simulation",
+    "touch": {
+      "leftMouse": "One finger: Move on the map",
+      "rightMouse": "Two fingers: Rotate the map",
+      "wheel": "Two fingers: Zoom in and out",
+      "doubleClick": "Double-tap on a building: Select another building for simulation"
+    }
+  },
+  "savingsCalculation": {
+    "button": "Calculate Earnings",
+    "consumptionTitle": "Annual electricity consumption in kWh",
+    "consumptionHelperInfo": "As a rough estimate: Calculate 800 kWh per person in the household, 2000 kWh for a heat pump, and an additional 2000 kWh per electric car.",
+    "consumptionHelperLabel": "[Calculate your electricity consumption]",
+    "storageTitle": "Electricity Storage capacity in kWh",
+    "electricityPriceTitle": "Electricity price in cents",
+    "electricityPricePlaceholder": "Price per kWh in cents",
+    "disclaimer": "The calculated yields and savings are only for rough guidance. The information is without guarantee and does not replace individual calculation and on-site consultation!",
+    "results": {
+      "production": "Annual electricity generation of the solar system: ",
+      "consumption": "Annual self-consumption: ",
+      "savings": "Annual savings: "
+    },
+    "calculate": "Calculate"
+  }
+}
