@@ -1,9 +1,10 @@
-name: 👷‍♀️ Build website to deployment branch
+name: 👷 Deploy test site to github pages
 
 on:
   workflow_dispatch:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
 
 jobs:
   deployment:
@@ -27,5 +28,7 @@ jobs:
           git config user.name "Automated"
           git config user.email "actions@users.noreply.github.com"
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/open-pv/website.git
+          echo "User-agent: *" > public/robots.txt
+          echo "Disallow: /" >> public/robots.txt
           npm run build
-          npm run deploy
+          npm run deploy:test
