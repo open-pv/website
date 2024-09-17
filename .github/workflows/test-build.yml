@@ -30,6 +30,6 @@ jobs:
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/open-pv/website.git
           echo "User-agent: *" > public/robots.txt
           echo "Disallow: /" >> public/robots.txt
-          echo "test.openpv.de" > CNAME
+          echo "test.openpv.de" > public/CNAME
           npm run build
           npm run deploy:test
