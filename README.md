@@ -1,3 +1,6 @@
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fwww.openpv.de%2F)](https://www.openpv.de/)
+
+
 # The OpenPV website
 This is the base repository for the website [openpv.de](https://www.openpv.de). The website is built using
 * [React](https://react.dev/)
@@ -27,6 +30,8 @@ If you want to deploy this website locally, you need to follow these steps:
     ```
     and visit [localhost:5173](http://localhost:5173).
 
+## How does this work?
+We have a detailed description in german and english on our [About Page](https://www.openpv.de/about). 
 
 ## Funding
 We thank our sponsors.
