@@ -1,4 +1,5 @@
 {
+  "mainDescription": "Determine the potential of your building for a solar installation by using openly available 3D data - directly in the browser.",
   "sidebar": {
     "header": "Goal of this website",
     "mainText": "The tool will then calculate the potential for a solar system on your roof and facade area.",

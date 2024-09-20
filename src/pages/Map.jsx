@@ -39,10 +39,10 @@ function Index() {
     // maxzoom: 22,
   }
 
-  const boundingBox = [5.98, 47.3, 15.1, 55.0];
+  const boundingBox = [5.98, 47.3, 15.1, 55.0]
 
   const [viewState, setViewState] = useState({
-    bounds: boundingBox
+    bounds: boundingBox,
   })
 
   const [mapMarkers, setMapMarkers] = useState([])
@@ -99,7 +99,7 @@ function Index() {
   })
 
   return (
-    <Main description={"Berechne das Potential deiner Solaranlage."}>
+    <Main description={t("mainDescription")}>
       <header>
         <div className="title">
           <SearchField callback={searchCallback} />
