@@ -27,45 +27,30 @@ export function createPVSystem({
 }) {
   const points = pvPoints.map((obj) => obj.point)
   if (pvPoints.length < 3) {
-    console.log("Not enough points to create a polygon")
     return
   }
   const geometry = new THREE.BufferGeometry()
-  const vertices = []
-  points.forEach((point) => {
-    vertices.push(point.x, point.y, point.z)
-  })
-
+  const trianglesWithNormals = triangulate(pvPoints)
   const triangles = []
   const bufferTriangles = []
   const normalOffset = 0.1 // Adjust this value as needed
 
-  for (let i = 1; i < pvPoints.length - 1; i++) {
-    const v0 = pvPoints[0]
-    const v1 = pvPoints[i]
-    const v2 = pvPoints[i + 1]
-
+  for(const {a, b, c} of trianglesWithNormals) {
     const shift = (element) => ({
       x: element.point.x + element.normal.x * normalOffset,
       y: element.point.y + element.normal.y * normalOffset,
       z: element.point.z + element.normal.z * normalOffset,
     })
 
-    const sv0 = shift(v0)
-    const sv1 = shift(v1)
-    const sv2 = shift(v2)
+    const sa = shift(a)
+    const sb = shift(b)
+    const sc = shift(c)
 
-    triangles.push({ a: v0.point, b: v1.point, c: v2.point })
+    triangles.push({a: a.point, b: b.point, c: c.point })
     bufferTriangles.push(
-      sv0.x,
-      sv0.y,
-      sv0.z,
-      sv1.x,
-      sv1.y,
-      sv1.z,
-      sv2.x,
-      sv2.y,
-      sv2.z
+      sa.x, sa.y, sa.z,
+      sb.x, sb.y, sb.z,
+      sc.x, sc.y, sc.z
     )
   }
 
@@ -465,4 +450,114 @@ function calculateTriangleIntensity(triangle) {
   const averageIntensity =
     (intensities[0] + intensities[1] + intensities[2]) / 3
   return averageIntensity
+}
+
+// Takes a sequence of points [[x, y, z], ...] and
+// returns a sequence of triangles [[x1, y1, z1, x2, ...], ...],
+// making sure to generate a valid triangulation of the polygon
+// Highly inefficient implementation, but we don't triangulate many polygons so it should be fine
+export function triangulate(points) {
+  if(points.length == 3) {
+    return [{a: points[0], b: points[1], c: points[2]}]
+  } else if (points.length < 3) {
+    return []
+  }
+
+  // As the triangle is in 3d-space anyways, we can just assume that vertices are given in CCW order
+  const pt = (i) => points[(i + points.length) % points.length];
+
+  const ab = sub(pt(1).point, pt(0).point)
+  const ac = sub(pt(2).point, pt(0).point)
+  const normal = new THREE.Vector3().crossVectors(ab, ac)
+
+  let countNegative = 0;
+  let countPositive = 0;
+
+  // Taking inspiration from a polygon triangulation based on the two ears theorem
+  // However, in R3, things can get a bit more wonky...
+  // https://en.wikipedia.org/wiki/Two_ears_theorem#Relation_to_triangulations 
+  const makeTriplet = (left, vertex, right) => {
+    const det = determinant(
+      sub(vertex.point, left.point),
+      sub(vertex.point, right.point),
+      normal
+    )
+
+    if(det > 0) {
+      countPositive += 1
+    } else {
+      countNegative += 1
+    }
+
+    return {left: left, vertex: vertex, right: right, det}
+  }
+
+  const triplets = points.map((cur, i) => makeTriplet(pt(i-1), cur, pt(i+1)))
+
+  if(countPositive < countNegative) {
+    // negative det => convex vertex, so we flip all determinants
+    for(let t of triplets) {
+      t.det = -t.det
+    }
+  }
+
+  const concaveVertices = triplets.filter(t => t.det < 0).map(t => t.vertex)
+
+  let anyEar = false;
+  for(let t of triplets) {
+    // Idea: Define the 3d analogue of a polygon ear by looking at triples and projecting the
+    // remaining points onto the plane spanned by that particular triangle
+    // An ear is any triangle having no concave vertices lying inside it
+    const containedConcaveVertices = concaveVertices
+      .filter(v => v != t.left && v != t.vertex && v != t.right)
+      .filter(v => pointInsideTriangle(v.point, t.left.point, t.vertex.point, t.right.point))
+
+    t.isEar = (t.det > 0) && (containedConcaveVertices.length == 0)
+    if(t.isEar) {
+      anyEar = true
+    }
+  }
+
+  // Prevent infinite loop
+  if(!anyEar) {
+    console.warn('No ear found in ear clipping!')
+    triplets[0].isEar = true
+  }
+
+  for(let ear of triplets.filter(t => t.isEar)) {
+    const remainingPoints = triplets.filter(t => t != ear).map(t => t.vertex)
+    return [{a: ear.left, b: ear.vertex, c: ear.right}].concat(triangulate(remainingPoints))
+  }
+}
+
+function determinant(v1, v2, v3) {
+  const matrix = new THREE.Matrix3()
+  matrix.set(
+    v1.x, v2.x, v3.x,  // First column
+    v1.y, v2.y, v3.y,  // Second column
+    v1.z, v2.z, v3.z   // Third column
+  )
+  return matrix.determinant()
+}
+
+function sub(v1, v2) {
+    return new THREE.Vector3().subVectors(v1, v2)
+}
+
+function cross(v1, v2) {
+  return new THREE.Vector3().crossVectors(v1, v2)
+}
+
+export function pointInsideTriangle(point, v1, v2, v3) {
+  const normal = cross(sub(v1, v2), sub(v2, v3))
+  const n1 = cross(normal, sub(v1, v2))
+  const n2 = cross(normal, sub(v2, v3))
+  const n3 = cross(normal, sub(v3, v1))
+
+  const d1 = Math.sign(n1.dot(sub(v1, point)))
+  const d2 = Math.sign(n2.dot(sub(v2, point)))
+  const d3 = Math.sign(n3.dot(sub(v3, point)))
+
+  // Inside if all 3 have the same sign
+  return (d1 == d2) && (d2 == d3)
 }
