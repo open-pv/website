@@ -41,11 +41,15 @@ function CustomMapControl(props) {
     console.log("Intersected Mesh", intersectedMesh)
 
     if (!intersectedMesh) return
-
+    if (!intersectedMesh.geometry.name) {
+      console.log(
+        "There is a mesh, but it has no name so I don't know what to do."
+      )
+      return
+    }
     if (
-      intersectedMesh.geometry.name &&
-      (intersectedMesh.geometry.name.includes("surrounding") ||
-        intersectedMesh.geometry.name.includes("background"))
+      intersectedMesh.geometry.name.includes("surrounding") ||
+      intersectedMesh.geometry.name.includes("background")
     ) {
       props.setSelectedMesh([intersectedMesh])
     }
