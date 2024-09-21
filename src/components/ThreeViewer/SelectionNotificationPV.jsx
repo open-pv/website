@@ -6,33 +6,26 @@ import {
   CloseButton,
   useDisclosure,
   Wrap,
-  WrapItem,
 } from "@chakra-ui/react"
 import React, { useEffect, useRef } from "react"
+import SavingCalculation from "../PVSimulation/SavingsCalculation"
 
-const SelectionNotification = ({ selection, setSelection, buttons }) => {
+const SelectionNotificationPV = ({
+  selectedPVSystem,
+  setSelectedPVSystem,
+  setPVSystems,
+}) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const hasShownAlertRef = useRef(false)
 
   useEffect(() => {
-    if (selection.length > 0 && !hasShownAlertRef.current) {
+    if (selectedPVSystem.length > 0) {
       onOpen()
-      hasShownAlertRef.current = true
     }
-  }, [selection, onOpen])
+  }, [selectedPVSystem, onOpen])
 
   const handleCloseAlert = () => {
     onClose()
-    setSelection([])
-    hasShownAlertRef.current = false
-  }
-
-  const handleButtonClick = (action) => {
-    // Call the button's action if provided
-    if (action) {
-      action()
-    }
-    handleCloseAlert()
+    setSelectedPVSystem([])
   }
 
   if (!isOpen) return null
@@ -49,19 +42,23 @@ const SelectionNotification = ({ selection, setSelection, buttons }) => {
       <Alert alignItems="start" boxShadow="md" rounded="md" colorScheme="teal">
         <Box width="100%">
           <AlertDescription display="block" mb={2}>
-            We've created your account for you.
+            {"Was soll mit dieser Anlage geschehen?"}
           </AlertDescription>
           <Wrap spacing={2} justify="start">
-            {buttons.map((button, index) => (
-              <WrapItem key={index}>
-                <Button
-                  size="sm"
-                  onClick={() => handleButtonClick(button.action)}
-                >
-                  {button.label}
-                </Button>
-              </WrapItem>
-            ))}
+            <SavingCalculation
+              selectedPVSystem={selectedPVSystem}
+              setSelectedPVSystem={setSelectedPVSystem}
+              onCloseAlert={onClose}
+            />
+            <Button
+              onClick={() => {
+                setPVSystems([])
+                setSelectedPVSystem([])
+                onClose()
+              }}
+            >
+              Anlage löschen
+            </Button>
           </Wrap>
         </Box>
         <CloseButton
@@ -75,4 +72,4 @@ const SelectionNotification = ({ selection, setSelection, buttons }) => {
   )
 }
 
-export default SelectionNotification
+export default SelectionNotificationPV

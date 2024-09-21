@@ -28,7 +28,7 @@ import SavingCalculation from "../PVSimulation/SavingsCalculation"
 import ButtonWithHoverHelp from "../Template/ButtonWithHoverHelp"
 import SliderWithLabel from "../Template/SliderWithLabel"
 import { createPVSystem } from "./Meshes/PVSystems"
-import SelectionNotification from "./SelectionNotification"
+import SelectionNotificationPV from "./SelectionNotificationPV"
 
 function Overlay({
   frontendState,
@@ -73,18 +73,14 @@ function Overlay({
   const handleAbortButtonClick = () => {
     setFrontendState("Results")
   }
-  const buttons = [
-    { label: "View Account", action: () => console.log("Viewing account") },
-    { label: "Edit Profile", action: () => console.log("Editing profile") },
-  ]
 
   return (
     <>
       <OverlayWrapper>
-        <SelectionNotification
-          selection={selectedPVSystem}
-          setSelection={setSelectedPVSystem}
-          buttons={buttons}
+        <SelectionNotificationPV
+          selectedPVSystem={selectedPVSystem}
+          setSelectedPVSystem={setSelectedPVSystem}
+          setPVSystems={setPVSystems}
         />
         {frontendState == "Results" && (
           <>
@@ -130,7 +126,7 @@ function Overlay({
             hoverText={t("button.drawPVSystemHover")}
           />
         )}
-        <SavingCalculation pvSystems={pvSystems} />
+
         {selectedMesh.length > 0 && (
           <Button
             className="button-high-prio"
