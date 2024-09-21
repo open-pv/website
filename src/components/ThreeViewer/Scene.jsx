@@ -21,7 +21,7 @@ const Scene = ({
   selectedMesh,
   setSelectedMesh,
   selectedPVSystem,
-  setselectedPVSystem,
+  setSelectedPVSystem,
   pvPoints,
   setPVPoints,
   vegetationGeometries,
@@ -65,7 +65,7 @@ const Scene = ({
         <CustomMapControl
           middle={simulationMeshes[0].middle}
           setSelectedMesh={setSelectedMesh}
-          setselectedPVSystem={setselectedPVSystem}
+          setSelectedPVSystem={setSelectedPVSystem}
         />
       )}
       {frontendState == "DrawPV" && (
