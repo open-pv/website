@@ -14,6 +14,10 @@ function CustomMapControl(props) {
   const handleInteraction = (event) => {
     event.preventDefault()
 
+    /**
+     * Returns the list of intersected objects. An intersected object is an object
+     * that lies directly below the mouse cursor.
+     */
     const getIntersects = () => {
       const isTouch = window.isTouchDevice
       const clientX = isTouch ? event.touches[0].clientX : event.clientX
@@ -29,38 +33,38 @@ function CustomMapControl(props) {
     }
     const intersects = getIntersects()
 
-    if (intersects.length > 0) {
-      const intersectedMesh = intersects[0].object
-      console.log("Intersected Mesh", intersectedMesh)
-
-      if (!intersectedMesh) return
-
-      if (
-        intersectedMesh.geometry.name &&
-        (intersectedMesh.geometry.name.includes("surrounding") ||
-          intersectedMesh.geometry.name.includes("background"))
-      ) {
-        const existingIndex = props.selectedMesh.findIndex(
-          (mesh) => mesh.geometry.name === intersectedMesh.geometry.name
-        )
-
-        if (existingIndex > -1) {
-          props.setSelectedMesh([
-            ...props.selectedMesh.slice(0, existingIndex),
-            ...props.selectedMesh.slice(existingIndex + 1),
-          ])
-        } else {
-          props.setSelectedMesh([
-            ...props.selectedMesh,
-            {
-              geometry: intersectedMesh.geometry,
-              material: intersectedMesh.material,
-            },
-          ])
-        }
-      }
-    } else {
+    if (intersects.length === 0) {
       console.log("No children in the intersected mesh.")
+      return
+    }
+    const intersectedMesh = intersects[0].object
+    console.log("Intersected Mesh", intersectedMesh)
+
+    if (!intersectedMesh) return
+
+    if (
+      intersectedMesh.geometry.name &&
+      (intersectedMesh.geometry.name.includes("surrounding") ||
+        intersectedMesh.geometry.name.includes("background"))
+    ) {
+      const existingIndex = props.selectedMesh.findIndex(
+        (mesh) => mesh.geometry.name === intersectedMesh.geometry.name
+      )
+
+      if (existingIndex > -1) {
+        props.setSelectedMesh([
+          ...props.selectedMesh.slice(0, existingIndex),
+          ...props.selectedMesh.slice(existingIndex + 1),
+        ])
+      } else {
+        props.setSelectedMesh([
+          ...props.selectedMesh,
+          {
+            geometry: intersectedMesh.geometry,
+            material: intersectedMesh.material,
+          },
+        ])
+      }
     }
   }
 
