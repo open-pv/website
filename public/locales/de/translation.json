@@ -1,4 +1,5 @@
 {
+  "mainDescription": "Ermitteln Sie das Potential ihres Gebäudes für eine Solaranlage - mit offen verfügbaren 3D-Daten direkt im Browser.",
   "sidebar": {
     "header": "Ziel des Tools",
     "mainText": "Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche.",
@@ -57,7 +58,7 @@
   },
   "WelcomeMessage": {
     "title": "Willkommen bei OpenPV",
-    "firstPage": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten bestimmen. Dafür geben Sie ihre Adresse im Suchfeld ein und klicken Sie auf 'Simulation starten'.",
+    "firstPage": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten und mit Hilfe von offenen 3D-Gebäudedaten bestimmen. Dafür geben Sie ihre Adresse im Suchfeld ein und klicken Sie auf 'Simulation starten'.",
     "secondPage": "Auf der Karte können Sie das Ergebnis der Verschattungssimulation betrachten. Mit Doppelklick können Sie weitere Gebäude für die Simulation auswählen.",
     "thirdPage": "Über 'Neue PV-Anlage einzeichnen' können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
     "fourthPage": "Anschließend können Sie mit dem Button 'Wirtschaftlichkeit der Anlage berechnen' die jährlichen Einnahmen der Anlage abschätzen.",
