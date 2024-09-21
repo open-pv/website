@@ -73,6 +73,7 @@ export function createPVSystem({
     "position",
     new THREE.Float32BufferAttribute(bufferTriangles, 3)
   )
+  geometry.name = "pvSystem"
 
   let subdividedTriangles = []
   const triangleSubdivisionThreshold = 0.8
