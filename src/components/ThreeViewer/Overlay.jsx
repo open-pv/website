@@ -21,13 +21,14 @@ import {
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react"
-import React from "react"
+import React, { useEffect, useRef } from "react"
 import { useTranslation } from "react-i18next"
 import { simulationForNewBuilding } from "../../simulation/main"
 import SavingCalculation from "../PVSimulation/SavingsCalculation"
 import ButtonWithHoverHelp from "../Template/ButtonWithHoverHelp"
 import SliderWithLabel from "../Template/SliderWithLabel"
 import { createPVSystem } from "./Meshes/PVSystems"
+import SelectionNotification from "./SelectionNotification"
 
 function Overlay({
   frontendState,
@@ -36,6 +37,8 @@ function Overlay({
   setShowTerrain,
   selectedMesh,
   setSelectedMesh,
+  selectedPVSystem,
+  setSelectedPVSystem,
   geometries,
   geoLocation,
   pvSystems,
@@ -70,10 +73,19 @@ function Overlay({
   const handleAbortButtonClick = () => {
     setFrontendState("Results")
   }
+  const buttons = [
+    { label: "View Account", action: () => console.log("Viewing account") },
+    { label: "Edit Profile", action: () => console.log("Editing profile") },
+  ]
 
   return (
     <>
       <OverlayWrapper>
+        <SelectionNotification
+          selection={selectedPVSystem}
+          setSelection={setSelectedPVSystem}
+          buttons={buttons}
+        />
         {frontendState == "Results" && (
           <>
             <Button
