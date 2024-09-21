@@ -14,16 +14,20 @@ function CustomMapControl(props) {
   const handleInteraction = (event) => {
     event.preventDefault()
 
-    const isTouch = event.type.startsWith("touch")
-    const clientX = isTouch ? event.touches[0].clientX : event.clientX
-    const clientY = isTouch ? event.touches[0].clientY : event.clientY
+    const getIntersects = () => {
+      const isTouch = window.isTouchDevice
+      const clientX = isTouch ? event.touches[0].clientX : event.clientX
+      const clientY = isTouch ? event.touches[0].clientY : event.clientY
 
-    const rect = event.target.getBoundingClientRect()
-    mouse.current.x = ((clientX - rect.left) / rect.width) * 2 - 1
-    mouse.current.y = (-(clientY - rect.top) / rect.height) * 2 + 1
+      const rect = event.target.getBoundingClientRect()
+      mouse.current.x = ((clientX - rect.left) / rect.width) * 2 - 1
+      mouse.current.y = (-(clientY - rect.top) / rect.height) * 2 + 1
 
-    raycaster.current.setFromCamera(mouse.current, camera)
-    const intersects = raycaster.current.intersectObjects(scene.children, true)
+      raycaster.current.setFromCamera(mouse.current, camera)
+
+      return raycaster.current.intersectObjects(scene.children, true)
+    }
+    const intersects = getIntersects()
 
     if (intersects.length > 0) {
       const intersectedMesh = intersects[0].object
