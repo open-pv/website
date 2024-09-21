@@ -58,7 +58,7 @@ function CustomMapControl(props) {
       props.setSelectedMesh([intersectedMesh])
     }
     if (intersectedMesh.geometry.name.includes("pvSystem")) {
-      props.setSelectedPVSystem([intersectedMesh])
+      props.setSelectedPVSystem([intersectedMesh.geometry])
     }
   }
 

@@ -39,7 +39,7 @@ function SavingCalculation({
   if (selectedPVSystem.length > 0) {
     pvProduction = Math.round(
       selectedPVSystem.reduce(
-        (previous, current) => previous + current.geometry.annualYield,
+        (previous, current) => previous + current.annualYield,
         0
       )
     )

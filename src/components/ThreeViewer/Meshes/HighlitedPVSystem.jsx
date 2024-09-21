@@ -1,13 +1,13 @@
 import React from "react"
 import * as THREE from "three"
 
-export function HighlightedPVSystem({ meshes }) {
+export function HighlightedPVSystem({ geometries }) {
   return (
     <>
-      {meshes.map((mesh, index) => (
+      {geometries.map((geometry, index) => (
         <mesh
           key={index}
-          geometry={mesh.geometry}
+          geometry={geometry}
           material={
             new THREE.MeshLambertMaterial({
               color: "red",
