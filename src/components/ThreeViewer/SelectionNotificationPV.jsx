@@ -8,6 +8,7 @@ import {
   Wrap,
 } from "@chakra-ui/react"
 import React, { useEffect, useRef } from "react"
+import { useTranslation } from "react-i18next"
 import SavingCalculation from "../PVSimulation/SavingsCalculation"
 
 const SelectionNotificationPV = ({
@@ -16,6 +17,7 @@ const SelectionNotificationPV = ({
   setPVSystems,
 }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (selectedPVSystem.length > 0) {
@@ -42,7 +44,7 @@ const SelectionNotificationPV = ({
       <Alert alignItems="start" boxShadow="md" rounded="md" colorScheme="gray">
         <Box width="100%">
           <AlertDescription display="block" mb={2}>
-            {"Was soll mit dieser Anlage geschehen?"}
+            {t("savingsCalculation.notificationLabel")}
           </AlertDescription>
           <Wrap spacing={2} justify="start">
             <SavingCalculation
@@ -58,7 +60,7 @@ const SelectionNotificationPV = ({
                 onClose()
               }}
             >
-              Anlage löschen
+              {t("delete")}
             </Button>
           </Wrap>
         </Box>

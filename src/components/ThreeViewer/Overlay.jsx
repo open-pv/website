@@ -21,10 +21,10 @@ import {
   UnorderedList,
   useDisclosure,
 } from "@chakra-ui/react"
-import React, { useEffect, useRef } from "react"
+import React from "react"
 import { useTranslation } from "react-i18next"
 import { simulationForNewBuilding } from "../../simulation/main"
-import SavingCalculation from "../PVSimulation/SavingsCalculation"
+
 import ButtonWithHoverHelp from "../Template/ButtonWithHoverHelp"
 import SliderWithLabel from "../Template/SliderWithLabel"
 import { createPVSystem } from "./Meshes/PVSystems"
