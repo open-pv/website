@@ -47,24 +47,7 @@ function CustomMapControl(props) {
       (intersectedMesh.geometry.name.includes("surrounding") ||
         intersectedMesh.geometry.name.includes("background"))
     ) {
-      const existingIndex = props.selectedMesh.findIndex(
-        (mesh) => mesh.geometry.name === intersectedMesh.geometry.name
-      )
-
-      if (existingIndex > -1) {
-        props.setSelectedMesh([
-          ...props.selectedMesh.slice(0, existingIndex),
-          ...props.selectedMesh.slice(existingIndex + 1),
-        ])
-      } else {
-        props.setSelectedMesh([
-          ...props.selectedMesh,
-          {
-            geometry: intersectedMesh.geometry,
-            material: intersectedMesh.material,
-          },
-        ])
-      }
+      props.setSelectedMesh([intersectedMesh])
     }
   }
 
