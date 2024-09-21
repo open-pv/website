@@ -127,6 +127,7 @@ function SavingCalculation({
     <>
       {selectedPVSystem.length > 0 && (
         <Button
+          colorScheme="teal"
           onClick={() => {
             onOpen()
           }}

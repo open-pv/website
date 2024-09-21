@@ -39,7 +39,7 @@ const SelectionNotificationPV = ({
       width="300px"
       zIndex={9999}
     >
-      <Alert alignItems="start" boxShadow="md" rounded="md" colorScheme="teal">
+      <Alert alignItems="start" boxShadow="md" rounded="md" colorScheme="gray">
         <Box width="100%">
           <AlertDescription display="block" mb={2}>
             {"Was soll mit dieser Anlage geschehen?"}
@@ -51,6 +51,7 @@ const SelectionNotificationPV = ({
               onCloseAlert={onClose}
             />
             <Button
+              colorScheme="teal"
               onClick={() => {
                 setPVSystems([])
                 setSelectedPVSystem([])
