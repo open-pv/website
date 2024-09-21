@@ -37,7 +37,11 @@ function CustomMapControl(props) {
       console.log("No children in the intersected mesh.")
       return
     }
-    const intersectedMesh = intersects[0].object
+    let intersectedMesh = intersects[0].object
+    if (intersectedMesh.type === "Sprite") {
+      //ignore Sprites (the label of pvsystems), use the underlying object
+      intersectedMesh = intersects[1].object
+    }
     console.log("Intersected Mesh", intersectedMesh)
 
     if (!intersectedMesh) return
