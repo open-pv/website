@@ -63,6 +63,7 @@ function Overlay({
   const handleCreatePVButtonClick = () => {
     createPVSystem({
       setPVSystems,
+      setSelectedPVSystem,
       pvPoints,
       setPVPoints,
       simulationMeshes,
