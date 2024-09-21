@@ -35,6 +35,8 @@ function Index() {
   })
   // highlighted meshes for resimulation
   const [selectedMesh, setSelectedMesh] = useState([])
+  // highlighted PVSystems for deletion or calculation
+  const [selectedPVSystem, setselectedPVSystem] = useState([])
   // meshes that were simulated
   const [simulationMeshes, setSimulationMeshes] = useState([])
 
@@ -90,6 +92,8 @@ function Index() {
             setPVSystems={setPVSystems}
             selectedMesh={selectedMesh}
             setSelectedMesh={setSelectedMesh}
+            selectedPVSystem={selectedPVSystem}
+            setselectedPVSystem={setselectedPVSystem}
             pvPoints={pvPoints}
             setPVPoints={setPVPoints}
             vegetationGeometries={vegetationGeometries}

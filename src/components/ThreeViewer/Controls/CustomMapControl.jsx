@@ -53,6 +53,9 @@ function CustomMapControl(props) {
     ) {
       props.setSelectedMesh([intersectedMesh])
     }
+    if (intersectedMesh.geometry.name.includes("pvSystem")) {
+      props.setselectedPVSystem([intersectedMesh])
+    }
   }
 
   const handleDoubleClick = (event) => {
