@@ -7,9 +7,9 @@ import {
   Image,
   Link,
   ListItem,
+  OrderedList,
   SimpleGrid,
   Text,
-  UnorderedList,
   VStack,
 } from "@chakra-ui/react"
 import React from "react"
@@ -23,22 +23,24 @@ const About = () => {
   return (
     <>
       <Main title={t("about.title")} description={t("about.description")}>
-        <Card height="100%" overflow="auto">
+        <Card height="100%" overflow="auto" padding={"20px"}>
           <CardHeader>
-            <Heading>{t("about.description")}</Heading>
+            <Heading>{t("about.title")}</Heading>
           </CardHeader>
           <CardBody>
             <VStack spacing="6" align="start">
+              <Text>{t("about.introduction")}</Text>
               <TextBox
                 heading={t("about.generalDescription.h")}
                 content={t("about.generalDescription.p")}
               >
-                <Text>{t("about.advantages.introduction")}</Text>
-                <UnorderedList>
-                  <ListItem>{t("about.advantages.1")}</ListItem>
-                  <ListItem>{t("about.advantages.2")}</ListItem>
-                  <ListItem>{t("about.advantages.3")}</ListItem>
-                </UnorderedList>
+                <Text>{t("about.steps.introduction")}</Text>
+                <OrderedList>
+                  <ListItem>{t("about.steps.1")}</ListItem>
+                  <ListItem>{t("about.steps.2")}</ListItem>
+                  <ListItem>{t("about.steps.3")}</ListItem>
+                  <ListItem>{t("about.steps.4")}</ListItem>
+                </OrderedList>
               </TextBox>
               <ImageRow
                 images={[
