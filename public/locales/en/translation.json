@@ -75,12 +75,12 @@
     "leftMouse": "Left Mouse Button: Move on the map",
     "rightMouse": "Right Mouse Button: Rotate the map",
     "wheel": "Mouse Wheel: Zoom in and out",
-    "doubleClick": "Double click: Choose another building for a simulation",
+    "doubleClick": "Double click: Select a builing or PV system",
     "touch": {
       "leftMouse": "One finger: Move on the map",
       "rightMouse": "Two fingers: Rotate the map",
       "wheel": "Two fingers: Zoom in and out",
-      "doubleClick": "Double-tap on a building: Select another building for simulation"
+      "doubleClick": "Double-tap: Select a builing or PV system"
     }
   },
   "savingsCalculation": {
