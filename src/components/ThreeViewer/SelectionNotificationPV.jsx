@@ -7,7 +7,7 @@ import {
   useDisclosure,
   Wrap,
 } from "@chakra-ui/react"
-import React, { useEffect, useRef } from "react"
+import React, { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import SavingCalculation from "../PVSimulation/SavingsCalculation"
 
@@ -23,7 +23,7 @@ const SelectionNotificationPV = ({
     if (selectedPVSystem.length > 0) {
       onOpen()
     }
-  }, [selectedPVSystem, onOpen])
+  }, [selectedPVSystem])
 
   const handleCloseAlert = () => {
     onClose()
