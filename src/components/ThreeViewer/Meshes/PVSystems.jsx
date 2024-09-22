@@ -141,7 +141,7 @@ export function createPVSystem({
 
   setPVSystems((prevSystems) => [...prevSystems, geometry])
   setPVPoints([])
-  setSelectedPVSystem((prevSystems) => [...prevSystems, geometry])
+  setSelectedPVSystem([geometry])
 }
 
 const PVSystem = ({ geometry }) => {
