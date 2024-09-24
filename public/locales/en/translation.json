@@ -1,4 +1,5 @@
 {
+  "mainDescription": "Determine the potential of your building for a solar installation by using openly available 3D data - directly in the browser.",
   "sidebar": {
     "header": "Goal of this website",
     "mainText": "The tool will then calculate the potential for a solar system on your roof and facade area.",
@@ -39,7 +40,7 @@
   },
   "WelcomeMessage": {
     "title": "Welcome to OpenPV",
-    "firstPage": "Is a solar system worth it for my roof or balcony? With OpenPV, you can determine the solar potential of your building in just a few steps. Simply enter your address in the search field and click Start.",
+    "firstPage": "Is a solar system worth it for my roof or balcony? With OpenPV, you can determine the solar potential of your building in just a few steps with the help of openly available 3D building data. Simply enter your address in the search field and click Start.",
     "secondPage": "On the map, you can view the results of the shading simulation. You can select additional buildings for simulation by double-clicking.",
     "thirdPage": "In Options -> Draw PV System, you can create a solar system and calculate the annual yield.",
     "fourthPage": "The best thing about OpenPV: We are open-source, free, store no data, and use no cookies!"
