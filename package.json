@@ -20,7 +20,6 @@
     "pako": "^2.1.0",
     "proj4": "^2.12.0",
     "react": "^18.2.0",
-    "react-burger-menu": "^3.0.9",
     "react-dom": "^18.2.0",
     "react-helmet-async": "^2.0.5",
     "react-i18next": "^15.0.0",
