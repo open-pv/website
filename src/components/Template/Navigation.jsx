@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 
 import routes from "../../data/routes"
-import Hamburger from "./Hamburger"
 
 // Websites Navbar, displays routes defined in 'src/data/routes'
 const Navigation = () => {
@@ -34,7 +33,6 @@ const Navigation = () => {
             ))}
         </ul>
       </nav>
-      <Hamburger />
     </header>
   )
 }
