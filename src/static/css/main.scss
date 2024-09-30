@@ -106,16 +106,6 @@ p.copyright {
   align-items: center;
 }
 
-@keyframes blink {
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.button-high-prio {
-  animation: blink 1s infinite;
-}
-
 button.maplibregl-popup-close-button {
   font-size: 2em;
   padding: 5px;
