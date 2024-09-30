@@ -35,7 +35,6 @@
 
 @import "layout/header";
 @import "layout/wrapper";
-@import "layout/main";
 
 // Theme overrides
 #main {
@@ -45,6 +44,9 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+  @include vendor("flex-grow", "1");
+  -ms-flex: 1;
+  width: 100%;
 }
 
 .content {
