@@ -37,11 +37,18 @@ function CustomMapControl(props) {
       console.log("No children in the intersected mesh.")
       return
     }
-    let intersectedMesh = intersects[0].object
-    if (intersectedMesh.type === "Sprite") {
-      //ignore Sprites (the label of pvsystems), use the underlying object
-      intersectedMesh = intersects[1].object
+
+    // Filter out Sprites (ie the labels of PV systems)
+    let i = 0
+    while (i < intersects.length && intersects[i].object.type === "Sprite") {
+      i++
     }
+    if (i === intersects.length) {
+      console.log("Only Sprite objects found in intersections.")
+      return
+    }
+
+    let intersectedMesh = intersects[i].object
     console.log("Intersected Mesh", intersectedMesh)
 
     if (!intersectedMesh) return
