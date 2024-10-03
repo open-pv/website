@@ -1,3 +1,4 @@
+import { Heading } from "@chakra-ui/react"
 import React from "react"
 import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
@@ -14,9 +15,11 @@ const Navigation = () => {
         {routes
           .filter((l) => l.index)
           .map((l) => (
-            <Link key={l.label} to={l.path}>
-              {l.label}
-            </Link>
+            <Heading>
+              <Link key={l.label} to={l.path}>
+                {l.label}
+              </Link>
+            </Heading>
           ))}
       </h1>
 
