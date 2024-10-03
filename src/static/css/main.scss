@@ -12,7 +12,24 @@
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
 
-@import "layout/wrapper";
+#wrapper {
+  @include vendor("display", "flex");
+  @include vendor("flex-direction", "row-reverse");
+  @include vendor("transition", "opacity #{_duration(menu)} ease");
+  margin: 0 auto;
+  max-width: 100%;
+  opacity: 1;
+  padding: 0;
+  width: 90em;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
 // Theme overrides
 #main {
