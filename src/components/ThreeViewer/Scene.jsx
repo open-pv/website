@@ -1,8 +1,9 @@
-import React, { useRef, useState } from "react"
+import React, { useRef } from "react"
 import { Canvas } from "react-three-fiber"
 
 import CustomMapControl from "./Controls/CustomMapControl"
 import DrawPVControl from "./Controls/DrawPVControl"
+import { HighlightedPVSystem } from "./Meshes/HighlitedPVSystem"
 import { HighlightedMesh } from "./Meshes/HiglightedMesh"
 import { PVSystems } from "./Meshes/PVSystems"
 import SimulationMesh from "./Meshes/SimulationMesh"
@@ -19,6 +20,8 @@ const Scene = ({
   pvSystems,
   selectedMesh,
   setSelectedMesh,
+  selectedPVSystem,
+  setSelectedPVSystem,
   pvPoints,
   setPVPoints,
   vegetationGeometries,
@@ -57,11 +60,14 @@ const Scene = ({
         <SimulationMesh meshes={simulationMeshes} />
       )}
       {selectedMesh && <HighlightedMesh meshes={selectedMesh} />}
+      {selectedPVSystem && (
+        <HighlightedPVSystem geometries={selectedPVSystem} />
+      )}
       {simulationMeshes.length > 0 && frontendState == "Results" && (
         <CustomMapControl
           middle={simulationMeshes[0].middle}
-          selectedMesh={selectedMesh}
           setSelectedMesh={setSelectedMesh}
+          setSelectedPVSystem={setSelectedPVSystem}
         />
       )}
       {frontendState == "DrawPV" && (

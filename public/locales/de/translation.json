@@ -11,6 +11,7 @@
   "next": "Nächste",
   "previous": "Vorherige",
   "close": "Schließen",
+  "delete": "Löschen",
   "searchField": {
     "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Lange Point 20, Freising"
   },
@@ -96,16 +97,17 @@
     "leftMouse": "Linke Maustaste: Bewegung auf der Karte",
     "rightMouse": "Rechte Maustaste: Rotation der Karte",
     "wheel": "Mausrad: Vergrößern und Verkleinern",
-    "doubleClick": "Doppelklick: Weiteres Gebäude für Simulation auswählen",
+    "doubleClick": "Doppelklick: Auswählen von Gebäude oder PV-Anlage",
     "touch": {
       "leftMouse": "Ein Finger: Bewegung auf der Karte",
       "rightMouse": "Zwei Finger: Rotation der Karte",
       "wheel": "Zwei Finger: Vergrößern und Verkleinern",
-      "doubleClick": "Zweimal kurz auf Gebäude tippen: Weiteres Gebäude für Simulation auswählen"
+      "doubleClick": "Zweimal kurz tippen: Auswählen von Gebäude oder PV-Anlage"
     }
   },
   "savingsCalculation": {
-    "button": "Wirtschaftlichkeit der Anlage berechnen",
+    "notificationLabel": "Für die ausgewählte PV-Anlage:",
+    "button": "Wirtschaftlichkeit berechnen",
     "consumptionTitle": "Jährlicher Stromverbrauch in kWh",
     "consumptionHelperInfo": "Als grober Schätzwert gilt: Rechne pro Person im Haushalt mit 800 kWh, für eine Wärmepumpe 2000 kWh und pro Elektroauto weitere 2000 kWh.",
     "consumptionHelperLabel": "[So berechnen Sie ihren Stromverbrauch]",

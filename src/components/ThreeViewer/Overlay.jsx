@@ -23,11 +23,12 @@ import {
 } from "@chakra-ui/react"
 import React from "react"
 import { useTranslation } from "react-i18next"
-import { simulationForNewBuilding } from "../../simulation/main"
-import SavingCalculation from "../PVSimulation/SavingsCalculation"
+
 import ButtonWithHoverHelp from "../Template/ButtonWithHoverHelp"
 import SliderWithLabel from "../Template/SliderWithLabel"
 import { createPVSystem } from "./Meshes/PVSystems"
+import SelectionNotificationBuilding from "./SelectionNotificationBuilding"
+import SelectionNotificationPV from "./SelectionNotificationPV"
 
 function Overlay({
   frontendState,
@@ -36,6 +37,8 @@ function Overlay({
   setShowTerrain,
   selectedMesh,
   setSelectedMesh,
+  selectedPVSystem,
+  setSelectedPVSystem,
   geometries,
   geoLocation,
   pvSystems,
@@ -60,6 +63,7 @@ function Overlay({
   const handleCreatePVButtonClick = () => {
     createPVSystem({
       setPVSystems,
+      setSelectedPVSystem,
       pvPoints,
       setPVPoints,
       simulationMeshes,
@@ -74,6 +78,19 @@ function Overlay({
   return (
     <>
       <OverlayWrapper>
+        <SelectionNotificationPV
+          selectedPVSystem={selectedPVSystem}
+          setSelectedPVSystem={setSelectedPVSystem}
+          setPVSystems={setPVSystems}
+        />
+        <SelectionNotificationBuilding
+          selectedMesh={selectedMesh}
+          setSelectedMesh={setSelectedMesh}
+          simulationMeshes={simulationMeshes}
+          setSimulationMeshes={setSimulationMeshes}
+          geometries={geometries}
+          geoLocation={geoLocation}
+        />
         {frontendState == "Results" && (
           <>
             <Button
@@ -118,24 +135,7 @@ function Overlay({
             hoverText={t("button.drawPVSystemHover")}
           />
         )}
-        <SavingCalculation pvSystems={pvSystems} />
-        {selectedMesh.length > 0 && (
-          <Button
-            className="button-high-prio"
-            onClick={async () =>
-              await simulationForNewBuilding({
-                selectedMesh,
-                setSelectedMesh,
-                simulationMeshes,
-                setSimulationMeshes,
-                geometries,
-                geoLocation,
-              })
-            }
-          >
-            {t("button.simulateBuilding")}
-          </Button>
-        )}
+
         {frontendState == "DrawPV" && (
           <>
             {pvPoints.length > 0 && (
