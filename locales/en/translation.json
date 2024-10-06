@@ -1,4 +1,5 @@
 {
+  "mainDescription": "Determine the potential of your building for a solar installation by using openly available 3D data - directly in the browser.",
   "sidebar": {
     "header": "Goal of this website",
     "mainText": "The tool will then calculate the potential for a solar system on your roof and facade area.",
@@ -10,22 +11,44 @@
   "next": "Next",
   "previous": "Previous",
   "close": "Close",
+  "delete": "Delete",
   "searchField": {
     "placeholder": "Enter your address or coordinates - e.g. Lange Point 20, Freising"
   },
   "about": {
-    "title": "Information",
-    "description": "More information on openpv.de",
-    "h2": "More information on openpv.de",
-    "p-1": "The following instructions will show you how to use the website to calculate the potential for a solar system.",
-    "h3-2": "1. Insert your adress or coordinates",
-    "p-2": "On the homepage, you will find a search field. Enter either the address of the desired location or the corresponding coordinates in the search field. If we do not have all addresses in Bavaria stored, you can use the coordinates instead. You can find the coordinates, for example, in Google Maps. Press Enter to confirm the input and start the simulation.",
-    "h3-3": "Download the 3D buildings dataset",
-    "p-3": "The website automatically downloads the 3D building data for the specified location and then initiates the simulation. Depending on the performance of your device and the size of the building data, this process may take a few seconds. Please be patient. If it takes too long, you can reduce the number of simulations or the building radius on the left side.",
-    "h3-4": "Visualize the simulation results",
-    "p-4": "After completing the solar potential calculation, the roof and facade of the building will be colored. Yellow indicates a very high potential for a solar system, while blue indicates a lower potential. In the displayed 3D view, you can navigate using the left and right mouse buttons, as well as your mouse wheel.",
-    "h3-5": "More details",
-    "p-5": "Once the 3D building data has been downloaded, the website begins the calculation of the solar potential. This is achieved through ray tracing to determine the angle of sunlight incidence on the roof and facade. The data used in this project is sourced from the OpenData Portal of the Bavarian Surveying Authority and is available under the CC BY 4.0 license: https://geodaten.bayern.de/opengeodata/OpenDataDetail.html?pn=lod2. The LOD2 data from March 2023 was used for this purpose. We express our gratitude to the source for providing these data, which have contributed to the realization of this project."
+    "title": "About the Project",
+    "description": "More information about openpv.de: The website for online calculation of shading and economic efficiency of your solar system.",
+    "introduction": "Solar systems make a significant contribution to the energy transition. Germany aims to triple the installed PV capacity by 2030. Roof and balcony systems play an essential role in this, as they enable decentralized energy supply without causing additional land consumption. Balcony power plants, in particular, allow tenants without their own property to generate a considerable part of their electricity themselves. However, many potential users lack the background knowledge to assess the suitability of their building for photovoltaics. This is where we want to help with OpenPV, to enable a simple analysis of the PV potential on one's own building. The goal of OpenPV is to simulate and display the solar potential of buildings across Germany with just a few clicks, based on an address.",
+    "generalDescription": {
+      "h": "How does openpv.de work?",
+      "p": "On the homepage, you can select your building either via the search field or the map. With a click on 'Start', the buildings of the selected location are loaded and the shading simulation is executed in your browser. After successful completion of the simulation, the PV potential of your building is displayed - yellow stands for good potential, dark blue for poor potential with a lot of shading. Afterwards, you can draw a PV system or adjust the simulation options."
+    },
+    "data": {
+      "h": "What data do we use?",
+      "p1": "We use various open datasets for the PV simulation. These are the 3D building data (LOD2 data) from various state surveying offices, the annual irradiation data for Germany of direct and diffuse radiation from the DWD (German Weather Service),",
+      "p2": "the terrain model from sonny,",
+      "p3": "as well as the base map from the BKG (Federal Agency for Cartography and Geodesy)"
+    },
+    "whyOpenSource": {
+      "h": "Why is OpenPV Open Source?",
+      "p": "Public Money, Public Code! The creation of our website was made possible through public funds, which is why the code is publicly available. Open source code also increases trust in the website and the simulation results. Additionally, other people can modify and reuse the code."
+    },
+    "team": {
+      "h": "Who are we?",
+      "p": "We are a small team of four people. We all work on OpenPV as a side project.",
+      "link": "The team on Github."
+    },
+    "sponsors": {
+      "h": "Our Sponsors",
+      "p": "We thank our sponsors! If you wish for a new feature or want to support us, please contact us: info[at]openpv.de"
+    },
+    "steps": {
+      "introduction": "Instructions for using openpv.de:",
+      "1": "On the OpenPV homepage, the first step is to select a building for the simulation. This can be done either by entering and searching for an address or by zooming and selecting on the map. Left-clicking on the building displays a menu through which the simulation can be started.",
+      "2": "Once the simulation is started, all relevant data for the selected building is loaded into the browser. This includes the 3D building data of the chosen building and the buildings in the neighborhood, the terrain model, and vegetation data (if available). For the yield calculation, two shading simulations are then performed, one with direct and one with diffuse radiation. For direct radiation, an average is taken over 100 randomly selected sun positions throughout the year. This number can be adjusted in the options. Based on the building's coordinates, climate data for the location from the German Weather Service (DWD) is used to account for local climate influences. For shading, the selected building and the buildings in the immediate vicinity are used. Shading by hills and mountains is taken into account using a terrain model with a resolution of 30m. Shading by trees can only be included in federal states that provide open access to vegetation data (laser point clouds). This is the case in Bavaria, for example. If vegetation is displayed on the website, it is also considered for the shading simulation. When the simulation is complete, the result is displayed in the browser. The chosen building is colored according to the calculated solar potential. For better orientation, the terrain, a map, the neighboring buildings, and the existing vegetation are also displayed.",
+      "3": "In the next step, a solar system can be drawn on the roof or façade using the 'Draw new PV system' button. By drawing the corner points, one or more solar systems of any shape can be created. Based on the previous simulation, an estimated annual electricity yield is then given for the drawn system.",
+      "4": "In the last step, an economic feasibility calculation can be performed for the drawn systems. A standard load profile is scaled with the annual consumption, and a standard generation profile is scaled with the power of the solar system. Then, for a one-year time series with hourly resolution, consumption is compared with electricity generation. If a storage system is present, it can be used to store excess electricity or to provide electricity. The portion of electricity that no longer needs to be drawn from the grid thanks to the solar system is then multiplied by the electricity price. This results in the annual savings."
+    }
   },
   "loadingMessage": {
     "tip1": "Double-click to select a different building on the map and restart the simulation.",
@@ -38,7 +61,7 @@
   },
   "WelcomeMessage": {
     "title": "Welcome to OpenPV",
-    "firstPage": "Is a solar system worth it for my roof or balcony? With OpenPV, you can determine the solar potential of your building in just a few steps. Simply enter your address in the search field and click Start.",
+    "firstPage": "Is a solar system worth it for my roof or balcony? With OpenPV, you can determine the solar potential of your building in just a few steps with the help of openly available 3D building data. Simply enter your address in the search field and click Start.",
     "secondPage": "On the map, you can view the results of the shading simulation. You can select additional buildings for simulation by double-clicking.",
     "thirdPage": "In Options -> Draw PV System, you can create a solar system and calculate the annual yield.",
     "fourthPage": "The best thing about OpenPV: We are open-source, free, store no data, and use no cookies!"
@@ -74,15 +97,16 @@
     "leftMouse": "Left Mouse Button: Move on the map",
     "rightMouse": "Right Mouse Button: Rotate the map",
     "wheel": "Mouse Wheel: Zoom in and out",
-    "doubleClick": "Double click: Choose another building for a simulation",
+    "doubleClick": "Double click: Select a builing or PV system",
     "touch": {
       "leftMouse": "One finger: Move on the map",
       "rightMouse": "Two fingers: Rotate the map",
       "wheel": "Two fingers: Zoom in and out",
-      "doubleClick": "Double-tap on a building: Select another building for simulation"
+      "doubleClick": "Double-tap: Select a builing or PV system"
     }
   },
   "savingsCalculation": {
+    "notificationLabel": "Continue with chosen pv system:",
     "button": "Calculate Earnings",
     "consumptionTitle": "Annual electricity consumption in kWh",
     "consumptionHelperInfo": "As a rough estimate: Calculate 800 kWh per person in the household, 2000 kWh for a heat pump, and an additional 2000 kWh per electric car.",

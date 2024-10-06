@@ -1,4 +1,5 @@
 {
+  "mainDescription": "Ermitteln Sie das Potential ihres Gebäudes für eine Solaranlage - mit offen verfügbaren 3D-Daten direkt im Browser.",
   "sidebar": {
     "header": "Ziel des Tools",
     "mainText": "Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche.",
@@ -10,12 +11,14 @@
   "next": "Nächste",
   "previous": "Vorherige",
   "close": "Schließen",
+  "delete": "Löschen",
   "searchField": {
     "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Lange Point 20, Freising"
   },
   "about": {
-    "title": "Informationen",
-    "description": "Weitere Informationen zu openpv.de",
+    "title": "Über das Projekt",
+    "description": "Weitere Informationen zu openpv.de: Die Website für die Online-Berechnung von Verschattung und Wirtschaftlichkeit deiner Solaranlage.",
+    "introduction": "Solaranlagen leisten einen bedeutenden Beitrag zur Energiewende. Deutschland strebt an, die installierte PV-Leistung bis 2030 zu verdreifachen. Hierbei spielen Dach- und Balkonanlagen eine essenzielle Rolle, da sie eine dezentrale Energieversorgung ermöglichen, ohne zusätzlichen Flächenverbrauch zu verursachen. Insbesondere durch Balkonkraftwerke ist es auch Mieter*innen ohne eigenes Wohneigentum möglich, einen erheblichen Teil des genutzten Stroms selbst zu erzeugen. Doch vielen möglichen Nutzer*innen fehlt das Hintergrundwissen, um die Eignung ihres Gebäudes für Photovoltaik einschätzen zu können. Hier wollen wir mit OpenPV helfen, um eine einfache Analyse des PV-Potentials am eigenen Gebäude vornehmen zu können.  Das Ziel von OpenPV ist es, deutschlandweit mit wenigen Klicks das Solarpotential von Gebäuden basierend auf einer Adresse zu simulieren und darzustellen.",
     "generalDescription": {
       "h": "Wie funktioniert openpv.de?",
       "p": "Auf der Startseite kannst du dein Gebäude entweder über das Suchfeld oder die Karte auwählen. Mit einem Klick auf 'Start' werden die Gebäude des gewählten Standorts geladen und die Verschattungssimulation in deinem Browser ausgeführt. Nach erfolgreichem Abschluss der Simulation wird das PV-Potential deines Gebäudes angezeigt - gelb steht für ein gutes Potential, dunkelblau für ein schlechtes Potential mit viel Verschattung. Anschließend kannst du eine PV-Anlage einzeichnen oder die Optionen der Simulation anpassen."
@@ -39,11 +42,12 @@
       "h": "Unsere Sponsoren",
       "p": "Wir danken unseren Sponsoren! Falls Sie ein neues Feature wünschen oder uns unterstützen möchten, kontaktieren Sie uns: info[at]openpv.de"
     },
-    "advantages": {
-      "introduction": "Bei OpenPV haben wir",
-      "1": "direkte und diffuse Einstrahlung integriert,",
-      "2": "Geländeverschattung integriert,",
-      "3": "und die Verschattung durch Vegetation in einigen Bundesländern integriert."
+    "steps": {
+      "introduction": "Anleitung für die Nutung von openpv.de:",
+      "1": "Auf der Startseite von OpenPV wird im ersten Schritt ein Gebäude für die Simulation ausgewählt. Dies kann entweder über die Eingabe und Suche einer Adresse erfolgen, oder durch das Zoomen und Auswählen auf der Landkarte. Durch einen Linksklick auf das Gebäude wird ein Menü angezeigt, durch welches die Simulation gestartet werden kann.",
+      "2": "Ist die Simulation gestartet, werden für das ausgewählte Gebäude alle relevanten Daten in den Browser geladen. Dies sind die 3D-Gebäudedaten des gewählten Gebäudes und der Gebäude aus der Nachbarschaft, das Geländemodell, sowie Daten zur Vegetation (falls vorhanden). Für die Betragsberechnung werden anschließend zwei Verschattungssimulationen durchgeführt, eine mit direkter und eine mit diffuser Einstrahlung. Für die direkte Einstrahlung wird über 100 zufällig gewählte Sonnenstände im Jahr gemittelt. Diese Zahl kann in den Optionen angepasst werden. Anhand der Koordinaten des Gebäudes werden die Klimadaten des Standorts vom deutschen Wetterdienst (DWD) verwendet, um die Einflüsse des lokalen Klimas zu berücksichtigen. Für die Verschattung werden das gewählte Gebäude sowie die Gebäude der direkten Nachbarschaft verwendet. Die Verschattung durch Hügel und Berge wird mit Hilfe eines Geländemodells mit einer Auflösung von 30m berücksichtigt. Die Verschattung durch Bäume kann nur in Bundesländern einbezogen werden, welche Daten zur Vegetation (Laserpunktwolken) offen zur Verfügung stellen. Das ist zum Beispiel in Bayern der Fall. Wenn Vegetation auf der Website angezeigt wird, so wird es auch für die Verschattungssimulation berücksichtigt. Wenn die Simulation beendet ist, wird das Ergebnis im Browser dargestellt. Dafür wird das gewählte Gebäude entsprechend des berechneten solaren Potentials eingefärbt. Zur besseren Orientierung werden auch das Gelände, eine Karte, die Gebäude der Nachbarschaft sowie die vorhandene Vegetation angezeigt.",
+      "3": "Im nächsten Schritt kann über den Button “Neue PV-Anlage einzeichnen” eine Solaranlage auf dem Dach oder an der Fassade eingezeichnet werden. Durch das Einzeichnen der Eckpunkte kann so eine oder mehrere Solaranlagen mit beliebiger Form angelegt werden. Basierend auf der vorangegangenen Simulation wird anschließend ein geschätzter jährlicher Stromertrag für die eingezeichnete Anlage angegeben.",
+      "4": "Für die eingezeichneten Anlagen kann im letzten Schritt eine Wirtschaftlichkeitsberechnung durchgeführt werden. Dabei werden ein Standardlastprofil mit dem jährlichen Verbrauch skaliert und ein Standarderzeugungsprofil mit der Leistung der Solaranlage skaliert. Anschließend wird für eine einjährige Zeitreihe mit stündlicher Auflösung der Verbrauch mit der Stromerzeugung abgeglichen. Falls ein Speicher vorhanden ist, kann dieser verwendet werden, um überschüssigen Strom zu speichern oder um Strom bereitzustellen. Der Anteil des Stroms, welcher dank der Solaranlage nicht mehr vom Netz bezogen werden muss, wird anschließend mit dem Strompreis multipliziert. Daraus ergeben sich dann die jährliche Ersparnisse."
     }
   },
   "loadingMessage": {
@@ -57,7 +61,7 @@
   },
   "WelcomeMessage": {
     "title": "Willkommen bei OpenPV",
-    "firstPage": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten bestimmen. Dafür geben Sie ihre Adresse im Suchfeld ein und klicken Sie auf 'Simulation starten'.",
+    "firstPage": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten und mit Hilfe von offenen 3D-Gebäudedaten bestimmen. Dafür geben Sie ihre Adresse im Suchfeld ein und klicken Sie auf 'Simulation starten'.",
     "secondPage": "Auf der Karte können Sie das Ergebnis der Verschattungssimulation betrachten. Mit Doppelklick können Sie weitere Gebäude für die Simulation auswählen.",
     "thirdPage": "Über 'Neue PV-Anlage einzeichnen' können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
     "fourthPage": "Anschließend können Sie mit dem Button 'Wirtschaftlichkeit der Anlage berechnen' die jährlichen Einnahmen der Anlage abschätzen.",
@@ -93,16 +97,17 @@
     "leftMouse": "Linke Maustaste: Bewegung auf der Karte",
     "rightMouse": "Rechte Maustaste: Rotation der Karte",
     "wheel": "Mausrad: Vergrößern und Verkleinern",
-    "doubleClick": "Doppelklick: Weiteres Gebäude für Simulation auswählen",
+    "doubleClick": "Doppelklick: Auswählen von Gebäude oder PV-Anlage",
     "touch": {
       "leftMouse": "Ein Finger: Bewegung auf der Karte",
       "rightMouse": "Zwei Finger: Rotation der Karte",
       "wheel": "Zwei Finger: Vergrößern und Verkleinern",
-      "doubleClick": "Zweimal kurz auf Gebäude tippen: Weiteres Gebäude für Simulation auswählen"
+      "doubleClick": "Zweimal kurz tippen: Auswählen von Gebäude oder PV-Anlage"
     }
   },
   "savingsCalculation": {
-    "button": "Wirtschaftlichkeit der Anlage berechnen",
+    "notificationLabel": "Für die ausgewählte PV-Anlage:",
+    "button": "Wirtschaftlichkeit berechnen",
     "consumptionTitle": "Jährlicher Stromverbrauch in kWh",
     "consumptionHelperInfo": "Als grober Schätzwert gilt: Rechne pro Person im Haushalt mit 800 kWh, für eine Wärmepumpe 2000 kWh und pro Elektroauto weitere 2000 kWh.",
     "consumptionHelperLabel": "[So berechnen Sie ihren Stromverbrauch]",
