@@ -7,7 +7,7 @@
     "deploy:test": "gh-pages -d dist -b gh-pages"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.8.2",
+    "@chakra-ui/react": "^2.10.1",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@openpv/simshady": "^0.0.5",
