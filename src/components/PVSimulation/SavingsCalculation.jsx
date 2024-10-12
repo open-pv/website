@@ -30,11 +30,25 @@ function SavingCalculation({
   const { isOpen: isOpenResultFade, onToggle: onToggleResultFade } =
     useDisclosure({ defaultIsOpen: false })
   const { t } = useTranslation()
-  const [annualConsumption, setAnnualConsumption] = useState(3000)
-  const [storageCapacity, setStorageCapacity] = useState(0)
-  const [electricityPrice, setElectricityPrice] = useState(25)
+  const [annualConsumption, setAnnualConsumption] = useState("3000")
+  const [storageCapacity, setStorageCapacity] = useState("0")
+  const [electricityPrice, setElectricityPrice] = useState("25")
   const [selfConsumption, setSelfConsumption] = useState(0)
   const [annualSavings, setAnnualSavings] = useState(0)
+
+  // Helper function to normalize input with different decimal separators
+  const normalizeInput = (value) => {
+    return value.replace(",", ".")
+  }
+
+  // Helper function to handle numeric input changes
+  const handleNumericChange = (setter) => (e) => {
+    const value = e.target.value
+    if (value === "" || /^[0-9]*[.,]?[0-9]*$/.test(value)) {
+      setter(value)
+    }
+  }
+
   let pvProduction
   if (selectedPVSystem.length > 0) {
     pvProduction = Math.round(
@@ -113,9 +127,9 @@ function SavingCalculation({
 
     await calculateSaving({
       pvProduction: pvProduction,
-      consumptionHousehold: parseFloat(annualConsumption),
-      storageCapacity: storageCapacity,
-      electricityPrice: electricityPrice,
+      consumptionHousehold: parseFloat(normalizeInput(annualConsumption)),
+      storageCapacity: parseFloat(normalizeInput(storageCapacity)),
+      electricityPrice: parseFloat(normalizeInput(electricityPrice)),
       setSelfConsumption: setSelfConsumption,
       setAnnualSavings: setAnnualSavings,
     })
@@ -164,16 +178,15 @@ function SavingCalculation({
                 <Input
                   ref={initialRef}
                   value={annualConsumption}
-                  onChange={(e) => setAnnualConsumption(e.target.value)}
+                  onChange={handleNumericChange(setAnnualConsumption)}
                 />
               </FormControl>
               <br />
               <FormControl>
                 <FormLabel>{t("savingsCalculation.storageTitle")}</FormLabel>
                 <Input
-                  ref={initialRef}
                   value={storageCapacity}
-                  onChange={(e) => setStorageCapacity(e.target.value)}
+                  onChange={handleNumericChange(setStorageCapacity)}
                 />
               </FormControl>
               <br />
@@ -182,12 +195,11 @@ function SavingCalculation({
                   {t("savingsCalculation.electricityPriceTitle")}
                 </FormLabel>
                 <Input
-                  ref={initialRef}
                   placeholder={t(
                     "savingsCalculation.electricityPricePlaceholder"
                   )}
                   value={electricityPrice}
-                  onChange={(e) => setElectricityPrice(e.target.value)}
+                  onChange={handleNumericChange(setElectricityPrice)}
                 />
               </FormControl>
 
@@ -234,8 +246,6 @@ function SavingCalculation({
               onClick={() => {
                 handleCalculateSaving()
                 if (!isOpenResultFade) {
-                  //open the Fade only if it is not
-                  // already opened
                   onToggleResultFade()
                 }
               }}
