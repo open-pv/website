@@ -32,7 +32,7 @@ function SavingCalculation({
   const { t } = useTranslation()
   const [annualConsumption, setAnnualConsumption] = useState("3000")
   const [storageCapacity, setStorageCapacity] = useState("0")
-  const [electricityPrice, setElectricityPrice] = useState("25")
+  const [electricityPrice, setElectricityPrice] = useState("30")
   const [selfConsumption, setSelfConsumption] = useState(0)
   const [annualSavings, setAnnualSavings] = useState(0)
 
