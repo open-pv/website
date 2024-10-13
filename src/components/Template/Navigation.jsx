@@ -1,41 +1,37 @@
+import { Box, Heading, Tab, TabList, Tabs } from "@chakra-ui/react"
 import React from "react"
 import { useTranslation } from "react-i18next"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 
-import routes from "../../data/routes"
-import Hamburger from "./Hamburger"
-
-// Websites Navbar, displays routes defined in 'src/data/routes'
 const Navigation = () => {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
+  const location = useLocation()
+
+  const isActive = (path) => location.pathname === path
 
   return (
-    <header id="header">
-      <h1 className="index-link">
-        {routes
-          .filter((l) => l.index)
-          .map((l) => (
-            <Link key={l.label} to={l.path}>
-              {l.label}
-            </Link>
-          ))}
-      </h1>
-
-      <nav className="links">
-        <ul>
-          {routes
-            .filter((l) => !l.index)
-            .map((l) => (
-              <li key={l.label}>
-                <Link to={l.path}>
-                  {l.labelKey == null ? l.label : t(l.labelKey)}
-                </Link>
-              </li>
-            ))}
-        </ul>
-      </nav>
-      <Hamburger />
-    </header>
+    <Tabs
+      as="nav"
+      className="links"
+      index={isActive("/") ? 0 : isActive("/about") ? 1 : -1}
+    >
+      <TabList>
+        <Tab
+          key="/"
+          as={Link}
+          to="/"
+          isSelected={isActive("/")}
+          fontSize="xl"
+          fontWeight="bold"
+          p={4}
+        >
+          OpenPV
+        </Tab>
+        <Tab key="/about" as={Link} to="/about" isSelected={isActive("/about")}>
+          {t("about.title")}
+        </Tab>
+      </TabList>
+    </Tabs>
   )
 }
 
