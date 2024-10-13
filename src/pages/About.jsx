@@ -48,6 +48,11 @@ const About = () => {
                   "images/WelcomeMessage2.png",
                   "images/WelcomeMessage3.png",
                 ]}
+                alttext={[
+                  "Screenshot of the map that is visible on the start screen of openpv.de.",
+                  "Screenhot of a simulated building.",
+                  "Screenshot of a PV system that is drawn on a simulated building together with an estimated annual PV yield.",
+                ]}
               />
               <TextBox heading={t("about.data.h")}>
                 {t("about.data.p1")}{" "}
@@ -95,6 +100,10 @@ const About = () => {
               />
               <ImageRow
                 images={["images/about/ptf.png", "images/about/bmbf.jpg"]}
+                alttext={[
+                  "Logo of the Prototypefund.",
+                  "Logo of the German Federal Ministry of Education and Research.",
+                ]}
                 links={["https://prototypefund.de/", "https://www.bmbf.de"]}
                 objectFit="contain"
               />
@@ -121,7 +130,7 @@ function TextBox({ content, heading, children }) {
   )
 }
 
-const ImageRow = ({ images, links = [], objectFit = "cover" }) => {
+const ImageRow = ({ images, alttext, links = [], objectFit = "cover" }) => {
   return (
     <SimpleGrid columns={images.length} spacing={4}>
       {images.map((src, index) => {
@@ -132,6 +141,7 @@ const ImageRow = ({ images, links = [], objectFit = "cover" }) => {
             width="100%"
             height="150px"
             borderRadius="md"
+            alt={alttext[index]}
           />
         )
 
