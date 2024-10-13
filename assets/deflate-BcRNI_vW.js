@@ -1,1 +1,0 @@
-import{i as r}from"./Simulation-WnA5ljl4.js";import{B as o}from"./basedecoder-DvumDe3Y.js";import"./index-lVzsyTpJ.js";import"./chunk-7OLJDQMT-C6-0UZ4A.js";import"./Footer-DX6fLiEi.js";import"./location-CEFIbzAH.js";import"./chunk-ZHMYA64R-B4ct7i8Q.js";class c extends o{decodeBlock(e){return r(new Uint8Array(e)).buffer}}export{c as default};
