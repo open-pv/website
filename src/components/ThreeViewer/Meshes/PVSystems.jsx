@@ -7,13 +7,8 @@ import TextSprite from "../TextSprite"
 export const PVSystems = ({ pvSystems }) => {
   return (
     <>
-      {pvSystems.map((system, index) => (
-        <PVSystem
-          key={index}
-          geometry={system.geometry}
-          annualYield={system.annualYield}
-          area={system.area}
-        />
+      {pvSystems.map((geometry) => (
+        <PVSystem geometry={geometry} />
       ))}
     </>
   )
@@ -21,6 +16,7 @@ export const PVSystems = ({ pvSystems }) => {
 
 export function createPVSystem({
   setPVSystems,
+  setSelectedPVSystem,
   pvPoints,
   setPVPoints,
   simulationMeshes,
@@ -58,6 +54,7 @@ export function createPVSystem({
     "position",
     new THREE.Float32BufferAttribute(bufferTriangles, 3)
   )
+  geometry.name = "pvSystem"
 
   let subdividedTriangles = []
   const triangleSubdivisionThreshold = 0.8
@@ -124,17 +121,15 @@ export function createPVSystem({
   )
   const annualYield = polygonArea * polygonIntensity
 
-  const newPVSystem = {
-    geometry: geometry,
-    annualYield: annualYield,
-    area: polygonArea,
-  }
+  geometry.annualYield = annualYield
+  geometry.area = polygonArea
 
-  setPVSystems((prevSystems) => [...prevSystems, newPVSystem])
+  setPVSystems((prevSystems) => [...prevSystems, geometry])
   setPVPoints([])
+  setSelectedPVSystem([geometry])
 }
 
-const PVSystem = ({ geometry, annualYield, area }) => {
+const PVSystem = ({ geometry }) => {
   const textRef = useRef()
 
   const center = calculateCenter(geometry.attributes.position.array)
@@ -161,9 +156,9 @@ const PVSystem = ({ geometry, annualYield, area }) => {
       />
 
       <TextSprite
-        text={`Jahresertrag: ${Math.round(annualYield).toLocaleString(
+        text={`Jahresertrag: ${Math.round(geometry.annualYield).toLocaleString(
           "de"
-        )} kWh pro Jahr\nFläche: ${area.toPrecision(3)}m²`}
+        )} kWh pro Jahr\nFläche: ${geometry.area.toPrecision(3)}m²`}
         position={center}
       />
     </>

@@ -14,49 +14,58 @@ function CustomMapControl(props) {
   const handleInteraction = (event) => {
     event.preventDefault()
 
-    const isTouch = event.type.startsWith("touch")
-    const clientX = isTouch ? event.touches[0].clientX : event.clientX
-    const clientY = isTouch ? event.touches[0].clientY : event.clientY
+    /**
+     * Returns the list of intersected objects. An intersected object is an object
+     * that lies directly below the mouse cursor.
+     */
+    const getIntersects = () => {
+      const isTouch = window.isTouchDevice
+      const clientX = isTouch ? event.touches[0].clientX : event.clientX
+      const clientY = isTouch ? event.touches[0].clientY : event.clientY
 
-    const rect = event.target.getBoundingClientRect()
-    mouse.current.x = ((clientX - rect.left) / rect.width) * 2 - 1
-    mouse.current.y = (-(clientY - rect.top) / rect.height) * 2 + 1
+      const rect = event.target.getBoundingClientRect()
+      mouse.current.x = ((clientX - rect.left) / rect.width) * 2 - 1
+      mouse.current.y = (-(clientY - rect.top) / rect.height) * 2 + 1
 
-    raycaster.current.setFromCamera(mouse.current, camera)
-    const intersects = raycaster.current.intersectObjects(scene.children, true)
+      raycaster.current.setFromCamera(mouse.current, camera)
 
-    if (intersects.length > 0) {
-      const intersectedMesh = intersects[0].object
-      console.log("Intersected Mesh", intersectedMesh)
+      return raycaster.current.intersectObjects(scene.children, true)
+    }
+    const intersects = getIntersects()
 
-      if (!intersectedMesh) return
-
-      if (
-        intersectedMesh.geometry.name &&
-        (intersectedMesh.geometry.name.includes("surrounding") ||
-          intersectedMesh.geometry.name.includes("background"))
-      ) {
-        const existingIndex = props.selectedMesh.findIndex(
-          (mesh) => mesh.geometry.name === intersectedMesh.geometry.name
-        )
-
-        if (existingIndex > -1) {
-          props.setSelectedMesh([
-            ...props.selectedMesh.slice(0, existingIndex),
-            ...props.selectedMesh.slice(existingIndex + 1),
-          ])
-        } else {
-          props.setSelectedMesh([
-            ...props.selectedMesh,
-            {
-              geometry: intersectedMesh.geometry,
-              material: intersectedMesh.material,
-            },
-          ])
-        }
-      }
-    } else {
+    if (intersects.length === 0) {
       console.log("No children in the intersected mesh.")
+      return
+    }
+
+    // Filter out Sprites (ie the labels of PV systems)
+    let i = 0
+    while (i < intersects.length && intersects[i].object.type === "Sprite") {
+      i++
+    }
+    if (i === intersects.length) {
+      console.log("Only Sprite objects found in intersections.")
+      return
+    }
+
+    let intersectedMesh = intersects[i].object
+    console.log("Intersected Mesh", intersectedMesh)
+
+    if (!intersectedMesh) return
+    if (!intersectedMesh.geometry.name) {
+      console.log(
+        "There is a mesh, but it has no name so I don't know what to do."
+      )
+      return
+    }
+    if (
+      intersectedMesh.geometry.name.includes("surrounding") ||
+      intersectedMesh.geometry.name.includes("background")
+    ) {
+      props.setSelectedMesh([intersectedMesh])
+    }
+    if (intersectedMesh.geometry.name.includes("pvSystem")) {
+      props.setSelectedPVSystem([intersectedMesh.geometry])
     }
   }
 

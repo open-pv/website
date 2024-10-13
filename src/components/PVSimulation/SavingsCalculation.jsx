@@ -21,7 +21,11 @@ import {
 import React, { useState } from "react"
 import { useTranslation } from "react-i18next"
 
-function SavingCalculation({ pvSystems }) {
+function SavingCalculation({
+  selectedPVSystem,
+  setSelectedPVSystem,
+  onCloseAlert,
+}) {
   const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: false })
   const { isOpen: isOpenResultFade, onToggle: onToggleResultFade } =
     useDisclosure({ defaultIsOpen: false })
@@ -32,9 +36,12 @@ function SavingCalculation({ pvSystems }) {
   const [selfConsumption, setSelfConsumption] = useState(0)
   const [annualSavings, setAnnualSavings] = useState(0)
   let pvProduction
-  if (pvSystems.length > 0) {
+  if (selectedPVSystem.length > 0) {
     pvProduction = Math.round(
-      pvSystems.reduce((previous, current) => previous + current.annualYield, 0)
+      selectedPVSystem.reduce(
+        (previous, current) => previous + current.annualYield,
+        0
+      )
     )
   }
 
@@ -118,12 +125,25 @@ function SavingCalculation({ pvSystems }) {
 
   return (
     <>
-      {pvSystems.length > 0 && (
-        <Button onClick={onOpen} className="button-high-prio">
+      {selectedPVSystem.length > 0 && (
+        <Button
+          colorScheme="teal"
+          onClick={() => {
+            onOpen()
+          }}
+        >
           {t("savingsCalculation.button")}
         </Button>
       )}
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          onClose()
+          onCloseAlert()
+          setSelectedPVSystem([])
+        }}
+        size="xl"
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{t("savingsCalculation.button")}</ModalHeader>
