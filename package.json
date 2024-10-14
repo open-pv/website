@@ -33,7 +33,7 @@
     "@vitejs/plugin-react": "^4.3.1",
     "gh-pages": "^6.1.1",
     "sass": "^1.77.8",
-    "vite": "^5.4.6"
+    "vite": "^5.4.8"
   },
   "browserslist": {
     "production": [
