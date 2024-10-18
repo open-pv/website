@@ -12,8 +12,7 @@ function Index() {
 
   // frontendState defines the general state of the frontend (Results, Loading, DrawPV)
   const [frontendState, setFrontendState] = useState("Loading")
-  // showTerrain decides if the underlying Map is visible or not
-  const [showTerrain, setShowTerrain] = useState(true)
+
   // simulationProgress is used for the loading bar
   const [simulationProgress, setSimulationProgress] = useState(0)
   // A list of visible PV Systems - they get visible after they are drawn on a building and calculated
@@ -69,8 +68,6 @@ function Index() {
             geometries={geometries}
             simulationMeshes={simulationMeshes}
             setSimulationMeshes={setSimulationMeshes}
-            showTerrain={showTerrain}
-            setShowTerrain={setShowTerrain}
             pvSystems={pvSystems}
             setPVSystems={setPVSystems}
             selectedMesh={selectedMesh}

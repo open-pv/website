@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { useRef, useState } from "react"
 import { Canvas } from "react-three-fiber"
 
 import CustomMapControl from "./Controls/CustomMapControl"
@@ -19,8 +19,6 @@ const Scene = ({
   geometries,
   simulationMeshes,
   setSimulationMeshes,
-  showTerrain,
-  setShowTerrain,
   pvSystems,
   setPVSystems,
   selectedMesh,
@@ -32,6 +30,9 @@ const Scene = ({
   vegetationGeometries,
   geoLocation,
 }) => {
+  // showTerrain decides if the underlying Map is visible or not
+  const [showTerrain, setShowTerrain] = useState(true)
+
   window.setPVPoints = setPVPoints
   const position = [
     simulationMeshes[0].middle.x,
