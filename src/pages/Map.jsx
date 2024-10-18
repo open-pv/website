@@ -86,12 +86,21 @@ function Index() {
           {...viewState}
           maxZoom={19}
           style={{ width: "100%", height: "100%" }}
-          mapStyle="https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json"
+          mapStyle="./mapstyle-bright-localname.json"
           onMove={(evt) => setViewState(evt.viewState)}
           onClick={mapClick}
           attributionControl={false}
           maxBounds={[-10, 35, 30, 65]}
         >
+          <Source id="nodata" type="geojson" data="./nodata.geojson">
+            <Layer id="nodata" type="fill" paint={{
+              'fill-color': '#000',
+              'fill-opacity': ['interpolate', ['linear'], ['zoom'],
+                8, 0.5,
+                12, 0
+              ]
+            }} />
+          </Source>
           <>{mapMarkers}</>
           {clickPoint && (
             <MapPopup
