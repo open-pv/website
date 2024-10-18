@@ -27,8 +27,6 @@ function Index() {
     background: [],
   })
 
-  // highlighted PVSystems for deletion or calculation
-  const [selectedPVSystem, setSelectedPVSystem] = useState([])
   // meshes that were simulated
   const [simulationMeshes, setSimulationMeshes] = useState([])
 
@@ -63,8 +61,6 @@ function Index() {
             geometries={geometries}
             simulationMeshes={simulationMeshes}
             setSimulationMeshes={setSimulationMeshes}
-            selectedPVSystem={selectedPVSystem}
-            setSelectedPVSystem={setSelectedPVSystem}
             vegetationGeometries={vegetationGeometries}
             geoLocation={location}
           />

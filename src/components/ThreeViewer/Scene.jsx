@@ -19,8 +19,6 @@ const Scene = ({
   geometries,
   simulationMeshes,
   setSimulationMeshes,
-  selectedPVSystem,
-  setSelectedPVSystem,
   vegetationGeometries,
   geoLocation,
 }) => {
@@ -32,6 +30,8 @@ const Scene = ({
   const [pvPoints, setPVPoints] = useState([])
   // highlighted meshes for resimulation
   const [selectedMesh, setSelectedMesh] = useState([])
+  // highlighted PVSystems for deletion or calculation
+  const [selectedPVSystem, setSelectedPVSystem] = useState([])
 
   window.setPVPoints = setPVPoints
   const position = [
