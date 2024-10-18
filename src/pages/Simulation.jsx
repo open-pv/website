@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import * as THREE from "three"
 import WrongAdress from "../components/ErrorMessages/WrongAdress"
 import Footer from "../components/Footer"
 import LoadingBar from "../components/Template/LoadingBar"
-import Overlay from "../components/ThreeViewer/Overlay"
 import Scene from "../components/ThreeViewer/Scene"
 import Main from "../Main"
 import { mainSimulation } from "../simulation/main"
@@ -62,34 +60,17 @@ function Index() {
   return (
     <Main description={"Berechne das Potential deiner Solaranlage."}>
       <div className="content">
-        {(frontendState == "Results" || frontendState == "DrawPV") && (
-          <Overlay
-            frontendState={frontendState}
-            setFrontendState={setFrontendState}
-            showTerrain={showTerrain}
-            setShowTerrain={setShowTerrain}
-            selectedMesh={selectedMesh}
-            setSelectedMesh={setSelectedMesh}
-            geometries={geometries}
-            geoLocation={location}
-            setPVSystems={setPVSystems}
-            pvSystems={pvSystems}
-            selectedPVSystem={selectedPVSystem}
-            setSelectedPVSystem={setSelectedPVSystem}
-            pvPoints={pvPoints}
-            setPVPoints={setPVPoints}
-            simulationMeshes={simulationMeshes}
-            setSimulationMeshes={setSimulationMeshes}
-          />
-        )}
         {frontendState == "ErrorAdress" && <WrongAdress />}
 
         {(frontendState == "Results" || frontendState == "DrawPV") && (
           <Scene
+            frontendState={frontendState}
+            setFrontendState={setFrontendState}
             geometries={geometries}
             simulationMeshes={simulationMeshes}
+            setSimulationMeshes={setSimulationMeshes}
             showTerrain={showTerrain}
-            frontendState={frontendState}
+            setShowTerrain={setShowTerrain}
             pvSystems={pvSystems}
             setPVSystems={setPVSystems}
             selectedMesh={selectedMesh}
@@ -99,6 +80,7 @@ function Index() {
             pvPoints={pvPoints}
             setPVPoints={setPVPoints}
             vegetationGeometries={vegetationGeometries}
+            geoLocation={location}
           />
         )}
 
