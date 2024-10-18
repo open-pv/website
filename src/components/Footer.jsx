@@ -6,7 +6,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react"
 import i18n from "i18next"
 import React from "react"
@@ -26,8 +26,9 @@ const WrapperForTouchDevice = ({ children }) => {
   return (
     <div className="overlay">
       <div className="attribution">
-
-        <Button variant={"link"} onClick={onOpen}>License Information</Button>
+        <Button variant={"link"} onClick={onOpen}>
+          License Information
+        </Button>
 
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
@@ -37,7 +38,7 @@ const WrapperForTouchDevice = ({ children }) => {
             <ModalBody>{children}</ModalBody>
           </ModalContent>
         </Modal>
-        </div>
+      </div>
     </div>
   )
 }
@@ -110,10 +111,6 @@ export default function Footer({ federalState, frontendState }) {
         &copy;&nbsp;
         <a href="https://github.com/open-pv" target="_blank">
           Team OpenPV
-        </a>
-        {" | "}
-        <a href="https://html5up.net" target="_blank">
-          Website Template
         </a>
         {" | "}
         <a href="/Impressum">Impressum</a>
