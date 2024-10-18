@@ -16,9 +16,6 @@ function Index() {
   // simulationProgress is used for the loading bar
   const [simulationProgress, setSimulationProgress] = useState(0)
 
-  // pvPoints are the red points that appear when drawing PV systems
-  const [pvPoints, setPVPoints] = useState([])
-
   // The federal State where the material comes from, ie "BY"
   const [federalState, setFederalState] = useState(false)
   window.setFederalState = setFederalState
@@ -71,8 +68,6 @@ function Index() {
             setSelectedMesh={setSelectedMesh}
             selectedPVSystem={selectedPVSystem}
             setSelectedPVSystem={setSelectedPVSystem}
-            pvPoints={pvPoints}
-            setPVPoints={setPVPoints}
             vegetationGeometries={vegetationGeometries}
             geoLocation={location}
           />

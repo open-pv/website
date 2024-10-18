@@ -23,8 +23,6 @@ const Scene = ({
   setSelectedMesh,
   selectedPVSystem,
   setSelectedPVSystem,
-  pvPoints,
-  setPVPoints,
   vegetationGeometries,
   geoLocation,
 }) => {
@@ -32,6 +30,8 @@ const Scene = ({
   const [showTerrain, setShowTerrain] = useState(true)
   // A list of visible PV Systems - they get visible after they are drawn on a building and calculated
   const [pvSystems, setPVSystems] = useState([])
+  // pvPoints are the red points that appear when drawing PV systems
+  const [pvPoints, setPVPoints] = useState([])
 
   window.setPVPoints = setPVPoints
   const position = [
