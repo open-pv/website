@@ -19,8 +19,6 @@ const Scene = ({
   geometries,
   simulationMeshes,
   setSimulationMeshes,
-  selectedMesh,
-  setSelectedMesh,
   selectedPVSystem,
   setSelectedPVSystem,
   vegetationGeometries,
@@ -32,6 +30,8 @@ const Scene = ({
   const [pvSystems, setPVSystems] = useState([])
   // pvPoints are the red points that appear when drawing PV systems
   const [pvPoints, setPVPoints] = useState([])
+  // highlighted meshes for resimulation
+  const [selectedMesh, setSelectedMesh] = useState([])
 
   window.setPVPoints = setPVPoints
   const position = [
