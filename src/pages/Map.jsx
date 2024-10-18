@@ -13,32 +13,6 @@ import WelcomeMessage from "../components/Template/WelcomeMessage"
 function Index() {
   const { t } = useTranslation()
 
-  const basemap_source = {
-    id: "basemap-source",
-    type: "raster",
-    tiles: [
-      "https://sgx.geodatenzentrum.de/wmts_basemapde/tile/1.0.0/de_basemapde_web_raster_farbe/default/GLOBAL_WEBMERCATOR/{z}/{y}/{x}.png",
-    ],
-    attribution: `
-        Basiskarte &copy;
-        <a href="https://www.bkg.bund.de" target="_blank">
-          BKG
-        </a>
-        &nbsp;(
-        <a href="https://www.govdata.de/dl-de/by-2-0" target="_blank">
-          dl-de/by-2-0
-        </a>
-        )
-    `,
-  }
-  const basemap_layer = {
-    id: "basemap",
-    type: "raster",
-    source: "basemap-source",
-    // minzoom: 0,
-    // maxzoom: 22,
-  }
-
   const boundingBox = [5.98, 47.3, 15.1, 55.0]
 
   const [viewState, setViewState] = useState({
