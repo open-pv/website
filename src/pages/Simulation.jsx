@@ -15,8 +15,7 @@ function Index() {
 
   // simulationProgress is used for the loading bar
   const [simulationProgress, setSimulationProgress] = useState(0)
-  // A list of visible PV Systems - they get visible after they are drawn on a building and calculated
-  const [pvSystems, setPVSystems] = useState([])
+
   // pvPoints are the red points that appear when drawing PV systems
   const [pvPoints, setPVPoints] = useState([])
 
@@ -68,8 +67,6 @@ function Index() {
             geometries={geometries}
             simulationMeshes={simulationMeshes}
             setSimulationMeshes={setSimulationMeshes}
-            pvSystems={pvSystems}
-            setPVSystems={setPVSystems}
             selectedMesh={selectedMesh}
             setSelectedMesh={setSelectedMesh}
             selectedPVSystem={selectedPVSystem}

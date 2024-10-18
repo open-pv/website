@@ -19,8 +19,6 @@ const Scene = ({
   geometries,
   simulationMeshes,
   setSimulationMeshes,
-  pvSystems,
-  setPVSystems,
   selectedMesh,
   setSelectedMesh,
   selectedPVSystem,
@@ -32,6 +30,8 @@ const Scene = ({
 }) => {
   // showTerrain decides if the underlying Map is visible or not
   const [showTerrain, setShowTerrain] = useState(true)
+  // A list of visible PV Systems - they get visible after they are drawn on a building and calculated
+  const [pvSystems, setPVSystems] = useState([])
 
   window.setPVPoints = setPVPoints
   const position = [
