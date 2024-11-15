@@ -1,5 +1,5 @@
 {
-  "mainDescription": "Ermitteln Sie das Potential ihres Gebäudes für eine Solaranlage - mit offen verfügbaren 3D-Daten direkt im Browser.",
+  "mainDescription": "Analysieren Sie das Solarpotenzial Ihres Gebäudes - Open Source, mit frei verfügbaren 3D-Daten und alles direkt im Browser. Datenschutz? Selbstverständlich: keine unnötiges Datensammeln, kein Tracking.",
   "sidebar": {
     "header": "Ziel des Tools",
     "mainText": "Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche.",
