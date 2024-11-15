@@ -7,7 +7,7 @@ const Datenschutz = () => {
     <Main title="Datenschutz" description="Datenschutzerklaerung der Website.">
       <Card height="100%" overflow="auto">
         <CardHeader>
-          <Heading>Datenschutz</Heading>
+          <Heading as="h1">Datenschutz</Heading>
         </CardHeader>
         <CardBody>
           <h1>Datenschutzerklärung</h1>

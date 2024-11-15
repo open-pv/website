@@ -8,7 +8,7 @@ const Impressum = () => {
     <Main title="Impressum" description="Impressum der Website.">
       <Card height="100%" overflow="auto">
         <CardHeader>
-          <Heading>Impressum</Heading>
+          <Heading as="h1">Impressum</Heading>
         </CardHeader>
         <CardBody>
           <p>
