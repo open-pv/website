@@ -10,6 +10,7 @@ const Main = (props) => (
     <Helmet titleTemplate="%s | OpenPV" defaultTitle="OpenPV" defer={false}>
       {props.title && <title>{props.title}</title>}
       <meta name="description" content={props.description} />
+      <meta name="Beschreibung" content={props.description} />
     </Helmet>
     <Layout>
       <Navigation />

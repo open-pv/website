@@ -1,5 +1,5 @@
 {
-  "mainDescription": "Determine the potential of your building for a solar installation by using openly available 3D data - directly in the browser.",
+  "mainDescription": "Analyze the solar potential of your building – open source, using freely available 3D data, all directly in your browser. Privacy? Absolutely: no unnecessary data collection, no tracking.",
   "sidebar": {
     "header": "Goal of this website",
     "mainText": "The tool will then calculate the potential for a solar system on your roof and facade area.",
