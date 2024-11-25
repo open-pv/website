@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^2.10.1",
-    "@emotion/react": "^11.13.3",
+    "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.0",
     "@openpv/simshady": "^0.0.5",
     "@react-three/drei": "^9.114.0",
