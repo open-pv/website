@@ -901,114 +901,59 @@
       }
     },
     {
-      "id": "aeroway-taxiway-casing",
-      "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "aeroway",
-      "minzoom": 12,
-      "filter": ["match", ["get", "class"], ["taxiway"], true, false],
-      "layout": {"line-cap": "round", "line-join": "round"},
-      "paint": {
-        "line-color": "rgba(153, 153, 153, 1)",
-        "line-opacity": 1,
-        "line-width": [
-          "interpolate",
-          ["exponential", 1.5],
-          ["zoom"],
-          11,
-          2,
-          17,
-          12
-        ]
-      }
-    },
-    {
-      "id": "aeroway-runway-casing",
-      "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "aeroway",
-      "minzoom": 12,
-      "filter": ["match", ["get", "class"], ["runway"], true, false],
-      "layout": {"line-cap": "round", "line-join": "round"},
-      "paint": {
-        "line-color": "rgba(153, 153, 153, 1)",
-        "line-opacity": 1,
-        "line-width": [
-          "interpolate",
-          ["exponential", 1.5],
-          ["zoom"],
-          11,
-          5,
-          17,
-          55
-        ]
-      }
-    },
-    {
-      "id": "aeroway-area",
+      "id": "aeroway_fill",
       "type": "fill",
       "source": "openmaptiles",
       "source-layer": "aeroway",
-      "minzoom": 4,
-      "filter": [
-        "all",
-        ["==", ["geometry-type"], "Polygon"],
-        ["match", ["get", "class"], ["runway", "taxiway"], true, false]
-      ],
-      "paint": {
-        "fill-color": "rgba(255, 255, 255, 1)",
-        "fill-opacity": ["interpolate", ["linear"], ["zoom"], 13, 0, 14, 1]
-      }
+      "minzoom": 9,
+      "filter": ["==", ["geometry-type"], "Polygon"],
+      "paint": {"fill-color": "rgba(229, 228, 224, 1)", "fill-opacity": 0.7}
     },
     {
-      "id": "aeroway-taxiway",
+      "id": "aeroway_runway",
       "type": "line",
       "source": "openmaptiles",
       "source-layer": "aeroway",
-      "minzoom": 4,
+      "minzoom": 11,
       "filter": [
         "all",
-        ["match", ["get", "class"], ["taxiway"], true, false],
-        ["==", ["geometry-type"], "LineString"]
+        ["==", ["geometry-type"], "LineString"],
+        ["==", ["get", "class"], "runway"]
       ],
-      "layout": {"line-cap": "round", "line-join": "round"},
       "paint": {
-        "line-color": "rgba(255, 255, 255, 1)",
-        "line-opacity": ["interpolate", ["linear"], ["zoom"], 11, 0, 12, 1],
+        "line-color": "#f0ede9",
         "line-width": [
           "interpolate",
-          ["exponential", 1.5],
+          ["exponential", 1.2],
           ["zoom"],
           11,
-          1,
-          17,
-          10
+          3,
+          20,
+          16
         ]
       }
     },
     {
-      "id": "aeroway-runway",
+      "id": "aeroway_taxiway",
       "type": "line",
       "source": "openmaptiles",
       "source-layer": "aeroway",
-      "minzoom": 4,
+      "minzoom": 11,
       "filter": [
         "all",
-        ["match", ["get", "class"], ["runway"], true, false],
-        ["==", ["geometry-type"], "LineString"]
+        ["==", ["geometry-type"], "LineString"],
+        ["==", ["get", "class"], "taxiway"]
       ],
-      "layout": {"line-cap": "round", "line-join": "round"},
       "paint": {
-        "line-color": "rgba(255, 255, 255, 1)",
-        "line-opacity": ["interpolate", ["linear"], ["zoom"], 11, 0, 12, 1],
+        "line-color": "#f0ede9",
         "line-width": [
           "interpolate",
-          ["exponential", 1.5],
+          ["exponential", 1.2],
           ["zoom"],
           11,
-          4,
-          17,
-          50
+          0.5,
+          20,
+          6
         ]
       }
     },
