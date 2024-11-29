@@ -67,9 +67,14 @@ function Index() {
   // Handling map click for manual location selection
   const [clickPoint, setClickPoint] = useState(null)
   const mapClick = useCallback((evt) => {
-    console.log(evt)
-    const { lng, lat } = evt.lngLat
-    setClickPoint([lat, lng])
+    const features = mapRef.current.getMap().queryRenderedFeatures(evt.point, { layers: ['nodata'] });
+    if (features.length > 0) {
+      // Nodata mask was clicked -> unset click point
+      setClickPoint(null);
+    } else {
+      const { lng, lat } = evt.lngLat
+      setClickPoint([lat, lng]);
+    }
   })
 
   return (
