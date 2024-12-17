@@ -56,7 +56,7 @@ function WelcomeMessage() {
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t("WelcomeMessage.title")}</ModalHeader>
+        <ModalHeader as="h1">{t("WelcomeMessage.title")}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {currentPage === 1 && (

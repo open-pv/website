@@ -25,7 +25,7 @@ const About = () => {
       <Main title={t("about.title")} description={t("about.description")}>
         <Card height="100%" overflow="auto" padding={"20px"}>
           <CardHeader>
-            <Heading>{t("about.title")}</Heading>
+            <Heading as="h1">{t("about.title")}</Heading>
           </CardHeader>
           <CardBody>
             <VStack spacing="6" align="start">
