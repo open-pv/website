@@ -4,7 +4,7 @@ import Main from "../Main"
 import { useToast } from "@chakra-ui/react"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { useTranslation } from "react-i18next"
-import { Layer, Map, NavigationControl, Source } from "react-map-gl/maplibre"
+import { Map, NavigationControl } from "react-map-gl/maplibre"
 import Footer from "../components/Footer"
 import MapPopup from "../components/MapPopup"
 import SearchField from "../components/PVSimulation/SearchField"
@@ -43,6 +43,7 @@ function Index() {
 
   const [viewState, setViewState] = useState({
     bounds: boundingBox,
+    zoom: 6,
   })
 
   const [mapMarkers, setMapMarkers] = useState([])
