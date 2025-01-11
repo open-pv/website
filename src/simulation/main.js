@@ -33,7 +33,7 @@ export async function mainSimulation(location) {
     let geometries = processGeometries(
       buildingGeometries,
       new THREE.Vector3(0, 0, 0),
-      80,
+      80
     )
 
     window.setGeometries(geometries)
@@ -44,7 +44,7 @@ export async function mainSimulation(location) {
 
     const scene = new ShadingScene(
       parseFloat(location.lat),
-      parseFloat(location.lon),
+      parseFloat(location.lon)
     )
     geometries.simulation.forEach((geom) => {
       scene.addSimulationGeometry(geom)
@@ -55,7 +55,7 @@ export async function mainSimulation(location) {
     })
 
     scene.addColorMap(
-      colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
+      colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 })
     )
 
     if (getFederalState() == "BY") {
@@ -82,15 +82,15 @@ export async function mainSimulation(location) {
 
         console.log("Vegetation Heightmap Data downloaded successfully")
         console.log(
-          `Data dimensions: ${vegetationHeightmapData.width}x${vegetationHeightmapData.height}`,
+          `Data dimensions: ${vegetationHeightmapData.width}x${vegetationHeightmapData.height}`
         )
         console.log(
-          `Data bounding box: [${vegetationHeightmapData.bbox.join(", ")}]`,
+          `Data bounding box: [${vegetationHeightmapData.bbox.join(", ")}]`
         )
 
         console.log("Processing vegetation raster data...")
         const vegetationRaster = processVegetationHeightmapData(
-          vegetationHeightmapData,
+          vegetationHeightmapData
         )
 
         if (!vegetationRaster) {
@@ -104,15 +104,15 @@ export async function mainSimulation(location) {
           vegetationRaster,
           new THREE.Vector3(0, 0, 0),
           30,
-          80,
+          80
         )
 
         console.log("Vegetation Geometries processed successfully")
         console.log(
-          `Number of surrounding geometries: ${vegetationGeometries.surrounding.length}`,
+          `Number of surrounding geometries: ${vegetationGeometries.surrounding.length}`
         )
         console.log(
-          `Number of background geometries: ${vegetationGeometries.background.length}`,
+          `Number of background geometries: ${vegetationGeometries.background.length}`
         )
 
         window.setVegetationGeometries(vegetationGeometries)
@@ -169,7 +169,7 @@ export async function simulationForNewBuilding(props) {
   // Get all geometries from the list and put it in one big simulation geometries. This needs
   // to be done since multiple buildings can be part of selectedMesh
   let newSimulationGeometries = mergeGeometries(
-    props.selectedMesh.map((mesh) => mesh.geometry),
+    props.selectedMesh.map((mesh) => mesh.geometry)
   )
 
   newSimulationGeometries.computeBoundingBox()
@@ -186,14 +186,14 @@ export async function simulationForNewBuilding(props) {
   const geometries = processGeometries(
     allBuildingGeometries,
     simulationCenter,
-    radius,
+    radius
   )
   const shadingScene = new ShadingScene(
     parseFloat(props.geoLocation.lat),
-    parseFloat(props.geoLocation.lon),
+    parseFloat(props.geoLocation.lon)
   )
   shadingScene.addColorMap(
-    colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
+    colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 })
   )
 
   shadingScene.addSimulationGeometry(newSimulationGeometries)
@@ -213,7 +213,7 @@ export async function simulationForNewBuilding(props) {
     urlDiffuseIrrandianceTIF:
       "https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif",
     progressCallback: (progress, total) =>
-      console.log("Simulation Progress is ", progress),
+      console.log(`Simulation Progress: ${progress} of ${total}`),
   })
   const material = new THREE.MeshLambertMaterial({
     vertexColors: true,
@@ -227,10 +227,10 @@ export async function simulationForNewBuilding(props) {
   const selectedMeshNames = props.selectedMesh.map((mesh) => mesh.geometry.name)
 
   const updatedSurroundings = props.geometries.surrounding.filter(
-    (mesh) => !selectedMeshNames.includes(mesh.name),
+    (mesh) => !selectedMeshNames.includes(mesh.name)
   )
   const updatedBackground = props.geometries.background.filter(
-    (mesh) => !selectedMeshNames.includes(mesh.name),
+    (mesh) => !selectedMeshNames.includes(mesh.name)
   )
 
   window.setGeometries({
