@@ -4,9 +4,9 @@ import {
   SliderThumb,
   SliderTrack,
   Tooltip,
-} from "@chakra-ui/react"
-import React from "react"
-import HoverHelp from "./HoverHelp"
+} from '@chakra-ui/react'
+import React from 'react'
+import HoverHelp from './HoverHelp'
 
 const SliderWithLabel = ({
   sliderProps,
@@ -22,11 +22,11 @@ const SliderWithLabel = ({
 
       {hoverHelpLabel && <HoverHelp label={hoverHelpLabel} />}
       <Slider
-        id="slider"
+        id='slider'
         defaultValue={sliderValue}
         min={sliderProps.min}
         max={sliderProps.max}
-        colorScheme="teal"
+        colorScheme='teal'
         onChange={setSliderValue}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
@@ -36,9 +36,9 @@ const SliderWithLabel = ({
         </SliderTrack>
         <Tooltip
           hasArrow
-          bg="teal.500"
-          color="white"
-          placement="top"
+          bg='teal.500'
+          color='white'
+          placement='top'
           isOpen={showTooltip}
           label={`${sliderValue}`}
         >

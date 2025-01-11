@@ -1,13 +1,13 @@
-import { Card, CardBody, CardHeader, Heading } from "@chakra-ui/react"
+import { Card, CardBody, CardHeader, Heading } from '@chakra-ui/react'
 
-import Main from "../Main"
+import Main from '../Main'
 
 const Datenschutz = () => {
   return (
-    <Main title="Datenschutz" description="Datenschutzerklaerung der Website.">
-      <Card height="100%" overflow="auto">
+    <Main title='Datenschutz' description='Datenschutzerklaerung der Website.'>
+      <Card height='100%' overflow='auto'>
         <CardHeader>
-          <Heading as="h1">Datenschutz</Heading>
+          <Heading as='h1'>Datenschutz</Heading>
         </CardHeader>
         <CardBody>
           <h1>Datenschutzerklärung</h1>
@@ -60,11 +60,11 @@ const Datenschutz = () => {
           </p>
           <p>
             Eine Liste der Aufsichtsbehörden (für den nichtöffentlichen Bereich)
-            mit Anschrift finden Sie unter:{" "}
+            mit Anschrift finden Sie unter:{' '}
             <a
-              href="https://www.bfdi.bund.de/DE/Service/Anschriften/Laender/Laender-node.html"
-              target="_blank"
-              rel="noopener nofollow"
+              href='https://www.bfdi.bund.de/DE/Service/Anschriften/Laender/Laender-node.html'
+              target='_blank'
+              rel='noopener nofollow'
             >
               https://www.bfdi.bund.de/DE/Service/Anschriften/Laender/Laender-node.html
             </a>
@@ -203,14 +203,14 @@ const Datenschutz = () => {
           <p>
             <em>
               Die Datenschutzerklärung wurde mithilfe der activeMind AG
-              erstellt, den Experten für{" "}
+              erstellt, den Experten für{' '}
               <a
-                href="https://www.activemind.de/datenschutz/datenschutzbeauftragter/"
-                target="_blank"
-                rel="noopener"
+                href='https://www.activemind.de/datenschutz/datenschutzbeauftragter/'
+                target='_blank'
+                rel='noopener'
               >
                 externe Datenschutzbeauftragte
-              </a>{" "}
+              </a>{' '}
               (Version #2020-09-30).
             </em>
           </p>

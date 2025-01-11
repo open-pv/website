@@ -1,5 +1,5 @@
-import React, { useMemo } from "react"
-import * as THREE from "three"
+import React, { useMemo } from 'react'
+import * as THREE from 'three'
 
 const PointsAndEdges = ({ points }) => {
   const pointsAndEdges = useMemo(() => {
@@ -9,7 +9,7 @@ const PointsAndEdges = ({ points }) => {
         point.point,
       ])
       const pointMaterial = new THREE.PointsMaterial({
-        color: "#333333",
+        color: '#333333',
         size: 10,
         sizeAttenuation: false,
       })
@@ -29,20 +29,20 @@ const PointsAndEdges = ({ points }) => {
       edgePositions.push(
         points[i].point.x,
         points[i].point.y,
-        points[i].point.z
+        points[i].point.z,
       )
       edgePositions.push(
         points[i + 1].point.x,
         points[i + 1].point.y,
-        points[i + 1].point.z
+        points[i + 1].point.z,
       )
     }
     edgeGeometry.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(edgePositions, 3)
+      'position',
+      new THREE.Float32BufferAttribute(edgePositions, 3),
     )
     const edgeMaterial = new THREE.LineBasicMaterial({
-      color: "#333333",
+      color: '#333333',
     })
     const edges = (
       <lineSegments geometry={edgeGeometry} material={edgeMaterial} />

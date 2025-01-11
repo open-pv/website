@@ -1,10 +1,10 @@
-import * as THREE from "three"
-import { mercator2meters } from "./download"
-import { coordinatesWebMercator } from "./location"
+import * as THREE from 'three'
+import { mercator2meters } from './download'
+import { coordinatesWebMercator } from './location'
 
 export function processVegetationHeightmapData(heightmapData) {
   if (!heightmapData || !heightmapData.bbox || !heightmapData.data) {
-    console.error("Invalid heightmap data, missing bbox or data")
+    console.error('Invalid heightmap data, missing bbox or data')
     return null
   }
 
@@ -18,22 +18,22 @@ export function processVegetationData(
   vegetationRaster,
   simulationCenter,
   vegetationSimulationCutoff,
-  vegetationViewingCutoff
+  vegetationViewingCutoff,
 ) {
-  console.log("Processing vegetation data...")
+  console.log('Processing vegetation data...')
 
   if (!vegetationRaster || !vegetationRaster.data) {
-    console.error("Invalid vegetation raster data")
+    console.error('Invalid vegetation raster data')
     return { surrounding: [], background: [] }
   }
 
   console.log(
-    "Vegetation raster dimensions:",
+    'Vegetation raster dimensions:',
     vegetationRaster.width,
-    "x",
-    vegetationRaster.height
+    'x',
+    vegetationRaster.height,
   )
-  console.log("Vegetation raster bbox:", vegetationRaster.bbox)
+  console.log('Vegetation raster bbox:', vegetationRaster.bbox)
 
   const geometries = {
     surrounding: [],
@@ -89,9 +89,9 @@ export function processVegetationData(
     }
   }
 
-  console.log("Vegetation processing complete.")
-  console.log("Surrounding geometries:", geometries.surrounding.length)
-  console.log("Background geometries:", geometries.background.length)
+  console.log('Vegetation processing complete.')
+  console.log('Surrounding geometries:', geometries.surrounding.length)
+  console.log('Background geometries:', geometries.background.length)
 
   return geometries
 }
@@ -102,7 +102,7 @@ function createVegetationGeometry(x, y, vegHeight) {
 
   const geometry = new THREE.BoxGeometry(width, depth, 20)
     .toNonIndexed()
-    .deleteAttribute("uv")
+    .deleteAttribute('uv')
   geometry.translate(x, y, vegHeight - 10)
 
   return geometry

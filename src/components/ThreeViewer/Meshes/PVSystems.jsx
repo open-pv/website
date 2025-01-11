@@ -1,8 +1,8 @@
-import React, { useRef } from "react"
-import { useFrame } from "react-three-fiber"
-import * as THREE from "three"
-import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js"
-import TextSprite from "../TextSprite"
+import React, { useRef } from 'react'
+import { useFrame } from 'react-three-fiber'
+import * as THREE from 'three'
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
+import TextSprite from '../TextSprite'
 
 export const PVSystems = ({ pvSystems }) => {
   return (
@@ -31,7 +31,7 @@ export function createPVSystem({
   const bufferTriangles = []
   const normalOffset = 0.1 // Adjust this value as needed
 
-  for(const {a, b, c} of trianglesWithNormals) {
+  for (const { a, b, c } of trianglesWithNormals) {
     const shift = (element) => ({
       x: element.point.x + element.normal.x * normalOffset,
       y: element.point.y + element.normal.y * normalOffset,
@@ -42,25 +42,21 @@ export function createPVSystem({
     const sb = shift(b)
     const sc = shift(c)
 
-    triangles.push({a: a.point, b: b.point, c: c.point })
-    bufferTriangles.push(
-      sa.x, sa.y, sa.z,
-      sb.x, sb.y, sb.z,
-      sc.x, sc.y, sc.z
-    )
+    triangles.push({ a: a.point, b: b.point, c: c.point })
+    bufferTriangles.push(sa.x, sa.y, sa.z, sb.x, sb.y, sb.z, sc.x, sc.y, sc.z)
   }
 
   geometry.setAttribute(
-    "position",
-    new THREE.Float32BufferAttribute(bufferTriangles, 3)
+    'position',
+    new THREE.Float32BufferAttribute(bufferTriangles, 3),
   )
-  geometry.name = "pvSystem"
+  geometry.name = 'pvSystem'
 
   let subdividedTriangles = []
   const triangleSubdivisionThreshold = 0.8
   triangles.forEach((triangle) => {
     subdividedTriangles = subdividedTriangles.concat(
-      subdivideTriangle(triangle, triangleSubdivisionThreshold)
+      subdivideTriangle(triangle, triangleSubdivisionThreshold),
     )
   })
 
@@ -73,13 +69,13 @@ export function createPVSystem({
   })
   const simulationGeometry = BufferGeometryUtils.mergeGeometries(
     geometries,
-    true
+    true,
   )
   const polygonPrefilteringCutoff = 10
   const prefilteredPolygons = filterPolygonsByDistance(
     simulationGeometry,
     points,
-    polygonPrefilteringCutoff
+    polygonPrefilteringCutoff,
   )
   const newVertices = []
   const newColors = []
@@ -93,19 +89,19 @@ export function createPVSystem({
     const vertex = new THREE.Vector3(
       newVertices[i],
       newVertices[i + 1],
-      newVertices[i + 2]
+      newVertices[i + 2],
     )
     const closestPolygon = findClosestPolygon(
       vertex,
       prefilteredPolygons,
-      polygonPrefilteringCutoff
+      polygonPrefilteringCutoff,
     )
     if (closestPolygon) {
       const projectedVertex = projectOntoTriangle(vertex, closestPolygon)
       const color = getColorAtPointOnTriangle(projectedVertex, closestPolygon)
       const intensity = getIntensityAtPointOnTriangle(
         projectedVertex,
-        closestPolygon
+        closestPolygon,
       )
       newColors.push(color.r, color.g, color.b)
       newIntensities.push(intensity)
@@ -117,7 +113,7 @@ export function createPVSystem({
   const polygonArea = calculatePolygonArea(triangles)
   const polygonIntensity = calculatePolygonIntensity(
     newVertices,
-    newIntensities
+    newIntensities,
   )
   const annualYield = polygonArea * polygonIntensity
 
@@ -146,7 +142,7 @@ const PVSystem = ({ geometry }) => {
         geometry={geometry}
         material={
           new THREE.MeshStandardMaterial({
-            color: "#2b2c40",
+            color: '#2b2c40',
             transparent: true,
             opacity: 0.5,
             metalness: 1,
@@ -157,7 +153,7 @@ const PVSystem = ({ geometry }) => {
 
       <TextSprite
         text={`Jahresertrag: ${Math.round(geometry.annualYield).toLocaleString(
-          "de"
+          'de',
         )} kWh pro Jahr\nFläche: ${geometry.area.toPrecision(3)}m²`}
         position={center}
       />
@@ -172,7 +168,7 @@ const calculateCenter = (points) => {
       acc[index % 3] += value
       return acc
     },
-    [0, 0, 0]
+    [0, 0, 0],
   )
   return new THREE.Vector3(sum[0] / length, sum[1] / length, sum[2] / length)
 }
@@ -244,7 +240,7 @@ function findClosestPolygon(vertex, polygons, polygonPrefilteringCutoff) {
 
   if (minDistance >= polygonPrefilteringCutoff) {
     console.error(
-      `Error: Trying to create a polygon with a distance longer than the threshold (${minDistance})`
+      `Error: Trying to create a polygon with a distance longer than the threshold (${minDistance})`,
     )
   }
 
@@ -268,17 +264,17 @@ function filterPolygonsByDistance(geometry, points, threshold) {
     const v0 = new THREE.Vector3(
       positions[i],
       positions[i + 1],
-      positions[i + 2]
+      positions[i + 2],
     )
     const v1 = new THREE.Vector3(
       positions[i + 3],
       positions[i + 4],
-      positions[i + 5]
+      positions[i + 5],
     )
     const v2 = new THREE.Vector3(
       positions[i + 6],
       positions[i + 7],
-      positions[i + 8]
+      positions[i + 8],
     )
 
     const color0 = colors
@@ -300,7 +296,7 @@ function filterPolygonsByDistance(geometry, points, threshold) {
       const distance = Math.min(
         point.distanceTo(v0),
         point.distanceTo(v1),
-        point.distanceTo(v2)
+        point.distanceTo(v2),
       )
       if (distance < minDistance) {
         minDistance = distance
@@ -309,7 +305,7 @@ function filterPolygonsByDistance(geometry, points, threshold) {
 
     if (minDistance < threshold) {
       const normal = new THREE.Triangle(v0, v1, v2).getNormal(
-        new THREE.Vector3()
+        new THREE.Vector3(),
       )
       filteredPolygons.push({
         vertices: [v0, v1, v2],
@@ -339,19 +335,19 @@ function getColorAtPointOnTriangle(point, triangle) {
   const normal = triangle.normal.clone().normalize()
 
   const areaABC = normal.dot(
-    new THREE.Vector3().crossVectors(v1.clone().sub(v0), v2.clone().sub(v0))
+    new THREE.Vector3().crossVectors(v1.clone().sub(v0), v2.clone().sub(v0)),
   )
   const areaPBC = normal.dot(
     new THREE.Vector3().crossVectors(
       v1.clone().sub(point),
-      v2.clone().sub(point)
-    )
+      v2.clone().sub(point),
+    ),
   )
   const areaPCA = normal.dot(
     new THREE.Vector3().crossVectors(
       v2.clone().sub(point),
-      v0.clone().sub(point)
-    )
+      v0.clone().sub(point),
+    ),
   )
 
   const u = areaPBC / areaABC
@@ -374,19 +370,19 @@ function getIntensityAtPointOnTriangle(point, triangle) {
   const normal = triangle.normal.clone().normalize()
 
   const areaABC = normal.dot(
-    new THREE.Vector3().crossVectors(v1.clone().sub(v0), v2.clone().sub(v0))
+    new THREE.Vector3().crossVectors(v1.clone().sub(v0), v2.clone().sub(v0)),
   )
   const areaPBC = normal.dot(
     new THREE.Vector3().crossVectors(
       v1.clone().sub(point),
-      v2.clone().sub(point)
-    )
+      v2.clone().sub(point),
+    ),
   )
   const areaPCA = normal.dot(
     new THREE.Vector3().crossVectors(
       v2.clone().sub(point),
-      v0.clone().sub(point)
-    )
+      v0.clone().sub(point),
+    ),
   )
 
   const u = areaPBC / areaABC
@@ -411,17 +407,17 @@ function calculatePolygonIntensity(vertices, intensities) {
       a: new THREE.Vector3(
         vertices[i * 9],
         vertices[i * 9 + 1],
-        vertices[i * 9 + 2]
+        vertices[i * 9 + 2],
       ),
       b: new THREE.Vector3(
         vertices[i * 9 + 3],
         vertices[i * 9 + 4],
-        vertices[i * 9 + 5]
+        vertices[i * 9 + 5],
       ),
       c: new THREE.Vector3(
         vertices[i * 9 + 6],
         vertices[i * 9 + 7],
-        vertices[i * 9 + 8]
+        vertices[i * 9 + 8],
       ),
       intensities: [
         intensities[i * 3],
@@ -452,91 +448,110 @@ function calculateTriangleIntensity(triangle) {
 // making sure to generate a valid triangulation of the polygon
 // Highly inefficient implementation, but we don't triangulate many polygons so it should be fine
 export function triangulate(points) {
-  if(points.length == 3) {
-    return [{a: points[0], b: points[1], c: points[2]}]
+  if (points.length == 3) {
+    return [{ a: points[0], b: points[1], c: points[2] }]
   } else if (points.length < 3) {
     return []
   }
 
   // As the triangle is in 3d-space anyways, we can just assume that vertices are given in CCW order
-  const pt = (i) => points[(i + points.length) % points.length];
+  const pt = (i) => points[(i + points.length) % points.length]
 
   const ab = sub(pt(1).point, pt(0).point)
   const ac = sub(pt(2).point, pt(0).point)
   const normal = new THREE.Vector3().crossVectors(ab, ac)
 
-  let countNegative = 0;
-  let countPositive = 0;
+  let countNegative = 0
+  let countPositive = 0
 
   // Taking inspiration from a polygon triangulation based on the two ears theorem
   // However, in R3, things can get a bit more wonky...
-  // https://en.wikipedia.org/wiki/Two_ears_theorem#Relation_to_triangulations 
+  // https://en.wikipedia.org/wiki/Two_ears_theorem#Relation_to_triangulations
   const makeTriplet = (left, vertex, right) => {
     const det = determinant(
       sub(vertex.point, left.point),
       sub(vertex.point, right.point),
-      normal
+      normal,
     )
 
-    if(det > 0) {
+    if (det > 0) {
       countPositive += 1
     } else {
       countNegative += 1
     }
 
-    return {left: left, vertex: vertex, right: right, det}
+    return { left: left, vertex: vertex, right: right, det }
   }
 
-  const triplets = points.map((cur, i) => makeTriplet(pt(i-1), cur, pt(i+1)))
+  const triplets = points.map((cur, i) =>
+    makeTriplet(pt(i - 1), cur, pt(i + 1)),
+  )
 
-  if(countPositive < countNegative) {
+  if (countPositive < countNegative) {
     // negative det => convex vertex, so we flip all determinants
-    for(let t of triplets) {
+    for (let t of triplets) {
       t.det = -t.det
     }
   }
 
-  const concaveVertices = triplets.filter(t => t.det < 0).map(t => t.vertex)
+  const concaveVertices = triplets.filter((t) => t.det < 0).map((t) => t.vertex)
 
-  let anyEar = false;
-  for(let t of triplets) {
+  let anyEar = false
+  for (let t of triplets) {
     // Idea: Define the 3d analogue of a polygon ear by looking at triples and projecting the
     // remaining points onto the plane spanned by that particular triangle
     // An ear is any triangle having no concave vertices lying inside it
     const containedConcaveVertices = concaveVertices
-      .filter(v => v != t.left && v != t.vertex && v != t.right)
-      .filter(v => pointInsideTriangle(v.point, t.left.point, t.vertex.point, t.right.point))
+      .filter((v) => v != t.left && v != t.vertex && v != t.right)
+      .filter((v) =>
+        pointInsideTriangle(
+          v.point,
+          t.left.point,
+          t.vertex.point,
+          t.right.point,
+        ),
+      )
 
-    t.isEar = (t.det > 0) && (containedConcaveVertices.length == 0)
-    if(t.isEar) {
+    t.isEar = t.det > 0 && containedConcaveVertices.length == 0
+    if (t.isEar) {
       anyEar = true
     }
   }
 
   // Prevent infinite loop
-  if(!anyEar) {
+  if (!anyEar) {
     console.warn('No ear found in ear clipping!')
     triplets[0].isEar = true
   }
 
-  for(let ear of triplets.filter(t => t.isEar)) {
-    const remainingPoints = triplets.filter(t => t != ear).map(t => t.vertex)
-    return [{a: ear.left, b: ear.vertex, c: ear.right}].concat(triangulate(remainingPoints))
+  for (let ear of triplets.filter((t) => t.isEar)) {
+    const remainingPoints = triplets
+      .filter((t) => t != ear)
+      .map((t) => t.vertex)
+    return [{ a: ear.left, b: ear.vertex, c: ear.right }].concat(
+      triangulate(remainingPoints),
+    )
   }
 }
 
 function determinant(v1, v2, v3) {
   const matrix = new THREE.Matrix3()
   matrix.set(
-    v1.x, v2.x, v3.x,  // First column
-    v1.y, v2.y, v3.y,  // Second column
-    v1.z, v2.z, v3.z   // Third column
+    v1.x,
+    v2.x,
+    v3.x, // First column
+    v1.y,
+    v2.y,
+    v3.y, // Second column
+    v1.z,
+    v2.z,
+    v3.z, // Third column
   )
   return matrix.determinant()
 }
 
 function sub(v1, v2) {
-    return new THREE.Vector3().subVectors(v1, v2)
+  return new THREE.Vector3().subVectors(v1, v2)
 }
 
 function cross(v1, v2) {
@@ -554,5 +569,5 @@ export function pointInsideTriangle(point, v1, v2, v3) {
   const d3 = Math.sign(n3.dot(sub(v3, point)))
 
   // Inside if all 3 have the same sign
-  return (d1 == d2) && (d2 == d3)
+  return d1 == d2 && d2 == d3
 }

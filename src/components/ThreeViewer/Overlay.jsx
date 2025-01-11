@@ -20,15 +20,15 @@ import {
   Text,
   UnorderedList,
   useDisclosure,
-} from "@chakra-ui/react"
-import React from "react"
-import { useTranslation } from "react-i18next"
+} from '@chakra-ui/react'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
 
-import ButtonWithHoverHelp from "../Template/ButtonWithHoverHelp"
-import SliderWithLabel from "../Template/SliderWithLabel"
-import { createPVSystem } from "./Meshes/PVSystems"
-import SelectionNotificationBuilding from "./SelectionNotificationBuilding"
-import SelectionNotificationPV from "./SelectionNotificationPV"
+import ButtonWithHoverHelp from '../Template/ButtonWithHoverHelp'
+import SliderWithLabel from '../Template/SliderWithLabel'
+import { createPVSystem } from './Meshes/PVSystems'
+import SelectionNotificationBuilding from './SelectionNotificationBuilding'
+import SelectionNotificationPV from './SelectionNotificationPV'
 
 function Overlay({
   frontendState,
@@ -68,11 +68,11 @@ function Overlay({
       setPVPoints,
       simulationMeshes,
     })
-    setFrontendState("Results")
+    setFrontendState('Results')
   }
 
   const handleAbortButtonClick = () => {
-    setFrontendState("Results")
+    setFrontendState('Results')
   }
 
   return (
@@ -91,26 +91,26 @@ function Overlay({
           geometries={geometries}
           geoLocation={geoLocation}
         />
-        {frontendState == "Results" && (
+        {frontendState == 'Results' && (
           <>
             <Button
               ref={btnRef}
-              colorScheme="teal"
+              colorScheme='teal'
               onClick={onOpenDrawer}
-              variant={"link"}
+              variant={'link'}
               zIndex={100}
             >
-              {t("button.options")}
+              {t('button.options')}
             </Button>
           </>
         )}
 
         <Button
           onClick={onOpenModalControls}
-          colorScheme="teal"
-          variant={"link"}
+          colorScheme='teal'
+          variant={'link'}
         >
-          {t("mapControlHelp.button")}
+          {t('mapControlHelp.button')}
         </Button>
         <ModalControls
           isOpen={isOpenModalControls}
@@ -124,39 +124,39 @@ function Overlay({
         />
       </OverlayWrapper>
       <HighPrioWrapper>
-        {frontendState == "Results" && (
+        {frontendState == 'Results' && (
           <ButtonWithHoverHelp
-            buttonLabel={t("button.drawPVSystem")}
+            buttonLabel={t('button.drawPVSystem')}
             onClick={() => {
-              setFrontendState("DrawPV")
+              setFrontendState('DrawPV')
               onCloseDrawer()
             }}
-            className={pvSystems.length == 0 ? "button-high-prio" : ""}
-            hoverText={t("button.drawPVSystemHover")}
+            className={pvSystems.length == 0 ? 'button-high-prio' : ''}
+            hoverText={t('button.drawPVSystemHover')}
           />
         )}
 
-        {frontendState == "DrawPV" && (
+        {frontendState == 'DrawPV' && (
           <>
             {pvPoints.length > 0 && (
               <>
                 <Button
-                  className="button-high-prio"
+                  className='button-high-prio'
                   onClick={handleCreatePVButtonClick}
                 >
-                  {t("button.createPVSystem")}
+                  {t('button.createPVSystem')}
                 </Button>
                 <Button
                   onClick={() => {
                     setPVPoints(pvPoints.slice(0, -1))
                   }}
                 >
-                  {t("button.deleteLastPoint")}
+                  {t('button.deleteLastPoint')}
                 </Button>
               </>
             )}
             <Button onClick={handleAbortButtonClick}>
-              {t("button.cancel")}
+              {t('button.cancel')}
             </Button>
           </>
         )}
@@ -169,32 +169,32 @@ const OverlayWrapper = ({ children }) => {
   return (
     <>
       <Box
-        display="flex"
-        flexDirection="row"
-        justifyContent="flex-start"
-        pointerEvents="none"
+        display='flex'
+        flexDirection='row'
+        justifyContent='flex-start'
+        pointerEvents='none'
         zIndex={100}
         minWidth={0}
         minHeight={0}
-        overflow="hidden"
+        overflow='hidden'
         sx={{
-          "> *": {
-            pointerEvents: "auto",
+          '> *': {
+            pointerEvents: 'auto',
           },
         }}
       >
         <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="flex-start" // Add this line
-          gap="20px"
-          padding="10px"
-          height="fit-content"
-          maxHeight="100%"
-          flexWrap="nowrap"
+          display='flex'
+          flexDirection='column'
+          alignItems='flex-start' // Add this line
+          gap='20px'
+          padding='10px'
+          height='fit-content'
+          maxHeight='100%'
+          flexWrap='nowrap'
           minWidth={0}
           minHeight={0}
-          overflow="hidden"
+          overflow='hidden'
         >
           {children}
         </Box>
@@ -207,33 +207,33 @@ const HighPrioWrapper = ({ children }) => {
   return (
     <>
       <Box
-        display="flex"
-        flexDirection="column" // First direction Column and second Box flexDirection
+        display='flex'
+        flexDirection='column' // First direction Column and second Box flexDirection
         // row pushes buttons to the upper left corner
-        justifyContent="space-between"
-        pointerEvents="none"
+        justifyContent='space-between'
+        pointerEvents='none'
         zIndex={100}
         minWidth={0}
         minHeight={0}
-        overflow="hidden"
+        overflow='hidden'
         sx={{
-          "> *": {
-            pointerEvents: "auto",
+          '> *': {
+            pointerEvents: 'auto',
           },
         }}
       >
         <Box
-          display="flex"
-          flexDirection="row"
-          gap="20px"
-          padding="10px"
-          width="fit-content"
-          maxWidth="100%"
-          flexWrap="wrap"
+          display='flex'
+          flexDirection='row'
+          gap='20px'
+          padding='10px'
+          width='fit-content'
+          maxWidth='100%'
+          flexWrap='wrap'
           minWidth={0}
           minHeight={0}
-          overflow="hidden"
-          marginLeft="auto" // Add this line
+          overflow='hidden'
+          marginLeft='auto' // Add this line
         >
           {children}
         </Box>
@@ -246,31 +246,31 @@ const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
   const { t } = useTranslation()
   const [sliderValue, setSliderValue] = React.useState(window.numSimulations)
   return (
-    <Stack spacing="24px">
-      <Drawer isOpen={isOpen} placement="left" onClose={onClose} size={"xs"}>
+    <Stack spacing='24px'>
+      <Drawer isOpen={isOpen} placement='left' onClose={onClose} size={'xs'}>
         <DrawerOverlay />
-        <DrawerContent height={"100%"}>
+        <DrawerContent height={'100%'}>
           <DrawerCloseButton />
-          <DrawerHeader>{t("button.options")}</DrawerHeader>
+          <DrawerHeader>{t('button.options')}</DrawerHeader>
 
           <DrawerBody>
             <>
-              <Text as="b">{t("sidebar.header")}</Text>
-              <Text>{t("sidebar.mainText")}</Text>
+              <Text as='b'>{t('sidebar.header')}</Text>
+              <Text>{t('sidebar.mainText')}</Text>
               <FormLabel>
-                {t("button.showMap")}
+                {t('button.showMap')}
                 <Switch
                   isChecked={showTerrain}
                   onChange={() => setShowTerrain((prev) => !prev)}
-                  colorScheme="teal"
-                  margin={"5px"}
+                  colorScheme='teal'
+                  margin={'5px'}
                 />
               </FormLabel>
 
               <SliderWithLabel
                 sliderProps={{ min: 1, max: 200 }}
-                label={t("sidebar.numberSimulations")}
-                hoverHelpLabel={t("sidebar.numberSimulationsHover")}
+                label={t('sidebar.numberSimulations')}
+                hoverHelpLabel={t('sidebar.numberSimulationsHover')}
                 sliderValue={sliderValue}
                 setSliderValue={(newValue) => {
                   setSliderValue(newValue)
@@ -289,7 +289,7 @@ export default Overlay
 
 const ModalControls = ({ isOpen, onClose }) => {
   const { t } = useTranslation()
-  const touchDeviceText = window.isTouchDevice ? "touch." : ""
+  const touchDeviceText = window.isTouchDevice ? 'touch.' : ''
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />

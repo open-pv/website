@@ -5,10 +5,10 @@ import {
   CloseButton,
   useDisclosure,
   Wrap,
-} from "@chakra-ui/react"
-import React, { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { simulationForNewBuilding } from "../../simulation/main"
+} from '@chakra-ui/react'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { simulationForNewBuilding } from '../../simulation/main'
 
 const SelectionNotificationBuilding = ({
   selectedMesh,
@@ -54,27 +54,27 @@ const SelectionNotificationBuilding = ({
 
   return (
     <Box
-      position="fixed"
+      position='fixed'
       bottom={4}
-      left="50%"
-      transform="translateX(-50%)"
-      width="300px"
+      left='50%'
+      transform='translateX(-50%)'
+      width='300px'
       zIndex={9999}
     >
-      <Alert alignItems="start" boxShadow="md" rounded="md" colorScheme="gray">
-        <Box width="100%">
-          <Wrap spacing={2} justify="start">
+      <Alert alignItems='start' boxShadow='md' rounded='md' colorScheme='gray'>
+        <Box width='100%'>
+          <Wrap spacing={2} justify='start'>
             <Button
               isLoading={isLoading}
-              colorScheme="teal"
+              colorScheme='teal'
               onClick={handleResimulationClick}
             >
-              {t("button.simulateBuilding")}
+              {t('button.simulateBuilding')}
             </Button>
           </Wrap>
         </Box>
         <CloseButton
-          position="absolute"
+          position='absolute'
           right={1}
           top={1}
           onClick={handleCloseAlert}

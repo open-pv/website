@@ -1,17 +1,17 @@
-import React, { useRef, useState } from "react"
-import { Canvas } from "react-three-fiber"
+import React, { useRef, useState } from 'react'
+import { Canvas } from 'react-three-fiber'
 
-import CustomMapControl from "./Controls/CustomMapControl"
-import DrawPVControl from "./Controls/DrawPVControl"
-import { HighlightedPVSystem } from "./Meshes/HighlitedPVSystem"
-import { HighlightedMesh } from "./Meshes/HiglightedMesh"
-import { PVSystems } from "./Meshes/PVSystems"
-import SimulationMesh from "./Meshes/SimulationMesh"
-import SurroundingMesh from "./Meshes/SurroundingMesh"
-import VegetationMesh from "./Meshes/VegetationMesh"
-import Overlay from "./Overlay"
-import PointsAndEdges from "./PointsAndEdges"
-import Terrain from "./Terrain"
+import CustomMapControl from './Controls/CustomMapControl'
+import DrawPVControl from './Controls/DrawPVControl'
+import { HighlightedPVSystem } from './Meshes/HighlitedPVSystem'
+import { HighlightedMesh } from './Meshes/HiglightedMesh'
+import { PVSystems } from './Meshes/PVSystems'
+import SimulationMesh from './Meshes/SimulationMesh'
+import SurroundingMesh from './Meshes/SurroundingMesh'
+import VegetationMesh from './Meshes/VegetationMesh'
+import Overlay from './Overlay'
+import PointsAndEdges from './PointsAndEdges'
+import Terrain from './Terrain'
 
 const Scene = ({
   frontendState,
@@ -90,20 +90,20 @@ const Scene = ({
         {selectedPVSystem && (
           <HighlightedPVSystem geometries={selectedPVSystem} />
         )}
-        {simulationMeshes.length > 0 && frontendState == "Results" && (
+        {simulationMeshes.length > 0 && frontendState == 'Results' && (
           <CustomMapControl
             middle={simulationMeshes[0].middle}
             setSelectedMesh={setSelectedMesh}
             setSelectedPVSystem={setSelectedPVSystem}
           />
         )}
-        {frontendState == "DrawPV" && (
+        {frontendState == 'DrawPV' && (
           <DrawPVControl
             middle={simulationMeshes[0].middle}
             setPVPoints={setPVPoints}
           />
         )}
-        {frontendState == "DrawPV" && <PointsAndEdges points={pvPoints} />}
+        {frontendState == 'DrawPV' && <PointsAndEdges points={pvPoints} />}
 
         {pvSystems.length > 0 && <PVSystems pvSystems={pvSystems} />}
 

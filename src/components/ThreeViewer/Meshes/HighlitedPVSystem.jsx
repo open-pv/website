@@ -1,5 +1,5 @@
-import React from "react"
-import * as THREE from "three"
+import React from 'react'
+import * as THREE from 'three'
 
 export function HighlightedPVSystem({ geometries }) {
   return (
@@ -10,7 +10,7 @@ export function HighlightedPVSystem({ geometries }) {
           geometry={geometry}
           material={
             new THREE.MeshLambertMaterial({
-              color: "red",
+              color: 'red',
               transparent: false,
             })
           }

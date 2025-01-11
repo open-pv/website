@@ -1,16 +1,16 @@
-import * as geotiff from "geotiff"
-import React, { useEffect, useState } from "react"
-import * as THREE from "three"
-import { mercator2meters } from "../../simulation/download"
+import * as geotiff from 'geotiff'
+import React, { useEffect, useState } from 'react'
+import * as THREE from 'three'
+import { mercator2meters } from '../../simulation/download'
 import {
   coordinatesWebMercator,
   coordinatesXY15,
   xyzBounds,
-} from "../../simulation/location"
+} from '../../simulation/location'
 
 class ElevationManager {
   static instancePromise = null
-  static state = "uninitialized"
+  static state = 'uninitialized'
 
   tiff = null
   image = null
@@ -78,7 +78,7 @@ class ElevationManager {
     this.instance = new ElevationManager()
     let me = this.instance
     me.tiff = await geotiff.fromUrl(
-      "https://maps.heidler.info/sonny_dtm_20.tif"
+      'https://maps.heidler.info/sonny_dtm_20.tif',
     )
     me.image = await this.instance.tiff.getImage()
     me.pixelScale = me.image.fileDirectory.ModelPixelScale
@@ -161,14 +161,14 @@ const TerrainTile = (props) => {
       const indexBuffer = new Uint32Array(indices)
       const geometry = new THREE.BufferGeometry()
       geometry.setAttribute(
-        "position",
-        new THREE.BufferAttribute(vertexBuffer, 3)
+        'position',
+        new THREE.BufferAttribute(vertexBuffer, 3),
       )
       geometry.setAttribute(
-        "normal",
-        new THREE.BufferAttribute(normalBuffer, 3)
+        'normal',
+        new THREE.BufferAttribute(normalBuffer, 3),
       )
-      geometry.setAttribute("uv", new THREE.BufferAttribute(uvBuffer, 2))
+      geometry.setAttribute('uv', new THREE.BufferAttribute(uvBuffer, 2))
       geometry.setIndex(new THREE.BufferAttribute(indexBuffer, 1))
 
       setGeometry(geometry)
@@ -179,7 +179,7 @@ const TerrainTile = (props) => {
           flatShading: false,
           map: await mapFuture,
           side: THREE.FrontSide,
-        })
+        }),
       )
       setMeshLoaded(true)
     }
@@ -218,7 +218,7 @@ const Terrain = ({ visible }) => {
             y={ty + dy}
             divisions={divisions}
             zoom={19}
-          />
+          />,
         )
 
         setTiles([...currentTiles]) // Update the state with the new set of tiles

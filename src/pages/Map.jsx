@@ -1,23 +1,23 @@
-import React, { useCallback, useRef, useState } from "react"
-import Main from "../Main"
+import React, { useCallback, useRef, useState } from 'react'
+import Main from '../Main'
 
-import { useToast } from "@chakra-ui/react"
-import "maplibre-gl/dist/maplibre-gl.css"
-import { useTranslation } from "react-i18next"
-import { Map, NavigationControl } from "react-map-gl/maplibre"
-import Footer from "../components/Footer"
-import MapPopup from "../components/MapPopup"
-import SearchField from "../components/PVSimulation/SearchField"
-import WelcomeMessage from "../components/Template/WelcomeMessage"
+import { useToast } from '@chakra-ui/react'
+import 'maplibre-gl/dist/maplibre-gl.css'
+import { useTranslation } from 'react-i18next'
+import { Map, NavigationControl } from 'react-map-gl/maplibre'
+import Footer from '../components/Footer'
+import MapPopup from '../components/MapPopup'
+import SearchField from '../components/PVSimulation/SearchField'
+import WelcomeMessage from '../components/Template/WelcomeMessage'
 
 function Index() {
   const { t } = useTranslation()
 
   const basemap_source = {
-    id: "basemap-source",
-    type: "raster",
+    id: 'basemap-source',
+    type: 'raster',
     tiles: [
-      "https://sgx.geodatenzentrum.de/wmts_basemapde/tile/1.0.0/de_basemapde_web_raster_farbe/default/GLOBAL_WEBMERCATOR/{z}/{y}/{x}.png",
+      'https://sgx.geodatenzentrum.de/wmts_basemapde/tile/1.0.0/de_basemapde_web_raster_farbe/default/GLOBAL_WEBMERCATOR/{z}/{y}/{x}.png',
     ],
     attribution: `
         Basiskarte &copy;
@@ -32,9 +32,9 @@ function Index() {
     `,
   }
   const basemap_layer = {
-    id: "basemap",
-    type: "raster",
-    source: "basemap-source",
+    id: 'basemap',
+    type: 'raster',
+    source: 'basemap-source',
     // minzoom: 0,
     // maxzoom: 22,
   }
@@ -52,11 +52,11 @@ function Index() {
 
   const searchCallback = (locations) => {
     if (locations.length == 0) {
-      console.error("No search results!")
+      console.error('No search results!')
       toast({
-        title: t("noSearchResults.title"),
-        description: t("noSearchResults.description"),
-        status: "error",
+        title: t('noSearchResults.title'),
+        description: t('noSearchResults.description'),
+        status: 'error',
         duration: 4000,
         isClosable: true,
       })
@@ -78,7 +78,9 @@ function Index() {
       })
     }
     setMapMarkers(
-      locations.map((location) => <MapPopup key={location.key} {...location} />)
+      locations.map((location) => (
+        <MapPopup key={location.key} {...location} />
+      )),
     )
   }
 
@@ -100,20 +102,20 @@ function Index() {
   })
 
   return (
-    <Main description={t("mainDescription")}>
+    <Main description={t('mainDescription')}>
       <header>
-        <div className="title">
+        <div className='title'>
           <SearchField callback={searchCallback} />
         </div>
       </header>
       <WelcomeMessage />
-      <div className="content">
+      <div className='content'>
         <Map
           ref={setMapRef}
           {...viewState}
           maxZoom={19}
-          style={{ width: "100%", height: "100%" }}
-          mapStyle="https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json"
+          style={{ width: '100%', height: '100%' }}
+          mapStyle='https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json'
           onMove={(evt) => setViewState(evt.viewState)}
           onClick={mapClick}
           attributionControl={false}
@@ -122,15 +124,15 @@ function Index() {
           <>{mapMarkers}</>
           {clickPoint && (
             <MapPopup
-              key="userSelectiion"
+              key='userSelectiion'
               lat={clickPoint[0]}
               lon={clickPoint[1]}
-              display_name={t("map.userSelection")}
+              display_name={t('map.userSelection')}
             />
           )}
-          <NavigationControl position="bottom-right" showCompass={false} />
+          <NavigationControl position='bottom-right' showCompass={false} />
         </Map>
-        <Footer federalState="" frontendState="Map" />
+        <Footer federalState='' frontendState='Map' />
       </div>
     </Main>
   )
