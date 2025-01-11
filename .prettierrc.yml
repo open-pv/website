@@ -1,4 +1,6 @@
-# prettier config
-semi: false  # No semicolons
-singleQuote: false  # use single quotes in regular js files
-jsxSingleQuote: false  # use single quotes in jsx files
+semi: false
+singleQuote: true
+jsxSingleQuote: true
+endOfLine: 'lf'
+trailingComma: 'all'
+tabWidth: 2
