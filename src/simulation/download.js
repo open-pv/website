@@ -1,5 +1,4 @@
 import * as GeoTIFF from "geotiff"
-import proj4 from "proj4"
 
 import * as THREE from "three"
 import { Matrix4 } from "three"
@@ -125,63 +124,6 @@ async function downloadFile(download_spec) {
     console.warn(error)
     return []
   }
-}
-
-function get_utm32(x, y) {
-  const IN_PROJ = "EPSG:4326"
-  const OUT_PROJ = "EPSG:25832"
-  let loc_utm
-  proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs")
-
-  const transformer = proj4(IN_PROJ, OUT_PROJ)
-
-  const [x_utm32, y_utm32] = transformer.forward([x, y])
-  loc_utm = [x_utm32, y_utm32]
-  return loc_utm
-}
-
-function get_file_names_vegetation_tif(x, y) {
-  const DIVISOR = 1000
-  const BUFFER_ZONE = 100
-  const loc_utm = get_utm32(x, y)
-  const x_utm32 = loc_utm[0]
-  const y_utm32 = loc_utm[1]
-
-  const x_rounded = Math.floor(x_utm32 / DIVISOR)
-  const y_rounded = Math.floor(y_utm32 / DIVISOR)
-
-  const load_tile_left = x_utm32 % DIVISOR < BUFFER_ZONE
-  const load_tile_right = x_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE
-  const load_tile_lower = y_utm32 % DIVISOR < BUFFER_ZONE
-  const load_tile_upper = y_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE
-
-  const file_list = [`${x_rounded}_${y_rounded}.tif.gz`]
-
-  if (load_tile_left) {
-    file_list.push(`${x_rounded - 2}_${y_rounded}.tif.gz`)
-  }
-  if (load_tile_right) {
-    file_list.push(`${x_rounded + 2}_${y_rounded}.tif.gz`)
-  }
-  if (load_tile_lower) {
-    file_list.push(`${x_rounded}_${y_rounded - 2}.tif.gz`)
-  }
-  if (load_tile_upper) {
-    file_list.push(`${x_rounded}_${y_rounded + 2}.tif.gz`)
-  }
-  if (load_tile_left && load_tile_lower) {
-    file_list.push(`${x_rounded - 2}_${y_rounded - 2}.tif.gz`)
-  }
-  if (load_tile_left && load_tile_upper) {
-    file_list.push(`${x_rounded - 2}_${y_rounded + 2}.tif.gz`)
-  }
-  if (load_tile_right && load_tile_lower) {
-    file_list.push(`${x_rounded + 2}_${y_rounded - 2}.tif.gz`)
-  }
-  if (load_tile_right && load_tile_upper) {
-    file_list.push(`${x_rounded + 2}_${y_rounded + 2}.tif.gz`)
-  }
-  return file_list
 }
 
 export async function downloadVegetationHeightmap(bbox) {
