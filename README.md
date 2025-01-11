@@ -33,7 +33,7 @@ If you want to deploy this website locally, you need to follow these steps:
 
 ## How does this work?
 
-We have a detailed description in german and english on our [About Page](https://www.openpv.de/about).
+We have a detailed description in german and english on our [About Page](https://www.openpv.de/about). Also check out our [blog](https://blog.openpv.de).
 
 ## Funding
 
