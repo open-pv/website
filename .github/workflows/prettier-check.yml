@@ -1,0 +1,35 @@
+name: Prettier Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  prettier-check:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Prettier on changed files
+        run: |
+          # Get a list of changed files
+          CHANGED_FILES=$(git diff --name-only origin/main HEAD)
+          # Filter to include only files tracked by Prettier
+          FILTERED_FILES=$(echo "$CHANGED_FILES" | grep -E '\.(js|jsx|ts|tsx|css|scss|md|json|yml|yaml)$' || true)
+          if [ -n "$FILTERED_FILES" ]; then
+            echo "$FILTERED_FILES" | xargs npx prettier --check
+          else
+            echo "No files to check."
+          fi
