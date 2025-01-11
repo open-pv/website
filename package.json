@@ -4,7 +4,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist -b build",
-    "deploy:test": "gh-pages -d dist -b gh-pages"
+    "deploy:test": "gh-pages -d dist -b gh-pages",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@chakra-ui/react": "^2.10.1",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
     "gh-pages": "^6.2.0",
+    "prettier": "3.4.2",
     "vite": "^6.0.7"
   },
   "browserslist": {
