@@ -1,18 +1,18 @@
-import { ShadingScene, colormaps } from "@openpv/simshady"
-import * as THREE from "three"
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js"
+import { ShadingScene, colormaps } from '@openpv/simshady'
+import * as THREE from 'three'
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import {
   downloadBuildings,
   downloadVegetationHeightmap,
   getFederalState,
-} from "./download"
-import { coordinatesWebMercator } from "./location"
-import { processGeometries } from "./preprocessing"
+} from './download'
+import { coordinatesWebMercator } from './location'
+import { processGeometries } from './preprocessing'
 
 import {
   processVegetationData,
   processVegetationHeightmapData,
-} from "./processVegetationTiffs"
+} from './processVegetationTiffs'
 
 const c0 = [0, 0, 0.2]
 const c1 = [1, 0.2, 0.1]
@@ -26,7 +26,7 @@ export async function mainSimulation(location) {
     }
   }
 
-  if (typeof location !== "undefined" && location != null) {
+  if (typeof location !== 'undefined' && location != null) {
     const buildingGeometries = await downloadBuildings(location)
     //const vegetationData = await retrieveVegetationRasters(location)
 
@@ -38,7 +38,7 @@ export async function mainSimulation(location) {
 
     window.setGeometries(geometries)
     if (geometries.simulation.length == 0) {
-      window.setFrontendState("ErrorAdress")
+      window.setFrontendState('ErrorAdress')
       return { simulationMesh: undefined }
     }
 
@@ -58,9 +58,9 @@ export async function mainSimulation(location) {
       colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
     )
 
-    if (getFederalState() == "BY") {
+    if (getFederalState() == 'BY') {
       const [cx, cy] = coordinatesWebMercator
-      console.log("coordinatesWebMercator:" + coordinatesWebMercator)
+      console.log('coordinatesWebMercator:' + coordinatesWebMercator)
       const bufferDistance = 200 // 1km buffer, adjust as needed
       const bbox = [
         cx - bufferDistance,
@@ -69,37 +69,37 @@ export async function mainSimulation(location) {
         cy + bufferDistance,
       ]
 
-      console.log("Starting vegetation processing...")
-      console.log(`Bounding box for vegetation data: [${bbox.join(", ")}]`)
+      console.log('Starting vegetation processing...')
+      console.log(`Bounding box for vegetation data: [${bbox.join(', ')}]`)
 
       try {
-        console.log("Downloading vegetation heightmap data...")
+        console.log('Downloading vegetation heightmap data...')
         const vegetationHeightmapData = await downloadVegetationHeightmap(bbox)
 
         if (!vegetationHeightmapData) {
-          throw new Error("Failed to download vegetation heightmap data")
+          throw new Error('Failed to download vegetation heightmap data')
         }
 
-        console.log("Vegetation Heightmap Data downloaded successfully")
+        console.log('Vegetation Heightmap Data downloaded successfully')
         console.log(
           `Data dimensions: ${vegetationHeightmapData.width}x${vegetationHeightmapData.height}`,
         )
         console.log(
-          `Data bounding box: [${vegetationHeightmapData.bbox.join(", ")}]`,
+          `Data bounding box: [${vegetationHeightmapData.bbox.join(', ')}]`,
         )
 
-        console.log("Processing vegetation raster data...")
+        console.log('Processing vegetation raster data...')
         const vegetationRaster = processVegetationHeightmapData(
           vegetationHeightmapData,
         )
 
         if (!vegetationRaster) {
-          throw new Error("Failed to process vegetation raster data")
+          throw new Error('Failed to process vegetation raster data')
         }
 
-        console.log("Vegetation Raster processed successfully")
+        console.log('Vegetation Raster processed successfully')
 
-        console.log("Processing vegetation geometries...")
+        console.log('Processing vegetation geometries...')
         const vegetationGeometries = processVegetationData(
           vegetationRaster,
           new THREE.Vector3(0, 0, 0),
@@ -107,7 +107,7 @@ export async function mainSimulation(location) {
           80,
         )
 
-        console.log("Vegetation Geometries processed successfully")
+        console.log('Vegetation Geometries processed successfully')
         console.log(
           `Number of surrounding geometries: ${vegetationGeometries.surrounding.length}`,
         )
@@ -117,18 +117,18 @@ export async function mainSimulation(location) {
 
         window.setVegetationGeometries(vegetationGeometries)
 
-        console.log("Adding vegetation geometries to the scene...")
+        console.log('Adding vegetation geometries to the scene...')
         vegetationGeometries.surrounding.forEach((geom) => {
           scene.addShadingGeometry(geom)
         })
-        console.log("Vegetation geometries added to the scene")
+        console.log('Vegetation geometries added to the scene')
       } catch (error) {
-        console.error("Error in vegetation processing:", error)
-        console.error("Error stack:", error.stack)
+        console.error('Error in vegetation processing:', error)
+        console.error('Error stack:', error.stack)
         // You might want to set an error state or display an error message to the user here
       }
 
-      console.log("Vegetation processing completed")
+      console.log('Vegetation processing completed')
     }
 
     //vegetationGeometries.surrounding.forEach((geom) => {
@@ -148,11 +148,11 @@ export async function mainSimulation(location) {
       numberSimulations: numSimulations,
       pvCellEfficiency: 0.138,
       maxYieldPerSquareMeter: 1400 * 0.138,
-      diffuseIrradianceURL: "https://www.openpv.de/data/irradiance/",
+      diffuseIrradianceURL: 'https://www.openpv.de/data/irradiance/',
       urlDirectIrrandianceTIF:
-        "https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif",
+        'https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif',
       urlDiffuseIrrandianceTIF:
-        "https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif",
+        'https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif',
       progressCallback: loadingBarWrapperFunction,
     })
 
@@ -207,20 +207,20 @@ export async function simulationForNewBuilding(props) {
     numberSimulations: numSimulations,
     pvCellEfficiency: 0.138,
     maxYieldPerSquareMeter: 1400 * 0.138,
-    diffuseIrradianceURL: "https://www.openpv.de/data/irradiance/",
+    diffuseIrradianceURL: 'https://www.openpv.de/data/irradiance/',
     urlDirectIrrandianceTIF:
-      "https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif",
+      'https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif',
     urlDiffuseIrrandianceTIF:
-      "https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif",
+      'https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif',
     progressCallback: (progress, total) =>
-      console.log("Simulation Progress is ", progress),
+      console.log(`Simulation Progress: ${progress} of ${total}`),
   })
   const material = new THREE.MeshLambertMaterial({
     vertexColors: true,
     side: THREE.DoubleSide,
   })
   simulationMesh.material = material
-  simulationMesh.name = "simulationMesh"
+  simulationMesh.name = 'simulationMesh'
 
   props.setSimulationMeshes([...props.simulationMeshes, simulationMesh])
   /// Delete the new simualted building from the background / surrounding geometries list

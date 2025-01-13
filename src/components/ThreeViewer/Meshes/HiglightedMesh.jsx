@@ -1,5 +1,5 @@
-import React from "react"
-import * as THREE from "three"
+import React from 'react'
+import * as THREE from 'three'
 
 export function HighlightedMesh({ meshes }) {
   return (
@@ -10,7 +10,7 @@ export function HighlightedMesh({ meshes }) {
           geometry={mesh.geometry}
           material={
             new THREE.MeshLambertMaterial({
-              color: "#2b2c40",
+              color: '#2b2c40',
               transparent: false,
             })
           }

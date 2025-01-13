@@ -1,21 +1,19 @@
-import React, { useMemo } from 'react';
-import * as THREE from "three";
+import React, { useMemo } from 'react'
+import * as THREE from 'three'
 
 const vegetationColors = [
-  "#27AD6B",  // Light green
-  "#2DBE76", // mint
-  "#33CC80", //dull green
-];
-
-
-
+  '#27AD6B', // Light green
+  '#2DBE76', // mint
+  '#33CC80', //dull green
+]
 
 const VegetationMesh = ({ geometries }) => {
   const randomColors = useMemo(() => {
-    return geometries.map(() => 
-      vegetationColors[Math.floor(Math.random() * vegetationColors.length)]
-    );
-  }, [geometries]);
+    return geometries.map(
+      () =>
+        vegetationColors[Math.floor(Math.random() * vegetationColors.length)],
+    )
+  }, [geometries])
 
   return (
     <>
@@ -29,7 +27,7 @@ const VegetationMesh = ({ geometries }) => {
         </mesh>
       ))}
     </>
-  );
-};
+  )
+}
 
 export default VegetationMesh

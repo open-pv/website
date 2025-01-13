@@ -1,7 +1,7 @@
-import { OrbitControls } from "@react-three/drei"
-import { useFrame, useThree } from "@react-three/fiber"
-import React, { useEffect, useRef } from "react"
-import * as THREE from "three"
+import { OrbitControls } from '@react-three/drei'
+import { useFrame, useThree } from '@react-three/fiber'
+import React, { useEffect, useRef } from 'react'
+import * as THREE from 'three'
 
 function CustomMapControl(props) {
   const controlsRef = useRef()
@@ -34,37 +34,37 @@ function CustomMapControl(props) {
     const intersects = getIntersects()
 
     if (intersects.length === 0) {
-      console.log("No children in the intersected mesh.")
+      console.log('No children in the intersected mesh.')
       return
     }
 
     // Filter out Sprites (ie the labels of PV systems)
     let i = 0
-    while (i < intersects.length && intersects[i].object.type === "Sprite") {
+    while (i < intersects.length && intersects[i].object.type === 'Sprite') {
       i++
     }
     if (i === intersects.length) {
-      console.log("Only Sprite objects found in intersections.")
+      console.log('Only Sprite objects found in intersections.')
       return
     }
 
     let intersectedMesh = intersects[i].object
-    console.log("Intersected Mesh", intersectedMesh)
+    console.log('Intersected Mesh', intersectedMesh)
 
     if (!intersectedMesh) return
     if (!intersectedMesh.geometry.name) {
       console.log(
-        "There is a mesh, but it has no name so I don't know what to do."
+        "There is a mesh, but it has no name so I don't know what to do.",
       )
       return
     }
     if (
-      intersectedMesh.geometry.name.includes("surrounding") ||
-      intersectedMesh.geometry.name.includes("background")
+      intersectedMesh.geometry.name.includes('surrounding') ||
+      intersectedMesh.geometry.name.includes('background')
     ) {
       props.setSelectedMesh([intersectedMesh])
     }
-    if (intersectedMesh.geometry.name.includes("pvSystem")) {
+    if (intersectedMesh.geometry.name.includes('pvSystem')) {
       props.setSelectedPVSystem([intersectedMesh.geometry])
     }
   }
@@ -85,12 +85,12 @@ function CustomMapControl(props) {
   useEffect(() => {
     const canvas = gl.domElement
 
-    canvas.addEventListener("dblclick", handleDoubleClick)
-    canvas.addEventListener("touchstart", handleDoubleTap)
+    canvas.addEventListener('dblclick', handleDoubleClick)
+    canvas.addEventListener('touchstart', handleDoubleTap)
 
     return () => {
-      canvas.removeEventListener("dblclick", handleDoubleClick)
-      canvas.removeEventListener("touchstart", handleDoubleTap)
+      canvas.removeEventListener('dblclick', handleDoubleClick)
+      canvas.removeEventListener('touchstart', handleDoubleTap)
     }
   }, [camera, scene])
 

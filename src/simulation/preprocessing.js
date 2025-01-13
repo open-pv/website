@@ -1,8 +1,8 @@
-import * as THREE from "three"
+import * as THREE from 'three'
 
 export function processGeometries(geometries, simulationCenter, shadingCutoff) {
-  console.log("simulationCenter", simulationCenter)
-  console.log("shadingCutoff", shadingCutoff)
+  console.log('simulationCenter', simulationCenter)
+  console.log('shadingCutoff', shadingCutoff)
 
   const simulationRadius = 10 // 10 meters radius for simulation
   const simulationRadius2 = simulationRadius * simulationRadius
@@ -28,7 +28,7 @@ export function processGeometries(geometries, simulationCenter, shadingCutoff) {
   // Step 2: Recenter the coordinates
   const offset = new THREE.Vector3().subVectors(
     closestGeometryCenter,
-    simulationCenter
+    simulationCenter,
   )
 
   let simulation = []

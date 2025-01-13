@@ -1,7 +1,7 @@
-import { useFrame, useThree } from "@react-three/fiber"
-import { useEffect, useRef } from "react"
-import * as THREE from "three"
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { useFrame, useThree } from '@react-three/fiber'
+import { useEffect, useRef } from 'react'
+import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 const DrawPVControl = ({ middle, setPVPoints }) => {
   const { camera, gl, scene } = useThree()
@@ -46,7 +46,7 @@ const DrawPVControl = ({ middle, setPVPoints }) => {
         // Catch the error where sometimes the intersection
         // is undefined. By this no dot is drawn, but also
         // no error is thrown
-        console.log("Intersaction.face was null.")
+        console.log('Intersaction.face was null.')
         return undefined
       }
       const normal = intersection.face.normal
@@ -59,11 +59,11 @@ const DrawPVControl = ({ middle, setPVPoints }) => {
 
   useEffect(() => {
     // Add event listener
-    gl.domElement.addEventListener("pointerdown", onPointerDown)
+    gl.domElement.addEventListener('pointerdown', onPointerDown)
 
     // Clean up
     return () => {
-      gl.domElement.removeEventListener("pointerdown", onPointerDown)
+      gl.domElement.removeEventListener('pointerdown', onPointerDown)
     }
   }, [gl])
 

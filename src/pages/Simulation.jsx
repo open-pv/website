@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
-import WrongAdress from "../components/ErrorMessages/WrongAdress"
-import Footer from "../components/Footer"
-import LoadingBar from "../components/Template/LoadingBar"
-import Scene from "../components/ThreeViewer/Scene"
-import Main from "../Main"
-import { mainSimulation } from "../simulation/main"
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import WrongAdress from '../components/ErrorMessages/WrongAdress'
+import Footer from '../components/Footer'
+import LoadingBar from '../components/Template/LoadingBar'
+import Scene from '../components/ThreeViewer/Scene'
+import Main from '../Main'
+import { mainSimulation } from '../simulation/main'
 
 function Index() {
   const location = useParams()
 
   // frontendState defines the general state of the frontend (Results, Loading, DrawPV)
-  const [frontendState, setFrontendState] = useState("Loading")
+  const [frontendState, setFrontendState] = useState('Loading')
 
   // simulationProgress is used for the loading bar
   const [simulationProgress, setSimulationProgress] = useState(0)
@@ -41,7 +41,7 @@ function Index() {
     const { simulationMesh } = await mainSimulation(location)
     if (simulationMesh) {
       setSimulationMeshes([...simulationMeshes, simulationMesh])
-      setFrontendState("Results")
+      setFrontendState('Results')
     }
   }
 
@@ -50,11 +50,11 @@ function Index() {
   }, [])
 
   return (
-    <Main description={"Berechne das Potential deiner Solaranlage."}>
-      <div className="content">
-        {frontendState == "ErrorAdress" && <WrongAdress />}
+    <Main description={'Berechne das Potential deiner Solaranlage.'}>
+      <div className='content'>
+        {frontendState == 'ErrorAdress' && <WrongAdress />}
 
-        {(frontendState == "Results" || frontendState == "DrawPV") && (
+        {(frontendState == 'Results' || frontendState == 'DrawPV') && (
           <Scene
             frontendState={frontendState}
             setFrontendState={setFrontendState}
@@ -66,7 +66,7 @@ function Index() {
           />
         )}
 
-        {frontendState == "Loading" && (
+        {frontendState == 'Loading' && (
           <LoadingBar progress={simulationProgress} />
         )}
         <Footer federalState={federalState} frontendState={frontendState} />

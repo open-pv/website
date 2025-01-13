@@ -17,9 +17,9 @@ import {
   Tooltip,
   UnorderedList,
   useDisclosure,
-} from "@chakra-ui/react"
-import React, { useState } from "react"
-import { useTranslation } from "react-i18next"
+} from '@chakra-ui/react'
+import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 function SavingCalculation({
   selectedPVSystem,
@@ -30,21 +30,21 @@ function SavingCalculation({
   const { isOpen: isOpenResultFade, onToggle: onToggleResultFade } =
     useDisclosure({ defaultIsOpen: false })
   const { t } = useTranslation()
-  const [annualConsumption, setAnnualConsumption] = useState("3000")
-  const [storageCapacity, setStorageCapacity] = useState("0")
-  const [electricityPrice, setElectricityPrice] = useState("30")
+  const [annualConsumption, setAnnualConsumption] = useState('3000')
+  const [storageCapacity, setStorageCapacity] = useState('0')
+  const [electricityPrice, setElectricityPrice] = useState('30')
   const [selfConsumption, setSelfConsumption] = useState(0)
   const [annualSavings, setAnnualSavings] = useState(0)
 
   // Helper function to normalize input with different decimal separators
   const normalizeInput = (value) => {
-    return value.replace(",", ".")
+    return value.replace(',', '.')
   }
 
   // Helper function to handle numeric input changes
   const handleNumericChange = (setter) => (e) => {
     const value = e.target.value
-    if (value === "" || /^[0-9]*[.,]?[0-9]*$/.test(value)) {
+    if (value === '' || /^[0-9]*[.,]?[0-9]*$/.test(value)) {
       setter(value)
     }
   }
@@ -54,8 +54,8 @@ function SavingCalculation({
     pvProduction = Math.round(
       selectedPVSystem.reduce(
         (previous, current) => previous + current.annualYield,
-        0
-      )
+        0,
+      ),
     )
   }
 
@@ -69,12 +69,12 @@ function SavingCalculation({
       setAnnualSavings,
     }) {
       const response = await fetch(
-        "https://www.openpv.de/data/savings_calculation/cons_prod.json"
+        'https://www.openpv.de/data/savings_calculation/cons_prod.json',
       )
       const data = await response.json()
 
-      const normalizedConsumption = data["Consumption"]
-      const normalizedProduction = data["Production"]
+      const normalizedConsumption = data['Consumption']
+      const normalizedProduction = data['Production']
 
       const result = {}
       let currentStorageLevel = 0
@@ -95,7 +95,7 @@ function SavingCalculation({
           const availableStorageSpace = storageCapacity - currentStorageLevel
           const chargedAmount = Math.min(
             excessProduction,
-            availableStorageSpace
+            availableStorageSpace,
           )
           currentStorageLevel += chargedAmount
         } else {
@@ -104,7 +104,7 @@ function SavingCalculation({
           // Use storage if available
           const usedFromStorage = Math.min(
             productionDeficit,
-            currentStorageLevel
+            currentStorageLevel,
           )
           currentStorageLevel -= usedFromStorage
 
@@ -116,12 +116,12 @@ function SavingCalculation({
 
       let selfConsumedElectricity = Object.values(result).reduce(
         (acc, val) => acc + val,
-        0
+        0,
       )
 
       setSelfConsumption(Math.round(selfConsumedElectricity))
       setAnnualSavings(
-        Math.round((selfConsumedElectricity * electricityPrice) / 100)
+        Math.round((selfConsumedElectricity * electricityPrice) / 100),
       )
     }
 
@@ -141,12 +141,12 @@ function SavingCalculation({
     <>
       {selectedPVSystem.length > 0 && (
         <Button
-          colorScheme="teal"
+          colorScheme='teal'
           onClick={() => {
             onOpen()
           }}
         >
-          {t("savingsCalculation.button")}
+          {t('savingsCalculation.button')}
         </Button>
       )}
       <Modal
@@ -156,22 +156,22 @@ function SavingCalculation({
           onCloseAlert()
           setSelectedPVSystem([])
         }}
-        size="xl"
+        size='xl'
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{t("savingsCalculation.button")}</ModalHeader>
+          <ModalHeader>{t('savingsCalculation.button')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <>
               <FormControl>
                 <FormLabel>
-                  {t("savingsCalculation.consumptionTitle")}
+                  {t('savingsCalculation.consumptionTitle')}
                   <Tooltip
-                    label={t("savingsCalculation.consumptionHelperInfo")}
+                    label={t('savingsCalculation.consumptionHelperInfo')}
                   >
-                    <Text color="teal" fontSize="xs">
-                      {t("savingsCalculation.consumptionHelperLabel")}
+                    <Text color='teal' fontSize='xs'>
+                      {t('savingsCalculation.consumptionHelperLabel')}
                     </Text>
                   </Tooltip>
                 </FormLabel>
@@ -183,7 +183,7 @@ function SavingCalculation({
               </FormControl>
               <br />
               <FormControl>
-                <FormLabel>{t("savingsCalculation.storageTitle")}</FormLabel>
+                <FormLabel>{t('savingsCalculation.storageTitle')}</FormLabel>
                 <Input
                   value={storageCapacity}
                   onChange={handleNumericChange(setStorageCapacity)}
@@ -192,11 +192,11 @@ function SavingCalculation({
               <br />
               <FormControl>
                 <FormLabel>
-                  {t("savingsCalculation.electricityPriceTitle")}
+                  {t('savingsCalculation.electricityPriceTitle')}
                 </FormLabel>
                 <Input
                   placeholder={t(
-                    "savingsCalculation.electricityPricePlaceholder"
+                    'savingsCalculation.electricityPricePlaceholder',
                   )}
                   value={electricityPrice}
                   onChange={handleNumericChange(setElectricityPrice)}
@@ -205,30 +205,30 @@ function SavingCalculation({
 
               <Collapse in={isOpenResultFade} animateOpacity>
                 <Box
-                  p="40px"
-                  color="white"
-                  mt="4"
-                  bg="teal"
-                  rounded="md"
-                  shadow="md"
+                  p='40px'
+                  color='white'
+                  mt='4'
+                  bg='teal'
+                  rounded='md'
+                  shadow='md'
                 >
-                  <Text>{t("savingsCalculation.disclaimer")}</Text>
+                  <Text>{t('savingsCalculation.disclaimer')}</Text>
                   <UnorderedList>
                     <ListItem>
-                      {t("savingsCalculation.results.production")}
-                      <Text as="b" color={"white"}>
+                      {t('savingsCalculation.results.production')}
+                      <Text as='b' color={'white'}>
                         {pvProduction} kWh
                       </Text>
                     </ListItem>
                     <ListItem>
-                      {t("savingsCalculation.results.consumption")}
-                      <Text as="b" color={"white"}>
+                      {t('savingsCalculation.results.consumption')}
+                      <Text as='b' color={'white'}>
                         {selfConsumption} kWh
                       </Text>
                     </ListItem>
                     <ListItem>
-                      {t("savingsCalculation.results.savings")}
-                      <Text as="b" color={"white"}>
+                      {t('savingsCalculation.results.savings')}
+                      <Text as='b' color={'white'}>
                         {annualSavings}€
                       </Text>
                     </ListItem>
@@ -250,7 +250,7 @@ function SavingCalculation({
                 }
               }}
             >
-              {t("savingsCalculation.calculate")}
+              {t('savingsCalculation.calculate')}
             </Button>
           </ModalFooter>
         </ModalContent>

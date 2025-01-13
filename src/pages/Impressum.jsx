@@ -1,14 +1,14 @@
-import { Card, CardBody, CardHeader, Heading } from "@chakra-ui/react"
-import React from "react"
+import { Card, CardBody, CardHeader, Heading } from '@chakra-ui/react'
+import React from 'react'
 
-import Main from "../Main"
+import Main from '../Main'
 
 const Impressum = () => {
   return (
-    <Main title="Impressum" description="Impressum der Website.">
-      <Card height="100%" overflow="auto">
+    <Main title='Impressum' description='Impressum der Website.'>
+      <Card height='100%' overflow='auto'>
         <CardHeader>
-          <Heading as="h1">Impressum</Heading>
+          <Heading as='h1'>Impressum</Heading>
         </CardHeader>
         <CardBody>
           <p>

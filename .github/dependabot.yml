@@ -5,7 +5,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/" # Location of package manifest
+  - package-ecosystem: 'npm'
+    directory: '/' # Location of package manifest
     schedule:
-      interval: "weekly"
+      interval: 'weekly'

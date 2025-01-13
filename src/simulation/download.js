@@ -1,18 +1,16 @@
-import * as GeoTIFF from "geotiff"
-import proj4 from "proj4"
+import * as GeoTIFF from 'geotiff'
 
-import * as pako from "pako"
-import * as THREE from "three"
-import { Matrix4 } from "three"
-import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js"
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js"
-import { attributions } from "../data/dataLicense"
-import { coordinatesLonLat, projectToWebMercator } from "./location"
+import * as THREE from 'three'
+import { Matrix4 } from 'three'
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { attributions } from '../data/dataLicense'
+import { coordinatesLonLat, projectToWebMercator } from './location'
 
-let federalState = null;
+let federalState = null
 
-export function getFederalState(){
-  return federalState;
+export function getFederalState() {
+  return federalState
 }
 
 export function tile2meters() {
@@ -25,7 +23,7 @@ export function mercator2meters() {
 }
 
 const dracoLoader = new DRACOLoader()
-dracoLoader.setDecoderPath("/draco/")
+dracoLoader.setDecoderPath('/draco/')
 dracoLoader.preload()
 const gltfLoader = new GLTFLoader()
 gltfLoader.setDRACOLoader(dracoLoader)
@@ -103,21 +101,21 @@ async function downloadFile(download_spec) {
         for (let { position, normal } of Object.values(buildings)) {
           let buildingGeometry = new THREE.BufferGeometry()
           position = new THREE.BufferAttribute(new Float32Array(position), 3)
-          buildingGeometry.setAttribute("position", position)
+          buildingGeometry.setAttribute('position', position)
           normal = new THREE.BufferAttribute(new Float32Array(normal), 3)
-          buildingGeometry.setAttribute("normal", normal)
+          buildingGeometry.setAttribute('normal', normal)
           geometries.push(buildingGeometry)
         }
       }
     }
 
     // Parse Bundesländer
-    const buffer = await data.parser.getDependency("bufferView", 0)
+    const buffer = await data.parser.getDependency('bufferView', 0)
     const ids = new TextDecoder().decode(buffer)
     for (const bundesland of Object.keys(attributions)) {
       if (ids.includes(`DE${bundesland}`)) {
-        window.setFederalState(bundesland);
-        federalState = bundesland;
+        window.setFederalState(bundesland)
+        federalState = bundesland
       }
     }
 
@@ -128,128 +126,76 @@ async function downloadFile(download_spec) {
   }
 }
 
-function get_utm32(x, y) {
-  const IN_PROJ = "EPSG:4326"
-  const OUT_PROJ = "EPSG:25832"
-  let loc_utm
-  proj4.defs("EPSG:25832", "+proj=utm +zone=32 +ellps=GRS80 +units=m +no_defs")
-
-  const transformer = proj4(IN_PROJ, OUT_PROJ)
-
-  const [x_utm32, y_utm32] = transformer.forward([x, y])
-  loc_utm = [x_utm32, y_utm32]
-  return loc_utm
-}
-
-function get_file_names_vegetation_tif(x, y) {
-  const DIVISOR = 1000
-  const BUFFER_ZONE = 100
-  const loc_utm = get_utm32(x, y)
-  const x_utm32 = loc_utm[0]
-  const y_utm32 = loc_utm[1]
-
-  const x_rounded = Math.floor(x_utm32 / DIVISOR)
-  const y_rounded = Math.floor(y_utm32 / DIVISOR)
-
-  const load_tile_left = x_utm32 % DIVISOR < BUFFER_ZONE
-  const load_tile_right = x_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE
-  const load_tile_lower = y_utm32 % DIVISOR < BUFFER_ZONE
-  const load_tile_upper = y_utm32 % DIVISOR > DIVISOR - BUFFER_ZONE
-
-  const file_list = [`${x_rounded}_${y_rounded}.tif.gz`]
-
-  if (load_tile_left) {
-    file_list.push(`${x_rounded - 2}_${y_rounded}.tif.gz`)
-  }
-  if (load_tile_right) {
-    file_list.push(`${x_rounded + 2}_${y_rounded}.tif.gz`)
-  }
-  if (load_tile_lower) {
-    file_list.push(`${x_rounded}_${y_rounded - 2}.tif.gz`)
-  }
-  if (load_tile_upper) {
-    file_list.push(`${x_rounded}_${y_rounded + 2}.tif.gz`)
-  }
-  if (load_tile_left && load_tile_lower) {
-    file_list.push(`${x_rounded - 2}_${y_rounded - 2}.tif.gz`)
-  }
-  if (load_tile_left && load_tile_upper) {
-    file_list.push(`${x_rounded - 2}_${y_rounded + 2}.tif.gz`)
-  }
-  if (load_tile_right && load_tile_lower) {
-    file_list.push(`${x_rounded + 2}_${y_rounded - 2}.tif.gz`)
-  }
-  if (load_tile_right && load_tile_upper) {
-    file_list.push(`${x_rounded + 2}_${y_rounded + 2}.tif.gz`)
-  }
-  return file_list
-}
-
-
 export async function downloadVegetationHeightmap(bbox) {
-  const url = 'https://vegetation.openpv.de/data/vegetation_heightmap_webmercator_bigtiff.tif';
+  const url =
+    'https://vegetation.openpv.de/data/vegetation_heightmap_webmercator_bigtiff.tif'
 
   try {
-    console.log("Attempting to open GeoTIFF file...");
-    const tiff = await GeoTIFF.fromUrl(url, { allowHttpRangeRequests: true });  // Enable HTTP range requests
-    console.log("GeoTIFF file opened successfully");
-    const image = await tiff.getImage();
-    console.log("Image metadata retrieved");
+    console.log('Attempting to open GeoTIFF file...')
+    const tiff = await GeoTIFF.fromUrl(url, { allowHttpRangeRequests: true }) // Enable HTTP range requests
+    console.log('GeoTIFF file opened successfully')
+    const image = await tiff.getImage()
+    console.log('Image metadata retrieved')
 
-    const fileDirectory = image.getFileDirectory();
-    const [imageWidth, imageHeight] = [image.getWidth(), image.getHeight()];
-    const [tileWidth, tileHeight] = [image.getTileWidth(), image.getTileHeight()];
-    console.log("Image dimensions:", imageWidth, "x", imageHeight);
-    console.log("Tile dimensions:", tileWidth, tileHeight);
+    const fileDirectory = image.getFileDirectory()
+    const [imageWidth, imageHeight] = [image.getWidth(), image.getHeight()]
+    const [tileWidth, tileHeight] = [
+      image.getTileWidth(),
+      image.getTileHeight(),
+    ]
+    console.log('Image dimensions:', imageWidth, 'x', imageHeight)
+    console.log('Tile dimensions:', tileWidth, tileHeight)
 
-    const geoKeys = fileDirectory.GeoKeyDirectory;
+    const geoKeys = fileDirectory.GeoKeyDirectory
     if (geoKeys) {
-      console.log("GeoKeys:", geoKeys);
+      console.log('GeoKeys:', geoKeys)
     }
 
-    const tiepoint = fileDirectory.ModelTiepoint;
-    const scale = fileDirectory.ModelPixelScale;
+    const tiepoint = fileDirectory.ModelTiepoint
+    const scale = fileDirectory.ModelPixelScale
     if (!tiepoint || !scale) {
-      throw new Error("Missing tiepoint or scale information");
+      throw new Error('Missing tiepoint or scale information')
     }
-    console.log("Tiepoint:", tiepoint);
-    console.log("Scale:", scale);
+    console.log('Tiepoint:', tiepoint)
+    console.log('Scale:', scale)
 
-    const [i, j, k, x, y, z] = tiepoint;
-    const [scaleX, scaleY, scaleZ] = scale;
+    const [i, j, k, x, y, z] = tiepoint
+    const [scaleX, scaleY, scaleZ] = scale
 
-    const [minX, minY, maxX, maxY] = image.getBoundingBox();
-    console.log("GeoTIFF bounding box:", [minX, minY, maxX, maxY]);
-    console.log("Requested bounding box:", bbox);
+    const [minX, minY, maxX, maxY] = image.getBoundingBox()
+    console.log('GeoTIFF bounding box:', [minX, minY, maxX, maxY])
+    console.log('Requested bounding box:', bbox)
 
     // Calculate pixel coordinates
-    let startX = Math.floor((bbox[0] - x) / scaleX);
-    let startY = Math.floor((y - bbox[3]) / scaleY);
-    let endX = Math.ceil((bbox[2] - x) / scaleX);
-    let endY = Math.ceil((y - bbox[1]) / scaleY);
+    let startX = Math.floor((bbox[0] - x) / scaleX)
+    let startY = Math.floor((y - bbox[3]) / scaleY)
+    let endX = Math.ceil((bbox[2] - x) / scaleX)
+    let endY = Math.ceil((y - bbox[1]) / scaleY)
 
     // Ensure the window is within the image bounds
-    startX = Math.max(0, startX);
-    startY = Math.max(0, startY);
-    endX = Math.min(imageWidth - 1, endX);
-    endY = Math.min(imageHeight - 1, endY);
+    startX = Math.max(0, startX)
+    startY = Math.max(0, startY)
+    endX = Math.min(imageWidth - 1, endX)
+    endY = Math.min(imageHeight - 1, endY)
 
-    let windowWidth = endX - startX;
-    let windowHeight = endY - startY;
+    let windowWidth = endX - startX
+    let windowHeight = endY - startY
 
-    console.log(`Calculated window: [${startX}, ${startY}, ${windowWidth}, ${windowHeight}]`);
+    console.log(
+      `Calculated window: [${startX}, ${startY}, ${windowWidth}, ${windowHeight}]`,
+    )
 
     if (windowWidth <= 0 || windowHeight <= 0) {
-      throw new Error("Invalid window dimensions");
+      throw new Error('Invalid window dimensions')
     }
 
-    const window = [startX, startY, endX, endY];
+    const window = [startX, startY, endX, endY]
 
     // Read the raster data for the specified window
-    console.log("Reading raster data...");
-    const [rasterData] = await image.readRasters({ window });
-    console.log("Raster data read successfully");
-    console.log(`Raster data shape: ${windowWidth}x${windowHeight}`);
+    console.log('Reading raster data...')
+    const [rasterData] = await image.readRasters({ window })
+    console.log('Raster data read successfully')
+    console.log(`Raster data shape: ${windowWidth}x${windowHeight}`)
 
     const result = {
       data: rasterData,
@@ -257,22 +203,21 @@ export async function downloadVegetationHeightmap(bbox) {
         x + startX * scaleX,
         y - (startY + windowHeight) * scaleY,
         x + (startX + windowWidth) * scaleX,
-        y - startY * scaleY
+        y - startY * scaleY,
       ],
       width: windowWidth,
       height: windowHeight,
       xResolution: scaleX,
-      yResolution: scaleY
-    };
+      yResolution: scaleY,
+    }
 
     //console.log("Result:", JSON.stringify(result, null, 2));
-    return result;
+    return result
   } catch (error) {
-    console.error("Error loading or processing GeoTIFF:", error);
-    console.error("Error stack:", error.stack);
-    return null;
+    console.error('Error loading or processing GeoTIFF:', error)
+    console.error('Error stack:', error.stack)
+    return null
   }
 }
-
 
 // Keep other functions in this file as they are

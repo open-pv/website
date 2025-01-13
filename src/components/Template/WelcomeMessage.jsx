@@ -12,23 +12,23 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
-} from "@chakra-ui/react"
-import React, { useState } from "react"
-import { useTranslation } from "react-i18next"
+} from '@chakra-ui/react'
+import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 function WelcomeMessageBoxElement({ image, text }) {
   return (
     <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="space-between"
+      display='flex'
+      flexDirection='column'
+      alignItems='center'
+      justifyContent='space-between'
     >
       {image && (
         <Image
           src={image.src}
           alt={image.alt}
-          style={{ maxHeight: "200px", width: "auto", margin: "20px" }}
+          style={{ maxHeight: '200px', width: 'auto', margin: '20px' }}
         />
       )}
 
@@ -53,56 +53,56 @@ function WelcomeMessage() {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
+    <Modal isOpen={isOpen} onClose={onClose} size='xl'>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader as="h1">{t("WelcomeMessage.title")}</ModalHeader>
+        <ModalHeader as='h1'>{t('WelcomeMessage.title')}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {currentPage === 1 && (
             <WelcomeMessageBoxElement
               image={{
-                src: "images/WelcomeMessage1.png",
-                alt: "Screenshot from the Search Input, where some address is written down.",
+                src: 'images/WelcomeMessage1.png',
+                alt: 'Screenshot from the Search Input, where some address is written down.',
               }}
-              text={t("WelcomeMessage.firstPage")}
+              text={t('WelcomeMessage.firstPage')}
             />
           )}
           {currentPage === 2 && (
             <WelcomeMessageBoxElement
               image={{
-                src: "images/WelcomeMessage2.png",
-                alt: "Screenshot from a possible Simulation Result, where the solar potential of a 3D building is shown.",
+                src: 'images/WelcomeMessage2.png',
+                alt: 'Screenshot from a possible Simulation Result, where the solar potential of a 3D building is shown.',
               }}
-              text={t("WelcomeMessage.secondPage")}
+              text={t('WelcomeMessage.secondPage')}
             />
           )}
           {currentPage === 3 && (
             <WelcomeMessageBoxElement
               image={{
-                src: "images/WelcomeMessage3.png",
-                alt: "Screenshot from a possible Simulation Result, where a PV system was created and the annual result was calculated.",
+                src: 'images/WelcomeMessage3.png',
+                alt: 'Screenshot from a possible Simulation Result, where a PV system was created and the annual result was calculated.',
               }}
-              text={t("WelcomeMessage.thirdPage")}
+              text={t('WelcomeMessage.thirdPage')}
             />
           )}
           {currentPage === 4 && (
             <WelcomeMessageBoxElement
               image={{
-                src: "images/WelcomeMessage4.png",
-                alt: "Screenshot from a possible Simulation Result, where a PV system was created and the annual result was calculated.",
+                src: 'images/WelcomeMessage4.png',
+                alt: 'Screenshot from a possible Simulation Result, where a PV system was created and the annual result was calculated.',
               }}
-              text={t("WelcomeMessage.fourthPage")}
+              text={t('WelcomeMessage.fourthPage')}
             />
           )}
           {currentPage === 5 && (
-            <WelcomeMessageBoxElement text={t("WelcomeMessage.fifthPage")} />
+            <WelcomeMessageBoxElement text={t('WelcomeMessage.fifthPage')} />
           )}
         </ModalBody>
 
         <ModalFooter>
           <Button mr={3} onClick={prevPage} isDisabled={currentPage === 1}>
-            {t("previous")}
+            {t('previous')}
           </Button>
           {currentPage != 5 && (
             <Button
@@ -110,21 +110,21 @@ function WelcomeMessage() {
               onClick={nextPage}
               isDisabled={currentPage === numPages}
             >
-              {t("next")}
+              {t('next')}
             </Button>
           )}
           {currentPage == 5 && (
             <Button mr={3} onClick={onClose}>
-              {t("close")}
+              {t('close')}
             </Button>
           )}
         </ModalFooter>
-        <Flex justifyContent="center" mb={4}>
+        <Flex justifyContent='center' mb={4}>
           {Array.from({ length: numPages }, (_, i) => i + 1).map((page) => (
             <Circle
               key={page}
-              size="10px"
-              bg={currentPage === page ? "blue.500" : "gray.300"}
+              size='10px'
+              bg={currentPage === page ? 'blue.500' : 'gray.300'}
               m={1}
             />
           ))}

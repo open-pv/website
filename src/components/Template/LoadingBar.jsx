@@ -1,6 +1,6 @@
-import { Progress } from "@chakra-ui/react"
-import React, { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
+import { Progress } from '@chakra-ui/react'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const LoadingBar = ({ progress }) => {
   const { t } = useTranslation()
@@ -16,18 +16,18 @@ const LoadingBar = ({ progress }) => {
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
       }}
     >
-      <p style={{ margin: "20px" }}>
-        {t("loadingMessage.tip" + shownTip.toString())}
+      <p style={{ margin: '20px' }}>
+        {t('loadingMessage.tip' + shownTip.toString())}
       </p>
-      <div style={{ width: "80%", maxWidth: "600px", margin: "0 auto" }}>
-        <Progress value={progress} width="100%" hasStripe={true} />
+      <div style={{ width: '80%', maxWidth: '600px', margin: '0 auto' }}>
+        <Progress value={progress} width='100%' hasStripe={true} />
       </div>
     </div>
   )
