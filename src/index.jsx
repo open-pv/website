@@ -38,6 +38,7 @@ const StrictApp = () => (
       </Suspense>
     </BrowserRouter>
   </Provider>
+
 )
 
 const rootElement = document.getElementById('root')
