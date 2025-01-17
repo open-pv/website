@@ -62,26 +62,20 @@ function Index() {
       })
     } else {
       // Use only the first one
-      locations = [locations[0]]
-      const lons = locations.map((loc) => loc.lon)
-      const lats = locations.map((loc) => loc.lat)
+      const location = locations[0]
+      let bounds = location.boundingBox
 
-      const bounds = [
-        Math.min(...lons),
-        Math.min(...lats),
-        Math.max(...lons),
-        Math.max(...lats),
-      ]
+      if (location.addressType === 'building') {
+        // Only add popup when search result is a building!
+        setMapMarkers([<MapPopup key={location.key} {...location} />])
+      }
+      console.log('bounds')
+      console.log(bounds)
       mapRef.current.fitBounds(bounds, {
         maxZoom: 17,
         speed: 2,
       })
     }
-    setMapMarkers(
-      locations.map((location) => (
-        <MapPopup key={location.key} {...location} />
-      )),
-    )
   }
 
   const mapRef = useRef()
