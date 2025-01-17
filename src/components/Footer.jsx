@@ -1,13 +1,16 @@
+import { Button } from '@/components/ui/button'
 import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-} from '@chakra-ui/react'
+  DialogActionTrigger,
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+
 import i18n from 'i18next'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -22,22 +25,30 @@ const WrapperForLaptopDevice = ({ children }) => {
 }
 
 const WrapperForTouchDevice = ({ children }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <div className='overlay'>
       <div className='attribution'>
-        <Button variant={'link'} onClick={onOpen}>
-          License Information
-        </Button>
-
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>License Information</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>{children}</ModalBody>
-          </ModalContent>
-        </Modal>
+        <DialogRoot>
+          <DialogTrigger asChild>
+            <Button variant='outline' size='sm'>
+              License Information
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>License Information</DialogTitle>
+            </DialogHeader>
+            <DialogBody>
+              <p>{children}</p>
+            </DialogBody>
+            <DialogFooter>
+              <DialogActionTrigger asChild>
+                <Button variant='outline'>Cancel</Button>
+              </DialogActionTrigger>
+            </DialogFooter>
+            <DialogCloseTrigger />
+          </DialogContent>
+        </DialogRoot>
       </div>
     </div>
   )
