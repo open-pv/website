@@ -23,22 +23,20 @@ window.isTouchDevice = isTouchDevice()
 
 // See https://reactjs.org/docs/strict-mode.html
 const StrictApp = () => (
-  <Provider value={defaultSystem}>
-    <React.StrictMode>
-      <BrowserRouter basename={PUBLIC_URL}>
-        <Suspense fallback={<Main />}>
-          <Routes>
-            <Route path='/' element={<Map />} />
-            <Route path='/simulation/:lon/:lat' element={<Simulation />} />
-            <Route path='/anleitung' element={<About />} />
-            <Route path='/about' element={<About />} />
-            <Route path='/impressum' element={<Impressum />} />
-            <Route path='/datenschutz' element={<Datenschutz />} />
-            <Route path='*' element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </React.StrictMode>
+  <Provider>
+    <BrowserRouter basename={PUBLIC_URL}>
+      <Suspense fallback={<Main />}>
+        <Routes>
+          <Route path='/' element={<Map />} />
+          <Route path='/simulation/:lon/:lat' element={<Simulation />} />
+          <Route path='/anleitung' element={<About />} />
+          <Route path='/about' element={<About />} />
+          <Route path='/impressum' element={<Impressum />} />
+          <Route path='/datenschutz' element={<Datenschutz />} />
+          <Route path='*' element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
   </Provider>
 )
 
