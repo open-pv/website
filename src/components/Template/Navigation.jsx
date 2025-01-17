@@ -6,14 +6,14 @@ const Navigation = () => {
   const { t } = useTranslation()
 
   return (
-    <Tabs.Root defaultValue='members'>
+    <Tabs.Root defaultValue='openpv' size='lg'>
       <Tabs.List>
-        <Tabs.Trigger value='members' asChild>
+        <Tabs.Trigger value='openpv'>
           <Link unstyled href='/'>
             OpenPV
           </Link>
         </Tabs.Trigger>
-        <Tabs.Trigger value='members' asChild>
+        <Tabs.Trigger value='about'>
           <Link unstyled href='/about'>
             {t('about.title')}
           </Link>
