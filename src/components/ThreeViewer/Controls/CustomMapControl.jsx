@@ -1,4 +1,4 @@
-import { OrbitControls } from '@react-three/drei'
+import { MapControls } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import React, { useEffect, useRef } from 'react'
 import * as THREE from 'three'
@@ -101,7 +101,7 @@ function CustomMapControl(props) {
   })
 
   return (
-    <OrbitControls
+    <MapControls
       ref={controlsRef}
       args={[camera, gl.domElement]}
       target={props.middle}
@@ -109,6 +109,10 @@ function CustomMapControl(props) {
         LEFT: THREE.MOUSE.PAN,
         MIDDLE: THREE.MOUSE.DOLLY,
         RIGHT: THREE.MOUSE.ROTATE,
+      }}
+      touches={{
+        ONE: THREE.TOUCH.PAN,
+        TWO: THREE.TOUCH.DOLLY_ROTATE,
       }}
       screenSpacePanning={false}
       dampingFactor={1}
