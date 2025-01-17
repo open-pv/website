@@ -322,10 +322,6 @@ const SelectionNotificationPV = ({
               justifyContent={'center'}
               alignItems={'center'}
             >
-              <Text as='b' color={'black'}>
-                {t('savingsCalculation.results.production')} {pvProduction} kWh
-              </Text>
-
               <Field
                 label={t('savingsCalculation.consumptionTitle')}
                 helperText={t('savingsCalculation.consumptionHelperInfo')}
@@ -368,6 +364,27 @@ const SelectionNotificationPV = ({
                   shadow='md'
                 >
                   <Text>{t('savingsCalculation.disclaimer')}</Text>
+                  <br />
+                  <List.Root>
+                    <List.Item>
+                      {t('savingsCalculation.results.production')}
+                      <Text as='b' color={'white'}>
+                        {pvProduction} kWh
+                      </Text>
+                    </List.Item>
+                    <List.Item>
+                      {t('savingsCalculation.results.consumption')}
+                      <Text as='b' color={'white'}>
+                        {selfConsumption} kWh
+                      </Text>
+                    </List.Item>
+                    <List.Item>
+                      {t('savingsCalculation.results.savings')}
+                      <Text as='b' color={'white'}>
+                        {annualSavings}€
+                      </Text>
+                    </List.Item>
+                  </List.Root>
                 </Box>
               </Collapsible.Content>
             </Collapsible.Root>
@@ -409,7 +426,9 @@ const SelectionNotificationPV = ({
             >
               {t('delete')}
             </Button>
-            <Button onClick={() => setSelectedPVSystem([])}>Cancel</Button>
+            <Button onClick={() => setSelectedPVSystem([])}>
+              {t('button.cancel')}
+            </Button>
           </SimpleGrid>
         </DialogBody>
       </DialogContent>
