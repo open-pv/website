@@ -41,24 +41,29 @@ async function processAddress(searchString) {
       )
     response = await fetchCoordinates(url)
   }
-  return response.map((obj) => ({
-    lat: obj.lat,
-    lon: obj.lon,
-    key: obj.place_id,
-    display_name: format_address(obj.address),
-  }))
+  return response.map((obj) => {
+    console.log(obj.boundingbox)
+    let [lat0, lat1, lon0, lon1] = obj.boundingbox.map(parseFloat)
+    return {
+      lat: obj.lat,
+      lon: obj.lon,
+      key: obj.place_id,
+      addressType: obj.addresstype,
+      boundingBox: [lon0, lat0, lon1, lat1],
+      display_name: format_address(obj.address),
+    }
+  })
 }
 
 function format_address(address) {
-  let addr =
-    (address.road || '') +
-    ' ' +
-    (address.house_number || '') +
-    ', ' +
-    (address.postcode || '') +
-    ' ' +
-    (address.city || '')
-  return addr
+  const part1 = (address.road || '') + ' ' + (address.house_number || '')
+  const part2 = (address.postcode || '') + ' ' + (address.city || '')
+
+  if (part1 != ' ' && part2 != ' ') {
+    return part1 + ', ' + part2
+  } else {
+    return part1 + part2
+  }
 }
 
 async function fetchCoordinates(url) {
