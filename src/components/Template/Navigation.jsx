@@ -1,14 +1,16 @@
 import { Link, Tabs } from '@chakra-ui/react'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 const Navigation = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   return (
-    <Tabs.Root defaultValue='openpv' size='lg'>
+    <Tabs.Root navigate={({ value, node }) => navigate(`/${value}`)} size='lg'>
       <Tabs.List>
-        <Tabs.Trigger value='openpv'>
+        <Tabs.Trigger value='/'>
           <Link unstyled href='/'>
             OpenPV
           </Link>
