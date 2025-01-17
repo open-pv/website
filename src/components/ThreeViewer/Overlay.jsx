@@ -1,34 +1,21 @@
+import { Button } from '@/components/ui/button'
 import {
-  Box,
-  Button,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerHeader,
-  DrawerOverlay,
-  FormLabel,
-  ListItem,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Stack,
-  Switch,
-  Text,
-  UnorderedList,
-  useDisclosure,
-} from '@chakra-ui/react'
-import React from 'react'
+  DialogActionTrigger,
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Slider } from '@/components/ui/slider'
+import { Switch } from '@/components/ui/switch'
+import { Box, List, SimpleGrid } from '@chakra-ui/react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
-import ButtonWithHoverHelp from '../Template/ButtonWithHoverHelp'
-import SliderWithLabel from '../Template/SliderWithLabel'
 import { createPVSystem } from './Meshes/PVSystems'
-import SelectionNotificationBuilding from './SelectionNotificationBuilding'
-import SelectionNotificationPV from './SelectionNotificationPV'
 
 function Overlay({
   frontendState,
@@ -48,18 +35,8 @@ function Overlay({
   simulationMeshes,
   setSimulationMeshes,
 }) {
-  const {
-    isOpen: isOpenDrawer,
-    onOpen: onOpenDrawer,
-    onClose: onCloseDrawer,
-  } = useDisclosure()
-  const {
-    isOpen: isOpenModalControls,
-    onOpen: onOpenModalControls,
-    onClose: onCloseModalControls,
-  } = useDisclosure()
   const { t } = useTranslation()
-  const btnRef = React.useRef()
+  const [sliderValue, setSliderValue] = useState(window.numSimulations)
   const handleCreatePVButtonClick = () => {
     createPVSystem({
       setPVSystems,
@@ -74,243 +51,109 @@ function Overlay({
   const handleAbortButtonClick = () => {
     setFrontendState('Results')
   }
+  const OptionsDialog = () => {
+    return (
+      <DialogRoot>
+        <DialogTrigger asChild>
+          <Button>{t('button.options')}</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('sidebar.header')}</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <p>{t('sidebar.mainText')}</p>
+            <br />
+            <SimpleGrid columns={2} gap='40px'>
+              <p>{t('button.showMap')}</p>
+              <Switch
+                checked={showTerrain}
+                onCheckedChange={() => setShowTerrain((prev) => !prev)}
+              />
+            </SimpleGrid>
+            <br />
+            <SimpleGrid columns={2} gap='40px'>
+              <p>{t('sidebar.numberSimulations')}</p>
+              <Slider
+                min={1}
+                max={200}
+                value={sliderValue}
+                onValueChange={(newValue) => {
+                  setSliderValue(newValue.value)
+                  window.numSimulations = newValue
+                }}
+                marks={[
+                  { value: 1, label: '1' },
+                  { value: 50, label: '50' },
+                  { value: 100, label: '100' },
+                  { value: 150, label: '150' },
+                  { value: 200, label: '200' },
+                ]}
+              />
+            </SimpleGrid>
+          </DialogBody>
+
+          <DialogCloseTrigger />
+        </DialogContent>
+      </DialogRoot>
+    )
+  }
 
   return (
-    <>
-      <OverlayWrapper>
-        <SelectionNotificationPV
-          selectedPVSystem={selectedPVSystem}
-          setSelectedPVSystem={setSelectedPVSystem}
-          setPVSystems={setPVSystems}
-        />
-        <SelectionNotificationBuilding
-          selectedMesh={selectedMesh}
-          setSelectedMesh={setSelectedMesh}
-          simulationMeshes={simulationMeshes}
-          setSimulationMeshes={setSimulationMeshes}
-          geometries={geometries}
-          geoLocation={geoLocation}
-        />
-        {frontendState == 'Results' && (
-          <>
-            <Button
-              ref={btnRef}
-              colorScheme='teal'
-              onClick={onOpenDrawer}
-              variant={'link'}
-              zIndex={100}
-            >
-              {t('button.options')}
-            </Button>
-          </>
-        )}
+    <OverlayWrapper>
+      <Button>Hi</Button>
+      <Button>Hi</Button>
+      <ControlHelperDialog />
+      {frontendState == 'Results' && <OptionsDialog />}
+    </OverlayWrapper>
+  )
+}
 
-        <Button
-          onClick={onOpenModalControls}
-          colorScheme='teal'
-          variant={'link'}
-        >
-          {t('mapControlHelp.button')}
-        </Button>
-        <ModalControls
-          isOpen={isOpenModalControls}
-          onClose={onCloseModalControls}
-        />
-        <CustomDrawer
-          isOpen={isOpenDrawer}
-          onClose={onCloseDrawer}
-          showTerrain={showTerrain}
-          setShowTerrain={setShowTerrain}
-        />
-      </OverlayWrapper>
-      <HighPrioWrapper>
-        {frontendState == 'Results' && (
-          <ButtonWithHoverHelp
-            buttonLabel={t('button.drawPVSystem')}
-            onClick={() => {
-              setFrontendState('DrawPV')
-              onCloseDrawer()
-            }}
-            className={pvSystems.length == 0 ? 'button-high-prio' : ''}
-            hoverText={t('button.drawPVSystemHover')}
-          />
-        )}
-
-        {frontendState == 'DrawPV' && (
-          <>
-            {pvPoints.length > 0 && (
-              <>
-                <Button
-                  className='button-high-prio'
-                  onClick={handleCreatePVButtonClick}
-                >
-                  {t('button.createPVSystem')}
-                </Button>
-                <Button
-                  onClick={() => {
-                    setPVPoints(pvPoints.slice(0, -1))
-                  }}
-                >
-                  {t('button.deleteLastPoint')}
-                </Button>
-              </>
-            )}
-            <Button onClick={handleAbortButtonClick}>
-              {t('button.cancel')}
-            </Button>
-          </>
-        )}
-      </HighPrioWrapper>
-    </>
+const ControlHelperDialog = () => {
+  const touchDeviceText = window.isTouchDevice ? 'touch.' : ''
+  const { t } = useTranslation()
+  return (
+    <DialogRoot>
+      <DialogTrigger asChild>
+        <Button>{t('mapControlHelp.button')}</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t(`mapControlHelp.title`)}</DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          <List.Root>
+            <List.Item>
+              {t(`mapControlHelp.${touchDeviceText}leftMouse`)}
+            </List.Item>
+            <List.Item>
+              {t(`mapControlHelp.${touchDeviceText}rightMouse`)}
+            </List.Item>
+            <List.Item>{t(`mapControlHelp.${touchDeviceText}wheel`)}</List.Item>
+            <List.Item>
+              {t(`mapControlHelp.${touchDeviceText}doubleClick`)}
+            </List.Item>
+          </List.Root>
+        </DialogBody>
+        <DialogCloseTrigger />
+      </DialogContent>
+    </DialogRoot>
   )
 }
 
 const OverlayWrapper = ({ children }) => {
   return (
-    <>
-      <Box
-        display='flex'
-        flexDirection='row'
-        justifyContent='flex-start'
-        pointerEvents='none'
-        zIndex={100}
-        minWidth={0}
-        minHeight={0}
-        overflow='hidden'
-        sx={{
-          '> *': {
-            pointerEvents: 'auto',
-          },
-        }}
+    <Box pointerEvents='none' zIndex={100}>
+      <SimpleGrid
+        margin='10px'
+        minChildWidth='sm'
+        gap='40px'
+        pointerEvents='auto'
       >
-        <Box
-          display='flex'
-          flexDirection='column'
-          alignItems='flex-start' // Add this line
-          gap='20px'
-          padding='10px'
-          height='fit-content'
-          maxHeight='100%'
-          flexWrap='nowrap'
-          minWidth={0}
-          minHeight={0}
-          overflow='hidden'
-        >
-          {children}
-        </Box>
-      </Box>
-    </>
-  )
-}
-
-const HighPrioWrapper = ({ children }) => {
-  return (
-    <>
-      <Box
-        display='flex'
-        flexDirection='column' // First direction Column and second Box flexDirection
-        // row pushes buttons to the upper left corner
-        justifyContent='space-between'
-        pointerEvents='none'
-        zIndex={100}
-        minWidth={0}
-        minHeight={0}
-        overflow='hidden'
-        sx={{
-          '> *': {
-            pointerEvents: 'auto',
-          },
-        }}
-      >
-        <Box
-          display='flex'
-          flexDirection='row'
-          gap='20px'
-          padding='10px'
-          width='fit-content'
-          maxWidth='100%'
-          flexWrap='wrap'
-          minWidth={0}
-          minHeight={0}
-          overflow='hidden'
-          marginLeft='auto' // Add this line
-        >
-          {children}
-        </Box>
-      </Box>
-    </>
-  )
-}
-
-const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
-  const { t } = useTranslation()
-  const [sliderValue, setSliderValue] = React.useState(window.numSimulations)
-  return (
-    <Stack spacing='24px'>
-      <Drawer isOpen={isOpen} placement='left' onClose={onClose} size={'xs'}>
-        <DrawerOverlay />
-        <DrawerContent height={'100%'}>
-          <DrawerCloseButton />
-          <DrawerHeader>{t('button.options')}</DrawerHeader>
-
-          <DrawerBody>
-            <>
-              <Text as='b'>{t('sidebar.header')}</Text>
-              <Text>{t('sidebar.mainText')}</Text>
-              <FormLabel>
-                {t('button.showMap')}
-                <Switch
-                  isChecked={showTerrain}
-                  onChange={() => setShowTerrain((prev) => !prev)}
-                  colorScheme='teal'
-                  margin={'5px'}
-                />
-              </FormLabel>
-
-              <SliderWithLabel
-                sliderProps={{ min: 1, max: 200 }}
-                label={t('sidebar.numberSimulations')}
-                hoverHelpLabel={t('sidebar.numberSimulationsHover')}
-                sliderValue={sliderValue}
-                setSliderValue={(newValue) => {
-                  setSliderValue(newValue)
-                  window.numSimulations = newValue
-                }}
-              />
-            </>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-    </Stack>
+        {children}
+      </SimpleGrid>
+    </Box>
   )
 }
 
 export default Overlay
-
-const ModalControls = ({ isOpen, onClose }) => {
-  const { t } = useTranslation()
-  const touchDeviceText = window.isTouchDevice ? 'touch.' : ''
-  return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{t(`mapControlHelp.title`)}</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <UnorderedList>
-            <ListItem>
-              {t(`mapControlHelp.${touchDeviceText}leftMouse`)}
-            </ListItem>
-            <ListItem>
-              {t(`mapControlHelp.${touchDeviceText}rightMouse`)}
-            </ListItem>
-            <ListItem>{t(`mapControlHelp.${touchDeviceText}wheel`)}</ListItem>
-            <ListItem>
-              {t(`mapControlHelp.${touchDeviceText}doubleClick`)}
-            </ListItem>
-          </UnorderedList>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
-  )
-}
