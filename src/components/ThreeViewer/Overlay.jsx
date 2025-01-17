@@ -17,6 +17,7 @@ import { Switch } from '@/components/ui/switch'
 import { Box, Collapsible, List, SimpleGrid, Text } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { simulationForNewBuilding } from '../../simulation/main'
 import { createPVSystem } from './Meshes/PVSystems'
 
 function Overlay({
@@ -149,6 +150,16 @@ function Overlay({
 
   return (
     <OverlayWrapper>
+      {selectedMesh.length > 0 && (
+        <SelectionNotificationBuilding
+          selectedMesh={selectedMesh}
+          setSelectedMesh={setSelectedMesh}
+          simulationMeshes={simulationMeshes}
+          setSimulationMeshes={setSimulationMeshes}
+          geometries={geometries}
+          geoLocation={geoLocation}
+        />
+      )}
       {selectedPVSystem.length > 0 && (
         <SelectionNotificationPV
           selectedPVSystem={selectedPVSystem}
@@ -427,6 +438,53 @@ const SelectionNotificationPV = ({
               {t('delete')}
             </Button>
             <Button onClick={() => setSelectedPVSystem([])}>
+              {t('button.cancel')}
+            </Button>
+          </SimpleGrid>
+        </DialogBody>
+      </DialogContent>
+    </DialogRoot>
+  )
+}
+const SelectionNotificationBuilding = ({
+  selectedMesh,
+  setSelectedMesh,
+  simulationMeshes,
+  setSimulationMeshes,
+  geometries,
+  geoLocation,
+}) => {
+  const { t } = useTranslation()
+  const [loading, setLoading] = useState(false)
+  const handleResimulationClick = async () => {
+    setLoading(true)
+    try {
+      await simulationForNewBuilding({
+        selectedMesh,
+        setSelectedMesh,
+        simulationMeshes,
+        setSimulationMeshes,
+        geometries,
+        geoLocation,
+      })
+    } finally {
+      setLoading(false)
+      onClose()
+    }
+  }
+
+  return (
+    <DialogRoot open={true} placement='bottom' size='xs'>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t('savingsCalculation.notificationLabel')}</DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          <SimpleGrid gap='5px'>
+            <Button loading={loading} onClick={handleResimulationClick}>
+              {t('button.simulateBuilding')}
+            </Button>
+            <Button onClick={() => setSelectedMesh([])}>
               {t('button.cancel')}
             </Button>
           </SimpleGrid>
