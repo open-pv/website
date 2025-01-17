@@ -98,6 +98,13 @@ function Overlay({
 
   return (
     <OverlayWrapper>
+      {selectedPVSystem.length > 0 && (
+        <SelectionNotificationPV
+          selectedPVSystem={selectedPVSystem}
+          setSelectedPVSystem={setSelectedPVSystem}
+          setPVSystems={setPVSystems}
+        />
+      )}
       <ControlHelperDialog />
       {frontendState == 'Results' && (
         <>
@@ -105,7 +112,6 @@ function Overlay({
           <Button
             onClick={() => {
               setFrontendState('DrawPV')
-              onCloseDrawer()
             }}
           >
             {t('button.drawPVSystem')}
@@ -134,6 +140,75 @@ function Overlay({
         </>
       )}
     </OverlayWrapper>
+  )
+}
+
+const SelectionNotificationPV = ({
+  selectedPVSystem,
+  setSelectedPVSystem,
+  setPVSystems,
+}) => {
+  const { t } = useTranslation()
+  const SavingCalculation = ({ selectedPVSystem, setSelectedPVSystem }) => {
+    return (
+      <DialogRoot>
+        <DialogTrigger asChild>
+          <Button variant='outline' size='sm'>
+            Open Dialog
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Dialog Title</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </p>
+          </DialogBody>
+          <DialogFooter>
+            <DialogActionTrigger asChild>
+              <Button variant='outline'>Cancel</Button>
+            </DialogActionTrigger>
+            <Button>Save</Button>
+          </DialogFooter>
+          <DialogCloseTrigger />
+        </DialogContent>
+      </DialogRoot>
+    )
+  }
+  return (
+    <DialogRoot open={true} placement='bottom'>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t('savingsCalculation.notificationLabel')}</DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          <SimpleGrid
+            margin='10px'
+            minChildWidth='sm'
+            gap='40px'
+            pointerEvents='auto'
+          >
+            <SavingCalculation
+              selectedPVSystem={selectedPVSystem}
+              setSelectedPVSystem={setSelectedPVSystem}
+            />
+            <Button
+              colorScheme='teal'
+              onClick={() => {
+                setPVSystems([])
+                setSelectedPVSystem([])
+              }}
+            >
+              {t('delete')}
+            </Button>
+            <Button onClick={() => setSelectedPVSystem([])}>Cancel</Button>
+          </SimpleGrid>
+        </DialogBody>
+      </DialogContent>
+    </DialogRoot>
   )
 }
 
