@@ -50,15 +50,14 @@ async function processAddress(searchString) {
 }
 
 function format_address(address) {
-  let addr =
-    (address.road || '') +
-    ' ' +
-    (address.house_number || '') +
-    ', ' +
-    (address.postcode || '') +
-    ' ' +
-    (address.city || '')
-  return addr
+  const part1 = (address.road || '') + ' ' + (address.house_number || '')
+  const part2 = (address.postcode || '') + ' ' + (address.city || '')
+
+  if (part1 != ' ' && part2 != ' ') {
+    return part1 + ', ' + part2
+  } else {
+    return part1 + part2
+  }
 }
 
 async function fetchCoordinates(url) {
