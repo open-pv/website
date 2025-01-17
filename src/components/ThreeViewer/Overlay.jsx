@@ -10,10 +10,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { Field } from '@/components/ui/field'
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
-import { Box, List, SimpleGrid, Text } from '@chakra-ui/react'
+import { Box, Collapsible, List, SimpleGrid, Text } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { createPVSystem } from './Meshes/PVSystems'
@@ -209,18 +210,11 @@ const SelectionNotificationPV = ({
     const [electricityPrice, setElectricityPrice] = useState('30')
     const [selfConsumption, setSelfConsumption] = useState(0)
     const [annualSavings, setAnnualSavings] = useState(0)
+    const [showResults, setShowResults] = useState(false)
 
     // Helper function to normalize input with different decimal separators
     const normalizeInput = (value) => {
       return value.replace(',', '.')
-    }
-
-    // Helper function to handle numeric input changes
-    const handleNumericChange = (setter) => (e) => {
-      const value = e.target.value
-      if (value === '' || /^[0-9]*[.,]?[0-9]*$/.test(value)) {
-        setter(value)
-      }
     }
 
     let pvProduction
@@ -301,9 +295,9 @@ const SelectionNotificationPV = ({
 
       await calculateSaving({
         pvProduction: pvProduction,
-        consumptionHousehold: parseFloat(normalizeInput(annualConsumption)),
-        storageCapacity: parseFloat(normalizeInput(storageCapacity)),
-        electricityPrice: parseFloat(normalizeInput(electricityPrice)),
+        consumptionHousehold: annualConsumption,
+        storageCapacity: storageCapacity,
+        electricityPrice: electricityPrice,
         setSelfConsumption: setSelfConsumption,
         setAnnualSavings: setAnnualSavings,
       })
@@ -320,28 +314,74 @@ const SelectionNotificationPV = ({
           </DialogHeader>
           <DialogBody>
             <p>{t('savingsCalculation.disclaimer')}</p>
-            <SimpleGrid columns={2} gap='10px'>
+            <br />
+            <SimpleGrid
+              columns={1}
+              columnGap='2'
+              rowGap='4'
+              justifyContent={'center'}
+              alignItems={'center'}
+            >
               <Text as='b' color={'black'}>
-                {t('savingsCalculation.results.production')}
+                {t('savingsCalculation.results.production')} {pvProduction} kWh
               </Text>
 
-              <Text as='b' color={'black'}>
-                {pvProduction} kWh
-              </Text>
-              <NumberInputRoot
-                maxW='200px'
-                value={annualConsumption}
-                onValueChange={(e) => setAnnualConsumption(e.value)}
+              <Field
+                label={t('savingsCalculation.consumptionTitle')}
+                helperText={t('savingsCalculation.consumptionHelperInfo')}
               >
-                <NumberInputField />
-              </NumberInputRoot>
+                <NumberInputRoot
+                  value={annualConsumption}
+                  onValueChange={(e) => setAnnualConsumption(e.value)}
+                >
+                  <NumberInputField />
+                </NumberInputRoot>
+              </Field>
+
+              <Field label={t('savingsCalculation.storageTitle')}>
+                <NumberInputRoot
+                  maxW='200px'
+                  value={storageCapacity}
+                  onValueChange={(e) => setStorageCapacity(e.value)}
+                >
+                  <NumberInputField />
+                </NumberInputRoot>
+              </Field>
+              <Field label={t('savingsCalculation.electricityPriceTitle')}>
+                <NumberInputRoot
+                  maxW='200px'
+                  value={electricityPrice}
+                  onValueChange={(e) => setElectricityPrice(e.value)}
+                >
+                  <NumberInputField />
+                </NumberInputRoot>
+              </Field>
             </SimpleGrid>
+            <Collapsible.Root open={showResults}>
+              <Collapsible.Content>
+                <Box
+                  p='40px'
+                  color='white'
+                  mt='4'
+                  bg='teal'
+                  rounded='md'
+                  shadow='md'
+                >
+                  <Text>{t('savingsCalculation.disclaimer')}</Text>
+                </Box>
+              </Collapsible.Content>
+            </Collapsible.Root>
           </DialogBody>
           <DialogFooter>
-            <DialogActionTrigger asChild>
-              <Button variant='outline'>Cancel</Button>
-            </DialogActionTrigger>
-            <Button>Save</Button>
+            <Button
+              mr={3}
+              onClick={() => {
+                handleCalculateSaving()
+                setShowResults(true)
+              }}
+            >
+              {t('savingsCalculation.calculate')}
+            </Button>
           </DialogFooter>
           <DialogCloseTrigger />
         </DialogContent>
