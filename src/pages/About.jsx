@@ -1,14 +1,11 @@
 import {
   Box,
   Card,
-  CardBody,
-  CardHeader,
+  Grid,
+  GridItem,
   Heading,
   Image,
   Link,
-  ListItem,
-  OrderedList,
-  SimpleGrid,
   Text,
   VStack,
 } from '@chakra-ui/react'
@@ -23,11 +20,11 @@ const About = () => {
   return (
     <>
       <Main title={t('about.title')} description={t('about.description')}>
-        <Card height='100%' overflow='auto' padding={'20px'}>
-          <CardHeader>
+        <Card.Root height='100%' overflow='auto' padding={'20px'}>
+          <Card.Header>
             <Heading as='h1'>{t('about.title')}</Heading>
-          </CardHeader>
-          <CardBody>
+          </Card.Header>
+          <Card.Body>
             <VStack spacing='6' align='start'>
               <Text>{t('about.introduction')}</Text>
               <TextBox
@@ -35,12 +32,12 @@ const About = () => {
                 content={t('about.generalDescription.p')}
               >
                 <Text>{t('about.steps.introduction')}</Text>
-                <OrderedList>
-                  <ListItem>{t('about.steps.1')}</ListItem>
-                  <ListItem>{t('about.steps.2')}</ListItem>
-                  <ListItem>{t('about.steps.3')}</ListItem>
-                  <ListItem>{t('about.steps.4')}</ListItem>
-                </OrderedList>
+                <Box as='ul'>
+                  <li>{t('about.steps.1')}</li>
+                  <li>{t('about.steps.2')}</li>
+                  <li>{t('about.steps.3')}</li>
+                  <li>{t('about.steps.4')}</li>
+                </Box>
               </TextBox>
               <ImageRow
                 images={[
@@ -108,8 +105,8 @@ const About = () => {
                 objectFit='contain'
               />
             </VStack>
-          </CardBody>
-        </Card>
+          </Card.Body>
+        </Card.Root>
       </Main>
       <Footer />
     </>
@@ -132,31 +129,33 @@ function TextBox({ content, heading, children }) {
 
 const ImageRow = ({ images, alttext, links = [], objectFit = 'cover' }) => {
   return (
-    <SimpleGrid columns={images.length} spacing={4}>
-      {images.map((src, index) => {
-        const imageContent = (
-          <Image
-            src={src}
-            objectFit={objectFit}
-            width='100%'
-            height='150px'
-            borderRadius='md'
-            alt={alttext[index]}
-          />
-        )
+    <Grid columns={images.length} spacing={4}>
+      <GridItem>
+        {images.map((src, index) => {
+          const imageContent = (
+            <Image
+              src={src}
+              objectFit={objectFit}
+              width='100%'
+              height='150px'
+              borderRadius='md'
+              alt={alttext[index]}
+            />
+          )
 
-        return (
-          <Box key={index} padding={2}>
-            {links[index] ? (
-              <Link href={links[index]} isExternal>
-                {imageContent}
-              </Link>
-            ) : (
-              imageContent
-            )}
-          </Box>
-        )
-      })}
-    </SimpleGrid>
+          return (
+            <Box key={index} padding={2}>
+              {links[index] ? (
+                <Link href={links[index]} isExternal>
+                  {imageContent}
+                </Link>
+              ) : (
+                imageContent
+              )}
+            </Box>
+          )
+        })}
+      </GridItem>
+    </Grid>
   )
 }
