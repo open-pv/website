@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button'
 import {
-  DialogActionTrigger,
   DialogBody,
   DialogCloseTrigger,
   DialogContent,
@@ -14,7 +13,14 @@ import { Field } from '@/components/ui/field'
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
-import { Box, Collapsible, List, SimpleGrid, Text } from '@chakra-ui/react'
+import {
+  Box,
+  Collapsible,
+  Grid,
+  List,
+  SimpleGrid,
+  Text,
+} from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { simulationForNewBuilding } from '../../simulation/main'
@@ -31,7 +37,6 @@ function Overlay({
   setSelectedPVSystem,
   geometries,
   geoLocation,
-  pvSystems,
   setPVSystems,
   pvPoints,
   setPVPoints,
@@ -55,7 +60,7 @@ function Overlay({
     return (
       <DialogRoot>
         <DialogTrigger asChild>
-          <Button>{t('button.options')}</Button>
+          <Button variant='subtle'>{t('button.options')}</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -105,7 +110,7 @@ function Overlay({
     return (
       <DialogRoot>
         <DialogTrigger asChild>
-          <Button>{t('mapControlHelp.button')}</Button>
+          <Button variant='subtle'>{t('mapControlHelp.button')}</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -136,14 +141,9 @@ function Overlay({
   const OverlayWrapper = ({ children }) => {
     return (
       <Box pointerEvents='none' zIndex={100}>
-        <SimpleGrid
-          margin='10px'
-          minChildWidth='sm'
-          gap='40px'
-          pointerEvents='auto'
-        >
+        <Grid margin='10px' minChildWidth='sm' gap='40px' pointerEvents='auto'>
           {children}
-        </SimpleGrid>
+        </Grid>
       </Box>
     )
   }
@@ -172,6 +172,7 @@ function Overlay({
         <>
           <OptionsDialog />
           <Button
+            variant='subtle'
             onClick={() => {
               setFrontendState('DrawPV')
             }}
@@ -182,15 +183,16 @@ function Overlay({
       )}
       {frontendState == 'DrawPV' && (
         <>
-          <Button onClick={() => setFrontendState('Results')}>
+          <Button variant='subtle' onClick={() => setFrontendState('Results')}>
             {t('button.cancel')}
           </Button>
           {pvPoints.length > 0 && (
             <>
-              <Button onClick={handleCreatePVButtonClick}>
+              <Button variant='subtle' onClick={handleCreatePVButtonClick}>
                 {t('button.createPVSystem')}
               </Button>
               <Button
+                variant='subtle'
                 onClick={() => {
                   setPVPoints(pvPoints.slice(0, -1))
                 }}
@@ -211,10 +213,7 @@ const SelectionNotificationPV = ({
   setPVSystems,
 }) => {
   const { t } = useTranslation()
-  const SavingCalculationDialog = ({
-    selectedPVSystem,
-    setSelectedPVSystem,
-  }) => {
+  const SavingCalculationDialog = ({ selectedPVSystem }) => {
     const { t } = useTranslation()
     const [annualConsumption, setAnnualConsumption] = useState('3000')
     const [storageCapacity, setStorageCapacity] = useState('0')
@@ -222,11 +221,6 @@ const SelectionNotificationPV = ({
     const [selfConsumption, setSelfConsumption] = useState(0)
     const [annualSavings, setAnnualSavings] = useState(0)
     const [showResults, setShowResults] = useState(false)
-
-    // Helper function to normalize input with different decimal separators
-    const normalizeInput = (value) => {
-      return value.replace(',', '.')
-    }
 
     let pvProduction
     if (selectedPVSystem.length > 0) {
@@ -317,7 +311,7 @@ const SelectionNotificationPV = ({
     return (
       <DialogRoot size='lg'>
         <DialogTrigger asChild>
-          <Button>{t('savingsCalculation.button')}</Button>
+          <Button variant='subtle'>{t('savingsCalculation.button')}</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -402,6 +396,7 @@ const SelectionNotificationPV = ({
           </DialogBody>
           <DialogFooter>
             <Button
+              variant='subtle'
               mr={3}
               onClick={() => {
                 handleCalculateSaving()
@@ -424,12 +419,9 @@ const SelectionNotificationPV = ({
         </DialogHeader>
         <DialogBody>
           <SimpleGrid gap='5px'>
-            <SavingCalculationDialog
-              selectedPVSystem={selectedPVSystem}
-              setSelectedPVSystem={setSelectedPVSystem}
-            />
+            <SavingCalculationDialog selectedPVSystem={selectedPVSystem} />
             <Button
-              colorScheme='teal'
+              variant='subtle'
               onClick={() => {
                 setPVSystems([])
                 setSelectedPVSystem([])
@@ -437,7 +429,7 @@ const SelectionNotificationPV = ({
             >
               {t('delete')}
             </Button>
-            <Button onClick={() => setSelectedPVSystem([])}>
+            <Button variant='subtle' onClick={() => setSelectedPVSystem([])}>
               {t('button.cancel')}
             </Button>
           </SimpleGrid>
@@ -476,15 +468,17 @@ const SelectionNotificationBuilding = ({
   return (
     <DialogRoot open={true} placement='bottom' size='xs'>
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('savingsCalculation.notificationLabel')}</DialogTitle>
-        </DialogHeader>
+        <DialogHeader></DialogHeader>
         <DialogBody>
           <SimpleGrid gap='5px'>
-            <Button loading={loading} onClick={handleResimulationClick}>
+            <Button
+              variant='subtle'
+              loading={loading}
+              onClick={handleResimulationClick}
+            >
               {t('button.simulateBuilding')}
             </Button>
-            <Button onClick={() => setSelectedMesh([])}>
+            <Button variant='subtle' onClick={() => setSelectedMesh([])}>
               {t('button.cancel')}
             </Button>
           </SimpleGrid>
