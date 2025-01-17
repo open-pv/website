@@ -48,9 +48,6 @@ function Overlay({
     setFrontendState('Results')
   }
 
-  const handleAbortButtonClick = () => {
-    setFrontendState('Results')
-  }
   const OptionsDialog = () => {
     return (
       <DialogRoot>
@@ -101,10 +98,41 @@ function Overlay({
 
   return (
     <OverlayWrapper>
-      <Button>Hi</Button>
-      <Button>Hi</Button>
       <ControlHelperDialog />
-      {frontendState == 'Results' && <OptionsDialog />}
+      {frontendState == 'Results' && (
+        <>
+          <OptionsDialog />
+          <Button
+            onClick={() => {
+              setFrontendState('DrawPV')
+              onCloseDrawer()
+            }}
+          >
+            {t('button.drawPVSystem')}
+          </Button>
+        </>
+      )}
+      {frontendState == 'DrawPV' && (
+        <>
+          <Button onClick={() => setFrontendState('Results')}>
+            {t('button.cancel')}
+          </Button>
+          {pvPoints.length > 0 && (
+            <>
+              <Button onClick={handleCreatePVButtonClick}>
+                {t('button.createPVSystem')}
+              </Button>
+              <Button
+                onClick={() => {
+                  setPVPoints(pvPoints.slice(0, -1))
+                }}
+              >
+                {t('button.deleteLastPoint')}
+              </Button>
+            </>
+          )}
+        </>
+      )}
     </OverlayWrapper>
   )
 }
