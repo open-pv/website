@@ -162,7 +162,12 @@ export default function SearchField({ callback }) {
           margin={'5px'}
           autoComplete='street-address'
         />
-        <Button margin={'5px'} minWidth={'150px'} type='submit'>
+        <Button
+          margin={'5px'}
+          minWidth={'150px'}
+          type='submit'
+          variant='subtle'
+        >
           {t('Search')}
         </Button>
       </div>
