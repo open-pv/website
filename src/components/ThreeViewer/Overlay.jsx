@@ -55,10 +55,10 @@ function Overlay({
     })
     setFrontendState('Results')
   }
-
+  const [open, setOpen] = useState(false)
   const OptionsDialog = () => {
     return (
-      <DialogRoot>
+      <DialogRoot open={open} onOpenChange={(e) => setOpen(e.open)}>
         <DialogTrigger asChild>
           <Button variant='subtle'>{t('button.options')}</Button>
         </DialogTrigger>
