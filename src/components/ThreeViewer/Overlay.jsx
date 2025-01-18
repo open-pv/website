@@ -202,11 +202,13 @@ function Overlay({
           <Button variant='subtle' onClick={() => setFrontendState('Results')}>
             {t('button.cancel')}
           </Button>
+          {pvPoints.length > 2 && (
+            <Button variant='solid' onClick={handleCreatePVButtonClick}>
+              {t('button.createPVSystem')}
+            </Button>
+          )}
           {pvPoints.length > 0 && (
             <>
-              <Button variant='subtle' onClick={handleCreatePVButtonClick}>
-                {t('button.createPVSystem')}
-              </Button>
               <Button
                 variant='subtle'
                 onClick={() => {
