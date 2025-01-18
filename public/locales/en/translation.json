@@ -120,6 +120,7 @@
       "consumption": "Annual self-consumption: ",
       "savings": "Annual savings: "
     },
-    "calculate": "Calculate"
+    "calculate": "Calculate",
+    "navigation": { "products": "Our Products" }
   }
 }

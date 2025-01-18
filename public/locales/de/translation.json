@@ -121,5 +121,6 @@
       "savings": "Jährliche Einsparungen: "
     },
     "calculate": "Berechnen"
-  }
+  },
+  "navigation": { "products": "Produkte und Leistungen" }
 }
