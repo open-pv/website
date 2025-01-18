@@ -13,14 +13,7 @@ import { Field } from '@/components/ui/field'
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
-import {
-  Box,
-  Collapsible,
-  Grid,
-  List,
-  SimpleGrid,
-  Text,
-} from '@chakra-ui/react'
+import { Box, Collapsible, List, SimpleGrid, Text } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { simulationForNewBuilding } from '../../simulation/main'
@@ -104,7 +97,9 @@ function Overlay({
       </DialogRoot>
     )
   }
-
+  /**
+   * The component for the "How do I control this app" button as well as the dialog.
+   */
   const ControlHelperDialog = () => {
     const touchDeviceText = window.isTouchDevice ? 'touch.' : ''
     const { t } = useTranslation()
@@ -138,7 +133,10 @@ function Overlay({
       </DialogRoot>
     )
   }
-
+  /**
+   * Wrapper for the buttons that are shown on top of the Scene. The wrapper controls the size, order,
+   * alignment of these buttons.
+   */
   const OverlayWrapper = ({ children }) => {
     return (
       <>
@@ -177,7 +175,7 @@ function Overlay({
         />
       )}
       {selectedPVSystem.length > 0 && (
-        <SelectionNotificationPV
+        <SelectedPVDialog
           selectedPVSystem={selectedPVSystem}
           setSelectedPVSystem={setSelectedPVSystem}
           setPVSystems={setPVSystems}
@@ -224,13 +222,19 @@ function Overlay({
     </OverlayWrapper>
   )
 }
-
-const SelectionNotificationPV = ({
+/**
+ * Controls the dialog component that appears when a PV system is selected. This includes the
+ * dialog component of the economic savings calculation.
+ */
+const SelectedPVDialog = ({
   selectedPVSystem,
   setSelectedPVSystem,
   setPVSystems,
 }) => {
   const { t } = useTranslation()
+  /**
+   * Controls the PV savings calculation dialog component together with the button to start this component.
+   */
   const SavingCalculationDialog = ({ selectedPVSystem }) => {
     const { t } = useTranslation()
     const [annualConsumption, setAnnualConsumption] = useState('3000')
