@@ -1,4 +1,4 @@
-import { Button, Input, List, ListItem } from '@chakra-ui/react'
+import { Button, Input, List } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { requestLocation } from '../../simulation/location'

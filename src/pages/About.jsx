@@ -141,18 +141,6 @@ const About = () => {
 
 export default About
 
-function TextBox({ content, heading, children }) {
-  return (
-    <Box>
-      <Heading as='h3' size='md'>
-        {heading}
-      </Heading>
-      <Text>{content}</Text>
-      {children}
-    </Box>
-  )
-}
-
 const ImageRow = ({ images, alttext, links = [], objectFit = 'cover' }) => {
   return (
     <SimpleGrid columns={images.length} spacing={4}>
