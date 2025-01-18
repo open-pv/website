@@ -140,11 +140,26 @@ function Overlay({
 
   const OverlayWrapper = ({ children }) => {
     return (
-      <Box pointerEvents='none' zIndex={100}>
-        <Grid margin='10px' minChildWidth='sm' gap='40px' pointerEvents='auto'>
-          {children}
-        </Grid>
-      </Box>
+      <>
+        <Box display='flex' pointerEvents='none' zIndex={100} overflow='hidden'>
+          <Box
+            display='flex'
+            flexDirection='column'
+            gap='10px'
+            padding='10px'
+            height='fit-content'
+            overflow='hidden'
+            pointerEvents='auto'
+            sx={{
+              button: {
+                minWidth: '100px', // Set the desired width
+              },
+            }}
+          >
+            {children}
+          </Box>
+        </Box>
+      </>
     )
   }
 
