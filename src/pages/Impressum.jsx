@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader, Heading } from '@chakra-ui/react'
+import { Card, Heading } from '@chakra-ui/react'
 import React from 'react'
 
 import Main from '../Main'
@@ -6,11 +6,11 @@ import Main from '../Main'
 const Impressum = () => {
   return (
     <Main title='Impressum' description='Impressum der Website.'>
-      <Card height='100%' overflow='auto'>
-        <CardHeader>
+      <Card.Root height='100%' overflow='auto'>
+        <Card.Header>
           <Heading as='h1'>Impressum</Heading>
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <p>
             Martin Großhauser <br />
             Arnulfstraße 138 <br />
@@ -82,8 +82,8 @@ const Impressum = () => {
             Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte
             unverzüglich entfernen.
           </p>
-        </CardBody>
-      </Card>
+        </Card.Body>
+      </Card.Root>
     </Main>
   )
 }
