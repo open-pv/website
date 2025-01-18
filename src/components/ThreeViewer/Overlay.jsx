@@ -85,7 +85,8 @@ function Overlay({
                 value={sliderValue}
                 onValueChange={(newValue) => {
                   setSliderValue(newValue.value)
-                  window.numSimulations = newValue
+                  window.numSimulations = newValue.value[0]
+                  console.log(newValue.value[0])
                 }}
                 marks={[
                   { value: 1, label: '1' },
@@ -476,7 +477,6 @@ const SelectionNotificationBuilding = ({
       })
     } finally {
       setLoading(false)
-      onClose()
     }
   }
 
