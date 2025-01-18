@@ -98,11 +98,17 @@ function WelcomeMessage() {
         </DialogBody>
 
         <DialogFooter>
-          <Button mr={3} onClick={prevPage} isDisabled={currentPage === 1}>
+          <Button
+            variant='subtle'
+            mr={3}
+            onClick={prevPage}
+            isDisabled={currentPage === 1}
+          >
             {t('previous')}
           </Button>
           {currentPage != 5 && (
             <Button
+              variant='subtle'
               mr={3}
               onClick={nextPage}
               isDisabled={currentPage === numPages}
