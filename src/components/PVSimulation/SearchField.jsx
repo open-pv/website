@@ -172,8 +172,10 @@ export default function SearchField({ callback }) {
         </Button>
       </div>
       {suggestionsVisible && (
-        <List
+        <List.Root
+          as='ul'
           style={{ paddingLeft: '0', marginTop: '0' }}
+          variant='plain'
           borderWidth={1}
           borderColor='gray.200'
           mt={2}
@@ -186,7 +188,7 @@ export default function SearchField({ callback }) {
           boxShadow='md'
         >
           {suggestions.map((suggestion, index) => (
-            <ListItem
+            <List.Item
               ref={(elem) => (suggestionsRef.current[index] = elem)}
               key={index}
               p={2}
@@ -198,9 +200,9 @@ export default function SearchField({ callback }) {
               onKeyDown={handleKeyDown}
             >
               {suggestion}
-            </ListItem>
+            </List.Item>
           ))}
-        </List>
+        </List.Root>
       )}
     </form>
   )
