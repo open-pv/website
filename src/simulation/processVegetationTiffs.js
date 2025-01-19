@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import { mercator2meters } from './download'
 import { coordinatesWebMercator } from './location'
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
+import { ElevationManager } from './elevation'
 
 export function processVegetationHeightmapData(heightmapData) {
   if (!heightmapData || !heightmapData.bbox || !heightmapData.data) {
@@ -14,7 +16,7 @@ export function processVegetationHeightmapData(heightmapData) {
   }
 }
 
-export function processVegetationData(
+export async function processVegetationData(
   vegetationRaster,
   simulationCenter,
   vegetationSimulationCutoff,
@@ -77,14 +79,25 @@ export function processVegetationData(
 
       // Triangle candidates
       const tris = [
-        [sx0, sy0, h00, sx1, sy0, h10, sx0, sy1, h01],
-        [sx0, sy1, h01, sx1, sy0, h10, sx1, sy1, h11],
+        [sx1, sy0, h10, sx0, sy0, h00, sx0, sy1, h01],
+        [sx1, sy0, h10, sx0, sy1, h01, sx1, sy1, h11],
       ]
       for (let tri of tris) {
         // If all heights are 0, don't render triangle
         if (tri[2] == 0 && tri[5] == 0 && tri[8] == 0) {
           continue
         }
+        // Fill 0 values with actual elevation at that point
+        for (let v of [0, 3, 6]) {
+          if (tri[v + 2] == 0) {
+            const x = tri[v + 0] / mercator2meters() + cx
+            const y = tri[v + 1] / mercator2meters() + cy
+            const pt3d = await ElevationManager.toPoint3D(x, y)
+            const height = pt3d.point[2]
+            tri[v + 2] = height
+          }
+        }
+
         const mx = (tri[0] + tri[3] + tri[6]) / 3
         const my = (tri[1] + tri[4] + tri[7]) / 3
 

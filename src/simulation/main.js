@@ -61,7 +61,7 @@ export async function mainSimulation(location) {
     if (getFederalState() == 'BY') {
       const [cx, cy] = coordinatesWebMercator
       console.log('coordinatesWebMercator:' + coordinatesWebMercator)
-      const bufferDistance = 200 // 1km buffer, adjust as needed
+      const bufferDistance = 400 // 1km buffer, adjust as needed
       const bbox = [
         cx - bufferDistance,
         cy - bufferDistance,
@@ -100,11 +100,11 @@ export async function mainSimulation(location) {
         console.log('Vegetation Raster processed successfully')
 
         console.log('Processing vegetation geometries...')
-        const vegetationGeometries = processVegetationData(
+        const vegetationGeometries = await processVegetationData(
           vegetationRaster,
           new THREE.Vector3(0, 0, 0),
           30,
-          80,
+          200,
         )
 
         console.log('Vegetation Geometries processed successfully')
