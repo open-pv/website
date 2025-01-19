@@ -8,20 +8,13 @@ const vegetationColors = [
 ]
 
 const VegetationMesh = ({ geometries }) => {
-  const randomColors = useMemo(() => {
-    return geometries.map(
-      () =>
-        vegetationColors[Math.floor(Math.random() * vegetationColors.length)],
-    )
-  }, [geometries])
-
   return (
     <>
       {geometries.map((geometry, index) => (
         <mesh key={index} geometry={geometry}>
           <meshLambertMaterial
             vertexColors={false}
-            color={randomColors[index]}
+            color='#27AD6B'
             side={THREE.DoubleSide}
           />
         </mesh>
