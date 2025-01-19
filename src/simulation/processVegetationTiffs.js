@@ -63,6 +63,8 @@ export async function processVegetationData(
 
   let surroundingTriangles = []
   let backgroundTriangles = []
+  let surroundingNormals = []
+  let backgroundNormals = []
 
   for (let y = 0; y < vegetationRaster.height - 1; y++) {
     for (let x = 0; x < vegetationRaster.width - 1; x++) {
@@ -101,13 +103,29 @@ export async function processVegetationData(
         const mx = (tri[0] + tri[3] + tri[6]) / 3
         const my = (tri[1] + tri[4] + tri[7]) / 3
 
+        const v1 = new THREE.Vector3(
+          tri[3] - tri[0],
+          tri[4] - tri[1],
+          tri[5] - tri[2],
+        )
+        const v0 = new THREE.Vector3(
+          tri[6] - tri[0],
+          tri[7] - tri[1],
+          tri[8] - tri[2],
+        )
+        v0.cross(v1)
+        v0.normalize()
+        const normal = [v0.x, v0.y, v0.z, v0.x, v0.y, v0.z, v0.x, v0.y, v0.z]
+
         const d2 =
           (centerX - mx) * (centerX - mx) + (centerY - my) * (centerY - my)
         if (d2 <= viewingCutoffSquared) {
           if (d2 <= simulationCutoffSquared) {
             surroundingTriangles = surroundingTriangles.concat(tri)
+            surroundingNormals = surroundingNormals.concat(normal)
           } else {
             backgroundTriangles = backgroundTriangles.concat(tri)
+            backgroundNormals = backgroundNormals.concat(normal)
           }
         }
       }
@@ -115,24 +133,32 @@ export async function processVegetationData(
   }
 
   if (surroundingTriangles.length > 0) {
-    const surroundingGeom = new THREE.BufferGeometry()
+    let surroundingGeom = new THREE.BufferGeometry()
     const surroundingPos = new THREE.BufferAttribute(
       new Float32Array(surroundingTriangles),
       3,
     )
+    const surroundingNor = new THREE.BufferAttribute(
+      new Float32Array(surroundingNormals),
+      3,
+    )
     surroundingGeom.setAttribute('position', surroundingPos)
-    surroundingGeom.computeVertexNormals()
+    surroundingGeom.setAttribute('normal', surroundingNor)
     geometries.surrounding.push(surroundingGeom)
   }
 
   if (backgroundTriangles.length > 0) {
-    const backgroundGeom = new THREE.BufferGeometry()
+    let backgroundGeom = new THREE.BufferGeometry()
     const backgroundPos = new THREE.BufferAttribute(
       new Float32Array(backgroundTriangles),
       3,
     )
+    const backgroundNor = new THREE.BufferAttribute(
+      new Float32Array(backgroundNormals),
+      3,
+    )
     backgroundGeom.setAttribute('position', backgroundPos)
-    backgroundGeom.computeVertexNormals()
+    backgroundGeom.setAttribute('normal', backgroundNor)
     geometries.background.push(backgroundGeom)
   }
 

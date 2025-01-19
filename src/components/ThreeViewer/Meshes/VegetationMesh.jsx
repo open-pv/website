@@ -1,12 +1,6 @@
 import React, { useMemo } from 'react'
 import * as THREE from 'three'
 
-const vegetationColors = [
-  '#27AD6B', // Light green
-  '#2DBE76', // mint
-  '#33CC80', //dull green
-]
-
 const VegetationMesh = ({ geometries }) => {
   return (
     <>
@@ -14,7 +8,8 @@ const VegetationMesh = ({ geometries }) => {
         <mesh key={index} geometry={geometry}>
           <meshLambertMaterial
             vertexColors={false}
-            color='#27AD6B'
+            color='#3C9000'
+            shininess={0}
             side={THREE.DoubleSide}
           />
         </mesh>
