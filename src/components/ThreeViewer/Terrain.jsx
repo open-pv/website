@@ -138,17 +138,17 @@ const TerrainTile = (props) => {
           const y = y0 + (ty / divisions) * (y1 - y0)
           vertices.push(ElevationManager.toPoint3D(x, y))
           // UV mapping for the texture
-          uvs = uvs.concat([tx / divisions, 1.0 - ty / divisions])
+          uvs.push(tx / divisions, 1.0 - ty / divisions)
           // Triangle indices
           if (tx > 0 && ty > 0) {
-            indices = indices.concat([
+            indices.push(
               i - row - 1,
               i - 1,
               i - row, // 1st triangle
               i - row,
               i - 1,
               i, // 2nd triangle
-            ])
+            )
           }
           i += 1
         }
