@@ -121,11 +121,11 @@ export async function processVegetationData(
           (centerX - mx) * (centerX - mx) + (centerY - my) * (centerY - my)
         if (d2 <= viewingCutoffSquared) {
           if (d2 <= simulationCutoffSquared) {
-            surroundingTriangles = surroundingTriangles.concat(tri)
-            surroundingNormals = surroundingNormals.concat(normal)
+            surroundingTriangles.push(...tri)
+            surroundingNormals.push(...normal)
           } else {
-            backgroundTriangles = backgroundTriangles.concat(tri)
-            backgroundNormals = backgroundNormals.concat(normal)
+            backgroundTriangles.push(...tri)
+            backgroundNormals.push(...normal)
           }
         }
       }
