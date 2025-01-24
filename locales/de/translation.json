@@ -92,7 +92,7 @@
     "privacyPolicy": "Datenschutz"
   },
   "mapControlHelp": {
-    "button": "Wie bediene ich die Karte?",
+    "button": "Hilfe",
     "title": "Bedienungsanleitung",
     "leftMouse": "Linke Maustaste: Bewegung auf der Karte",
     "rightMouse": "Rechte Maustaste: Rotation der Karte",
@@ -121,5 +121,6 @@
       "savings": "Jährliche Einsparungen: "
     },
     "calculate": "Berechnen"
-  }
+  },
+  "navigation": { "products": "Produkte und Leistungen" }
 }
