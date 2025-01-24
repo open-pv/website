@@ -100,7 +100,7 @@ export async function mainSimulation(location) {
         console.log('Vegetation Raster processed successfully')
 
         console.log('Processing vegetation geometries...')
-        const vegetationGeometries = processVegetationData(
+        const vegetationGeometries = await processVegetationData(
           vegetationRaster,
           new THREE.Vector3(0, 0, 0),
           30,
@@ -130,14 +130,6 @@ export async function mainSimulation(location) {
 
       console.log('Vegetation processing completed')
     }
-
-    //vegetationGeometries.surrounding.forEach((geom) => {
-    //  scene.addShadingGeometry(geom)
-    //})
-    //vegetationGeometries.surrounding.forEach((geom) => {
-    //  scene.addShadingGeometry(geom)
-    //})
-    //scene.addVegetationRaster(rasterData)
 
     let numSimulations = window.numSimulations || 80
     function loadingBarWrapperFunction(progress, total) {
