@@ -7,7 +7,7 @@ const SurroundingMesh = ({ geometries }) => {
         <mesh key={index} geometry={geometry}>
           <meshLambertMaterial
             vertexColors={false}
-            color={0xab9980}
+            color={0xc4b69f}
             side={THREE.DoubleSide}
           />
         </mesh>

@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { Canvas } from 'react-three-fiber'
+import * as THREE from 'three'
 
 import CustomMapControl from './Controls/CustomMapControl'
 import DrawPVControl from './Controls/DrawPVControl'
@@ -70,6 +71,7 @@ const Scene = ({
           up: [0, 0, 1],
           ref: cameraRef,
         }}
+        gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}
       >
         <ambientLight intensity={2} />
         <directionalLight intensity={1} position={[0, -1, -2]} />
