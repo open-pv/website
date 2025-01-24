@@ -72,21 +72,34 @@ export default function Footer({ federalState, frontendState }) {
         frontendState == 'DrawPV') && (
         <p key='map-attribution' className='copyright'>
           Basiskarte &copy;{' '}
-          <a href='https://www.bkg.bund.de' target='_blank'>
+          <a
+            href='https://www.bkg.bund.de'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             BKG
           </a>
           &nbsp;(
-          <a href='https://www.govdata.de/dl-de/by-2-0' target='_blank'>
+          <a
+            href='https://www.govdata.de/dl-de/by-2-0'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             dl-de/by-2-0
           </a>
           ) | Geländemodell:&nbsp;
-          <a href='https://sonny.4lima.de' target='_blank'>
+          <a
+            href='https://sonny.4lima.de'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             &copy;&nbsp;Sonny
           </a>
           &nbsp;(
           <a
             href='https://creativecommons.org/licenses/by/4.0/deed.en'
             target='_blank'
+            rel='noopener noreferrer'
           >
             CC-BY-4.0
           </a>
@@ -94,6 +107,7 @@ export default function Footer({ federalState, frontendState }) {
           <a
             href='https://drive.google.com/file/d/1rgGA22Ha42ulQORK9Pfp4JPpPAIKFx6Q/view'
             target='_blank'
+            rel='noopener noreferrer'
           >
             verschiedenen Quellen
           </a>
@@ -107,11 +121,15 @@ export default function Footer({ federalState, frontendState }) {
             style={federalState ? {} : { display: 'none' }}
           >
             Geb&auml;udedaten &copy;{' '}
-            <a href={attr.link} target='_blank'>
+            <a href={attr.link} target='_blank' rel='noopener noreferrer'>
               {attr.attribution}
             </a>
             &nbsp;(
-            <a href={licenseLinks[attr.license]} target='_blank'>
+            <a
+              href={licenseLinks[attr.license]}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
               {attr.license}
             </a>
             )
@@ -120,7 +138,11 @@ export default function Footer({ federalState, frontendState }) {
       )}
       <p className='copyright'>
         &copy;&nbsp;
-        <a href='https://github.com/open-pv' target='_blank'>
+        <a
+          href='https://github.com/open-pv'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
           Team OpenPV
         </a>
         {' | '}
