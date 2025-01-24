@@ -164,7 +164,7 @@ function Overlay({
   return (
     <OverlayWrapper>
       {selectedMesh.length > 0 && (
-        <SelectionNotificationBuilding
+        <NotificationForSelectedBuilding
           selectedMesh={selectedMesh}
           setSelectedMesh={setSelectedMesh}
           simulationMeshes={simulationMeshes}
@@ -174,7 +174,7 @@ function Overlay({
         />
       )}
       {selectedPVSystem.length > 0 && (
-        <SelectedPVDialog
+        <NotificationForSelectedPV
           selectedPVSystem={selectedPVSystem}
           setSelectedPVSystem={setSelectedPVSystem}
           setPVSystems={setPVSystems}
@@ -225,7 +225,7 @@ function Overlay({
  * Controls the dialog component that appears when a PV system is selected. This includes the
  * dialog component of the economic savings calculation.
  */
-const SelectedPVDialog = ({
+const NotificationForSelectedPV = ({
   selectedPVSystem,
   setSelectedPVSystem,
   setPVSystems,
@@ -459,7 +459,7 @@ const SelectedPVDialog = ({
     </DialogRoot>
   )
 }
-const SelectionNotificationBuilding = ({
+const NotificationForSelectedBuilding = ({
   selectedMesh,
   setSelectedMesh,
   simulationMeshes,
