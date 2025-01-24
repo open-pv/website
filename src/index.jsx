@@ -1,5 +1,4 @@
 import { Provider } from '@/components/ui/provider'
-import { defaultSystem } from '@chakra-ui/react'
 import React, { Suspense, lazy } from 'react'
 import { createRoot, hydrateRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
@@ -38,7 +37,6 @@ const StrictApp = () => (
       </Suspense>
     </BrowserRouter>
   </Provider>
-
 )
 
 const rootElement = document.getElementById('root')

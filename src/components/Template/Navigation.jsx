@@ -1,7 +1,7 @@
 import { Link, Tabs } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 const Navigation = () => {
   const { t } = useTranslation()

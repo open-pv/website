@@ -7,14 +7,11 @@ import {
 import {
   Box,
   Card,
-  Grid,
-  GridItem,
   Heading,
   Image,
   Link,
   SimpleGrid,
   Text,
-  VStack,
 } from '@chakra-ui/react'
 import React from 'react'
 import { useTranslation } from 'react-i18next'

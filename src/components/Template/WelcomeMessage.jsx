@@ -6,7 +6,6 @@ import {
   DialogHeader,
   DialogRoot,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
 import { Box, Button, Circle, Flex, Image } from '@chakra-ui/react'
 import React, { useState } from 'react'
@@ -35,7 +34,7 @@ function WelcomeMessageBoxElement({ image, text }) {
 
 function WelcomeMessage() {
   const [currentPage, setCurrentPage] = useState(1)
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [open, setOpen] = useState(true)
 
   const numPages = 5
