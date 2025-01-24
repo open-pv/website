@@ -16,7 +16,7 @@
     "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Lange Point 20, Freising"
   },
   "about": {
-    "title": "Über das Projekt",
+    "title": "Über openpv.de",
     "description": "Weitere Informationen zu openpv.de: Die Website für die Online-Berechnung von Verschattung und Wirtschaftlichkeit deiner Solaranlage.",
     "introduction": "Solaranlagen leisten einen bedeutenden Beitrag zur Energiewende. Deutschland strebt an, die installierte PV-Leistung bis 2030 zu verdreifachen. Hierbei spielen Dach- und Balkonanlagen eine essenzielle Rolle, da sie eine dezentrale Energieversorgung ermöglichen, ohne zusätzlichen Flächenverbrauch zu verursachen. Insbesondere durch Balkonkraftwerke ist es auch Mieter*innen ohne eigenes Wohneigentum möglich, einen erheblichen Teil des genutzten Stroms selbst zu erzeugen. Doch vielen möglichen Nutzer*innen fehlt das Hintergrundwissen, um die Eignung ihres Gebäudes für Photovoltaik einschätzen zu können. Hier wollen wir mit OpenPV helfen, um eine einfache Analyse des PV-Potentials am eigenen Gebäude vornehmen zu können.  Das Ziel von OpenPV ist es, deutschlandweit mit wenigen Klicks das Solarpotential von Gebäuden basierend auf einer Adresse zu simulieren und darzustellen.",
     "generalDescription": {
@@ -61,7 +61,7 @@
   },
   "WelcomeMessage": {
     "title": "OpenPV - Ihr Solarrechner für ganz Deutschland.",
-    "introduction": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten und mit Hilfe von frei verfügbaren 3D-Gebäudedaten bestimmen.",
+    "introduction": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? OpenPV ist ein kostenloses Tool für die Verschattungsberechnung. Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten und mit Hilfe von frei verfügbaren 3D-Gebäudedaten bestimmen.",
     "0": {
       "title": "Schritt 1: Gebäude auswählen",
       "text": "Auf der Startseite von OpenPV wird im ersten Schritt ein Gebäude für die Simulation ausgewählt. Dies kann entweder über die Eingabe und Suche einer Adresse erfolgen, oder durch das Zoomen und Auswählen auf der Landkarte. Durch einen Linksklick auf das Gebäude wird ein Menü angezeigt. Mit einem Klick auf 'Simulation starten' wird die Berechnung gestartet.",
@@ -69,27 +69,24 @@
     },
     "1": {
       "title": "Schritt 2: Ergebnisse anzeigen",
-      "text": "",
-      "alt": "Ein Screenshot eines simulierten Gebäudes. Farblich markiert ist die "
+      "text": "Anschließend können Sie die Verschattungssimulation für das gewählte Gebäude betrachten. Helle Farben stellen einen guten Solarertrag dar, dunkle Flächen sind häufig verschattet. Interessieren sie sich für die genaueren Details der Verschattungssimulation? Dann gelangen sie durch einen Klick auf den Reiter 'Über openpv.de' zu einer detailierten Beschreibung.",
+      "alt": "Ein Screenshot eines simulierten Gebäudes. Helle Farben stehen für einen guten solaren Ertrag, dunkle Farben für einen schlechteren Ertrag."
     },
     "2": {
       "title": "Schritt 3: Solaranlage einzeichnen",
-      "text": "",
+      "text": "Über 'Neue PV-Anlage einzeichnen' können Sie eine Solaranlage erstellen. Legen Sie dafür die Eckpunkte auf eine FLäche des Gebäudes und schließen sie die Anlage durch einen Klick auf 'Solaranlage erstellen' ab. Sie können nun die eingezeichnete Solaranlage sowie den geschätzten Jahresertrag sehen.",
       "alt": ""
     },
     "3": {
       "title": "Schritt 4: Wirtschaftlichkeit der Solaranlage bestimmen",
-      "text": "",
-      "alt": ""
+      "text": "Anschließend können Sie mit dem Button 'Wirtschaftlichkeit der Anlage berechnen' die jährlich eingesparten Kosten durch den Eigenverbrauch des Stroms bestimmen.",
+      "alt": "Ein Screenshot der Wirtschaftlichkeitsberechnung. Nach Angabe von jährlichem Stromverbrauch, Kapazität einer Batterie, und dem Strompreis pro kWh wird die jährliche Ersparnis berechnet."
     },
     "4": {
       "title": "Extra: Wir sind Open Source und datensparsam!",
-      "text": ""
-    },
-    "secondPage": "Auf der Karte können Sie das Ergebnis der Verschattungssimulation betrachten. Mit Doppelklick können Sie weitere Gebäude für die Simulation auswählen.",
-    "thirdPage": "Über 'Neue PV-Anlage einzeichnen' können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
-    "fourthPage": "Anschließend können Sie mit dem Button 'Wirtschaftlichkeit der Anlage berechnen' die jährlichen Einnahmen der Anlage abschätzen.",
-    "fifthPage": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Tracking-Cookies!"
+      "text": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Tracking-Cookies!",
+      "alt": ""
+    }
   },
   "button": {
     "showMap": "Karte anzeigen",
