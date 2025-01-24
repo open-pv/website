@@ -37,7 +37,6 @@ function Overlay({
   setSimulationMeshes,
 }) {
   const { t } = useTranslation()
-  const [sliderValue, setSliderValue] = useState(window.numSimulations)
   const handleCreatePVButtonClick = () => {
     createPVSystem({
       setPVSystems,
@@ -50,6 +49,7 @@ function Overlay({
   }
   const [open, setOpen] = useState(false)
   const OptionsDialog = () => {
+    const [sliderValue, setSliderValue] = useState([100])
     return (
       <DialogRoot open={open} onOpenChange={(e) => setOpen(e.open)}>
         <DialogTrigger asChild>
@@ -79,7 +79,6 @@ function Overlay({
                 onValueChange={(newValue) => {
                   setSliderValue(newValue.value)
                   window.numSimulations = newValue.value[0]
-                  console.log(newValue.value[0])
                 }}
                 marks={[
                   { value: 1, label: '1' },
