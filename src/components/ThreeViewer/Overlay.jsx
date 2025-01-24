@@ -142,7 +142,8 @@ function Overlay({
         <Box display='flex' pointerEvents='none' zIndex={100} overflow='hidden'>
           <Box
             display='flex'
-            flexDirection='column'
+            flexDirection='row'
+            flexWrap='wrap'
             gap='10px'
             padding='10px'
             height='fit-content'
@@ -150,7 +151,7 @@ function Overlay({
             pointerEvents='auto'
             sx={{
               button: {
-                minWidth: '100px', // Set the desired width
+                minWidth: '100px',
               },
             }}
           >
