@@ -433,7 +433,12 @@ const NotificationForSelectedPV = ({
     )
   }
   return (
-    <DialogRoot open={true} placement='bottom' size='xs'>
+    <DialogRoot
+      open={true}
+      placement='bottom'
+      size='xs'
+      onInteractOutside={() => setSelectedPVSystem([])}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('savingsCalculation.notificationLabel')}</DialogTitle>
@@ -450,11 +455,9 @@ const NotificationForSelectedPV = ({
             >
               {t('delete')}
             </Button>
-            <Button variant='subtle' onClick={() => setSelectedPVSystem([])}>
-              {t('button.cancel')}
-            </Button>
           </SimpleGrid>
         </DialogBody>
+        <DialogCloseTrigger onClick={() => setSelectedPVSystem([])} />
       </DialogContent>
     </DialogRoot>
   )
