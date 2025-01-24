@@ -102,7 +102,7 @@ const TerrainTile = (props) => {
   const ty = props.y
   const divisions = props.divisions;
 
-  const url = `https://sgx.geodatenzentrum.de/wmts_basemapde/tile/1.0.0/de_basemapde_web_raster_farbe/default/GLOBAL_WEBMERCATOR/${zoom}/${ty}/${tx}.png`
+  const url = `https://tiles.heidler.info/styles/basic/256/${zoom}/${tx}/${ty}.webp`
 
   let [geometry, setGeometry] = useState(null)
   let [material, setMaterial] = useState(null)
