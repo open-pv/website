@@ -2,6 +2,9 @@ import * as geotiff from 'geotiff'
 import { mercator2meters } from './download'
 import { coordinatesWebMercator } from './location'
 
+/**
+ * Loads the tiles from geotiff terrain model to cache, so that requests to the geotiff are faster.
+ */
 export class ElevationManager {
   static instancePromise = null
   static state = 'uninitialized'
