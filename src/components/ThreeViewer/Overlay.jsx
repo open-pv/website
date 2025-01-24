@@ -486,7 +486,12 @@ const SelectionNotificationBuilding = ({
   }
 
   return (
-    <DialogRoot open={true} placement='bottom' size='xs'>
+    <DialogRoot
+      open={true}
+      placement='bottom'
+      size='xs'
+      onInteractOutside={() => setSelectedMesh([])}
+    >
       <DialogContent>
         <DialogHeader></DialogHeader>
         <DialogBody>
@@ -498,11 +503,9 @@ const SelectionNotificationBuilding = ({
             >
               {t('button.simulateBuilding')}
             </Button>
-            <Button variant='subtle' onClick={() => setSelectedMesh([])}>
-              {t('button.cancel')}
-            </Button>
           </SimpleGrid>
         </DialogBody>
+        <DialogCloseTrigger onClick={() => setSelectedMesh([])} />
       </DialogContent>
     </DialogRoot>
   )
