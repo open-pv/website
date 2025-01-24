@@ -92,7 +92,7 @@
     "privacyPolicy": "Privacy Policy"
   },
   "mapControlHelp": {
-    "button": "How to control the Map?",
+    "button": "Help",
     "title": "User Manual",
     "leftMouse": "Left Mouse Button: Move on the map",
     "rightMouse": "Right Mouse Button: Rotate the map",
@@ -120,6 +120,7 @@
       "consumption": "Annual self-consumption: ",
       "savings": "Annual savings: "
     },
-    "calculate": "Calculate"
+    "calculate": "Calculate",
+    "navigation": { "products": "Our Products" }
   }
 }

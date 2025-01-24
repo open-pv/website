@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react'
 import Main from '../Main'
 
-import { useToast } from '@chakra-ui/react'
+import { toaster } from '@/components/ui/toaster'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { useTranslation } from 'react-i18next'
 import { Map, NavigationControl } from 'react-map-gl/maplibre'
@@ -48,12 +48,10 @@ function Index() {
 
   const [mapMarkers, setMapMarkers] = useState([])
 
-  const toast = useToast()
-
   const searchCallback = (locations) => {
     if (locations.length == 0) {
       console.error('No search results!')
-      toast({
+      toaster.create({
         title: t('noSearchResults.title'),
         description: t('noSearchResults.description'),
         status: 'error',

@@ -1,37 +1,34 @@
-import { Tab, TabList, Tabs } from '@chakra-ui/react'
+import { Link, Tabs } from '@chakra-ui/react'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 const Navigation = () => {
   const { t } = useTranslation()
   const location = useLocation()
-
   const isActive = (path) => location.pathname === path
 
   return (
-    <Tabs
-      as='nav'
-      className='links'
-      index={isActive('/') ? 0 : isActive('/about') ? 1 : -1}
-    >
-      <TabList>
-        <Tab
-          key='/'
-          as={Link}
-          to='/'
-          isSelected={isActive('/')}
-          fontSize='xl'
-          fontWeight='bold'
-          p={4}
-        >
-          OpenPV
-        </Tab>
-        <Tab key='/about' as={Link} to='/about' isSelected={isActive('/about')}>
-          {t('about.title')}
-        </Tab>
-      </TabList>
-    </Tabs>
+    <Tabs.Root value={isActive('/about') ? '/about' : '/'}>
+      <Tabs.List bg='bg.muted' rounded='l3'>
+        <Tabs.Trigger value='/'>
+          <Link textStyle='xl' href='/'>
+            OpenPV
+          </Link>
+        </Tabs.Trigger>
+        <Tabs.Trigger value='/about'>
+          <Link unstyled href='/about'>
+            {t('about.title')}
+          </Link>
+        </Tabs.Trigger>
+        <Tabs.Trigger value='blog'>
+          <Link unstyled href='https://blog.openpv.de'>
+            {t('navigation.products')}
+          </Link>
+        </Tabs.Trigger>
+        <Tabs.Indicator rounded='l2' />
+      </Tabs.List>
+    </Tabs.Root>
   )
 }
 

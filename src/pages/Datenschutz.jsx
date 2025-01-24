@@ -1,15 +1,15 @@
-import { Card, CardBody, CardHeader, Heading } from '@chakra-ui/react'
+import { Card, Heading } from '@chakra-ui/react'
 
 import Main from '../Main'
 
 const Datenschutz = () => {
   return (
     <Main title='Datenschutz' description='Datenschutzerklaerung der Website.'>
-      <Card height='100%' overflow='auto'>
-        <CardHeader>
+      <Card.Root height='100%' overflow='auto'>
+        <Card.Header>
           <Heading as='h1'>Datenschutz</Heading>
-        </CardHeader>
-        <CardBody>
+        </Card.Header>
+        <Card.Body>
           <h1>Datenschutzerklärung</h1>
           <p>
             Verantwortlicher im Sinne der Datenschutzgesetze, insbesondere der
@@ -214,8 +214,8 @@ const Datenschutz = () => {
               (Version #2020-09-30).
             </em>
           </p>
-        </CardBody>
-      </Card>
+        </Card.Body>
+      </Card.Root>
     </Main>
   )
 }

@@ -1,18 +1,13 @@
 import {
-  Box,
-  Button,
-  Circle,
-  Flex,
-  Image,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-} from '@chakra-ui/react'
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Box, Button, Circle, Flex, Image } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -38,9 +33,9 @@ function WelcomeMessageBoxElement({ image, text }) {
 }
 
 function WelcomeMessage() {
-  const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true })
   const [currentPage, setCurrentPage] = useState(1)
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
+  const [open, setOpen] = useState(true)
 
   const numPages = 5
 
@@ -53,12 +48,13 @@ function WelcomeMessage() {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size='xl'>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader as='h1'>{t('WelcomeMessage.title')}</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
+    <DialogRoot open={open} onOpenChange={(e) => setOpen(e.open)}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t('WelcomeMessage.title')}</DialogTitle>
+        </DialogHeader>
+
+        <DialogBody>
           {currentPage === 1 && (
             <WelcomeMessageBoxElement
               image={{
@@ -98,14 +94,20 @@ function WelcomeMessage() {
           {currentPage === 5 && (
             <WelcomeMessageBoxElement text={t('WelcomeMessage.fifthPage')} />
           )}
-        </ModalBody>
+        </DialogBody>
 
-        <ModalFooter>
-          <Button mr={3} onClick={prevPage} isDisabled={currentPage === 1}>
+        <DialogFooter>
+          <Button
+            variant='subtle'
+            mr={3}
+            onClick={prevPage}
+            isDisabled={currentPage === 1}
+          >
             {t('previous')}
           </Button>
           {currentPage != 5 && (
             <Button
+              variant='subtle'
               mr={3}
               onClick={nextPage}
               isDisabled={currentPage === numPages}
@@ -113,12 +115,7 @@ function WelcomeMessage() {
               {t('next')}
             </Button>
           )}
-          {currentPage == 5 && (
-            <Button mr={3} onClick={onClose}>
-              {t('close')}
-            </Button>
-          )}
-        </ModalFooter>
+        </DialogFooter>
         <Flex justifyContent='center' mb={4}>
           {Array.from({ length: numPages }, (_, i) => i + 1).map((page) => (
             <Circle
@@ -129,8 +126,9 @@ function WelcomeMessage() {
             />
           ))}
         </Flex>
-      </ModalContent>
-    </Modal>
+        <DialogCloseTrigger />
+      </DialogContent>
+    </DialogRoot>
   )
 }
 

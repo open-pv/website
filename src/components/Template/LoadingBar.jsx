@@ -1,4 +1,4 @@
-import { Progress } from '@chakra-ui/react'
+import { ProgressBar, ProgressRoot } from '@/components/ui/progress'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -27,7 +27,9 @@ const LoadingBar = ({ progress }) => {
         {t('loadingMessage.tip' + shownTip.toString())}
       </p>
       <div style={{ width: '80%', maxWidth: '600px', margin: '0 auto' }}>
-        <Progress value={progress} width='100%' hasStripe={true} />
+        <ProgressRoot value={progress} max={100} min={0} striped>
+          <ProgressBar />
+        </ProgressRoot>
       </div>
     </div>
   )

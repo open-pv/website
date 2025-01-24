@@ -1,34 +1,23 @@
+import { Button } from '@/components/ui/button'
 import {
-  Box,
-  Button,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerHeader,
-  DrawerOverlay,
-  FormLabel,
-  ListItem,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Stack,
-  Switch,
-  Text,
-  UnorderedList,
-  useDisclosure,
-} from '@chakra-ui/react'
-import React from 'react'
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Field } from '@/components/ui/field'
+import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
+import { Slider } from '@/components/ui/slider'
+import { Switch } from '@/components/ui/switch'
+import { Box, Collapsible, List, SimpleGrid, Text } from '@chakra-ui/react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
-import ButtonWithHoverHelp from '../Template/ButtonWithHoverHelp'
-import SliderWithLabel from '../Template/SliderWithLabel'
+import { simulationForNewBuilding } from '../../simulation/main'
 import { createPVSystem } from './Meshes/PVSystems'
-import SelectionNotificationBuilding from './SelectionNotificationBuilding'
-import SelectionNotificationPV from './SelectionNotificationPV'
 
 function Overlay({
   frontendState,
@@ -41,25 +30,13 @@ function Overlay({
   setSelectedPVSystem,
   geometries,
   geoLocation,
-  pvSystems,
   setPVSystems,
   pvPoints,
   setPVPoints,
   simulationMeshes,
   setSimulationMeshes,
 }) {
-  const {
-    isOpen: isOpenDrawer,
-    onOpen: onOpenDrawer,
-    onClose: onCloseDrawer,
-  } = useDisclosure()
-  const {
-    isOpen: isOpenModalControls,
-    onOpen: onOpenModalControls,
-    onClose: onCloseModalControls,
-  } = useDisclosure()
   const { t } = useTranslation()
-  const btnRef = React.useRef()
   const handleCreatePVButtonClick = () => {
     createPVSystem({
       setPVSystems,
@@ -70,20 +47,125 @@ function Overlay({
     })
     setFrontendState('Results')
   }
+  const [open, setOpen] = useState(false)
+  const OptionsDialog = () => {
+    const [sliderValue, setSliderValue] = useState([100])
+    return (
+      <DialogRoot open={open} onOpenChange={(e) => setOpen(e.open)}>
+        <DialogTrigger asChild>
+          <Button variant='subtle'>{t('button.options')}</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('sidebar.header')}</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <p>{t('sidebar.mainText')}</p>
+            <br />
+            <SimpleGrid columns={2} gap='40px'>
+              <p>{t('button.showMap')}</p>
+              <Switch
+                checked={showTerrain}
+                onCheckedChange={() => setShowTerrain((prev) => !prev)}
+              />
+            </SimpleGrid>
+            <br />
+            <SimpleGrid columns={2} gap='40px'>
+              <p>{t('sidebar.numberSimulations')}</p>
+              <Slider
+                min={1}
+                max={200}
+                value={sliderValue}
+                onValueChange={(newValue) => {
+                  setSliderValue(newValue.value)
+                  window.numSimulations = newValue.value[0]
+                }}
+                marks={[
+                  { value: 1, label: '1' },
+                  { value: 50, label: '50' },
+                  { value: 100, label: '100' },
+                  { value: 150, label: '150' },
+                  { value: 200, label: '200' },
+                ]}
+              />
+            </SimpleGrid>
+          </DialogBody>
 
-  const handleAbortButtonClick = () => {
-    setFrontendState('Results')
+          <DialogCloseTrigger />
+        </DialogContent>
+      </DialogRoot>
+    )
+  }
+  /**
+   * The component for the "How do I control this app" button as well as the dialog.
+   */
+  const ControlHelperDialog = () => {
+    const touchDeviceText = window.isTouchDevice ? 'touch.' : ''
+    const { t } = useTranslation()
+    return (
+      <DialogRoot>
+        <DialogTrigger asChild>
+          <Button variant='subtle'>{t('mapControlHelp.button')}</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t(`mapControlHelp.title`)}</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <List.Root>
+              <List.Item>
+                {t(`mapControlHelp.${touchDeviceText}leftMouse`)}
+              </List.Item>
+              <List.Item>
+                {t(`mapControlHelp.${touchDeviceText}rightMouse`)}
+              </List.Item>
+              <List.Item>
+                {t(`mapControlHelp.${touchDeviceText}wheel`)}
+              </List.Item>
+              <List.Item>
+                {t(`mapControlHelp.${touchDeviceText}doubleClick`)}
+              </List.Item>
+            </List.Root>
+          </DialogBody>
+          <DialogCloseTrigger />
+        </DialogContent>
+      </DialogRoot>
+    )
+  }
+  /**
+   * Wrapper for the buttons that are shown on top of the Scene. The wrapper controls the size, order,
+   * alignment of these buttons.
+   */
+  const OverlayWrapper = ({ children }) => {
+    return (
+      <>
+        <Box display='flex' pointerEvents='none' zIndex={100} overflow='hidden'>
+          <Box
+            display='flex'
+            flexDirection='row'
+            flexWrap='wrap'
+            gap='10px'
+            padding='10px'
+            height='fit-content'
+            overflow='hidden'
+            pointerEvents='auto'
+            sx={{
+              button: {
+                minWidth: '100px',
+              },
+            }}
+          >
+            {children}
+          </Box>
+        </Box>
+      </>
+    )
   }
 
   return (
-    <>
-      <OverlayWrapper>
-        <SelectionNotificationPV
-          selectedPVSystem={selectedPVSystem}
-          setSelectedPVSystem={setSelectedPVSystem}
-          setPVSystems={setPVSystems}
-        />
-        <SelectionNotificationBuilding
+    <OverlayWrapper>
+      {selectedMesh.length > 0 && (
+        <NotificationForSelectedBuilding
           selectedMesh={selectedMesh}
           setSelectedMesh={setSelectedMesh}
           simulationMeshes={simulationMeshes}
@@ -91,226 +173,346 @@ function Overlay({
           geometries={geometries}
           geoLocation={geoLocation}
         />
-        {frontendState == 'Results' && (
-          <>
-            <Button
-              ref={btnRef}
-              colorScheme='teal'
-              onClick={onOpenDrawer}
-              variant={'link'}
-              zIndex={100}
-            >
-              {t('button.options')}
-            </Button>
-          </>
-        )}
-
-        <Button
-          onClick={onOpenModalControls}
-          colorScheme='teal'
-          variant={'link'}
-        >
-          {t('mapControlHelp.button')}
-        </Button>
-        <ModalControls
-          isOpen={isOpenModalControls}
-          onClose={onCloseModalControls}
+      )}
+      {selectedPVSystem.length > 0 && (
+        <NotificationForSelectedPV
+          selectedPVSystem={selectedPVSystem}
+          setSelectedPVSystem={setSelectedPVSystem}
+          setPVSystems={setPVSystems}
         />
-        <CustomDrawer
-          isOpen={isOpenDrawer}
-          onClose={onCloseDrawer}
-          showTerrain={showTerrain}
-          setShowTerrain={setShowTerrain}
-        />
-      </OverlayWrapper>
-      <HighPrioWrapper>
-        {frontendState == 'Results' && (
-          <ButtonWithHoverHelp
-            buttonLabel={t('button.drawPVSystem')}
+      )}
+      <ControlHelperDialog />
+      {frontendState == 'Results' && (
+        <>
+          <OptionsDialog />
+          <Button
+            variant='subtle'
             onClick={() => {
               setFrontendState('DrawPV')
-              onCloseDrawer()
             }}
-            className={pvSystems.length == 0 ? 'button-high-prio' : ''}
-            hoverText={t('button.drawPVSystemHover')}
-          />
-        )}
-
-        {frontendState == 'DrawPV' && (
-          <>
-            {pvPoints.length > 0 && (
-              <>
-                <Button
-                  className='button-high-prio'
-                  onClick={handleCreatePVButtonClick}
-                >
-                  {t('button.createPVSystem')}
-                </Button>
-                <Button
-                  onClick={() => {
-                    setPVPoints(pvPoints.slice(0, -1))
-                  }}
-                >
-                  {t('button.deleteLastPoint')}
-                </Button>
-              </>
-            )}
-            <Button onClick={handleAbortButtonClick}>
-              {t('button.cancel')}
+          >
+            {t('button.drawPVSystem')}
+          </Button>
+        </>
+      )}
+      {frontendState == 'DrawPV' && (
+        <>
+          <Button variant='subtle' onClick={() => setFrontendState('Results')}>
+            {t('button.cancel')}
+          </Button>
+          {pvPoints.length > 2 && (
+            <Button variant='solid' onClick={handleCreatePVButtonClick}>
+              {t('button.createPVSystem')}
             </Button>
-          </>
-        )}
-      </HighPrioWrapper>
-    </>
-  )
-}
-
-const OverlayWrapper = ({ children }) => {
-  return (
-    <>
-      <Box
-        display='flex'
-        flexDirection='row'
-        justifyContent='flex-start'
-        pointerEvents='none'
-        zIndex={100}
-        minWidth={0}
-        minHeight={0}
-        overflow='hidden'
-        sx={{
-          '> *': {
-            pointerEvents: 'auto',
-          },
-        }}
-      >
-        <Box
-          display='flex'
-          flexDirection='column'
-          alignItems='flex-start' // Add this line
-          gap='20px'
-          padding='10px'
-          height='fit-content'
-          maxHeight='100%'
-          flexWrap='nowrap'
-          minWidth={0}
-          minHeight={0}
-          overflow='hidden'
-        >
-          {children}
-        </Box>
-      </Box>
-    </>
-  )
-}
-
-const HighPrioWrapper = ({ children }) => {
-  return (
-    <>
-      <Box
-        display='flex'
-        flexDirection='column' // First direction Column and second Box flexDirection
-        // row pushes buttons to the upper left corner
-        justifyContent='space-between'
-        pointerEvents='none'
-        zIndex={100}
-        minWidth={0}
-        minHeight={0}
-        overflow='hidden'
-        sx={{
-          '> *': {
-            pointerEvents: 'auto',
-          },
-        }}
-      >
-        <Box
-          display='flex'
-          flexDirection='row'
-          gap='20px'
-          padding='10px'
-          width='fit-content'
-          maxWidth='100%'
-          flexWrap='wrap'
-          minWidth={0}
-          minHeight={0}
-          overflow='hidden'
-          marginLeft='auto' // Add this line
-        >
-          {children}
-        </Box>
-      </Box>
-    </>
-  )
-}
-
-const CustomDrawer = ({ isOpen, onClose, showTerrain, setShowTerrain }) => {
-  const { t } = useTranslation()
-  const [sliderValue, setSliderValue] = React.useState(window.numSimulations)
-  return (
-    <Stack spacing='24px'>
-      <Drawer isOpen={isOpen} placement='left' onClose={onClose} size={'xs'}>
-        <DrawerOverlay />
-        <DrawerContent height={'100%'}>
-          <DrawerCloseButton />
-          <DrawerHeader>{t('button.options')}</DrawerHeader>
-
-          <DrawerBody>
+          )}
+          {pvPoints.length > 0 && (
             <>
-              <Text as='b'>{t('sidebar.header')}</Text>
-              <Text>{t('sidebar.mainText')}</Text>
-              <FormLabel>
-                {t('button.showMap')}
-                <Switch
-                  isChecked={showTerrain}
-                  onChange={() => setShowTerrain((prev) => !prev)}
-                  colorScheme='teal'
-                  margin={'5px'}
-                />
-              </FormLabel>
-
-              <SliderWithLabel
-                sliderProps={{ min: 1, max: 200 }}
-                label={t('sidebar.numberSimulations')}
-                hoverHelpLabel={t('sidebar.numberSimulationsHover')}
-                sliderValue={sliderValue}
-                setSliderValue={(newValue) => {
-                  setSliderValue(newValue)
-                  window.numSimulations = newValue
+              <Button
+                variant='subtle'
+                onClick={() => {
+                  setPVPoints(pvPoints.slice(0, -1))
                 }}
-              />
+              >
+                {t('button.deleteLastPoint')}
+              </Button>
             </>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-    </Stack>
+          )}
+        </>
+      )}
+    </OverlayWrapper>
+  )
+}
+/**
+ * Controls the dialog component that appears when a PV system is selected. This includes the
+ * dialog component of the economic savings calculation.
+ */
+const NotificationForSelectedPV = ({
+  selectedPVSystem,
+  setSelectedPVSystem,
+  setPVSystems,
+}) => {
+  const { t } = useTranslation()
+  /**
+   * Controls the PV savings calculation dialog component together with the button to start this component.
+   */
+  const SavingCalculationDialog = ({ selectedPVSystem }) => {
+    const { t } = useTranslation()
+    const [annualConsumption, setAnnualConsumption] = useState('3000')
+    const [storageCapacity, setStorageCapacity] = useState('0')
+    const [electricityPrice, setElectricityPrice] = useState('30')
+    const [selfConsumption, setSelfConsumption] = useState(0)
+    const [annualSavings, setAnnualSavings] = useState(0)
+    const [showResults, setShowResults] = useState(false)
+
+    let pvProduction
+    if (selectedPVSystem.length > 0) {
+      pvProduction = Math.round(
+        selectedPVSystem.reduce(
+          (previous, current) => previous + current.annualYield,
+          0,
+        ),
+      )
+    }
+
+    async function handleCalculateSaving() {
+      async function calculateSaving({
+        pvProduction,
+        consumptionHousehold,
+        storageCapacity,
+        electricityPrice,
+        setSelfConsumption,
+        setAnnualSavings,
+      }) {
+        const response = await fetch(
+          'https://www.openpv.de/data/savings_calculation/cons_prod.json',
+        )
+        const data = await response.json()
+
+        const normalizedConsumption = data['Consumption']
+        const normalizedProduction = data['Production']
+
+        const result = {}
+        let currentStorageLevel = 0
+        for (const timestamp in normalizedConsumption) {
+          const consumptionValue =
+            (normalizedConsumption[timestamp] * consumptionHousehold) / 1000
+          const productionValue =
+            (normalizedProduction[timestamp] * pvProduction) / 1000
+
+          let selfConsumption = 0
+          let excessProduction = 0
+
+          if (productionValue > consumptionValue) {
+            selfConsumption = consumptionValue
+            excessProduction = productionValue - consumptionValue
+
+            // Charge the storage
+            const availableStorageSpace = storageCapacity - currentStorageLevel
+            const chargedAmount = Math.min(
+              excessProduction,
+              availableStorageSpace,
+            )
+            currentStorageLevel += chargedAmount
+          } else {
+            const productionDeficit = consumptionValue - productionValue
+
+            // Use storage if available
+            const usedFromStorage = Math.min(
+              productionDeficit,
+              currentStorageLevel,
+            )
+            currentStorageLevel -= usedFromStorage
+
+            selfConsumption = productionValue + usedFromStorage
+          }
+
+          result[timestamp] = selfConsumption
+        }
+
+        let selfConsumedElectricity = Object.values(result).reduce(
+          (acc, val) => acc + val,
+          0,
+        )
+
+        setSelfConsumption(Math.round(selfConsumedElectricity))
+        setAnnualSavings(
+          Math.round((selfConsumedElectricity * electricityPrice) / 100),
+        )
+      }
+
+      await calculateSaving({
+        pvProduction: pvProduction,
+        consumptionHousehold: annualConsumption,
+        storageCapacity: storageCapacity,
+        electricityPrice: electricityPrice,
+        setSelfConsumption: setSelfConsumption,
+        setAnnualSavings: setAnnualSavings,
+      })
+    }
+
+    return (
+      <DialogRoot size='lg'>
+        <DialogTrigger asChild>
+          <Button variant='subtle'>{t('savingsCalculation.button')}</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('savingsCalculation.button')}</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <p>{t('savingsCalculation.disclaimer')}</p>
+            <br />
+            <SimpleGrid
+              columns={1}
+              columnGap='2'
+              rowGap='4'
+              justifyContent={'center'}
+              alignItems={'center'}
+            >
+              <Field
+                label={t('savingsCalculation.consumptionTitle')}
+                helperText={t('savingsCalculation.consumptionHelperInfo')}
+              >
+                <NumberInputRoot
+                  value={annualConsumption}
+                  onValueChange={(e) => setAnnualConsumption(e.value)}
+                >
+                  <NumberInputField />
+                </NumberInputRoot>
+              </Field>
+
+              <Field label={t('savingsCalculation.storageTitle')}>
+                <NumberInputRoot
+                  maxW='200px'
+                  value={storageCapacity}
+                  onValueChange={(e) => setStorageCapacity(e.value)}
+                >
+                  <NumberInputField />
+                </NumberInputRoot>
+              </Field>
+              <Field label={t('savingsCalculation.electricityPriceTitle')}>
+                <NumberInputRoot
+                  maxW='200px'
+                  value={electricityPrice}
+                  onValueChange={(e) => setElectricityPrice(e.value)}
+                >
+                  <NumberInputField />
+                </NumberInputRoot>
+              </Field>
+            </SimpleGrid>
+            <Collapsible.Root open={showResults}>
+              <Collapsible.Content>
+                <Box
+                  p='40px'
+                  color='white'
+                  mt='4'
+                  bg='teal'
+                  rounded='md'
+                  shadow='md'
+                >
+                  <Text>{t('savingsCalculation.disclaimer')}</Text>
+                  <br />
+                  <List.Root>
+                    <List.Item>
+                      {t('savingsCalculation.results.production')}
+                      <Text as='b' color={'white'}>
+                        {pvProduction} kWh
+                      </Text>
+                    </List.Item>
+                    <List.Item>
+                      {t('savingsCalculation.results.consumption')}
+                      <Text as='b' color={'white'}>
+                        {selfConsumption} kWh
+                      </Text>
+                    </List.Item>
+                    <List.Item>
+                      {t('savingsCalculation.results.savings')}
+                      <Text as='b' color={'white'}>
+                        {annualSavings}€
+                      </Text>
+                    </List.Item>
+                  </List.Root>
+                </Box>
+              </Collapsible.Content>
+            </Collapsible.Root>
+          </DialogBody>
+          <DialogFooter>
+            <Button
+              variant='subtle'
+              mr={3}
+              onClick={() => {
+                handleCalculateSaving()
+                setShowResults(true)
+              }}
+            >
+              {t('savingsCalculation.calculate')}
+            </Button>
+          </DialogFooter>
+          <DialogCloseTrigger />
+        </DialogContent>
+      </DialogRoot>
+    )
+  }
+  return (
+    <DialogRoot
+      open={true}
+      placement='bottom'
+      size='xs'
+      onInteractOutside={() => setSelectedPVSystem([])}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t('savingsCalculation.notificationLabel')}</DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          <SimpleGrid gap='5px'>
+            <SavingCalculationDialog selectedPVSystem={selectedPVSystem} />
+            <Button
+              variant='subtle'
+              onClick={() => {
+                setPVSystems([])
+                setSelectedPVSystem([])
+              }}
+            >
+              {t('delete')}
+            </Button>
+          </SimpleGrid>
+        </DialogBody>
+        <DialogCloseTrigger onClick={() => setSelectedPVSystem([])} />
+      </DialogContent>
+    </DialogRoot>
+  )
+}
+const NotificationForSelectedBuilding = ({
+  selectedMesh,
+  setSelectedMesh,
+  simulationMeshes,
+  setSimulationMeshes,
+  geometries,
+  geoLocation,
+}) => {
+  const { t } = useTranslation()
+  const [loading, setLoading] = useState(false)
+  const handleResimulationClick = async () => {
+    setLoading(true)
+    try {
+      await simulationForNewBuilding({
+        selectedMesh,
+        setSelectedMesh,
+        simulationMeshes,
+        setSimulationMeshes,
+        geometries,
+        geoLocation,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <DialogRoot
+      open={true}
+      placement='bottom'
+      size='xs'
+      onInteractOutside={() => setSelectedMesh([])}
+    >
+      <DialogContent>
+        <DialogHeader></DialogHeader>
+        <DialogBody>
+          <SimpleGrid gap='5px'>
+            <Button
+              variant='subtle'
+              loading={loading}
+              onClick={handleResimulationClick}
+            >
+              {t('button.simulateBuilding')}
+            </Button>
+          </SimpleGrid>
+        </DialogBody>
+        <DialogCloseTrigger onClick={() => setSelectedMesh([])} />
+      </DialogContent>
+    </DialogRoot>
   )
 }
 
 export default Overlay
-
-const ModalControls = ({ isOpen, onClose }) => {
-  const { t } = useTranslation()
-  const touchDeviceText = window.isTouchDevice ? 'touch.' : ''
-  return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{t(`mapControlHelp.title`)}</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <UnorderedList>
-            <ListItem>
-              {t(`mapControlHelp.${touchDeviceText}leftMouse`)}
-            </ListItem>
-            <ListItem>
-              {t(`mapControlHelp.${touchDeviceText}rightMouse`)}
-            </ListItem>
-            <ListItem>{t(`mapControlHelp.${touchDeviceText}wheel`)}</ListItem>
-            <ListItem>
-              {t(`mapControlHelp.${touchDeviceText}doubleClick`)}
-            </ListItem>
-          </UnorderedList>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
-  )
-}

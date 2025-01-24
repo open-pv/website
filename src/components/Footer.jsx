@@ -1,13 +1,16 @@
+import { Button } from '@/components/ui/button'
 import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-} from '@chakra-ui/react'
+  DialogActionTrigger,
+  DialogBody,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+
 import i18n from 'i18next'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -22,22 +25,30 @@ const WrapperForLaptopDevice = ({ children }) => {
 }
 
 const WrapperForTouchDevice = ({ children }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <div className='overlay'>
       <div className='attribution'>
-        <Button variant={'link'} onClick={onOpen}>
-          License Information
-        </Button>
-
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>License Information</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>{children}</ModalBody>
-          </ModalContent>
-        </Modal>
+        <DialogRoot>
+          <DialogTrigger asChild>
+            <Button variant='outline' size='sm'>
+              License Information
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>License Information</DialogTitle>
+            </DialogHeader>
+            <DialogBody>
+              <p>{children}</p>
+            </DialogBody>
+            <DialogFooter>
+              <DialogActionTrigger asChild>
+                <Button variant='outline'>Cancel</Button>
+              </DialogActionTrigger>
+            </DialogFooter>
+            <DialogCloseTrigger />
+          </DialogContent>
+        </DialogRoot>
       </div>
     </div>
   )
@@ -61,21 +72,34 @@ export default function Footer({ federalState, frontendState }) {
         frontendState == 'DrawPV') && (
         <p key='map-attribution' className='copyright'>
           Basiskarte &copy;{' '}
-          <a href='https://www.bkg.bund.de' target='_blank'>
+          <a
+            href='https://www.bkg.bund.de'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             BKG
           </a>
           &nbsp;(
-          <a href='https://www.govdata.de/dl-de/by-2-0' target='_blank'>
+          <a
+            href='https://www.govdata.de/dl-de/by-2-0'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             dl-de/by-2-0
           </a>
           ) | Geländemodell:&nbsp;
-          <a href='https://sonny.4lima.de' target='_blank'>
+          <a
+            href='https://sonny.4lima.de'
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             &copy;&nbsp;Sonny
           </a>
           &nbsp;(
           <a
             href='https://creativecommons.org/licenses/by/4.0/deed.en'
             target='_blank'
+            rel='noopener noreferrer'
           >
             CC-BY-4.0
           </a>
@@ -83,6 +107,7 @@ export default function Footer({ federalState, frontendState }) {
           <a
             href='https://drive.google.com/file/d/1rgGA22Ha42ulQORK9Pfp4JPpPAIKFx6Q/view'
             target='_blank'
+            rel='noopener noreferrer'
           >
             verschiedenen Quellen
           </a>
@@ -96,11 +121,15 @@ export default function Footer({ federalState, frontendState }) {
             style={federalState ? {} : { display: 'none' }}
           >
             Geb&auml;udedaten &copy;{' '}
-            <a href={attr.link} target='_blank'>
+            <a href={attr.link} target='_blank' rel='noopener noreferrer'>
               {attr.attribution}
             </a>
             &nbsp;(
-            <a href={licenseLinks[attr.license]} target='_blank'>
+            <a
+              href={licenseLinks[attr.license]}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
               {attr.license}
             </a>
             )
@@ -109,7 +138,11 @@ export default function Footer({ federalState, frontendState }) {
       )}
       <p className='copyright'>
         &copy;&nbsp;
-        <a href='https://github.com/open-pv' target='_blank'>
+        <a
+          href='https://github.com/open-pv'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
           Team OpenPV
         </a>
         {' | '}

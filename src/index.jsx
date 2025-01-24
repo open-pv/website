@@ -1,4 +1,4 @@
-import { ChakraProvider } from '@chakra-ui/react'
+import { Provider } from '@/components/ui/provider'
 import React, { Suspense, lazy } from 'react'
 import { createRoot, hydrateRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
@@ -22,7 +22,7 @@ window.isTouchDevice = isTouchDevice()
 
 // See https://reactjs.org/docs/strict-mode.html
 const StrictApp = () => (
-  <ChakraProvider>
+  <Provider>
     <BrowserRouter basename={PUBLIC_URL}>
       <Suspense fallback={<Main />}>
         <Routes>
@@ -36,7 +36,7 @@ const StrictApp = () => (
         </Routes>
       </Suspense>
     </BrowserRouter>
-  </ChakraProvider>
+  </Provider>
 )
 
 const rootElement = document.getElementById('root')
