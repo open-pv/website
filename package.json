@@ -27,7 +27,7 @@
     "react-map-gl": "^7.1.7",
     "react-router-dom": "^7.1.1",
     "react-three-fiber": "^6.0.13",
-    "three": "^0.171.0"
+    "three": "^0.172.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
