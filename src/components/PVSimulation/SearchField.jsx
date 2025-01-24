@@ -1,7 +1,7 @@
 import { Button, Input, List, ListItem } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { requestLocation } from '../../simulation/location'
+import { processAddress } from '../../simulation/location'
 
 export default function SearchField({ callback }) {
   const [inputValue, setInputValue] = useState('')
@@ -102,14 +102,14 @@ export default function SearchField({ callback }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    const locations = await requestLocation(inputValue)
+    const locations = await processAddress(inputValue)
     console.warn(locations)
     callback(locations)
   }
 
   const handleSuggestionClick = (suggestion) => {
     setInputValue(suggestion)
-    requestLocation(suggestion).then((locations) => {
+    processAddress(suggestion).then((locations) => {
       console.warn(locations)
       callback(locations)
     })

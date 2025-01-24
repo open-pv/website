@@ -2,33 +2,7 @@
  */
 export var coordinatesXY15, coordinatesLonLat, coordinatesWebMercator
 
-export async function requestLocation(searchString) {
-  let options = extractLongitudeLatitude(searchString)
-  if (options.length == 0) {
-    options = processAddress(searchString)
-  }
-  return options
-}
-
-function extractLongitudeLatitude(searchString) {
-  if (/^[-]?(\d+(\.\d+)?),\s*[-]?(\d+(\.\d+)?)$/.test(searchString)) {
-    const [lat, lon] = searchString
-      .split(',')
-      .map((value) => parseFloat(value.trim()))
-    return [
-      {
-        lat,
-        lon,
-        display_name: `${lat},${lon}`,
-        key: 'coordinates',
-      },
-    ]
-  } else {
-    return []
-  }
-}
-
-async function processAddress(searchString) {
+export async function processAddress(searchString) {
   let url =
     'https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q='
       .concat(searchString)
