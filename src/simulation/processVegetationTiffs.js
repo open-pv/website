@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { mercator2meters } from './download'
 import { coordinatesWebMercator } from './location'
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
-import { ElevationManager } from './elevation'
+import { SONNY_DEM } from './elevation'
 
 export function processVegetationHeightmapData(heightmapData) {
   if (!heightmapData || !heightmapData.bbox || !heightmapData.data) {
@@ -94,7 +94,8 @@ export async function processVegetationData(
           if (tri[v + 2] == 0) {
             const x = tri[v + 0] / mercator2meters() + cx
             const y = tri[v + 1] / mercator2meters() + cy
-            const pt3d = await ElevationManager.toPoint3D(x, y)
+            const pt3d = await SONNY_DEM.toPoint3D(x, y)
+            // TODO: pt3d already gives us normals, use those instead of re-calculating later!
             const height = pt3d.point[2]
             tri[v + 2] = height
           }
