@@ -56,6 +56,44 @@ class DEM {
       normal: [dx / len, dy / len, -1.0 / len],
     }
   }
+
+  async getGridPoints(minX, minY, maxX, maxY) {
+    const xyscale = mercator2meters()
+    const [cx, cy] = coordinatesWebMercator
+    const x0 = Math.floor((minX - this.origin[0]) / this.pixelScale[0])
+    const x1 = Math.ceil((maxX - this.origin[0]) / this.pixelScale[0])
+    const y1 = Math.ceil((minY - this.origin[1]) / -this.pixelScale[1])
+    const y0 = Math.floor((maxY - this.origin[1]) / -this.pixelScale[1])
+
+    const grid = Array(y1 - y0)
+      .fill(0)
+      .map(() => new Array(x1 - x0))
+
+    for (let y = y0; y < y1; y++) {
+      let z_x_prev = await this.requestPixel(x0 - 1, y)
+      let z = await this.requestPixel(x0, y)
+      for (let x = x0; x < x1; x++) {
+        let z_x_next = await this.requestPixel(x + 1, y)
+        const z_y_prev = await this.requestPixel(x, y - 1)
+        const z_y_next = await this.requestPixel(x, y + 1)
+
+        const dx = (z_x_next - z_x_prev) / (2 * xyscale * this.pixelScale[0])
+        const dy = (z_y_next - z_y_prev) / (2 * xyscale * -this.pixelScale[1])
+        const len = Math.sqrt(dx * dx + dy * dy + 1.0)
+
+        const x_merc = x * this.pixelScale[0] + this.origin[0]
+        const y_merc = y * -this.pixelScale[1] + this.origin[1]
+        grid[y - y0][x - x0] = {
+          point: [xyscale * (x_merc - cx), xyscale * (y_merc - cy), z],
+          normal: [dx / len, dy / len, -1.0 / len],
+        }
+
+        z_x_prev = z
+        z = z_x_next
+      }
+    }
+    return grid
+  }
 }
 
 /**
@@ -171,8 +209,11 @@ class XYZDEM extends DEM {
     const tile_y = Math.floor(py / 256) // Tile y index
     const tile_key = [tile_x, tile_y]
     if (!this.requestedRegions[tile_key]) {
+      console.log(`cache miss: ${tile_key}`)
       // Only request each tile once
       this.requestedRegions[tile_key] = this.loadTile(tile_x, tile_y)
+    } else {
+      console.log('cache hit')
     }
     const region = await this.requestedRegions[tile_key]
     const height = region[px - 256 * tile_x + (py - 256 * tile_y) * 256]
@@ -191,8 +232,17 @@ class LazyCOGDEM {
   }
 
   async toPoint3D(x, y) {
-    const instance = await this.promise
-    return instance.toPoint3D(x, y)
+    if (this.instance === null) {
+      this.instance = await this.promise
+    }
+    return this.instance.toPoint3D(x, y)
+  }
+
+  async getGridPoints(minX, minY, maxX, maxY) {
+    if (this.instance === null) {
+      this.instance = await this.promise
+    }
+    return this.instance.toPoint3D(x, y)
   }
 }
 
@@ -204,15 +254,30 @@ class LazyXYZDEM {
       LazyXYZDEM.promises[(url, zoom)] = XYZDEM.init(url, zoom)
     }
     this.promise = LazyXYZDEM.promises[(url, zoom)]
+    this.instance = null
   }
 
   async toPoint3D(x, y) {
-    const instance = await this.promise
-    return instance.toPoint3D(x, y)
+    if (this.instance === null) {
+      this.instance = await this.promise
+    }
+    return this.instance.toPoint3D(x, y)
+  }
+
+  async getGridPoints(minX, minY, maxX, maxY) {
+    if (this.instance === null) {
+      this.instance = await this.promise
+    }
+    return this.instance.getGridPoints(minX, minY, maxX, maxY)
   }
 }
 
 export const SONNY_DEM = new LazyXYZDEM(
   'https://vegetation.openpv.de/data/dem/sonny/{z}/{x}/{y}.webp',
   13,
+)
+
+export const VEGETATION_DEM = new LazyXYZDEM(
+  'https://vegetation.openpv.de/data/vegetation/{z}/{x}/{y}.webp',
+  17,
 )

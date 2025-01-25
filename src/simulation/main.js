@@ -1,18 +1,11 @@
 import { ShadingScene, colormaps } from '@openpv/simshady'
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
-import {
-  downloadBuildings,
-  downloadVegetationHeightmap,
-  getFederalState,
-} from './download'
+import { downloadBuildings, getFederalState } from './download'
 import { coordinatesWebMercator } from './location'
 import { processGeometries } from './preprocessing'
-
-import {
-  processVegetationData,
-  processVegetationHeightmapData,
-} from './processVegetationTiffs'
+import { processVegetationData } from './processVegetationTiffs'
+import { VEGETATION_DEM } from './elevation'
 
 const c0 = [0, 0, 0.2]
 const c1 = [1, 0.2, 0.1]
@@ -60,7 +53,7 @@ export async function mainSimulation(location) {
 
     if (getFederalState() == 'BY') {
       const [cx, cy] = coordinatesWebMercator
-      console.log('coordinatesWebMercator:' + coordinatesWebMercator)
+      console.log('coordinatesWebMercator: ' + coordinatesWebMercator)
       const bufferDistance = 200 // 1km buffer, adjust as needed
       const bbox = [
         cx - bufferDistance,
@@ -69,64 +62,32 @@ export async function mainSimulation(location) {
         cy + bufferDistance,
       ]
 
-      console.log('Starting vegetation processing...')
-      console.log(`Bounding box for vegetation data: [${bbox.join(', ')}]`)
+      console.log('Requesting vegetation for', bbox)
+      const vegetationHeightmap = await VEGETATION_DEM.getGridPoints(...bbox)
 
-      try {
-        console.log('Downloading vegetation heightmap data...')
-        const vegetationHeightmapData = await downloadVegetationHeightmap(bbox)
+      console.log('Processing vegetation geometries...')
+      const vegetationGeometries = await processVegetationData(
+        vegetationHeightmap,
+        new THREE.Vector3(0, 0, 0),
+        30,
+        80,
+      )
 
-        if (!vegetationHeightmapData) {
-          throw new Error('Failed to download vegetation heightmap data')
-        }
+      console.log('Vegetation Geometries processed successfully')
+      console.log(
+        `Number of surrounding geometries: ${vegetationGeometries.surrounding.length}`,
+      )
+      console.log(
+        `Number of background geometries: ${vegetationGeometries.background.length}`,
+      )
 
-        console.log('Vegetation Heightmap Data downloaded successfully')
-        console.log(
-          `Data dimensions: ${vegetationHeightmapData.width}x${vegetationHeightmapData.height}`,
-        )
-        console.log(
-          `Data bounding box: [${vegetationHeightmapData.bbox.join(', ')}]`,
-        )
+      window.setVegetationGeometries(vegetationGeometries)
 
-        console.log('Processing vegetation raster data...')
-        const vegetationRaster = processVegetationHeightmapData(
-          vegetationHeightmapData,
-        )
-
-        if (!vegetationRaster) {
-          throw new Error('Failed to process vegetation raster data')
-        }
-
-        console.log('Vegetation Raster processed successfully')
-
-        console.log('Processing vegetation geometries...')
-        const vegetationGeometries = await processVegetationData(
-          vegetationRaster,
-          new THREE.Vector3(0, 0, 0),
-          30,
-          80,
-        )
-
-        console.log('Vegetation Geometries processed successfully')
-        console.log(
-          `Number of surrounding geometries: ${vegetationGeometries.surrounding.length}`,
-        )
-        console.log(
-          `Number of background geometries: ${vegetationGeometries.background.length}`,
-        )
-
-        window.setVegetationGeometries(vegetationGeometries)
-
-        console.log('Adding vegetation geometries to the scene...')
-        vegetationGeometries.surrounding.forEach((geom) => {
-          scene.addShadingGeometry(geom)
-        })
-        console.log('Vegetation geometries added to the scene')
-      } catch (error) {
-        console.error('Error in vegetation processing:', error)
-        console.error('Error stack:', error.stack)
-        // You might want to set an error state or display an error message to the user here
-      }
+      console.log('Adding vegetation geometries to the scene...')
+      vegetationGeometries.surrounding.forEach((geom) => {
+        scene.addShadingGeometry(geom)
+      })
+      console.log('Vegetation geometries added to the scene')
 
       console.log('Vegetation processing completed')
     }
