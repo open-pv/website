@@ -8,8 +8,10 @@ import { coordinatesWebMercator } from './location'
 class DEM {
   origin = [0, 0]
   pixelScale = [1, 1]
+  point_cache = {}
 
   async toPoint3D(x, y) {
+    const key = (x, y)
     const xyscale = mercator2meters()
     const [cx, cy] = coordinatesWebMercator
 
@@ -96,6 +98,88 @@ class COGDEM extends DEM {
   }
 }
 
+/**
+ * Loads elevation data from a Mapbox Terrain-RGB encoded elevation model.
+ * Caches indivisual chunks, so that subsequent requests are faster.
+ * Assumes the tilesize to be 256x256
+ */
+class XYZDEM extends DEM {
+  zoom_level = -1
+  url = null
+  width = -1
+  height = -1
+  cache = {}
+  requestedRegions = {}
+
+  static async init(url, zoom_level) {
+    let me = new XYZDEM()
+    me.url = url
+    me.zoom_level = zoom_level
+    const scl = 40075016.68 / (256 << me.zoom_level)
+    me.origin = [-20037508.34, 20037508.34]
+    me.pixelScale = [scl, scl]
+    return me
+  }
+
+  async loadTile(tile_x, tile_y) {
+    const heights = Array(256 * 256)
+
+    const url = this.url
+      .replace('{z}', this.zoom_level)
+      .replace('{x}', tile_x)
+      .replace('{y}', tile_y)
+    const img = new Image()
+    img.crossOrigin = 'Anonymous'
+    img.src = url
+
+    let success = await new Promise((resolve, reject) => {
+      img.onload = () => resolve(true)
+      img.onerror = () => resolve(false)
+    })
+
+    if (!success) {
+      console.error(`Error loading DEM tile from ${url}`)
+      heights.fill(0)
+      return heights
+    }
+
+    const canvas = document.createElement('canvas')
+    canvas.width = img.width
+    canvas.height = img.height
+
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(img, 0, 0)
+
+    // Get decoded image pixel data
+    const raw_data = ctx.getImageData(0, 0, img.width, img.height)
+    for (let i = 0; i < 256 * 256; i++) {
+      const r = raw_data.data[i * 4]
+      const g = raw_data.data[i * 4 + 1]
+      const b = raw_data.data[i * 4 + 2]
+      // cf. https://docs.mapbox.com/data/tilesets/reference/mapbox-terrain-rgb-v1/#elevation-data
+      heights[i] = -10000 + (r * 256 * 256 + g * 256 + b) * 0.1
+    }
+    return heights
+  }
+
+  /*
+   * Get pixel data for (px, py) from the (hypothetical) global mosaic at the given zoom level,
+   * i.e. for (px, py) == (0, 0), returns elevation data at lat=90, lon=-180
+   */
+  async requestPixel(px, py) {
+    const tile_x = Math.floor(px / 256) // Tile x index
+    const tile_y = Math.floor(py / 256) // Tile y index
+    const tile_key = [tile_x, tile_y]
+    if (!this.requestedRegions[tile_key]) {
+      // Only request each tile once
+      this.requestedRegions[tile_key] = this.loadTile(tile_x, tile_y)
+    }
+    const region = await this.requestedRegions[tile_key]
+    const height = region[px - 256 * tile_x + (py - 256 * tile_y) * 256]
+    return height
+  }
+}
+
 class LazyCOGDEM {
   static promises = {}
 
@@ -112,6 +196,26 @@ class LazyCOGDEM {
   }
 }
 
-export const SONNY_DEM = new LazyCOGDEM(
-  'https://maps.heidler.info/sonny_dtm_20.tif',
+class LazyXYZDEM {
+  static promises = {}
+
+  constructor(url, zoom) {
+    if (!LazyXYZDEM.promises[url]) {
+      LazyXYZDEM.promises[(url, zoom)] = XYZDEM.init(url, zoom)
+    }
+    this.promise = LazyXYZDEM.promises[(url, zoom)]
+  }
+
+  async toPoint3D(x, y) {
+    const instance = await this.promise
+    return instance.toPoint3D(x, y)
+  }
+}
+
+// export const SONNY_DEM = new LazyCOGDEM(
+//   'https://maps.heidler.info/sonny_dtm_20.tif',
+// )
+export const SONNY_DEM = new LazyXYZDEM(
+  'https://vegetation.openpv.de/data/dem/sonny/{z}/{x}/{y}.webp',
+  13,
 )
