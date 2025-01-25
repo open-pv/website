@@ -212,9 +212,6 @@ class LazyXYZDEM {
   }
 }
 
-// export const SONNY_DEM = new LazyCOGDEM(
-//   'https://maps.heidler.info/sonny_dtm_20.tif',
-// )
 export const SONNY_DEM = new LazyXYZDEM(
   'https://vegetation.openpv.de/data/dem/sonny/{z}/{x}/{y}.webp',
   13,
