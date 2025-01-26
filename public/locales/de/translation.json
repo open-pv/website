@@ -61,7 +61,7 @@
   },
   "WelcomeMessage": {
     "title": "OpenPV - Ihr Solarrechner für ganz Deutschland.",
-    "introduction": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? OpenPV ist ein kostenloses Tool für die Verschattungsberechnung. Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten und mit Hilfe von frei verfügbaren 3D-Gebäudedaten bestimmen.",
+    "introduction": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? OpenPV ist ein kostenloses Tool für die Verschattungsberechnung und Ertragsprognose von Solaranalgen. Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten und mit Hilfe von frei verfügbaren 3D-Gebäudedaten bestimmen.",
     "0": {
       "title": "Schritt 1: Gebäude auswählen",
       "text": "Auf der Startseite von OpenPV wird im ersten Schritt ein Gebäude für die Simulation ausgewählt. Dies kann entweder über die Eingabe und Suche einer Adresse erfolgen, oder durch das Zoomen und Auswählen auf der Landkarte. Durch einen Linksklick auf das Gebäude wird ein Menü angezeigt. Mit einem Klick auf 'Simulation starten' wird die Berechnung gestartet.",
@@ -74,12 +74,12 @@
     },
     "2": {
       "title": "Schritt 3: Solaranlage einzeichnen",
-      "text": "Über 'Neue PV-Anlage einzeichnen' können Sie eine Solaranlage erstellen. Legen Sie dafür die Eckpunkte auf eine FLäche des Gebäudes und schließen sie die Anlage durch einen Klick auf 'Solaranlage erstellen' ab. Sie können nun die eingezeichnete Solaranlage sowie den geschätzten Jahresertrag sehen.",
+      "text": "Über 'Neue PV-Anlage einzeichnen' können Sie eine Solaranlage erstellen. Legen Sie dafür die Eckpunkte auf eine Fläche des Gebäudes und schließen sie die Anlage durch einen Klick auf 'Solaranlage erstellen' ab. Sie können nun die eingezeichnete Solaranlage sowie den geschätzten Jahresertrag sehen.",
       "alt": ""
     },
     "3": {
       "title": "Schritt 4: Wirtschaftlichkeit der Solaranlage bestimmen",
-      "text": "Anschließend können Sie mit dem Button 'Wirtschaftlichkeit der Anlage berechnen' die jährlich eingesparten Kosten durch den Eigenverbrauch des Stroms bestimmen.",
+      "text": "Anschließend können Sie über den Button 'Wirtschaftlichkeit der Anlage berechnen' die jährlich eingesparten Kosten durch den Eigenverbrauch des Stroms bestimmen. Dafür müssen Sie einige Daten angeben. Diese Daten bleiben bei Ihnen im Browser und werden zu keinem Zeitpunkt an unsere Server übermittelt.",
       "alt": "Ein Screenshot der Wirtschaftlichkeitsberechnung. Nach Angabe von jährlichem Stromverbrauch, Kapazität einer Batterie, und dem Strompreis pro kWh wird die jährliche Ersparnis berechnet."
     },
     "4": {
