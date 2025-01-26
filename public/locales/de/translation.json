@@ -1,4 +1,5 @@
 {
+  "title": "OpenPV - Ihr kostenloser Solarrechner",
   "mainDescription": "Analysieren Sie das Solarpotenzial Ihres Gebäudes - Open Source, mit frei verfügbaren 3D-Daten und alles direkt im Browser. Datenschutz? Selbstverständlich: keine unnötiges Datensammeln, kein Tracking.",
   "sidebar": {
     "header": "Ziel des Tools",
