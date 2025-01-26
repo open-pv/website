@@ -123,5 +123,6 @@
     },
     "calculate": "Calculate",
     "navigation": { "products": "Our Products" }
-  }
+  },
+  "navigation": { "products": "Products and Services" }
 }
