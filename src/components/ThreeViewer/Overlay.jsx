@@ -10,6 +10,12 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Field } from '@/components/ui/field'
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from '@/components/ui/menu'
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
@@ -96,6 +102,7 @@ function Overlay({
       </DialogRoot>
     )
   }
+  const [isOpenControlHelp, setIsOpenControlHelp] = useState(false)
   /**
    * The component for the "How do I control this app" button as well as the dialog.
    */
@@ -103,7 +110,10 @@ function Overlay({
     const touchDeviceText = window.isTouchDevice ? 'touch.' : ''
     const { t } = useTranslation()
     return (
-      <DialogRoot>
+      <DialogRoot
+        open={isOpenControlHelp}
+        onOpenChange={(e) => setIsOpenControlHelp(e.open)}
+      >
         <DialogTrigger asChild>
           <Button variant='subtle'>{t('mapControlHelp.button')}</Button>
         </DialogTrigger>
@@ -127,6 +137,31 @@ function Overlay({
               </List.Item>
             </List.Root>
           </DialogBody>
+          <DialogCloseTrigger />
+        </DialogContent>
+      </DialogRoot>
+    )
+  }
+  /**
+   * The component for the "How do I control this app" button as well as the dialog.
+   */
+  const [isOpenAdvertisment, setIsOpenAdvertisment] = useState(false)
+  const AdvertismentDialog = () => {
+    const { t } = useTranslation()
+
+    return (
+      <DialogRoot
+        open={isOpenAdvertisment}
+        onOpenChange={(e) => setIsOpenAdvertisment(e.open)}
+      >
+        <DialogTrigger asChild>
+          <Button variant='subtle'>Mein Beitrag zur Energiewende</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t(`mapControlHelp.title`)}</DialogTitle>
+          </DialogHeader>
+          <DialogBody>Hi</DialogBody>
           <DialogCloseTrigger />
         </DialogContent>
       </DialogRoot>
@@ -181,10 +216,9 @@ function Overlay({
           setPVSystems={setPVSystems}
         />
       )}
-      <ControlHelperDialog />
+
       {frontendState == 'Results' && (
         <>
-          <OptionsDialog />
           <Button
             variant='subtle'
             onClick={() => {
@@ -219,6 +253,24 @@ function Overlay({
           )}
         </>
       )}
+      <MenuRoot>
+        <MenuTrigger>
+          <Button variant='subtle' size='sm'>
+            Mehr...
+          </Button>
+        </MenuTrigger>
+        <MenuContent>
+          <MenuItem>
+            <AdvertismentDialog />
+          </MenuItem>
+          <MenuItem>
+            <OptionsDialog />
+          </MenuItem>
+          <MenuItem>
+            <ControlHelperDialog />
+          </MenuItem>
+        </MenuContent>
+      </MenuRoot>
     </OverlayWrapper>
   )
 }
