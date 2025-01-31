@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { DataListItem, DataListRoot } from '@/components/ui/data-list'
 import {
   DialogBody,
   DialogCloseTrigger,
@@ -148,6 +149,24 @@ function Overlay({
   const [isOpenAdvertisment, setIsOpenAdvertisment] = useState(false)
   const AdvertismentDialog = () => {
     const { t } = useTranslation()
+    const data = [
+      {
+        label: 'Infos zu Balkonsolaranlagen',
+        value: 'https://balkon.solar',
+        href: 'https://balkon.solar',
+      },
+      {
+        label: 'Installateure in Ihrer Nähe',
+        value: 'https://www.sfv.de',
+        href: 'https://www.sfv.de/solaranlagenberatung/sachverstaendige-1',
+      },
+      {
+        label:
+          'Kein eigenes Dach? Tritt doch einer Bürgerenergiegenossenschaft bei!',
+        value: 'https://www.buendnis-buergerenergie.de/',
+        href: 'https://www.buendnis-buergerenergie.de/karte',
+      },
+    ]
 
     return (
       <DialogRoot
@@ -159,9 +178,27 @@ function Overlay({
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t(`mapControlHelp.title`)}</DialogTitle>
+            <DialogTitle>Was kann ich jetzt machen?</DialogTitle>
           </DialogHeader>
-          <DialogBody>Hi</DialogBody>
+          <DialogBody>
+            <p>
+              Es ist gut, dass Sie sich für eine Solaranlage interessieren. Mit
+              einer eigenen Anlage leisten Sie einen wichtgen Beitrag zur
+              Energiewende. Hier sammeln wir weiterführende Links, die Ihnen bei
+              der Planung ihrer Anlage helfen.
+            </p>
+            <br />
+            <DataListRoot>
+              {data.map((item) => (
+                <DataListItem
+                  key={item.label}
+                  label={item.label}
+                  value={item.value}
+                  href={item.href}
+                />
+              ))}
+            </DataListRoot>
+          </DialogBody>
           <DialogCloseTrigger />
         </DialogContent>
       </DialogRoot>
