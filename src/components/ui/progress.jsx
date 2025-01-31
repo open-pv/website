@@ -1,5 +1,4 @@
 import { Progress as ChakraProgress } from '@chakra-ui/react'
-import { InfoTip } from './toggle-tip'
 import * as React from 'react'
 
 export const ProgressBar = React.forwardRef(function ProgressBar(props, ref) {
@@ -16,7 +15,6 @@ export const ProgressLabel = React.forwardRef(
     return (
       <ChakraProgress.Label {...rest} ref={ref}>
         {children}
-        {info && <InfoTip>{info}</InfoTip>}
       </ChakraProgress.Label>
     )
   },
