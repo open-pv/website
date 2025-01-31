@@ -122,5 +122,11 @@
     },
     "calculate": "Berechnen"
   },
-  "navigation": { "products": "Produkte und Leistungen" }
+  "navigation": { "products": "Produkte und Leistungen" },
+  "adbox": {
+    "introduction": "Es ist gut, dass Sie sich für eine Solaranlage interessieren. Mit einer eigenen Anlage leisten Sie einen wichtgen Beitrag zur Energiewende. Hier sammeln wir weiterführende Links, die Ihnen bei der Planung ihrer Anlage helfen.",
+    "balkonsolar": "Infos zu Balkonsolaranlagen",
+    "companies": "Installateure in Ihrer Nähe",
+    "bbe": "Kein eigenes Dach? Tritt doch einer Bürgerenergiegenossenschaft bei!"
+  }
 }
