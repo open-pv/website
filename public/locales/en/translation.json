@@ -77,7 +77,8 @@
     "cancel": "Cancel",
     "deleteLastPoint": "Delete Last Point",
     "startSimulation": "Start simulation",
-    "Search": "Search"
+    "Search": "Search",
+    "more": "More..."
   },
   "noSearchResults": {
     "title": "No Results",
@@ -124,6 +125,8 @@
   },
   "navigation": { "products": "Our Products" },
   "adbox": {
+    "button": "My contribution to the energy transition",
+    "title": "What can I do now?",
     "introduction": "It's great that you're interested in a solar system. With your own system, you make an important contribution to the energy transition. Here, we collect further links to help you plan your system.",
     "balkonsolar": "Information on balcony solar systems",
     "companies": "Installers near you",

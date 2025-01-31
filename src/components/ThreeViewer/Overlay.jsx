@@ -172,11 +172,11 @@ function Overlay({
         onOpenChange={(e) => setIsOpenAdvertisment(e.open)}
       >
         <DialogTrigger asChild>
-          <Button variant='subtle'>Mein Beitrag zur Energiewende</Button>
+          <Button variant='subtle'>{t('adbox.button')}</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Was kann ich jetzt machen?</DialogTitle>
+            <DialogTitle>{t('adbox.title')}</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <p>{t('adbox.introduction')}</p>
@@ -286,7 +286,7 @@ function Overlay({
       <MenuRoot>
         <MenuTrigger>
           <Button variant='subtle' size='sm'>
-            Mehr...
+            {t('button.more')}
           </Button>
         </MenuTrigger>
         <MenuContent>
