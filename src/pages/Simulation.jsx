@@ -5,7 +5,7 @@ import Footer from '../components/Footer'
 import LoadingBar from '../components/Template/LoadingBar'
 import Scene from '../components/ThreeViewer/Scene'
 import Main from '../Main'
-import { mainSimulation } from '../simulation/main'
+import { loadGeometries, mainSimulation } from '../simulation/main'
 
 function Index() {
   const location = useParams()
@@ -38,7 +38,12 @@ function Index() {
   window.setVegetationGeometries = setVegetationGeometries
 
   const loadAndSimulate = async () => {
-    const { simulationMesh } = await mainSimulation(location)
+    loadGeometries(location)
+    const { simulationMesh } = await mainSimulation(
+      location,
+      geometries,
+      vegetationGeometries,
+    )
     if (simulationMesh) {
       setSimulationMeshes([...simulationMeshes, simulationMesh])
       setFrontendState('Results')

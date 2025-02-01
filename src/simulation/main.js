@@ -18,7 +18,7 @@ const c0 = [0, 0, 0.2]
 const c1 = [1, 0.2, 0.1]
 const c2 = [1, 1, 0.1]
 
-export async function mainSimulation(location) {
+export async function loadGeometries(location) {
   // Clear previous attributions if any
   if (window.setAttribution) {
     for (let attributionSetter of Object.values(window.setAttribution)) {
@@ -26,135 +26,144 @@ export async function mainSimulation(location) {
     }
   }
 
-  if (typeof location !== 'undefined' && location != null) {
-    const buildingGeometries = await downloadBuildings(location)
-    //const vegetationData = await retrieveVegetationRasters(location)
+  if (typeof location == 'undefined' || location == null) {
+    throw new Error('Location is not defined or is null')
+  }
 
-    let geometries = processGeometries(
-      buildingGeometries,
+  const buildingGeometries = await downloadBuildings(location)
+  let geometries = processGeometries(
+    buildingGeometries,
+    new THREE.Vector3(0, 0, 0),
+    80,
+  )
+
+  window.setGeometries(geometries)
+  if (geometries.simulation.length == 0) {
+    window.setFrontendState('ErrorAdress')
+    return { simulationMesh: undefined }
+  }
+  if (getFederalState() != 'BY') {
+    return
+  } else {
+    loadVegetationGeometries()
+  }
+}
+
+async function loadVegetationGeometries() {
+  const [cx, cy] = coordinatesWebMercator
+  const bufferDistance = 200 // 1km buffer, adjust as needed
+  const bbox = [
+    cx - bufferDistance,
+    cy - bufferDistance,
+    cx + bufferDistance,
+    cy + bufferDistance,
+  ]
+
+  console.log('Starting vegetation processing...')
+  console.log(`Bounding box for vegetation data: [${bbox.join(', ')}]`)
+
+  try {
+    console.log('Downloading vegetation heightmap data...')
+    const vegetationHeightmapData = await downloadVegetationHeightmap(bbox)
+
+    if (!vegetationHeightmapData) {
+      throw new Error('Failed to download vegetation heightmap data')
+    }
+
+    console.log('Vegetation Heightmap Data downloaded successfully')
+    console.log(
+      `Data dimensions: ${vegetationHeightmapData.width}x${vegetationHeightmapData.height}`,
+    )
+    console.log(
+      `Data bounding box: [${vegetationHeightmapData.bbox.join(', ')}]`,
+    )
+
+    console.log('Processing vegetation raster data...')
+    const vegetationRaster = processVegetationHeightmapData(
+      vegetationHeightmapData,
+    )
+
+    if (!vegetationRaster) {
+      throw new Error('Failed to process vegetation raster data')
+    }
+
+    console.log('Vegetation Raster processed successfully')
+
+    console.log('Processing vegetation geometries...')
+    const vegetationGeometries = await processVegetationData(
+      vegetationRaster,
       new THREE.Vector3(0, 0, 0),
+      30,
       80,
     )
 
-    window.setGeometries(geometries)
-    if (geometries.simulation.length == 0) {
-      window.setFrontendState('ErrorAdress')
-      return { simulationMesh: undefined }
-    }
-
-    const scene = new ShadingScene(
-      parseFloat(location.lat),
-      parseFloat(location.lon),
+    console.log('Vegetation Geometries processed successfully')
+    console.log(
+      `Number of surrounding geometries: ${vegetationGeometries.surrounding.length}`,
     )
-    geometries.simulation.forEach((geom) => {
-      scene.addSimulationGeometry(geom)
-      scene.addShadingGeometry(geom)
-    })
-    geometries.surrounding.forEach((geom) => {
-      scene.addShadingGeometry(geom)
-    })
-
-    scene.addColorMap(
-      colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
+    console.log(
+      `Number of background geometries: ${vegetationGeometries.background.length}`,
     )
 
-    if (getFederalState() == 'BY') {
-      const [cx, cy] = coordinatesWebMercator
-      console.log('coordinatesWebMercator:' + coordinatesWebMercator)
-      const bufferDistance = 200 // 1km buffer, adjust as needed
-      const bbox = [
-        cx - bufferDistance,
-        cy - bufferDistance,
-        cx + bufferDistance,
-        cy + bufferDistance,
-      ]
-
-      console.log('Starting vegetation processing...')
-      console.log(`Bounding box for vegetation data: [${bbox.join(', ')}]`)
-
-      try {
-        console.log('Downloading vegetation heightmap data...')
-        const vegetationHeightmapData = await downloadVegetationHeightmap(bbox)
-
-        if (!vegetationHeightmapData) {
-          throw new Error('Failed to download vegetation heightmap data')
-        }
-
-        console.log('Vegetation Heightmap Data downloaded successfully')
-        console.log(
-          `Data dimensions: ${vegetationHeightmapData.width}x${vegetationHeightmapData.height}`,
-        )
-        console.log(
-          `Data bounding box: [${vegetationHeightmapData.bbox.join(', ')}]`,
-        )
-
-        console.log('Processing vegetation raster data...')
-        const vegetationRaster = processVegetationHeightmapData(
-          vegetationHeightmapData,
-        )
-
-        if (!vegetationRaster) {
-          throw new Error('Failed to process vegetation raster data')
-        }
-
-        console.log('Vegetation Raster processed successfully')
-
-        console.log('Processing vegetation geometries...')
-        const vegetationGeometries = await processVegetationData(
-          vegetationRaster,
-          new THREE.Vector3(0, 0, 0),
-          30,
-          80,
-        )
-
-        console.log('Vegetation Geometries processed successfully')
-        console.log(
-          `Number of surrounding geometries: ${vegetationGeometries.surrounding.length}`,
-        )
-        console.log(
-          `Number of background geometries: ${vegetationGeometries.background.length}`,
-        )
-
-        window.setVegetationGeometries(vegetationGeometries)
-
-        console.log('Adding vegetation geometries to the scene...')
-        vegetationGeometries.surrounding.forEach((geom) => {
-          scene.addShadingGeometry(geom)
-        })
-        console.log('Vegetation geometries added to the scene')
-      } catch (error) {
-        console.error('Error in vegetation processing:', error)
-        console.error('Error stack:', error.stack)
-        // You might want to set an error state or display an error message to the user here
-      }
-
-      console.log('Vegetation processing completed')
-    }
-
-    let numSimulations = window.numSimulations || 80
-    function loadingBarWrapperFunction(progress, total) {
-      return window.setSimulationProgress((progress * 100) / total)
-    }
-
-    const simulationMesh = await scene.calculate({
-      numberSimulations: numSimulations,
-      pvCellEfficiency: 0.138,
-      maxYieldPerSquareMeter: 1400 * 0.138,
-      diffuseIrradianceURL: 'https://www.openpv.de/data/irradiance/',
-      urlDirectIrrandianceTIF:
-        'https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif',
-      urlDiffuseIrrandianceTIF:
-        'https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif',
-      progressCallback: loadingBarWrapperFunction,
-    })
-
-    let middle = new THREE.Vector3()
-    simulationMesh.geometry.computeBoundingBox()
-    simulationMesh.geometry.boundingBox.getCenter(middle)
-    simulationMesh.middle = middle
-
-    return { simulationMesh }
+    window.setVegetationGeometries(vegetationGeometries)
+  } catch (error) {
+    console.error('Error in vegetation processing:', error)
+    console.error('Error stack:', error.stack)
+    // You might want to set an error state or display an error message to the user here
   }
+
+  console.log('Vegetation processing completed')
+}
+
+export async function mainSimulation(
+  location,
+  geometries,
+  vegetationGeometries,
+) {
+  const scene = new ShadingScene(
+    parseFloat(location.lat),
+    parseFloat(location.lon),
+  )
+  geometries.simulation.forEach((geom) => {
+    scene.addSimulationGeometry(geom)
+    scene.addShadingGeometry(geom)
+  })
+  geometries.surrounding.forEach((geom) => {
+    scene.addShadingGeometry(geom)
+  })
+  if (vegetationGeometries.length != 0) {
+    console.log('Adding vegetation geometries to the scene...')
+    vegetationGeometries.surrounding.forEach((geom) => {
+      scene.addShadingGeometry(geom)
+    })
+  }
+  scene.addColorMap(
+    colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
+  )
+
+  let numSimulations = window.numSimulations || 80
+  function loadingBarWrapperFunction(progress, total) {
+    return window.setSimulationProgress((progress * 100) / total)
+  }
+
+  const simulationMesh = await scene.calculate({
+    numberSimulations: numSimulations,
+    pvCellEfficiency: 0.138,
+    maxYieldPerSquareMeter: 1400 * 0.138,
+    diffuseIrradianceURL: 'https://www.openpv.de/data/irradiance/',
+    urlDirectIrrandianceTIF:
+      'https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif',
+    urlDiffuseIrrandianceTIF:
+      'https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif',
+    progressCallback: loadingBarWrapperFunction,
+  })
+
+  let middle = new THREE.Vector3()
+  simulationMesh.geometry.computeBoundingBox()
+  simulationMesh.geometry.boundingBox.getCenter(middle)
+  simulationMesh.middle = middle
+
+  return { simulationMesh }
 }
 
 export async function simulationForNewBuilding(props) {
