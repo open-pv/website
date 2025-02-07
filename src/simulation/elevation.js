@@ -158,23 +158,31 @@ class DEM {
 class COGDEM extends DEM {
   tiff = null
   image = null
+  image_promise
   width = -1
   height = -1
   boundingBox = [0, 0, 0, 0]
   cache = {}
   requestedRegions = {}
 
-  static async init(url) {
-    let me = new COGDEM()
-    me.tiff = await geotiff.fromUrl(url)
-    me.image = await me.tiff.getImage()
-    me.pixelScale = me.image.fileDirectory.ModelPixelScale
-    const tiepoint = me.image.fileDirectory.ModelTiepoint
-    me.origin = [tiepoint[3], tiepoint[4]]
-    return me
+  constructor(url) {
+    super()
+    this.image_promise = geotiff.fromUrl(url).then((tiff) => tiff.getImage())
+    this.initialized = false
+  }
+
+  async init() {
+    if (this.image !== null) {
+      return
+    }
+    this.image = await this.image_promise
+    this.pixelScale = this.image.fileDirectory.ModelPixelScale
+    const tiepoint = this.image.fileDirectory.ModelTiepoint
+    this.origin = [tiepoint[3], tiepoint[4]]
   }
 
   async requestPixel(px, py) {
+    await this.init()
     const tile_x = Math.floor(px / 256) * 256 // Internal COG tile window start
     const tile_y = Math.floor(py / 256) * 256 // Internal COG tile window start
     const tile_key = [tile_x, tile_y]
@@ -197,20 +205,19 @@ class COGDEM extends DEM {
  */
 class XYZDEM extends DEM {
   zoom_level = -1
-  url = null
+  url_template = null
   width = -1
   height = -1
   cache = {}
   requestedRegions = {}
 
-  static async init(url, zoom_level) {
-    let me = new XYZDEM()
-    me.url = url
-    me.zoom_level = zoom_level
-    const scl = 40075016.68 / (256 << me.zoom_level)
-    me.origin = [-20037508.34, 20037508.34]
-    me.pixelScale = [scl, scl]
-    return me
+  constructor(url_template, zoom_level) {
+    super()
+    this.url_template = url_template
+    this.zoom_level = zoom_level
+    const scl = 40075016.68 / (256 << zoom_level)
+    this.origin = [-20037508.34, 20037508.34]
+    this.pixelScale = [scl, scl]
   }
 
   async loadTile(tile_x, tile_y) {
@@ -219,7 +226,7 @@ class XYZDEM extends DEM {
     }
     const heights = Array(256 * 256)
 
-    const url = this.url
+    const url = this.url_template
       .replace('{z}', this.zoom_level)
       .replace('{x}', tile_x)
       .replace('{y}', tile_y)
@@ -310,38 +317,12 @@ class LazyCOGDEM {
   }
 }
 
-class LazyXYZDEM {
-  static promises = {}
-
-  constructor(url, zoom) {
-    if (!LazyXYZDEM.promises[url]) {
-      LazyXYZDEM.promises[(url, zoom)] = XYZDEM.init(url, zoom)
-    }
-    this.promise = LazyXYZDEM.promises[(url, zoom)]
-    this.instance = null
-  }
-
-  async toPoint3D(x, y) {
-    if (this.instance === null) {
-      this.instance = await this.promise
-    }
-    return this.instance.toPoint3D(x, y)
-  }
-
-  async getGridPoints(minX, minY, maxX, maxY) {
-    if (this.instance === null) {
-      this.instance = await this.promise
-    }
-    return this.instance.getGridPoints(minX, minY, maxX, maxY)
-  }
-}
-
-export const SONNY_DEM = new LazyXYZDEM(
+export const SONNY_DEM = new XYZDEM(
   'https://vegetation.openpv.de/data/dem/sonny/{z}/{x}/{y}.webp',
   13,
 )
 
-export const VEGETATION_DEM = new LazyXYZDEM(
+export const VEGETATION_DEM = new XYZDEM(
   'https://vegetation.openpv.de/data/vegetation/{z}/{x}/{y}.webp',
   17,
 )
