@@ -91,6 +91,14 @@ const Datenschutz = () => {
               -stabilität sowie zur Optimierung unserer Website.
             </li>
             <li>
+              Beim Besuchen der Seite blog.openpv.de nutzen wir ein hosting
+              des Anbieters github: Sogenannte github pages. Oben genannte 
+              Verkehrsdaten (wie zB IP-Adresse) werden dabei ausschließlich vom 
+              Anbieter github gespeichert. Wir haben keinen Zugriff auf diese 
+              Serverlogs. Entsprechend verweisen wir auf das Privacy Statement von
+              Github: https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement
+            </li>
+            <li>
               Adresse und Koordinaten: Die Adresse, welche Sie in die Suchmaske
               eingeben, wird an Nominatim zur Koordinatenermittlung übermittelt.
               Weitere Infos zu Nominatim finden Sie unter dem Abschnitt "Plugins
