@@ -10,8 +10,13 @@ class DEM {
   pixelScale = [1, 1]
   point_cache = {}
 
+  /** Get the 3d point from the local (simulation space) x and y coordinates */
+  async toPoint3D_fromlocal(local_x, local_y) {
+    const xyscale = mercator2meters()
+  }
+
+  /** Get the 3d point from global (WebMercator) x and y coordinates */
   async toPoint3D(x, y) {
-    const key = (x, y)
     const xyscale = mercator2meters()
     const [cx, cy] = coordinatesWebMercator
 
@@ -46,7 +51,7 @@ class DEM {
       -qx * tl + // Top left
       -tx * tr + // Top right
       qx * bl + // Bottom left
-      tx * br // Botrom right
+      tx * br // Bottom right
     dx /= xyscale * this.pixelScale[0]
     dy /= xyscale * -this.pixelScale[1]
     const len = Math.sqrt(dx * dx + dy * dy + 1.0)
@@ -78,7 +83,7 @@ class DEM {
     await Promise.all(loadingRequests)
 
     // Fill buffer
-    const buffer = new Array(H).fill().map(() => new Array(W))
+    const buffer = new Array(H).fill().map(() => new Array(W).fill(0))
     for (let i = 0; i < loadingRequests.length; i++) {
       const [tx, ty] = tile_xy[i]
       const tile = await loadingRequests[i]

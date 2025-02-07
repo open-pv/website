@@ -23,6 +23,7 @@ export async function processVegetationData(
   let surroundingNormals = []
   let backgroundNormals = []
 
+  let i = 0
   for (let y = 0; y < vegetationGrid.length - 1; y++) {
     for (let x = 0; x < vegetationGrid.length - 1; x++) {
       const p00 = vegetationGrid[y][x]
@@ -31,21 +32,40 @@ export async function processVegetationData(
       const p11 = vegetationGrid[y + 1][x + 1]
 
       // Triangle candidates
+      // KH: Need to clone here to avoid the elevation-filling algo to fill the entire area
+      // (I dare you to try and remove the structuredClone and see what happens :)
       const tris = [
-        [p10, p00, p01],
-        [p10, p01, p11],
+        structuredClone([p10, p00, p01]),
+        structuredClone([p10, p01, p11]),
       ]
       for (let [a, b, c] of tris) {
+        i += 1
         // If all heights are 0, don't render triangle
         if (a.point[2] <= 0 && b.point[2] <= 0 && c.point[2] <= 0) {
           continue
         }
+
+        const max_height = Math.max(a.point[2], b.point[2], c.point[2])
         // Fill 0 values with actual elevation at that point
+        const xyscale = mercator2meters()
+        const [cx, cy] = coordinatesWebMercator
+
+        const old_heights = [a.point[2], b.point[2], c.point[2]]
+        let fillcount = 0
         for (let pt of [a, b, c]) {
+          // if (pt.point[2] <= max_height - 20) {
           if (pt.point[2] <= 0) {
-            const pt3d = await SONNY_DEM.toPoint3D(pt.point[0], pt.point[1])
+            fillcount++
+            const mercator_x = pt.point[0] / xyscale + cx
+            const mercator_y = pt.point[1] / xyscale + cy
+            const pt3d = await SONNY_DEM.toPoint3D(mercator_x, mercator_y)
+
             pt.point[2] = pt3d.point[2]
           }
+        }
+
+        if (fillcount == 3) {
+          console.log('Wrongly filled:', old_heights)
         }
 
         const mx = (a.point[0] + b.point[0] + c.point[0]) / 3
