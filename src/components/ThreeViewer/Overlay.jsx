@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { DataListItem, DataListRoot } from '@/components/ui/data-list'
 import {
   DialogBody,
   DialogCloseTrigger,
@@ -10,6 +11,12 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Field } from '@/components/ui/field'
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from '@/components/ui/menu'
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
@@ -96,6 +103,7 @@ function Overlay({
       </DialogRoot>
     )
   }
+  const [isOpenControlHelp, setIsOpenControlHelp] = useState(false)
   /**
    * The component for the "How do I control this app" button as well as the dialog.
    */
@@ -103,7 +111,10 @@ function Overlay({
     const touchDeviceText = window.isTouchDevice ? 'touch.' : ''
     const { t } = useTranslation()
     return (
-      <DialogRoot>
+      <DialogRoot
+        open={isOpenControlHelp}
+        onOpenChange={(e) => setIsOpenControlHelp(e.open)}
+      >
         <DialogTrigger asChild>
           <Button variant='subtle'>{t('mapControlHelp.button')}</Button>
         </DialogTrigger>
@@ -126,6 +137,60 @@ function Overlay({
                 {t(`mapControlHelp.${touchDeviceText}doubleClick`)}
               </List.Item>
             </List.Root>
+          </DialogBody>
+          <DialogCloseTrigger />
+        </DialogContent>
+      </DialogRoot>
+    )
+  }
+  /**
+   * The component for the "How do I control this app" button as well as the dialog.
+   */
+  const [isOpenAdvertisment, setIsOpenAdvertisment] = useState(false)
+  const AdvertismentDialog = () => {
+    const data = [
+      {
+        label: t('adbox.balkonsolar'),
+        value: 'https://balkon.solar',
+        href: 'https://balkon.solar',
+      },
+      {
+        label: t('adbox.companies'),
+        value: 'https://www.sfv.de',
+        href: 'https://www.sfv.de/solaranlagenberatung/sachverstaendige-1',
+      },
+      {
+        label: t('adbox.bbe'),
+        value: 'https://www.buendnis-buergerenergie.de/',
+        href: 'https://www.buendnis-buergerenergie.de/karte',
+      },
+    ]
+
+    return (
+      <DialogRoot
+        open={isOpenAdvertisment}
+        onOpenChange={(e) => setIsOpenAdvertisment(e.open)}
+      >
+        <DialogTrigger asChild>
+          <Button variant='subtle'>{t('adbox.button')}</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('adbox.title')}</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <p>{t('adbox.introduction')}</p>
+            <br />
+            <DataListRoot>
+              {data.map((item) => (
+                <DataListItem
+                  key={item.label}
+                  label={item.label}
+                  value={item.value}
+                  href={item.href}
+                />
+              ))}
+            </DataListRoot>
           </DialogBody>
           <DialogCloseTrigger />
         </DialogContent>
@@ -181,10 +246,9 @@ function Overlay({
           setPVSystems={setPVSystems}
         />
       )}
-      <ControlHelperDialog />
+
       {frontendState == 'Results' && (
         <>
-          <OptionsDialog />
           <Button
             variant='subtle'
             onClick={() => {
@@ -219,248 +283,25 @@ function Overlay({
           )}
         </>
       )}
+      <MenuRoot>
+        <MenuTrigger>
+          <Button variant='subtle' size='sm'>
+            {t('button.more')}
+          </Button>
+        </MenuTrigger>
+        <MenuContent>
+          <MenuItem>
+            <AdvertismentDialog />
+          </MenuItem>
+          <MenuItem>
+            <OptionsDialog />
+          </MenuItem>
+          <MenuItem>
+            <ControlHelperDialog />
+          </MenuItem>
+        </MenuContent>
+      </MenuRoot>
     </OverlayWrapper>
-  )
-}
-/**
- * Controls the dialog component that appears when a PV system is selected. This includes the
- * dialog component of the economic savings calculation.
- */
-const NotificationForSelectedPV = ({
-  selectedPVSystem,
-  setSelectedPVSystem,
-  setPVSystems,
-}) => {
-  const { t } = useTranslation()
-  /**
-   * Controls the PV savings calculation dialog component together with the button to start this component.
-   */
-  const SavingCalculationDialog = ({ selectedPVSystem }) => {
-    const { t } = useTranslation()
-    const [annualConsumption, setAnnualConsumption] = useState('3000')
-    const [storageCapacity, setStorageCapacity] = useState('0')
-    const [electricityPrice, setElectricityPrice] = useState('30')
-    const [selfConsumption, setSelfConsumption] = useState(0)
-    const [annualSavings, setAnnualSavings] = useState(0)
-    const [showResults, setShowResults] = useState(false)
-
-    let pvProduction
-    if (selectedPVSystem.length > 0) {
-      pvProduction = Math.round(
-        selectedPVSystem.reduce(
-          (previous, current) => previous + current.annualYield,
-          0,
-        ),
-      )
-    }
-
-    async function handleCalculateSaving() {
-      async function calculateSaving({
-        pvProduction,
-        consumptionHousehold,
-        storageCapacity,
-        electricityPrice,
-        setSelfConsumption,
-        setAnnualSavings,
-      }) {
-        const response = await fetch(
-          'https://www.openpv.de/data/savings_calculation/cons_prod.json',
-        )
-        const data = await response.json()
-
-        const normalizedConsumption = data['Consumption']
-        const normalizedProduction = data['Production']
-
-        const result = {}
-        let currentStorageLevel = 0
-        for (const timestamp in normalizedConsumption) {
-          const consumptionValue =
-            (normalizedConsumption[timestamp] * consumptionHousehold) / 1000
-          const productionValue =
-            (normalizedProduction[timestamp] * pvProduction) / 1000
-
-          let selfConsumption = 0
-          let excessProduction = 0
-
-          if (productionValue > consumptionValue) {
-            selfConsumption = consumptionValue
-            excessProduction = productionValue - consumptionValue
-
-            // Charge the storage
-            const availableStorageSpace = storageCapacity - currentStorageLevel
-            const chargedAmount = Math.min(
-              excessProduction,
-              availableStorageSpace,
-            )
-            currentStorageLevel += chargedAmount
-          } else {
-            const productionDeficit = consumptionValue - productionValue
-
-            // Use storage if available
-            const usedFromStorage = Math.min(
-              productionDeficit,
-              currentStorageLevel,
-            )
-            currentStorageLevel -= usedFromStorage
-
-            selfConsumption = productionValue + usedFromStorage
-          }
-
-          result[timestamp] = selfConsumption
-        }
-
-        let selfConsumedElectricity = Object.values(result).reduce(
-          (acc, val) => acc + val,
-          0,
-        )
-
-        setSelfConsumption(Math.round(selfConsumedElectricity))
-        setAnnualSavings(
-          Math.round((selfConsumedElectricity * electricityPrice) / 100),
-        )
-      }
-
-      await calculateSaving({
-        pvProduction: pvProduction,
-        consumptionHousehold: annualConsumption,
-        storageCapacity: storageCapacity,
-        electricityPrice: electricityPrice,
-        setSelfConsumption: setSelfConsumption,
-        setAnnualSavings: setAnnualSavings,
-      })
-    }
-
-    return (
-      <DialogRoot size='lg'>
-        <DialogTrigger asChild>
-          <Button variant='subtle'>{t('savingsCalculation.button')}</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('savingsCalculation.button')}</DialogTitle>
-          </DialogHeader>
-          <DialogBody>
-            <p>{t('savingsCalculation.disclaimer')}</p>
-            <br />
-            <SimpleGrid
-              columns={1}
-              columnGap='2'
-              rowGap='4'
-              justifyContent={'center'}
-              alignItems={'center'}
-            >
-              <Field
-                label={t('savingsCalculation.consumptionTitle')}
-                helperText={t('savingsCalculation.consumptionHelperInfo')}
-              >
-                <NumberInputRoot
-                  value={annualConsumption}
-                  onValueChange={(e) => setAnnualConsumption(e.value)}
-                >
-                  <NumberInputField />
-                </NumberInputRoot>
-              </Field>
-
-              <Field label={t('savingsCalculation.storageTitle')}>
-                <NumberInputRoot
-                  maxW='200px'
-                  value={storageCapacity}
-                  onValueChange={(e) => setStorageCapacity(e.value)}
-                >
-                  <NumberInputField />
-                </NumberInputRoot>
-              </Field>
-              <Field label={t('savingsCalculation.electricityPriceTitle')}>
-                <NumberInputRoot
-                  maxW='200px'
-                  value={electricityPrice}
-                  onValueChange={(e) => setElectricityPrice(e.value)}
-                >
-                  <NumberInputField />
-                </NumberInputRoot>
-              </Field>
-            </SimpleGrid>
-            <Collapsible.Root open={showResults}>
-              <Collapsible.Content>
-                <Box
-                  p='40px'
-                  color='white'
-                  mt='4'
-                  bg='teal'
-                  rounded='md'
-                  shadow='md'
-                >
-                  <Text>{t('savingsCalculation.disclaimer')}</Text>
-                  <br />
-                  <List.Root>
-                    <List.Item>
-                      {t('savingsCalculation.results.production')}
-                      <Text as='b' color={'white'}>
-                        {pvProduction} kWh
-                      </Text>
-                    </List.Item>
-                    <List.Item>
-                      {t('savingsCalculation.results.consumption')}
-                      <Text as='b' color={'white'}>
-                        {selfConsumption} kWh
-                      </Text>
-                    </List.Item>
-                    <List.Item>
-                      {t('savingsCalculation.results.savings')}
-                      <Text as='b' color={'white'}>
-                        {annualSavings}€
-                      </Text>
-                    </List.Item>
-                  </List.Root>
-                </Box>
-              </Collapsible.Content>
-            </Collapsible.Root>
-          </DialogBody>
-          <DialogFooter>
-            <Button
-              variant='subtle'
-              mr={3}
-              onClick={() => {
-                handleCalculateSaving()
-                setShowResults(true)
-              }}
-            >
-              {t('savingsCalculation.calculate')}
-            </Button>
-          </DialogFooter>
-          <DialogCloseTrigger />
-        </DialogContent>
-      </DialogRoot>
-    )
-  }
-  return (
-    <DialogRoot
-      open={true}
-      placement='bottom'
-      size='xs'
-      onInteractOutside={() => setSelectedPVSystem([])}
-    >
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('savingsCalculation.notificationLabel')}</DialogTitle>
-        </DialogHeader>
-        <DialogBody>
-          <SimpleGrid gap='5px'>
-            <SavingCalculationDialog selectedPVSystem={selectedPVSystem} />
-            <Button
-              variant='subtle'
-              onClick={() => {
-                setPVSystems([])
-                setSelectedPVSystem([])
-              }}
-            >
-              {t('delete')}
-            </Button>
-          </SimpleGrid>
-        </DialogBody>
-        <DialogCloseTrigger onClick={() => setSelectedPVSystem([])} />
-      </DialogContent>
-    </DialogRoot>
   )
 }
 const NotificationForSelectedBuilding = ({

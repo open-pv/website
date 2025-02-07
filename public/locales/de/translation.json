@@ -98,7 +98,8 @@
     "drawPVSystem": "Neue PV-Anlage einzeichnen",
     "drawPVSystemHover": "Ecken der PV-Anlage mit Klicks in der Karte einzeichnen und anschließend die Anlage erstellen.",
     "cancel": "Abbrechen",
-    "deleteLastPoint": "Letzen Punkt löschen"
+    "deleteLastPoint": "Letzen Punkt löschen",
+    "more": "Mehr..."
   },
   "noSearchResults": {
     "title": "Keine Ergebnisse",
@@ -144,5 +145,13 @@
     },
     "calculate": "Berechnen"
   },
-  "navigation": { "products": "Produkte und Leistungen" }
+  "navigation": { "products": "Produkte und Leistungen" },
+  "adbox": {
+    "button": "Wie installiere ich eine Solaranlage?",
+    "title": "Was kann ich jetzt machen?",
+    "introduction": "Es ist gut, dass Sie sich für eine Solaranlage interessieren. Mit einer eigenen Anlage leisten Sie einen wichtgen Beitrag zur Energiewende. Hier sammeln wir weiterführende Links, die Ihnen bei der Planung ihrer Anlage helfen.",
+    "balkonsolar": "Infos zu Balkonsolaranlagen",
+    "companies": "Installateure in Ihrer Nähe",
+    "bbe": "Kein eigenes Dach? Tritt doch einer Bürgerenergiegenossenschaft bei!"
+  }
 }
