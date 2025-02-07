@@ -37,12 +37,12 @@ export async function processVegetationData(
       ]
       for (let [a, b, c] of tris) {
         // If all heights are 0, don't render triangle
-        if (a.point[2] == 0 && b.point[2] == 0 && c.point[2] == 0) {
+        if (a.point[2] <= 0 && b.point[2] <= 0 && c.point[2] <= 0) {
           continue
         }
         // Fill 0 values with actual elevation at that point
         for (let pt of [a, b, c]) {
-          if (pt.point[2] == 0) {
+          if (pt.point[2] <= 0) {
             const pt3d = await SONNY_DEM.toPoint3D(pt.point[0], pt.point[1])
             pt.point[2] = pt3d.point[2]
           }

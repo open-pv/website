@@ -57,25 +57,74 @@ class DEM {
     }
   }
 
+  async requestChunks(px0, py0, px1, py1) {
+    const H = py1 - py0
+    const W = px1 - px0
+
+    const tx0 = Math.floor(px0 / 256)
+    const ty0 = Math.floor(py0 / 256)
+    const tx1 = Math.floor(px1 / 256)
+    const ty1 = Math.floor(py1 / 256)
+
+    // Pre-load all tiles in parallel
+    const loadingRequests = []
+    const tile_xy = []
+    for (let tile_y = ty0; tile_y <= ty1; tile_y++) {
+      for (let tile_x = tx0; tile_x <= tx1; tile_x++) {
+        loadingRequests.push(this.loadTile(tile_x, tile_y))
+        tile_xy.push([tile_x, tile_y])
+      }
+    }
+    await Promise.all(loadingRequests)
+
+    // Fill buffer
+    const buffer = new Array(H).fill().map(() => new Array(W))
+    for (let i = 0; i < loadingRequests.length; i++) {
+      const [tx, ty] = tile_xy[i]
+      const tile = await loadingRequests[i]
+      if (tile === undefined) {
+        console.warn('Skipping empty elevation tile')
+        continue
+      }
+
+      // Offset between tile pixels and buffer pixels
+      const dy = ty * 256 - py0
+      const dx = tx * 256 - px0
+      const row_min = Math.max(0, -dy)
+      const col_min = Math.max(0, -dx)
+      const row_max = Math.min(256, py1 - py0 - dy)
+      const col_max = Math.min(256, px1 - px0 - dx)
+      for (let y = row_min; y < row_max; y++) {
+        for (let x = col_min; x < col_max; x++) {
+          buffer[y + dy][x + dx] = tile[256 * y + x]
+        }
+      }
+    }
+    return buffer
+  }
+
   async getGridPoints(minX, minY, maxX, maxY) {
     const xyscale = mercator2meters()
     const [cx, cy] = coordinatesWebMercator
-    const x0 = Math.floor((minX - this.origin[0]) / this.pixelScale[0])
-    const x1 = Math.ceil((maxX - this.origin[0]) / this.pixelScale[0])
-    const y1 = Math.ceil((minY - this.origin[1]) / -this.pixelScale[1])
-    const y0 = Math.floor((maxY - this.origin[1]) / -this.pixelScale[1])
+    const x0 = Math.floor((minX - this.origin[0]) / this.pixelScale[0]) - 1
+    const x1 = Math.ceil((maxX - this.origin[0]) / this.pixelScale[0]) + 1
+    const y0 = Math.floor((maxY - this.origin[1]) / -this.pixelScale[1]) - 1
+    const y1 = Math.ceil((minY - this.origin[1]) / -this.pixelScale[1]) + 1
+    const heights = await this.requestChunks(x0, y0, x1, y1)
 
-    const grid = Array(y1 - y0)
+    const grid = Array(y1 - y0 - 2)
       .fill(0)
-      .map(() => new Array(x1 - x0))
+      .map(() => new Array(x1 - x0 - 2))
 
-    for (let y = y0; y < y1; y++) {
-      let z_x_prev = await this.requestPixel(x0 - 1, y)
-      let z = await this.requestPixel(x0, y)
+    for (let y = y0 + 1; y < y1 - 1; y++) {
+      const py = y - y0
+      let z_x_prev = heights[py][0]
+      let z = heights[py][1]
       for (let x = x0; x < x1; x++) {
-        let z_x_next = await this.requestPixel(x + 1, y)
-        const z_y_prev = await this.requestPixel(x, y - 1)
-        const z_y_next = await this.requestPixel(x, y + 1)
+        const px = x - x0
+        let z_x_next = heights[py][px + 1]
+        const z_y_prev = heights[py - 1][px]
+        const z_y_next = heights[py + 1][px]
 
         const dx = (z_x_next - z_x_prev) / (2 * xyscale * this.pixelScale[0])
         const dy = (z_y_next - z_y_prev) / (2 * xyscale * -this.pixelScale[1])
@@ -83,7 +132,7 @@ class DEM {
 
         const x_merc = x * this.pixelScale[0] + this.origin[0]
         const y_merc = y * -this.pixelScale[1] + this.origin[1]
-        grid[y - y0][x - x0] = {
+        grid[py - 1][px - 1] = {
           point: [xyscale * (x_merc - cx), xyscale * (y_merc - cy), z],
           normal: [dx / len, dy / len, -1.0 / len],
         }
@@ -160,6 +209,9 @@ class XYZDEM extends DEM {
   }
 
   async loadTile(tile_x, tile_y) {
+    if (this.requestedRegions.hasOwnProperty((tile_x, tile_y))) {
+      return this.requestedRegions[(tile_x, tile_y)]
+    }
     const heights = Array(256 * 256)
 
     const url = this.url
@@ -200,6 +252,15 @@ class XYZDEM extends DEM {
     return heights
   }
 
+  async preLoad(xMin, yMin, xMax, yMax) {
+    let promises = []
+    for (let y = Math.floor(yMin / 256); y <= Math.floor(yMax); y++) {
+      for (let x = Math.floor(xMin / 256); x <= Math.floor(xMax); x++) {
+        promises.push(this.loadTile(x, y))
+      }
+    }
+  }
+
   /*
    * Get pixel data for (px, py) from the (hypothetical) global mosaic at the given zoom level,
    * i.e. for (px, py) == (0, 0), returns elevation data at lat=90, lon=-180
@@ -209,11 +270,9 @@ class XYZDEM extends DEM {
     const tile_y = Math.floor(py / 256) // Tile y index
     const tile_key = [tile_x, tile_y]
     if (!this.requestedRegions[tile_key]) {
-      console.log(`cache miss: ${tile_key}`)
       // Only request each tile once
       this.requestedRegions[tile_key] = this.loadTile(tile_x, tile_y)
     } else {
-      console.log('cache hit')
     }
     const region = await this.requestedRegions[tile_key]
     const height = region[px - 256 * tile_x + (py - 256 * tile_y) * 256]
