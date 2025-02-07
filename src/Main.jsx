@@ -2,22 +2,30 @@ import { Box } from '@chakra-ui/react'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
+import { useTranslation } from 'react-i18next'
 
 import Navigation from './components/Template/Navigation'
 
-const Main = (props) => (
-  <HelmetProvider>
-    <Helmet titleTemplate='%s | OpenPV' defaultTitle='OpenPV' defer={false}>
-      {props.title && <title>{props.title}</title>}
-      <meta name='description' content={props.description} />
-      <meta name='Beschreibung' content={props.description} />
-    </Helmet>
-    <Layout>
-      <Navigation />
-      {props.children}
-    </Layout>
-  </HelmetProvider>
-)
+const Main = (props) => {
+  const { t } = useTranslation()
+  return (
+    <HelmetProvider>
+      <Helmet
+        titleTemplate='%s | OpenPV'
+        defaultTitle={t('title')}
+        defer={false}
+      >
+        {props.title && <title>{props.title}</title>}
+        <meta name='description' content={props.description} />
+        <meta name='Beschreibung' content={props.description} />
+      </Helmet>
+      <Layout>
+        <Navigation />
+        {props.children}
+      </Layout>
+    </HelmetProvider>
+  )
+}
 
 Main.propTypes = {
   children: PropTypes.oneOfType([
