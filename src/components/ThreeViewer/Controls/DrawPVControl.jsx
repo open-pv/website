@@ -2,12 +2,21 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { createPVSystem } from '../Meshes/PVSystems'
 
-const DrawPVControl = ({ middle, setPVPoints }) => {
+const DrawPVControl = ({
+  middle,
+  setPVPoints,
+  setPVSystems,
+  setSelectedPVSystem,
+  simulationMeshes,
+  setFrontendState,
+}) => {
   const { camera, gl, scene } = useThree()
   const raycaster = useRef(new THREE.Raycaster())
   const mouse = useRef(new THREE.Vector2())
   const controls = useRef()
+  let pvPointsRef = []
 
   useEffect(() => {
     // Initialize OrbitControls
@@ -41,6 +50,21 @@ const DrawPVControl = ({ middle, setPVPoints }) => {
     if (intersects.length > 0) {
       const intersection = intersects[0]
 
+      console.log('THis is the intersection', intersection)
+      if (intersection.object.type == 'Points') {
+        // User clicked on a previously drawn point. Now we need
+        // to check if this was the first point from the list
+        // and if three points already exist.
+        console.log('Klicked on a point')
+        createPVSystem({
+          setPVSystems,
+          setSelectedPVSystem,
+          pvPoints: pvPointsRef,
+          setPVPoints,
+          simulationMeshes,
+        })
+        setFrontendState('Results')
+      }
       const point = intersection.point
       if (!intersection.face) {
         // Catch the error where sometimes the intersection
@@ -53,7 +77,11 @@ const DrawPVControl = ({ middle, setPVPoints }) => {
         .clone()
         .transformDirection(intersection.object.matrixWorld)
 
-      setPVPoints((prevPoints) => [...prevPoints, { point, normal }])
+      setPVPoints((prevPoints) => {
+        const newPoints = [...prevPoints, { point, normal }]
+        pvPointsRef = newPoints // Keep ref updated
+        return newPoints
+      })
     }
   }
 
