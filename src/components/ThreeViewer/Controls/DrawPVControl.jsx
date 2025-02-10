@@ -49,28 +49,35 @@ const DrawPVControl = ({
 
     if (intersects.length > 0) {
       const intersection = intersects[0]
-
-      console.log('THis is the intersection', intersection)
       if (intersection.object.type == 'Points') {
         // User clicked on a previously drawn point. Now we need
         // to check if this was the first point from the list
-        // and if three points already exist.
-        console.log('Klicked on a point')
-        createPVSystem({
-          setPVSystems,
-          setSelectedPVSystem,
-          pvPoints: pvPointsRef,
-          setPVPoints,
-          simulationMeshes,
-        })
-        setFrontendState('Results')
+        // and if three points already exist. Then we can draw the
+        // PV System.
+
+        if (
+          arePointsEqual(
+            pvPointsRef[0].point,
+            intersection.object.geometry.attributes.position.array,
+          ) &&
+          pvPointsRef.length > 2
+        ) {
+          createPVSystem({
+            setPVSystems,
+            setSelectedPVSystem,
+            pvPoints: pvPointsRef,
+            setPVPoints,
+            simulationMeshes,
+          })
+          setFrontendState('Results')
+        }
       }
       const point = intersection.point
       if (!intersection.face) {
         // Catch the error where sometimes the intersection
         // is undefined. By this no dot is drawn, but also
         // no error is thrown
-        console.log('Intersaction.face was null.')
+        console.log('Intersection.face was null.')
         return undefined
       }
       const normal = intersection.face.normal
@@ -103,3 +110,18 @@ const DrawPVControl = ({
 }
 
 export default DrawPVControl
+
+/**
+ * Compares two points, where one is an object and one is a list.
+ * The function allows a 1% deviation in each direction.
+ * @param {} p1 First Point as object with x,y,z attribute
+ * @param {} p2 Second point as list with three elements
+ * @returns
+ */
+function arePointsEqual(p1, p2) {
+  return (
+    Math.abs(p1.x - p2[0]) <= 0.01 * Math.abs(p1.x) &&
+    Math.abs(p1.y - p2[1]) <= 0.01 * Math.abs(p1.y) &&
+    Math.abs(p1.z - p2[2]) <= 0.01 * Math.abs(p1.z)
+  )
+}
