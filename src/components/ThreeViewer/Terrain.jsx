@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import * as THREE from 'three'
 import { coordinatesXY15, xyzBounds } from '../../simulation/location'
-import { ElevationManager } from '../../simulation/elevation'
+import { SONNY_DEM } from '../../simulation/elevation'
 
 /** Load an OSM map tile and return it as a THREE Mesh
  */
@@ -37,7 +37,7 @@ const TerrainTile = (props) => {
         for (let tx = 0; tx <= divisions; tx++) {
           const x = x0 + (tx / divisions) * (x1 - x0)
           const y = y0 + (ty / divisions) * (y1 - y0)
-          vertices.push(ElevationManager.toPoint3D(x, y))
+          vertices.push(SONNY_DEM.toPoint3D(x, y))
           // UV mapping for the texture
           uvs.push(tx / divisions, 1.0 - ty / divisions)
           // Triangle indices
