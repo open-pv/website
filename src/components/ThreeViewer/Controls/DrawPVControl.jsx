@@ -55,6 +55,9 @@ const DrawPVControl = ({
         // and if three points already exist. Then we can draw the
         // PV System.
 
+        // Also important to understand this behaviour here: Check out
+        // https://github.com/open-pv/website/pull/430
+
         if (
           arePointsEqual(
             pvPointsRef[0].point,
@@ -113,7 +116,7 @@ export default DrawPVControl
 
 /**
  * Compares two points, where one is an object and one is a list.
- * The function allows a 1% deviation in each direction.
+ * The function allows a 1% deviation.
  * @param {} p1 First Point as object with x,y,z attribute
  * @param {} p2 Second point as list with three elements
  * @returns
