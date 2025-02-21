@@ -119,9 +119,5 @@ export default DrawPVControl
  * @returns
  */
 function arePointsEqual(p1, p2) {
-  return (
-    Math.abs(p1.x - p2[0]) <= 0.01 * Math.abs(p1.x) &&
-    Math.abs(p1.y - p2[1]) <= 0.01 * Math.abs(p1.y) &&
-    Math.abs(p1.z - p2[2]) <= 0.01 * Math.abs(p1.z)
-  )
+  return Math.hypot(p1.x - p2[0], p1.y - p2[1], p1.z - p2[2]) < 0.01
 }
