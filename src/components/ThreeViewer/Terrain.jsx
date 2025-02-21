@@ -76,8 +76,7 @@ const TerrainTile = (props) => {
       const map = await mapFuture
       map.colorSpace = THREE.SRGBColorSpace
       setMaterial(
-        new THREE.MeshLambertMaterial({
-          flatShading: false,
+        new THREE.MeshBasicMaterial({
           map: await mapFuture,
           side: THREE.FrontSide,
         }),
