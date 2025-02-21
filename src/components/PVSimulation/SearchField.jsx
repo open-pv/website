@@ -177,14 +177,12 @@ export default function SearchField({ callback }) {
           style={{ paddingLeft: '0', marginTop: '0' }}
           variant='plain'
           borderWidth={1}
-          borderColor='gray.200'
           mt={2}
           position='absolute'
           top='100%'
           left={0}
           right={0}
           zIndex={1}
-          bg='white'
           boxShadow='md'
         >
           {suggestions.map((suggestion, index) => (
@@ -198,6 +196,7 @@ export default function SearchField({ callback }) {
               backgroundColor={focusedIndex === index ? 'gray.100' : 'white'}
               onClick={() => handleSuggestionClick(suggestion)}
               onKeyDown={handleKeyDown}
+              color={'black'}
             >
               {suggestion}
             </List.Item>
