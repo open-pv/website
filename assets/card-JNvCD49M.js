@@ -1,1 +1,0 @@
-import{a1 as o}from"./index-CYXwk1mh.js";const{withProvider:e,withContext:t,useStyles:d,PropsProvider:s}=o({key:"card"}),a=e("div","root"),i=t("div","body"),c=t("div","header");t("div","footer");const n=t("h3","title"),C=t("p","description");export{a as C,i as a,n as b,C as c,c as d};
