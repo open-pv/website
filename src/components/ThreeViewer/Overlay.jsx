@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { DataListItem, DataListRoot } from '@/components/ui/data-list'
 import {
   DialogBody,
   DialogCloseTrigger,
@@ -10,6 +11,12 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Field } from '@/components/ui/field'
+import {
+  MenuContent,
+  MenuItem,
+  MenuRoot,
+  MenuTrigger,
+} from '@/components/ui/menu'
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
@@ -96,6 +103,7 @@ function Overlay({
       </DialogRoot>
     )
   }
+  const [isOpenControlHelp, setIsOpenControlHelp] = useState(false)
   /**
    * The component for the "How do I control this app" button as well as the dialog.
    */
@@ -103,7 +111,10 @@ function Overlay({
     const touchDeviceText = window.isTouchDevice ? 'touch.' : ''
     const { t } = useTranslation()
     return (
-      <DialogRoot>
+      <DialogRoot
+        open={isOpenControlHelp}
+        onOpenChange={(e) => setIsOpenControlHelp(e.open)}
+      >
         <DialogTrigger asChild>
           <Button variant='subtle'>{t('mapControlHelp.button')}</Button>
         </DialogTrigger>
@@ -126,6 +137,60 @@ function Overlay({
                 {t(`mapControlHelp.${touchDeviceText}doubleClick`)}
               </List.Item>
             </List.Root>
+          </DialogBody>
+          <DialogCloseTrigger />
+        </DialogContent>
+      </DialogRoot>
+    )
+  }
+  /**
+   * The component for the "How do I control this app" button as well as the dialog.
+   */
+  const [isOpenAdvertisment, setIsOpenAdvertisment] = useState(false)
+  const AdvertismentDialog = () => {
+    const data = [
+      {
+        label: t('adbox.balkonsolar'),
+        value: 'https://balkon.solar',
+        href: 'https://balkon.solar',
+      },
+      {
+        label: t('adbox.companies'),
+        value: 'https://www.sfv.de',
+        href: 'https://www.sfv.de/solaranlagenberatung/sachverstaendige-1',
+      },
+      {
+        label: t('adbox.bbe'),
+        value: 'https://www.buendnis-buergerenergie.de/',
+        href: 'https://www.buendnis-buergerenergie.de/karte',
+      },
+    ]
+
+    return (
+      <DialogRoot
+        open={isOpenAdvertisment}
+        onOpenChange={(e) => setIsOpenAdvertisment(e.open)}
+      >
+        <DialogTrigger asChild>
+          <Button variant='subtle'>{t('adbox.button')}</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('adbox.title')}</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <p>{t('adbox.introduction')}</p>
+            <br />
+            <DataListRoot>
+              {data.map((item) => (
+                <DataListItem
+                  key={item.label}
+                  label={item.label}
+                  value={item.value}
+                  href={item.href}
+                />
+              ))}
+            </DataListRoot>
           </DialogBody>
           <DialogCloseTrigger />
         </DialogContent>
@@ -181,10 +246,9 @@ function Overlay({
           setPVSystems={setPVSystems}
         />
       )}
-      <ControlHelperDialog />
+
       {frontendState == 'Results' && (
         <>
-          <OptionsDialog />
           <Button
             variant='subtle'
             onClick={() => {
@@ -219,9 +283,28 @@ function Overlay({
           )}
         </>
       )}
+      <MenuRoot>
+        <MenuTrigger>
+          <Button variant='subtle' size='sm'>
+            {t('button.more')}
+          </Button>
+        </MenuTrigger>
+        <MenuContent>
+          <MenuItem>
+            <AdvertismentDialog />
+          </MenuItem>
+          <MenuItem>
+            <OptionsDialog />
+          </MenuItem>
+          <MenuItem>
+            <ControlHelperDialog />
+          </MenuItem>
+        </MenuContent>
+      </MenuRoot>
     </OverlayWrapper>
   )
 }
+
 /**
  * Controls the dialog component that appears when a PV system is selected. This includes the
  * dialog component of the economic savings calculation.
@@ -463,6 +546,7 @@ const NotificationForSelectedPV = ({
     </DialogRoot>
   )
 }
+
 const NotificationForSelectedBuilding = ({
   selectedMesh,
   setSelectedMesh,
