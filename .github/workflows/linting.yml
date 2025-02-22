@@ -20,8 +20,8 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Prettier
-        run: npm install prettier
+      - name: Install dependencies
+        run: npm ci
 
       - name: Run linters
         uses: wearerequired/lint-action@v2

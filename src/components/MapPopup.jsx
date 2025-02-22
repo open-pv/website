@@ -28,8 +28,10 @@ export default function MapPopup({ lat, lon, display_name }) {
           closeOnClick={false}
           onClose={() => setVisible(false)}
         >
-          <Text margin='10px'>{display_name}</Text>
-          <Button variant='subtle' onClick={action}>
+          <Text color={'black'} margin='10px'>
+            {display_name}
+          </Text>
+          <Button margin='10px' variant='subtle' onClick={action}>
             {t('startSimulation')}
           </Button>
         </Popup>
