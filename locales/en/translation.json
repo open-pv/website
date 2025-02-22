@@ -1,5 +1,6 @@
 {
-  "mainDescription": "Determine the potential of your building for a solar installation by using openly available 3D data - directly in the browser.",
+  "title": "OpenPV - A free solar calculator",
+  "mainDescription": "Analyze the solar potential of your building – open source, using freely available 3D data, all directly in your browser. Privacy? Absolutely: no unnecessary data collection, no tracking.",
   "sidebar": {
     "header": "Goal of this website",
     "mainText": "The tool will then calculate the potential for a solar system on your roof and facade area.",
@@ -77,7 +78,8 @@
     "cancel": "Cancel",
     "deleteLastPoint": "Delete Last Point",
     "startSimulation": "Start simulation",
-    "Search": "Search"
+    "Search": "Search",
+    "more": "More..."
   },
   "noSearchResults": {
     "title": "No Results",
@@ -92,7 +94,7 @@
     "privacyPolicy": "Privacy Policy"
   },
   "mapControlHelp": {
-    "button": "How to control the Map?",
+    "button": "Help",
     "title": "User Manual",
     "leftMouse": "Left Mouse Button: Move on the map",
     "rightMouse": "Right Mouse Button: Rotate the map",
@@ -121,5 +123,14 @@
       "savings": "Annual savings: "
     },
     "calculate": "Calculate"
+  },
+  "navigation": { "products": "Our Products" },
+  "adbox": {
+    "button": "How do I install a PV system?",
+    "title": "What can I do now?",
+    "introduction": "It's great that you're interested in a solar system. With your own system, you make an important contribution to the energy transition. Here, we collect further links to help you plan your system.",
+    "balkonsolar": "Information on balcony solar systems",
+    "companies": "Installers near you",
+    "bbe": "No own roof? Join a community energy cooperative!"
   }
 }

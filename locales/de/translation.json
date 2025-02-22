@@ -1,5 +1,6 @@
 {
-  "mainDescription": "Ermitteln Sie das Potential ihres Gebäudes für eine Solaranlage - mit offen verfügbaren 3D-Daten direkt im Browser.",
+  "title": "OpenPV - Ihr kostenloser Solarrechner",
+  "mainDescription": "Analysieren Sie das Solarpotenzial Ihres Gebäudes - Open Source, mit frei verfügbaren 3D-Daten und alles direkt im Browser. Datenschutz? Selbstverständlich: keine unnötiges Datensammeln, kein Tracking.",
   "sidebar": {
     "header": "Ziel des Tools",
     "mainText": "Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche.",
@@ -16,7 +17,7 @@
     "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Lange Point 20, Freising"
   },
   "about": {
-    "title": "Über das Projekt",
+    "title": "Über openpv.de",
     "description": "Weitere Informationen zu openpv.de: Die Website für die Online-Berechnung von Verschattung und Wirtschaftlichkeit deiner Solaranlage.",
     "introduction": "Solaranlagen leisten einen bedeutenden Beitrag zur Energiewende. Deutschland strebt an, die installierte PV-Leistung bis 2030 zu verdreifachen. Hierbei spielen Dach- und Balkonanlagen eine essenzielle Rolle, da sie eine dezentrale Energieversorgung ermöglichen, ohne zusätzlichen Flächenverbrauch zu verursachen. Insbesondere durch Balkonkraftwerke ist es auch Mieter*innen ohne eigenes Wohneigentum möglich, einen erheblichen Teil des genutzten Stroms selbst zu erzeugen. Doch vielen möglichen Nutzer*innen fehlt das Hintergrundwissen, um die Eignung ihres Gebäudes für Photovoltaik einschätzen zu können. Hier wollen wir mit OpenPV helfen, um eine einfache Analyse des PV-Potentials am eigenen Gebäude vornehmen zu können.  Das Ziel von OpenPV ist es, deutschlandweit mit wenigen Klicks das Solarpotential von Gebäuden basierend auf einer Adresse zu simulieren und darzustellen.",
     "generalDescription": {
@@ -43,7 +44,7 @@
       "p": "Wir danken unseren Sponsoren! Falls Sie ein neues Feature wünschen oder uns unterstützen möchten, kontaktieren Sie uns: info[at]openpv.de"
     },
     "steps": {
-      "introduction": "Anleitung für die Nutung von openpv.de:",
+      "introduction": "Anleitung für die Nutzung von openpv.de:",
       "1": "Auf der Startseite von OpenPV wird im ersten Schritt ein Gebäude für die Simulation ausgewählt. Dies kann entweder über die Eingabe und Suche einer Adresse erfolgen, oder durch das Zoomen und Auswählen auf der Landkarte. Durch einen Linksklick auf das Gebäude wird ein Menü angezeigt, durch welches die Simulation gestartet werden kann.",
       "2": "Ist die Simulation gestartet, werden für das ausgewählte Gebäude alle relevanten Daten in den Browser geladen. Dies sind die 3D-Gebäudedaten des gewählten Gebäudes und der Gebäude aus der Nachbarschaft, das Geländemodell, sowie Daten zur Vegetation (falls vorhanden). Für die Betragsberechnung werden anschließend zwei Verschattungssimulationen durchgeführt, eine mit direkter und eine mit diffuser Einstrahlung. Für die direkte Einstrahlung wird über 100 zufällig gewählte Sonnenstände im Jahr gemittelt. Diese Zahl kann in den Optionen angepasst werden. Anhand der Koordinaten des Gebäudes werden die Klimadaten des Standorts vom deutschen Wetterdienst (DWD) verwendet, um die Einflüsse des lokalen Klimas zu berücksichtigen. Für die Verschattung werden das gewählte Gebäude sowie die Gebäude der direkten Nachbarschaft verwendet. Die Verschattung durch Hügel und Berge wird mit Hilfe eines Geländemodells mit einer Auflösung von 30m berücksichtigt. Die Verschattung durch Bäume kann nur in Bundesländern einbezogen werden, welche Daten zur Vegetation (Laserpunktwolken) offen zur Verfügung stellen. Das ist zum Beispiel in Bayern der Fall. Wenn Vegetation auf der Website angezeigt wird, so wird es auch für die Verschattungssimulation berücksichtigt. Wenn die Simulation beendet ist, wird das Ergebnis im Browser dargestellt. Dafür wird das gewählte Gebäude entsprechend des berechneten solaren Potentials eingefärbt. Zur besseren Orientierung werden auch das Gelände, eine Karte, die Gebäude der Nachbarschaft sowie die vorhandene Vegetation angezeigt.",
       "3": "Im nächsten Schritt kann über den Button “Neue PV-Anlage einzeichnen” eine Solaranlage auf dem Dach oder an der Fassade eingezeichnet werden. Durch das Einzeichnen der Eckpunkte kann so eine oder mehrere Solaranlagen mit beliebiger Form angelegt werden. Basierend auf der vorangegangenen Simulation wird anschließend ein geschätzter jährlicher Stromertrag für die eingezeichnete Anlage angegeben.",
@@ -60,12 +61,33 @@
     "wrongAdress": "Für den angegebenen Ort konnten keine Gebäude gefunden werden. Dies kann mehrere Gründe haben: 1. Am ausgewählten Ort steht kein Gebäude. 2. Am ausgewählten Ort steht ein neues Gebäude, welches noch nicht in unseren Daten vorhanden ist. 3. Der ausgewählte Ort liegt außerhalb von Deutschland oder in den Bundesländern Saarland / Mecklenburg-Vorpommern. Für diese Bundesländer haben wir leider keine Gebäudedaten."
   },
   "WelcomeMessage": {
-    "title": "Willkommen bei OpenPV",
-    "firstPage": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten und mit Hilfe von offenen 3D-Gebäudedaten bestimmen. Dafür geben Sie ihre Adresse im Suchfeld ein und klicken Sie auf 'Simulation starten'.",
-    "secondPage": "Auf der Karte können Sie das Ergebnis der Verschattungssimulation betrachten. Mit Doppelklick können Sie weitere Gebäude für die Simulation auswählen.",
-    "thirdPage": "Über 'Neue PV-Anlage einzeichnen' können Sie eine Solaranlage erstellen und den Jahresbetrag errechnen.",
-    "fourthPage": "Anschließend können Sie mit dem Button 'Wirtschaftlichkeit der Anlage berechnen' die jährlichen Einnahmen der Anlage abschätzen.",
-    "fifthPage": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Tracking-Cookies!"
+    "title": "OpenPV - Ihr Solarrechner für ganz Deutschland.",
+    "introduction": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? OpenPV ist ein kostenloses Tool für die Verschattungsberechnung und Ertragsprognose von Solaranalgen. Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten und mit Hilfe von frei verfügbaren 3D-Gebäudedaten bestimmen.",
+    "0": {
+      "title": "Schritt 1: Gebäude auswählen",
+      "text": "Auf der Startseite von OpenPV wird im ersten Schritt ein Gebäude für die Simulation ausgewählt. Dies kann entweder über die Eingabe und Suche einer Adresse erfolgen, oder durch das Zoomen und Auswählen auf der Landkarte. Durch einen Linksklick auf das Gebäude wird ein Menü angezeigt. Mit einem Klick auf 'Simulation starten' wird die Berechnung gestartet.",
+      "alt": "Ein Screenshot der Suchmaske. Eine Adresse ist eingegeben. Auf der darunterliegenden Karte ist auf diese Adresse gezoomt. Ein Feld mit dem Button 'Simulation starten' wird angezeigt."
+    },
+    "1": {
+      "title": "Schritt 2: Ergebnisse anzeigen",
+      "text": "Anschließend können Sie die Verschattungssimulation für das gewählte Gebäude betrachten. Helle Farben stellen einen guten Solarertrag dar, dunkle Flächen sind häufig verschattet. Interessieren sie sich für die genaueren Details der Verschattungssimulation? Dann gelangen sie durch einen Klick auf den Reiter 'Über openpv.de' zu einer detailierten Beschreibung.",
+      "alt": "Ein Screenshot eines simulierten Gebäudes. Helle Farben stehen für einen guten solaren Ertrag, dunkle Farben für einen schlechteren Ertrag."
+    },
+    "2": {
+      "title": "Schritt 3: Solaranlage einzeichnen",
+      "text": "Über 'Neue PV-Anlage einzeichnen' können Sie eine Solaranlage erstellen. Legen Sie dafür die Eckpunkte auf eine Fläche des Gebäudes und schließen sie die Anlage durch einen Klick auf 'Solaranlage erstellen' ab. Sie können nun die eingezeichnete Solaranlage sowie den geschätzten Jahresertrag sehen.",
+      "alt": ""
+    },
+    "3": {
+      "title": "Schritt 4: Wirtschaftlichkeit der Solaranlage bestimmen",
+      "text": "Anschließend können Sie über den Button 'Wirtschaftlichkeit der Anlage berechnen' die jährlich eingesparten Kosten durch den Eigenverbrauch des Stroms bestimmen. Dafür müssen Sie einige Daten angeben. Diese Daten bleiben bei Ihnen im Browser und werden zu keinem Zeitpunkt an unsere Server übermittelt.",
+      "alt": "Ein Screenshot der Wirtschaftlichkeitsberechnung. Nach Angabe von jährlichem Stromverbrauch, Kapazität einer Batterie, und dem Strompreis pro kWh wird die jährliche Ersparnis berechnet."
+    },
+    "4": {
+      "title": "Extra: Wir sind Open Source und datensparsam!",
+      "text": "Das Beste an OpenPV: Wir sind Open-Source, kostenlos, speichern keine Daten und verwenden keine Tracking-Cookies!",
+      "alt": ""
+    }
   },
   "button": {
     "showMap": "Karte anzeigen",
@@ -76,7 +98,8 @@
     "drawPVSystem": "Neue PV-Anlage einzeichnen",
     "drawPVSystemHover": "Ecken der PV-Anlage mit Klicks in der Karte einzeichnen und anschließend die Anlage erstellen.",
     "cancel": "Abbrechen",
-    "deleteLastPoint": "Letzen Punkt löschen"
+    "deleteLastPoint": "Letzen Punkt löschen",
+    "more": "Mehr..."
   },
   "noSearchResults": {
     "title": "Keine Ergebnisse",
@@ -92,7 +115,7 @@
     "privacyPolicy": "Datenschutz"
   },
   "mapControlHelp": {
-    "button": "Wie bediene ich die Karte?",
+    "button": "Hilfe",
     "title": "Bedienungsanleitung",
     "leftMouse": "Linke Maustaste: Bewegung auf der Karte",
     "rightMouse": "Rechte Maustaste: Rotation der Karte",
@@ -121,5 +144,14 @@
       "savings": "Jährliche Einsparungen: "
     },
     "calculate": "Berechnen"
+  },
+  "navigation": { "products": "Produkte und Leistungen" },
+  "adbox": {
+    "button": "Wie installiere ich eine Solaranlage?",
+    "title": "Was kann ich jetzt machen?",
+    "introduction": "Es ist gut, dass Sie sich für eine Solaranlage interessieren. Mit einer eigenen Anlage leisten Sie einen wichtgen Beitrag zur Energiewende. Hier sammeln wir weiterführende Links, die Ihnen bei der Planung ihrer Anlage helfen.",
+    "balkonsolar": "Infos zu Balkonsolaranlagen",
+    "companies": "Installateure in Ihrer Nähe",
+    "bbe": "Kein eigenes Dach? Tritt doch einer Bürgerenergiegenossenschaft bei!"
   }
 }
