@@ -73,24 +73,13 @@ function CustomMapControl(props) {
     handleInteraction(event)
   }
 
-  const handleDoubleTap = (event) => {
-    const currentTime = new Date().getTime()
-    const tapLength = currentTime - lastTap
-    if (tapLength < 300 && tapLength > 0) {
-      handleInteraction(event)
-    }
-    lastTap = currentTime
-  }
-
   useEffect(() => {
     const canvas = gl.domElement
 
     canvas.addEventListener('dblclick', handleDoubleClick)
-    canvas.addEventListener('touchstart', handleDoubleTap)
 
     return () => {
       canvas.removeEventListener('dblclick', handleDoubleClick)
-      canvas.removeEventListener('touchstart', handleDoubleTap)
     }
   }, [camera, scene])
 
