@@ -45,7 +45,7 @@ function WelcomeMessage() {
     <DialogRoot size='xl' open={open} onOpenChange={(e) => setOpen(e.open)}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t('WelcomeMessage.title')}</DialogTitle>
+          <DialogTitle as='h1'>{t('WelcomeMessage.title')}</DialogTitle>
         </DialogHeader>
 
         <DialogBody>
