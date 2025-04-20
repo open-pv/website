@@ -50,6 +50,7 @@ export async function mainSimulation(location) {
     scene.addColorMap(
       colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
     )
+    scene.addSolarIrradianceFromURL("https://api.openpv.de/skymaps/876037_2018_yearly.json")
 
     if (getFederalState() == 'BY') {
       const [cx, cy] = coordinatesWebMercator
@@ -98,14 +99,9 @@ export async function mainSimulation(location) {
     }
 
     const simulationMesh = await scene.calculate({
-      numberSimulations: numSimulations,
-      pvCellEfficiency: 0.138,
-      maxYieldPerSquareMeter: 1400 * 0.138,
-      diffuseIrradianceURL: 'https://www.openpv.de/data/irradiance/',
-      urlDirectIrrandianceTIF:
-        'https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif',
-      urlDiffuseIrrandianceTIF:
-        'https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif',
+      
+      solarToElectricityConversionEfficiency: 0.15*0.065*8760/1000,
+      
       progressCallback: loadingBarWrapperFunction,
     })
 
