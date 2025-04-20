@@ -50,9 +50,8 @@ export async function mainSimulation(location) {
     scene.addColorMap(
       colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
     )
-    const solarIrradianceResponse = await fetch("https://api.openpv.de/skymaps/876037_2018_yearly.json");
-    const solarIrradiance = await solarIrradianceResponse.json();
-    scene.addSolarIrradiance(solarIrradiance);
+
+    await scene.addSolarIrradianceFromURL("https://api.openpv.de/skymaps/876037_2018_yearly.json");
 
 
     if (getFederalState() == 'BY') {
@@ -101,8 +100,10 @@ export async function mainSimulation(location) {
     }
     
     const simulationMesh = await scene.calculate({
+      // .21 is the efficiency of a solar panel
+      // .85 is the coverage factor of panels on a roof
       
-      solarToElectricityConversionEfficiency: 0.21*0.85*solarIrradiance.metadata.daylight_timesteps_processed*0.065/1000,
+      solarToElectricityConversionEfficiency: 0.21*0.85,
       
       progressCallback: loadingBarWrapperFunction,
     })
