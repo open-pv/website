@@ -51,9 +51,24 @@ export async function mainSimulation(location) {
       colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
     )
 
-    await scene.addSolarIrradianceFromURL(
-      'https://api.openpv.de/skymaps/irradiance_48.8_11.2_2018_yearly.json',
-    )
+    // Round to nearest multiple function
+    function roundToNearest(value, multiple) {
+      return Math.round(value / multiple) * multiple
+    }
+
+    // Get rounded lat and lon values
+    const roundedLat = roundToNearest(location.lat, 0.2)
+    const roundedLon = roundToNearest(location.lon, 0.2)
+
+    // Format to one decimal place to avoid floating-point inaccuracies
+    const formattedLat = roundedLat.toFixed(1)
+    const formattedLon = roundedLon.toFixed(1)
+
+    // Create the dynamic URL with the properly formatted values
+    const irradianceUrl = `https://api.openpv.de/skymaps/irradiance_${formattedLat}_${formattedLon}_2018_yearly.json`
+
+    // Add solar irradiance using the dynamic URL
+    await scene.addSolarIrradianceFromURL(irradianceUrl)
 
     if (getFederalState() == 'BY') {
       const [cx, cy] = coordinatesWebMercator
@@ -145,6 +160,7 @@ export async function simulationForNewBuilding(props) {
     parseFloat(props.geoLocation.lat),
     parseFloat(props.geoLocation.lon),
   )
+
   shadingScene.addColorMap(
     colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
   )
