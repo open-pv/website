@@ -103,7 +103,7 @@ export async function mainSimulation(location) {
       // .21 is the efficiency of a solar panel
       // .85 is the coverage factor of panels on a roof
       
-      solarToElectricityConversionEfficiency: 0.21*0.85,
+      solarToElectricityConversionEfficiency: 0.21*0.78,
       
       progressCallback: loadingBarWrapperFunction,
     })
