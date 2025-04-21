@@ -51,8 +51,9 @@ export async function mainSimulation(location) {
       colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
     )
 
-    await scene.addSolarIrradianceFromURL("https://api.openpv.de/skymaps/876037_2018_yearly.json");
-
+    await scene.addSolarIrradianceFromURL(
+      'https://api.openpv.de/skymaps/irradiance_48.8_11.2_2018_yearly.json',
+    )
 
     if (getFederalState() == 'BY') {
       const [cx, cy] = coordinatesWebMercator
@@ -98,13 +99,13 @@ export async function mainSimulation(location) {
     function loadingBarWrapperFunction(progress, total) {
       return window.setSimulationProgress((progress * 100) / total)
     }
-    
+
     const simulationMesh = await scene.calculate({
       // .21 is the efficiency of a solar panel
-      // .85 is the coverage factor of panels on a roof
-      
-      solarToElectricityConversionEfficiency: 0.21*0.78,
-      
+      // .78 is the coverage factor of panels on a roof
+
+      solarToElectricityConversionEfficiency: 0.21 * 0.78,
+
       progressCallback: loadingBarWrapperFunction,
     })
 
@@ -156,14 +157,14 @@ export async function simulationForNewBuilding(props) {
   let numSimulations = window.numSimulations || 80
 
   let simulationMesh = await shadingScene.calculate({
-    numberSimulations: numSimulations,
-    pvCellEfficiency: 0.138,
-    maxYieldPerSquareMeter: 1400 * 0.138,
-    diffuseIrradianceURL: 'https://www.openpv.de/data/irradiance/',
-    urlDirectIrrandianceTIF:
-      'https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif',
-    urlDiffuseIrrandianceTIF:
-      'https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif',
+    //numberSimulations: numSimulations,
+    //pvCellEfficiency: 0.138,
+    //maxYieldPerSquareMeter: 1400 * 0.138,
+    //diffuseIrradianceURL: 'https://www.openpv.de/data/irradiance/',
+    //urlDirectIrrandianceTIF:
+    //  'https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif',
+    //urlDiffuseIrrandianceTIF:
+    //  'https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif',
     progressCallback: (progress, total) =>
       console.log(`Simulation Progress: ${progress} of ${total}`),
   })
