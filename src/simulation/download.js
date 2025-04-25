@@ -126,4 +126,17 @@ async function downloadFile(download_spec) {
   }
 }
 
-// Keep other functions in this file as they are
+export const createSkydomeURL = (lat, lon) => {
+  function roundToNearest(value, multiple) {
+    return Math.round(value / multiple) * multiple
+  }
+  const roundedLat = roundToNearest(lat, 0.2)
+  const roundedLon = roundToNearest(lon, 0.2)
+
+  // Format to one decimal place to avoid floating-point inaccuracies
+  const formattedLat = roundedLat.toFixed(1)
+  const formattedLon = roundedLon.toFixed(1)
+
+  // Create the dynamic URL with the properly formatted values
+  return `https://api.openpv.de/skymaps/irradiance_${formattedLat}_${formattedLon}_2018_yearly.json`
+}

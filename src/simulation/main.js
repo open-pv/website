@@ -1,11 +1,15 @@
 import { ShadingScene, colormaps } from '@openpv/simshady'
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
-import { downloadBuildings, getFederalState } from './download'
+import {
+  createSkydomeURL,
+  downloadBuildings,
+  getFederalState,
+} from './download'
+import { VEGETATION_DEM } from './elevation'
 import { coordinatesWebMercator } from './location'
 import { processGeometries } from './preprocessing'
 import { processVegetationData } from './processVegetationTiffs'
-import { VEGETATION_DEM } from './elevation'
 
 const c0 = [0, 0, 0.2]
 const c1 = [1, 0.2, 0.1]
@@ -35,10 +39,7 @@ export async function mainSimulation(location) {
       return { simulationMesh: undefined }
     }
 
-    const scene = new ShadingScene(
-      parseFloat(location.lat),
-      parseFloat(location.lon),
-    )
+    const scene = new ShadingScene()
     geometries.simulation.forEach((geom) => {
       scene.addSimulationGeometry(geom)
       scene.addShadingGeometry(geom)
@@ -51,23 +52,7 @@ export async function mainSimulation(location) {
       colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
     )
 
-    // Round to nearest multiple function
-    function roundToNearest(value, multiple) {
-      return Math.round(value / multiple) * multiple
-    }
-
-    // Get rounded lat and lon values
-    const roundedLat = roundToNearest(location.lat, 0.2)
-    const roundedLon = roundToNearest(location.lon, 0.2)
-
-    // Format to one decimal place to avoid floating-point inaccuracies
-    const formattedLat = roundedLat.toFixed(1)
-    const formattedLon = roundedLon.toFixed(1)
-
-    // Create the dynamic URL with the properly formatted values
-    const irradianceUrl = `https://api.openpv.de/skymaps/irradiance_${formattedLat}_${formattedLon}_2018_yearly.json`
-
-    // Add solar irradiance using the dynamic URL
+    const irradianceUrl = createSkydomeURL(location.lat, location.lon)
     await scene.addSolarIrradianceFromURL(irradianceUrl)
 
     if (getFederalState() == 'BY') {
@@ -124,6 +109,8 @@ export async function mainSimulation(location) {
       progressCallback: loadingBarWrapperFunction,
     })
 
+    console.log('First SImulation mesh', simulationMesh)
+
     let middle = new THREE.Vector3()
     simulationMesh.geometry.computeBoundingBox()
     simulationMesh.geometry.boundingBox.getCenter(middle)
@@ -156,34 +143,30 @@ export async function simulationForNewBuilding(props) {
     simulationCenter,
     radius,
   )
-  const shadingScene = new ShadingScene(
-    parseFloat(props.geoLocation.lat),
-    parseFloat(props.geoLocation.lon),
-  )
+  const shadingScene = new ShadingScene()
 
   shadingScene.addColorMap(
     colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
   )
+
+  const irradianceUrl = createSkydomeURL(
+    parseFloat(props.geoLocation.lat),
+    parseFloat(props.geoLocation.lon),
+  )
+  await shadingScene.addSolarIrradianceFromURL(irradianceUrl)
 
   shadingScene.addSimulationGeometry(newSimulationGeometries)
   geometries.surrounding.forEach((geom) => {
     shadingScene.addShadingGeometry(geom)
   })
 
-  let numSimulations = window.numSimulations || 80
-
   let simulationMesh = await shadingScene.calculate({
-    //numberSimulations: numSimulations,
-    //pvCellEfficiency: 0.138,
-    //maxYieldPerSquareMeter: 1400 * 0.138,
-    //diffuseIrradianceURL: 'https://www.openpv.de/data/irradiance/',
-    //urlDirectIrrandianceTIF:
-    //  'https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif',
-    //urlDiffuseIrrandianceTIF:
-    //  'https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif',
+    solarToElectricityConversionEfficiency: 0.21 * 0.78,
     progressCallback: (progress, total) =>
       console.log(`Simulation Progress: ${progress} of ${total}`),
   })
+
+  console.log('2nd SImulation mesh', simulationMesh)
   const material = new THREE.MeshLambertMaterial({
     vertexColors: true,
     side: THREE.DoubleSide,
