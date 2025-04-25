@@ -1,1 +1,0 @@
-import{a1 as o}from"./index-CWWqsdrG.js";const{withProvider:e,withContext:t}=o({key:"card"}),a=e("div","root"),d=t("div","body"),i=t("div","header");t("div","footer");const s=t("h3","title"),c=t("p","description");export{a as C,d as a,s as b,c,i as d};
