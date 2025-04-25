@@ -11,16 +11,18 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Field } from '@/components/ui/field'
-import {
-  MenuContent,
-  MenuItem,
-  MenuRoot,
-  MenuTrigger,
-} from '@/components/ui/menu'
+
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
-import { Box, Collapsible, List, SimpleGrid, Text } from '@chakra-ui/react'
+import {
+  Box,
+  Collapsible,
+  List,
+  Menu,
+  SimpleGrid,
+  Text,
+} from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { simulationForNewBuilding } from '../../simulation/main'
@@ -54,14 +56,14 @@ function Overlay({
     })
     setFrontendState('Results')
   }
-  const [open, setOpen] = useState(false)
+  const [isOpenOptionsDialog, setIsOpenOptionsDialog] = useState(false)
   const OptionsDialog = () => {
     const [sliderValue, setSliderValue] = useState([100])
     return (
-      <DialogRoot open={open} onOpenChange={(e) => setOpen(e.open)}>
-        <DialogTrigger asChild>
-          <Button variant='subtle'>{t('button.options')}</Button>
-        </DialogTrigger>
+      <DialogRoot
+        open={isOpenOptionsDialog}
+        onOpenChange={(e) => setIsOpenOptionsDialog(e.open)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('sidebar.header')}</DialogTitle>
@@ -115,9 +117,6 @@ function Overlay({
         open={isOpenControlHelp}
         onOpenChange={(e) => setIsOpenControlHelp(e.open)}
       >
-        <DialogTrigger asChild>
-          <Button variant='subtle'>{t('mapControlHelp.button')}</Button>
-        </DialogTrigger>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t(`mapControlHelp.title`)}</DialogTitle>
@@ -171,9 +170,6 @@ function Overlay({
         open={isOpenAdvertisment}
         onOpenChange={(e) => setIsOpenAdvertisment(e.open)}
       >
-        <DialogTrigger asChild>
-          <Button variant='subtle'>{t('adbox.button')}</Button>
-        </DialogTrigger>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('adbox.title')}</DialogTitle>
@@ -283,24 +279,33 @@ function Overlay({
           )}
         </>
       )}
-      <MenuRoot>
-        <MenuTrigger>
+      <Menu.Root>
+        <Menu.Trigger>
           <Button variant='subtle' size='sm'>
             {t('button.more')}
           </Button>
-        </MenuTrigger>
-        <MenuContent>
-          <MenuItem>
-            <AdvertismentDialog />
-          </MenuItem>
-          <MenuItem>
-            <OptionsDialog />
-          </MenuItem>
-          <MenuItem>
-            <ControlHelperDialog />
-          </MenuItem>
-        </MenuContent>
-      </MenuRoot>
+        </Menu.Trigger>
+        <Menu.Content>
+          <Menu.Item
+            value='advertisment'
+            onClick={() => setIsOpenAdvertisment(true)}
+          >
+            {t('adbox.button')}
+          </Menu.Item>
+          <Menu.Item
+            value='options'
+            onClick={() => setIsOpenOptionsDialog(true)}
+          >
+            {t('button.options')}
+          </Menu.Item>
+          <Menu.Item value='help' onClick={() => setIsOpenControlHelp(true)}>
+            {t('mapControlHelp.button')}
+          </Menu.Item>
+        </Menu.Content>
+      </Menu.Root>
+      <AdvertismentDialog />
+      <OptionsDialog />
+      <ControlHelperDialog />
     </OverlayWrapper>
   )
 }
