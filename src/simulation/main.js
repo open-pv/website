@@ -1,11 +1,15 @@
 import { ShadingScene, colormaps } from '@openpv/simshady'
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
-import { downloadBuildings, getFederalState } from './download'
+import {
+  createSkydomeURL,
+  downloadBuildings,
+  getFederalState,
+} from './download'
+import { VEGETATION_DEM } from './elevation'
 import { coordinatesWebMercator } from './location'
 import { processGeometries } from './preprocessing'
 import { processVegetationData } from './processVegetationTiffs'
-import { VEGETATION_DEM } from './elevation'
 
 const c0 = [0, 0, 0.2]
 const c1 = [1, 0.2, 0.1]
@@ -35,10 +39,7 @@ export async function mainSimulation(location) {
       return { simulationMesh: undefined }
     }
 
-    const scene = new ShadingScene(
-      parseFloat(location.lat),
-      parseFloat(location.lon),
-    )
+    const scene = new ShadingScene()
     geometries.simulation.forEach((geom) => {
       scene.addSimulationGeometry(geom)
       scene.addShadingGeometry(geom)
@@ -51,9 +52,11 @@ export async function mainSimulation(location) {
       colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
     )
 
+    const irradianceUrl = createSkydomeURL(location.lat, location.lon)
+    await scene.addSolarIrradianceFromURL(irradianceUrl)
+
     if (getFederalState() == 'BY') {
       const [cx, cy] = coordinatesWebMercator
-      console.log('coordinatesWebMercator: ' + coordinatesWebMercator)
       const bufferDistance = 200 // 1km buffer, adjust as needed
       const bbox = [
         cx - bufferDistance,
@@ -62,7 +65,6 @@ export async function mainSimulation(location) {
         cy + bufferDistance,
       ]
 
-      console.log('Requesting vegetation for', bbox)
       const vegetationHeightmap = await VEGETATION_DEM.getGridPoints(...bbox)
 
       console.log('Processing vegetation geometries...')
@@ -92,20 +94,16 @@ export async function mainSimulation(location) {
       console.log('Vegetation processing completed')
     }
 
-    let numSimulations = window.numSimulations || 80
     function loadingBarWrapperFunction(progress, total) {
       return window.setSimulationProgress((progress * 100) / total)
     }
 
     const simulationMesh = await scene.calculate({
-      numberSimulations: numSimulations,
-      pvCellEfficiency: 0.138,
-      maxYieldPerSquareMeter: 1400 * 0.138,
-      diffuseIrradianceURL: 'https://www.openpv.de/data/irradiance/',
-      urlDirectIrrandianceTIF:
-        'https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif',
-      urlDiffuseIrrandianceTIF:
-        'https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif',
+      // .21 is the efficiency of a solar panel
+      // .78 is the coverage factor of panels on a roof
+
+      solarToElectricityConversionEfficiency: 0.21 * 0.78,
+
       progressCallback: loadingBarWrapperFunction,
     })
 
@@ -129,7 +127,6 @@ export async function simulationForNewBuilding(props) {
   newSimulationGeometries.computeBoundingSphere()
   let simulationCenter = new THREE.Vector3()
   newSimulationGeometries.boundingBox.getCenter(simulationCenter)
-  console.log(props.geometries)
   const radius = newSimulationGeometries.boundingSphere.radius + 80
   const allBuildingGeometries = [
     ...props.geometries.surrounding,
@@ -141,33 +138,29 @@ export async function simulationForNewBuilding(props) {
     simulationCenter,
     radius,
   )
-  const shadingScene = new ShadingScene(
-    parseFloat(props.geoLocation.lat),
-    parseFloat(props.geoLocation.lon),
-  )
+  const shadingScene = new ShadingScene()
+
   shadingScene.addColorMap(
     colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
   )
+
+  const irradianceUrl = createSkydomeURL(
+    parseFloat(props.geoLocation.lat),
+    parseFloat(props.geoLocation.lon),
+  )
+  await shadingScene.addSolarIrradianceFromURL(irradianceUrl)
 
   shadingScene.addSimulationGeometry(newSimulationGeometries)
   geometries.surrounding.forEach((geom) => {
     shadingScene.addShadingGeometry(geom)
   })
 
-  let numSimulations = window.numSimulations || 80
-
   let simulationMesh = await shadingScene.calculate({
-    numberSimulations: numSimulations,
-    pvCellEfficiency: 0.138,
-    maxYieldPerSquareMeter: 1400 * 0.138,
-    diffuseIrradianceURL: 'https://www.openpv.de/data/irradiance/',
-    urlDirectIrrandianceTIF:
-      'https://www.openpv.de/data/irradiance/geotiff/average_direct_radiation.tif',
-    urlDiffuseIrrandianceTIF:
-      'https://www.openpv.de/data/irradiance/geotiff/average_diffuse_radiation.tif',
+    solarToElectricityConversionEfficiency: 0.21 * 0.78,
     progressCallback: (progress, total) =>
       console.log(`Simulation Progress: ${progress} of ${total}`),
   })
+
   const material = new THREE.MeshLambertMaterial({
     vertexColors: true,
     side: THREE.DoubleSide,
