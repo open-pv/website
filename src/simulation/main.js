@@ -57,7 +57,6 @@ export async function mainSimulation(location) {
 
     if (getFederalState() == 'BY') {
       const [cx, cy] = coordinatesWebMercator
-      console.log('coordinatesWebMercator: ' + coordinatesWebMercator)
       const bufferDistance = 200 // 1km buffer, adjust as needed
       const bbox = [
         cx - bufferDistance,
@@ -66,7 +65,6 @@ export async function mainSimulation(location) {
         cy + bufferDistance,
       ]
 
-      console.log('Requesting vegetation for', bbox)
       const vegetationHeightmap = await VEGETATION_DEM.getGridPoints(...bbox)
 
       console.log('Processing vegetation geometries...')
@@ -109,8 +107,6 @@ export async function mainSimulation(location) {
       progressCallback: loadingBarWrapperFunction,
     })
 
-    console.log('First SImulation mesh', simulationMesh)
-
     let middle = new THREE.Vector3()
     simulationMesh.geometry.computeBoundingBox()
     simulationMesh.geometry.boundingBox.getCenter(middle)
@@ -131,7 +127,6 @@ export async function simulationForNewBuilding(props) {
   newSimulationGeometries.computeBoundingSphere()
   let simulationCenter = new THREE.Vector3()
   newSimulationGeometries.boundingBox.getCenter(simulationCenter)
-  console.log(props.geometries)
   const radius = newSimulationGeometries.boundingSphere.radius + 80
   const allBuildingGeometries = [
     ...props.geometries.surrounding,
@@ -166,7 +161,6 @@ export async function simulationForNewBuilding(props) {
       console.log(`Simulation Progress: ${progress} of ${total}`),
   })
 
-  console.log('2nd SImulation mesh', simulationMesh)
   const material = new THREE.MeshLambertMaterial({
     vertexColors: true,
     side: THREE.DoubleSide,
