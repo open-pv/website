@@ -107,6 +107,10 @@
       "doubleClick": " "
     }
   },
+  "colorLegend": {
+    "button": "Color scale",
+    "description": "Yield in kWh per kWp and year"
+  },
   "savingsCalculation": {
     "notificationLabel": "Continue with chosen pv system:",
     "button": "Calculate Earnings",
