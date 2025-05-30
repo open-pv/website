@@ -1,6 +1,7 @@
 import { ShadingScene, colormaps } from '@openpv/simshady'
 import * as THREE from 'three'
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
+import { c0, c1, c2 } from '../data/constants'
 import {
   createSkydomeURL,
   downloadBuildings,
@@ -10,10 +11,6 @@ import { VEGETATION_DEM } from './elevation'
 import { coordinatesWebMercator } from './location'
 import { processGeometries } from './preprocessing'
 import { processVegetationData } from './processVegetationTiffs'
-
-const c0 = [0, 0, 0.2]
-const c1 = [1, 0.2, 0.1]
-const c2 = [1, 1, 0.1]
 
 export async function mainSimulation(location) {
   // Clear previous attributions if any

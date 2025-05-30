@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Field } from '@/components/ui/field'
+import { colormaps } from '@openpv/simshady'
 
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
 import { Slider } from '@/components/ui/slider'
@@ -22,9 +23,11 @@ import {
   Menu,
   SimpleGrid,
   Text,
+  VStack,
 } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { c0, c1, c2 } from '../../data/constants'
 import { simulationForNewBuilding } from '../../simulation/main'
 import { createPVSystem } from './Meshes/PVSystems'
 
@@ -105,6 +108,63 @@ function Overlay({
       </DialogRoot>
     )
   }
+
+  const [isOpenColorLegend, setIsOpenColorLegend] = useState(false)
+  const ColorLegend = () => {
+    const rgbToCss = ([r, g, b]) => {
+      return `rgb(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)})`
+    }
+    const colorMap = colormaps.interpolateThreeColors({
+      c0,
+      c1,
+      c2,
+    })
+    const steps = 50
+    const gradient = Array.from({ length: steps }, (_, i) => {
+      const t = i / (steps - 1)
+      return rgbToCss(colorMap(t))
+    }).join(',')
+    console.log(gradient)
+
+    return (
+      <DialogRoot
+        open={isOpenColorLegend}
+        onOpenChange={(e) => setIsOpenColorLegend(e.open)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t(`colorLegend.button`)}</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <VStack spacing={4}>
+              <Box>
+                <Box display='flex' justifyContent='space-between' px={1}>
+                  <Text fontSize='sm'>{t(`colorLegend.description`)}</Text>
+                </Box>
+                <Box display='flex' justifyContent='space-between' px={1}>
+                  <Text fontSize='sm'>0</Text>
+                  <Text fontSize='sm'>500</Text>
+                  <Text fontSize='sm'>1150</Text>
+                </Box>
+                <Box
+                  id='colorLegend'
+                  h='20px'
+                  w='300px'
+                  borderRadius='md'
+                  style={{
+                    background: `linear-gradient(to right, ${gradient})`,
+                  }}
+                />
+              </Box>
+            </VStack>
+          </DialogBody>
+
+          <DialogCloseTrigger />
+        </DialogContent>
+      </DialogRoot>
+    )
+  }
+
   const [isOpenControlHelp, setIsOpenControlHelp] = useState(false)
   /**
    * The component for the "How do I control this app" button as well as the dialog.
@@ -279,6 +339,7 @@ function Overlay({
           )}
         </>
       )}
+
       <Menu.Root>
         <Menu.Trigger>
           <Button variant='subtle' size='sm'>
@@ -301,11 +362,15 @@ function Overlay({
           <Menu.Item value='help' onClick={() => setIsOpenControlHelp(true)}>
             {t('mapControlHelp.button')}
           </Menu.Item>
+          <Menu.Item value='legend' onClick={() => setIsOpenColorLegend(true)}>
+            {t(`colorLegend.button`)}
+          </Menu.Item>
         </Menu.Content>
       </Menu.Root>
       <AdvertismentDialog />
       <OptionsDialog />
       <ControlHelperDialog />
+      <ColorLegend />
     </OverlayWrapper>
   )
 }
