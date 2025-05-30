@@ -124,7 +124,6 @@ function Overlay({
       const t = i / (steps - 1)
       return rgbToCss(colorMap(t))
     }).join(',')
-    console.log(gradient)
 
     return (
       <DialogRoot
