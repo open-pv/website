@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import * as THREE from 'three'
 import { SceneContext } from '../../context'
 
