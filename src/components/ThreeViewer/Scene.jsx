@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { Canvas } from 'react-three-fiber'
 import * as THREE from 'three'
 
+import { SceneContext } from '../context'
 import CustomMapControl from './Controls/CustomMapControl'
 import DrawPVControl from './Controls/DrawPVControl'
 import { HighlightedPVSystem } from './Meshes/HighlitedPVSystem'
@@ -42,24 +43,27 @@ const Scene = ({
   ]
   const cameraRef = useRef()
   return (
-    <>
+    <SceneContext.Provider
+      value={{
+        geometries,
+        simulationMeshes,
+        setSimulationMeshes,
+        pvPoints,
+        setPVPoints,
+        selectedPVSystem,
+        setSelectedPVSystem,
+        pvSystems,
+        setPVSystems,
+        selectedMesh,
+        setSelectedMesh,
+        showTerrain,
+        setShowTerrain,
+      }}
+    >
       <Overlay
         frontendState={frontendState}
         setFrontendState={setFrontendState}
-        showTerrain={showTerrain}
-        setShowTerrain={setShowTerrain}
-        selectedMesh={selectedMesh}
-        setSelectedMesh={setSelectedMesh}
-        geometries={geometries}
         geoLocation={geoLocation}
-        setPVSystems={setPVSystems}
-        pvSystems={pvSystems}
-        selectedPVSystem={selectedPVSystem}
-        setSelectedPVSystem={setSelectedPVSystem}
-        pvPoints={pvPoints}
-        setPVPoints={setPVPoints}
-        simulationMeshes={simulationMeshes}
-        setSimulationMeshes={setSimulationMeshes}
       />
 
       <Canvas
@@ -85,9 +89,7 @@ const Scene = ({
           <SurroundingMesh geometries={geometries.background} />
         )}
 
-        {simulationMeshes.length > 0 && (
-          <SimulationMesh meshes={simulationMeshes} />
-        )}
+        {simulationMeshes.length > 0 && <SimulationMesh />}
         {selectedMesh && <HighlightedMesh meshes={selectedMesh} />}
         {selectedPVSystem && (
           <HighlightedPVSystem geometries={selectedPVSystem} />
@@ -129,7 +131,7 @@ const Scene = ({
 
         {simulationMeshes.length > 0 && <Terrain visible={showTerrain} />}
       </Canvas>
-    </>
+    </SceneContext.Provider>
   )
 }
 

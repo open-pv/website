@@ -25,37 +25,23 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { c0, c1, c2 } from '../../data/constants'
 import { simulationForNewBuilding } from '../../simulation/main'
+import { SceneContext } from '../context'
 import { createPVSystem } from './Meshes/PVSystems'
 
-function Overlay({
-  frontendState,
-  setFrontendState,
-  showTerrain,
-  setShowTerrain,
-  selectedMesh,
-  setSelectedMesh,
-  selectedPVSystem,
-  setSelectedPVSystem,
-  geometries,
-  geoLocation,
-  setPVSystems,
-  pvPoints,
-  setPVPoints,
-  simulationMeshes,
-  setSimulationMeshes,
-}) {
+function Overlay({ frontendState, setFrontendState, geoLocation }) {
+  const sceneContext = useContext(SceneContext)
   const { t } = useTranslation()
   const handleCreatePVButtonClick = () => {
     createPVSystem({
-      setPVSystems,
-      setSelectedPVSystem,
-      pvPoints,
-      setPVPoints,
-      simulationMeshes,
+      setPVSystems: sceneContext.setPVSystems,
+      setSelectedPVSystem: sceneContext.setSelectedPVSystem,
+      pvPoints: sceneContext.pvPoints,
+      setPVPoints: sceneContext.setPVPoints,
+      simulationMeshes: sceneContext.simulationMeshes,
     })
     setFrontendState('Results')
   }
@@ -77,8 +63,10 @@ function Overlay({
             <SimpleGrid columns={2} gap='40px'>
               <p>{t('button.showMap')}</p>
               <Switch
-                checked={showTerrain}
-                onCheckedChange={() => setShowTerrain((prev) => !prev)}
+                checked={sceneContext.showTerrain}
+                onCheckedChange={() =>
+                  sceneContext.setShowTerrain((prev) => !prev)
+                }
               />
             </SimpleGrid>
             <br />
@@ -284,22 +272,11 @@ function Overlay({
 
   return (
     <OverlayWrapper>
-      {selectedMesh.length > 0 && (
-        <NotificationForSelectedBuilding
-          selectedMesh={selectedMesh}
-          setSelectedMesh={setSelectedMesh}
-          simulationMeshes={simulationMeshes}
-          setSimulationMeshes={setSimulationMeshes}
-          geometries={geometries}
-          geoLocation={geoLocation}
-        />
+      {sceneContext.selectedMesh.length > 0 && (
+        <NotificationForSelectedBuilding geoLocation={geoLocation} />
       )}
-      {selectedPVSystem.length > 0 && (
-        <NotificationForSelectedPV
-          selectedPVSystem={selectedPVSystem}
-          setSelectedPVSystem={setSelectedPVSystem}
-          setPVSystems={setPVSystems}
-        />
+      {sceneContext.selectedPVSystem.length > 0 && (
+        <NotificationForSelectedPV />
       )}
 
       {frontendState == 'Results' && (
@@ -319,17 +296,17 @@ function Overlay({
           <Button variant='subtle' onClick={() => setFrontendState('Results')}>
             {t('button.cancel')}
           </Button>
-          {pvPoints.length > 2 && (
+          {sceneContext.pvPoints.length > 2 && (
             <Button variant='solid' onClick={handleCreatePVButtonClick}>
               {t('button.createPVSystem')}
             </Button>
           )}
-          {pvPoints.length > 0 && (
+          {sceneContext.pvPoints.length > 0 && (
             <>
               <Button
                 variant='subtle'
                 onClick={() => {
-                  setPVPoints(pvPoints.slice(0, -1))
+                  sceneContext.setPVPoints(pvPoints.slice(0, -1))
                 }}
               >
                 {t('button.deleteLastPoint')}
@@ -378,16 +355,14 @@ function Overlay({
  * Controls the dialog component that appears when a PV system is selected. This includes the
  * dialog component of the economic savings calculation.
  */
-const NotificationForSelectedPV = ({
-  selectedPVSystem,
-  setSelectedPVSystem,
-  setPVSystems,
-}) => {
+const NotificationForSelectedPV = () => {
   const { t } = useTranslation()
+  const sceneContext = useContext(SceneContext)
   /**
    * Controls the PV savings calculation dialog component together with the button to start this component.
    */
-  const SavingCalculationDialog = ({ selectedPVSystem }) => {
+  const SavingCalculationDialog = () => {
+    const sceneContext = useContext(SceneContext)
     const { t } = useTranslation()
     const [annualConsumption, setAnnualConsumption] = useState('3000')
     const [storageCapacity, setStorageCapacity] = useState('0')
@@ -397,9 +372,9 @@ const NotificationForSelectedPV = ({
     const [showResults, setShowResults] = useState(false)
 
     let pvProduction
-    if (selectedPVSystem.length > 0) {
+    if (sceneContext.selectedPVSystem.length > 0) {
       pvProduction = Math.round(
-        selectedPVSystem.reduce(
+        sceneContext.selectedPVSystem.reduce(
           (previous, current) => previous + current.annualYield,
           0,
         ),
@@ -590,7 +565,7 @@ const NotificationForSelectedPV = ({
       open={true}
       placement='bottom'
       size='xs'
-      onInteractOutside={() => setSelectedPVSystem([])}
+      onInteractOutside={() => sceneContext.setSelectedPVSystem([])}
     >
       <DialogContent>
         <DialogHeader>
@@ -598,43 +573,39 @@ const NotificationForSelectedPV = ({
         </DialogHeader>
         <DialogBody>
           <SimpleGrid gap='5px'>
-            <SavingCalculationDialog selectedPVSystem={selectedPVSystem} />
+            <SavingCalculationDialog />
             <Button
               variant='subtle'
               onClick={() => {
-                setPVSystems([])
-                setSelectedPVSystem([])
+                sceneContext.setPVSystems([])
+                sceneContext.setSelectedPVSystem([])
               }}
             >
               {t('delete')}
             </Button>
           </SimpleGrid>
         </DialogBody>
-        <DialogCloseTrigger onClick={() => setSelectedPVSystem([])} />
+        <DialogCloseTrigger
+          onClick={() => sceneContext.setSelectedPVSystem([])}
+        />
       </DialogContent>
     </DialogRoot>
   )
 }
 
-const NotificationForSelectedBuilding = ({
-  selectedMesh,
-  setSelectedMesh,
-  simulationMeshes,
-  setSimulationMeshes,
-  geometries,
-  geoLocation,
-}) => {
+const NotificationForSelectedBuilding = ({ geoLocation }) => {
+  const sceneContext = useContext(SceneContext)
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const handleResimulationClick = async () => {
     setLoading(true)
     try {
       await simulationForNewBuilding({
-        selectedMesh,
-        setSelectedMesh,
-        simulationMeshes,
-        setSimulationMeshes,
-        geometries,
+        selectedMesh: sceneContext.selectedMesh,
+        setSelectedMesh: sceneContext.setSelectedMesh,
+        simulationMeshes: sceneContext.simulationMeshes,
+        setSimulationMeshes: sceneContext.setSimulationMeshes,
+        geometries: sceneContext.geometries,
         geoLocation,
       })
     } finally {
@@ -647,7 +618,7 @@ const NotificationForSelectedBuilding = ({
       open={true}
       placement='bottom'
       size='xs'
-      onInteractOutside={() => setSelectedMesh([])}
+      onInteractOutside={() => sceneContext.setSelectedMesh([])}
     >
       <DialogContent>
         <DialogHeader></DialogHeader>
@@ -662,7 +633,7 @@ const NotificationForSelectedBuilding = ({
             </Button>
           </SimpleGrid>
         </DialogBody>
-        <DialogCloseTrigger onClick={() => setSelectedMesh([])} />
+        <DialogCloseTrigger onClick={() => sceneContext.setSelectedMesh([])} />
       </DialogContent>
     </DialogRoot>
   )
