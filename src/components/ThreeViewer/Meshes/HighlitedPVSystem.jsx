@@ -1,10 +1,12 @@
-import React from 'react'
+import { useContext } from 'react'
 import * as THREE from 'three'
+import { SceneContext } from '../../context'
 
-export function HighlightedPVSystem({ geometries }) {
+export function HighlightedPVSystem() {
+  const sceneContext = useContext(SceneContext)
   return (
     <>
-      {geometries.map((geometry, index) => (
+      {sceneContext.selectedPVSystem.map((geometry, index) => (
         <mesh
           key={index}
           geometry={geometry}
