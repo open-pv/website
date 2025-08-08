@@ -95,11 +95,7 @@ const Scene = ({
           <HighlightedPVSystem geometries={selectedPVSystem} />
         )}
         {simulationMeshes.length > 0 && frontendState == 'Results' && (
-          <CustomMapControl
-            middle={simulationMeshes[0].middle}
-            setSelectedMesh={setSelectedMesh}
-            setSelectedPVSystem={setSelectedPVSystem}
-          />
+          <CustomMapControl />
         )}
         {frontendState == 'DrawPV' && (
           <DrawPVControl
