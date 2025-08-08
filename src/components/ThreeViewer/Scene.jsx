@@ -98,7 +98,7 @@ const Scene = ({
           <CustomMapControl />
         )}
         {frontendState == 'DrawPV' && <DrawPVControl />}
-        {frontendState == 'DrawPV' && <PointsAndEdges points={pvPoints} />}
+        {frontendState == 'DrawPV' && <PointsAndEdges />}
 
         {pvSystems.length > 0 && <PVSystems pvSystems={pvSystems} />}
 
