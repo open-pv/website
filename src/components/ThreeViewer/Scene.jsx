@@ -98,7 +98,7 @@ const Scene = ({
         {frontendState == 'DrawPV' && <DrawPVControl />}
         {frontendState == 'DrawPV' && <PointsAndEdges />}
 
-        {pvSystems.length > 0 && <PVSystems pvSystems={pvSystems} />}
+        {pvSystems.length > 0 && <PVSystems />}
 
         {vegetationGeometries && (
           <>

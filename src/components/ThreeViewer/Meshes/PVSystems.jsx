@@ -1,13 +1,15 @@
-import React, { useRef } from 'react'
+import { useContext, useRef } from 'react'
 import { useFrame } from 'react-three-fiber'
 import * as THREE from 'three'
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
+import { SceneContext } from '../../context'
 import TextSprite from '../TextSprite'
 
-export const PVSystems = ({ pvSystems }) => {
+export const PVSystems = () => {
+  const sceneContext = useContext(SceneContext)
   return (
     <>
-      {pvSystems.map((geometry) => (
+      {sceneContext.pvSystems.map((geometry) => (
         <PVSystem geometry={geometry} />
       ))}
     </>
