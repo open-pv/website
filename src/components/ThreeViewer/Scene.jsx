@@ -115,7 +115,7 @@ const Scene = ({
           </>
         )}
 
-        {simulationMeshes.length > 0 && <Terrain visible={showTerrain} />}
+        {simulationMeshes.length > 0 && <Terrain />}
       </Canvas>
     </SceneContext.Provider>
   )
