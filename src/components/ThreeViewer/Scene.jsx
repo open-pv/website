@@ -90,7 +90,7 @@ const Scene = ({
         )}
 
         {simulationMeshes.length > 0 && <SimulationMesh />}
-        {selectedMesh && <HighlightedMesh meshes={selectedMesh} />}
+        {selectedMesh && <HighlightedMesh />}
         {selectedPVSystem && <HighlightedPVSystem />}
         {simulationMeshes.length > 0 && frontendState == 'Results' && (
           <CustomMapControl />

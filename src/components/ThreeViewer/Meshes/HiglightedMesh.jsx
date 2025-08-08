@@ -1,10 +1,12 @@
-import React from 'react'
+import { useContext } from 'react'
 import * as THREE from 'three'
+import { SceneContext } from '../../context'
 
-export function HighlightedMesh({ meshes }) {
+export function HighlightedMesh() {
+  const sceneContext = useContext(SceneContext)
   return (
     <>
-      {meshes.map((mesh, index) => (
+      {sceneContext.selectedMesh.map((mesh, index) => (
         <mesh
           key={index}
           geometry={mesh.geometry}
