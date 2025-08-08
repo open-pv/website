@@ -1,9 +1,11 @@
 import { MapControls } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
-import React, { useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import * as THREE from 'three'
+import { SceneContext } from '../../context'
 
-function CustomMapControl(props) {
+function CustomMapControl() {
+  const sceneContext = useContext(SceneContext)
   const controlsRef = useRef()
   const raycaster = useRef(new THREE.Raycaster())
   const mouse = useRef(new THREE.Vector2())
@@ -62,10 +64,10 @@ function CustomMapControl(props) {
       intersectedMesh.geometry.name.includes('surrounding') ||
       intersectedMesh.geometry.name.includes('background')
     ) {
-      props.setSelectedMesh([intersectedMesh])
+      sceneContext.setSelectedMesh([intersectedMesh])
     }
     if (intersectedMesh.geometry.name.includes('pvSystem')) {
-      props.setSelectedPVSystem([intersectedMesh.geometry])
+      sceneContext.setSelectedPVSystem([intersectedMesh.geometry])
     }
   }
 
@@ -93,7 +95,7 @@ function CustomMapControl(props) {
     <MapControls
       ref={controlsRef}
       args={[camera, gl.domElement]}
-      target={props.middle}
+      target={sceneContext.simulationMeshes[0].middle}
       mouseButtons={{
         LEFT: THREE.MOUSE.PAN,
         MIDDLE: THREE.MOUSE.DOLLY,

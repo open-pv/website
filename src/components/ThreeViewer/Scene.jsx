@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Canvas } from 'react-three-fiber'
 import * as THREE from 'three'
 
+import { SceneContext } from '../context'
 import CustomMapControl from './Controls/CustomMapControl'
 import DrawPVControl from './Controls/DrawPVControl'
 import { HighlightedPVSystem } from './Meshes/HighlitedPVSystem'
@@ -42,24 +43,27 @@ const Scene = ({
   ]
   const cameraRef = useRef()
   return (
-    <>
+    <SceneContext.Provider
+      value={{
+        geometries,
+        simulationMeshes,
+        setSimulationMeshes,
+        pvPoints,
+        setPVPoints,
+        selectedPVSystem,
+        setSelectedPVSystem,
+        pvSystems,
+        setPVSystems,
+        selectedMesh,
+        setSelectedMesh,
+        showTerrain,
+        setShowTerrain,
+      }}
+    >
       <Overlay
         frontendState={frontendState}
         setFrontendState={setFrontendState}
-        showTerrain={showTerrain}
-        setShowTerrain={setShowTerrain}
-        selectedMesh={selectedMesh}
-        setSelectedMesh={setSelectedMesh}
-        geometries={geometries}
         geoLocation={geoLocation}
-        setPVSystems={setPVSystems}
-        pvSystems={pvSystems}
-        selectedPVSystem={selectedPVSystem}
-        setSelectedPVSystem={setSelectedPVSystem}
-        pvPoints={pvPoints}
-        setPVPoints={setPVPoints}
-        simulationMeshes={simulationMeshes}
-        setSimulationMeshes={setSimulationMeshes}
       />
 
       <Canvas
@@ -85,34 +89,16 @@ const Scene = ({
           <SurroundingMesh geometries={geometries.background} />
         )}
 
-        {simulationMeshes.length > 0 && (
-          <SimulationMesh meshes={simulationMeshes} />
-        )}
-        {selectedMesh && <HighlightedMesh meshes={selectedMesh} />}
-        {selectedPVSystem && (
-          <HighlightedPVSystem geometries={selectedPVSystem} />
-        )}
+        {simulationMeshes.length > 0 && <SimulationMesh />}
+        {selectedMesh && <HighlightedMesh />}
+        {selectedPVSystem && <HighlightedPVSystem />}
         {simulationMeshes.length > 0 && frontendState == 'Results' && (
-          <CustomMapControl
-            middle={simulationMeshes[0].middle}
-            setSelectedMesh={setSelectedMesh}
-            setSelectedPVSystem={setSelectedPVSystem}
-          />
+          <CustomMapControl />
         )}
-        {frontendState == 'DrawPV' && (
-          <DrawPVControl
-            middle={simulationMeshes[0].middle}
-            setPVPoints={setPVPoints}
-            setPVSystems={setPVSystems}
-            setSelectedPVSystem={setSelectedPVSystem}
-            pvPoints={pvPoints}
-            simulationMeshes={simulationMeshes}
-            setFrontendState={setFrontendState}
-          />
-        )}
-        {frontendState == 'DrawPV' && <PointsAndEdges points={pvPoints} />}
+        {frontendState == 'DrawPV' && <DrawPVControl />}
+        {frontendState == 'DrawPV' && <PointsAndEdges />}
 
-        {pvSystems.length > 0 && <PVSystems pvSystems={pvSystems} />}
+        {pvSystems.length > 0 && <PVSystems />}
 
         {vegetationGeometries && (
           <>
@@ -127,9 +113,9 @@ const Scene = ({
           </>
         )}
 
-        {simulationMeshes.length > 0 && <Terrain visible={showTerrain} />}
+        {simulationMeshes.length > 0 && <Terrain />}
       </Canvas>
-    </>
+    </SceneContext.Provider>
   )
 }
 

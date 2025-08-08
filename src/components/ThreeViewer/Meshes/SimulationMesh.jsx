@@ -1,10 +1,12 @@
-import React from 'react'
+import { useContext } from 'react'
 import * as THREE from 'three'
+import { SceneContext } from '../../context'
 
-const SimulationMesh = ({ meshes }) => {
+const SimulationMesh = () => {
+  const sceneContext = useContext(SceneContext)
   return (
     <>
-      {meshes.map((mesh, index) => (
+      {sceneContext.simulationMeshes.map((mesh, index) => (
         <mesh key={index} geometry={mesh.geometry}>
           <meshLambertMaterial vertexColors={true} side={THREE.DoubleSide} />
         </mesh>

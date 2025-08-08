@@ -1,10 +1,12 @@
-import React, { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import * as THREE from 'three'
+import { SceneContext } from '../context'
 
-const PointsAndEdges = ({ points }) => {
+const PointsAndEdges = () => {
+  const sceneContext = useContext(SceneContext)
   const pointsAndEdges = useMemo(() => {
     // Create points
-    const pointMeshes = points.map((point, index) => {
+    const pointMeshes = sceneContext.pvPoints.map((point, index) => {
       const pointGeometry = new THREE.BufferGeometry().setFromPoints([
         point.point,
       ])
@@ -25,16 +27,16 @@ const PointsAndEdges = ({ points }) => {
     // Create edges
     const edgeGeometry = new THREE.BufferGeometry()
     const edgePositions = []
-    for (let i = 0; i < points.length - 1; i++) {
+    for (let i = 0; i < sceneContext.pvPoints.length - 1; i++) {
       edgePositions.push(
-        points[i].point.x,
-        points[i].point.y,
-        points[i].point.z,
+        sceneContext.pvPoints[i].point.x,
+        sceneContext.pvPoints[i].point.y,
+        sceneContext.pvPoints[i].point.z,
       )
       edgePositions.push(
-        points[i + 1].point.x,
-        points[i + 1].point.y,
-        points[i + 1].point.z,
+        sceneContext.pvPoints[i + 1].point.x,
+        sceneContext.pvPoints[i + 1].point.y,
+        sceneContext.pvPoints[i + 1].point.z,
       )
     }
     edgeGeometry.setAttribute(
@@ -49,7 +51,7 @@ const PointsAndEdges = ({ points }) => {
     )
 
     return [...pointMeshes, edges]
-  }, [points])
+  }, [sceneContext.pvPoints])
 
   return <>{pointsAndEdges}</>
 }

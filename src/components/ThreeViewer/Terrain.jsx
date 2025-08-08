@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import * as THREE from 'three'
-import { coordinatesXY15, xyzBounds } from '../../simulation/location'
 import { SONNY_DEM } from '../../simulation/elevation'
+import { coordinatesXY15, xyzBounds } from '../../simulation/location'
+import { SceneContext } from '../context'
 
 /** Load an OSM map tile and return it as a THREE Mesh
  */
@@ -89,7 +90,8 @@ const TerrainTile = (props) => {
   return mesh
 }
 
-const Terrain = ({ visible }) => {
+const Terrain = () => {
+  const sceneContext = useContext(SceneContext)
   const [x, y] = coordinatesXY15
   const [tiles, setTiles] = useState([]) // State to manage tiles
   const tx = Math.floor(x * 16)
@@ -135,7 +137,7 @@ const Terrain = ({ visible }) => {
     }
   }, [tx, ty]) // Dependency array to reset when the coordinates change
 
-  return <group visible={visible}>{tiles}</group>
+  return <group visible={sceneContext.showTerrain}>{tiles}</group>
 }
 
 export default Terrain
