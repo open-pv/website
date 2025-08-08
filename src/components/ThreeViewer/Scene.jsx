@@ -97,17 +97,7 @@ const Scene = ({
         {simulationMeshes.length > 0 && frontendState == 'Results' && (
           <CustomMapControl />
         )}
-        {frontendState == 'DrawPV' && (
-          <DrawPVControl
-            middle={simulationMeshes[0].middle}
-            setPVPoints={setPVPoints}
-            setPVSystems={setPVSystems}
-            setSelectedPVSystem={setSelectedPVSystem}
-            pvPoints={pvPoints}
-            simulationMeshes={simulationMeshes}
-            setFrontendState={setFrontendState}
-          />
-        )}
+        {frontendState == 'DrawPV' && <DrawPVControl />}
         {frontendState == 'DrawPV' && <PointsAndEdges points={pvPoints} />}
 
         {pvSystems.length > 0 && <PVSystems pvSystems={pvSystems} />}

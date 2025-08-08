@@ -1,17 +1,12 @@
 import { useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { SceneContext } from '../../context'
 import { createPVSystem } from '../Meshes/PVSystems'
 
-const DrawPVControl = ({
-  middle,
-  setPVPoints,
-  setPVSystems,
-  setSelectedPVSystem,
-  simulationMeshes,
-  setFrontendState,
-}) => {
+const DrawPVControl = () => {
+  const sceneContext = useContext(SceneContext)
   const { camera, gl, scene } = useThree()
   const raycaster = useRef(new THREE.Raycaster())
   const mouse = useRef(new THREE.Vector2())
@@ -21,7 +16,7 @@ const DrawPVControl = ({
   useEffect(() => {
     // Initialize OrbitControls
     controls.current = new OrbitControls(camera, gl.domElement)
-    controls.current.target = middle
+    controls.current.target = sceneContext.simulationMeshes[0].middle
     controls.current.mouseButtons = {
       MIDDLE: THREE.MOUSE.DOLLY,
       RIGHT: THREE.MOUSE.ROTATE,
@@ -34,7 +29,7 @@ const DrawPVControl = ({
     return () => {
       controls.current.dispose()
     }
-  }, [camera, gl, middle])
+  }, [camera, gl, sceneContext.simulationMeshes[0].middle])
 
   const onPointerDown = (event) => {
     if (event.button !== 0) return
@@ -66,11 +61,11 @@ const DrawPVControl = ({
           pvPointsRef.length > 2
         ) {
           createPVSystem({
-            setPVSystems,
-            setSelectedPVSystem,
+            setPVSystems: sceneContext.setPVSystems,
+            setSelectedPVSystem: sceneContext.setSelectedPVSystem,
             pvPoints: pvPointsRef,
-            setPVPoints,
-            simulationMeshes,
+            setPVPoints: sceneContext.setPVPoints,
+            simulationMeshes: sceneContext.simulationMeshes,
           })
           setFrontendState('Results')
         }
