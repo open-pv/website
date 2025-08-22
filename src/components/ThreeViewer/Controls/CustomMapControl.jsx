@@ -11,36 +11,29 @@ function CustomMapControl() {
   const mouse = useRef(new THREE.Vector2())
   const { gl, camera, scene } = useThree()
 
-  let lastTap = 0
+  /**
+   * Returns the list of intersected objects. An intersected object is an object
+   * that lies directly below the mouse cursor.
+   */
+  const getIntersects = () => {
+    const isTouch = window.isTouchDevice
+    const clientX = isTouch ? event.touches[0].clientX : event.clientX
+    const clientY = isTouch ? event.touches[0].clientY : event.clientY
 
-  const handleInteraction = (event) => {
-    event.preventDefault()
+    const rect = event.target.getBoundingClientRect()
+    mouse.current.x = ((clientX - rect.left) / rect.width) * 2 - 1
+    mouse.current.y = (-(clientY - rect.top) / rect.height) * 2 + 1
 
-    /**
-     * Returns the list of intersected objects. An intersected object is an object
-     * that lies directly below the mouse cursor.
-     */
-    const getIntersects = () => {
-      const isTouch = window.isTouchDevice
-      const clientX = isTouch ? event.touches[0].clientX : event.clientX
-      const clientY = isTouch ? event.touches[0].clientY : event.clientY
+    raycaster.current.setFromCamera(mouse.current, camera)
 
-      const rect = event.target.getBoundingClientRect()
-      mouse.current.x = ((clientX - rect.left) / rect.width) * 2 - 1
-      mouse.current.y = (-(clientY - rect.top) / rect.height) * 2 + 1
+    return raycaster.current.intersectObjects(scene.children, true)
+  }
 
-      raycaster.current.setFromCamera(mouse.current, camera)
-
-      return raycaster.current.intersectObjects(scene.children, true)
-    }
-    const intersects = getIntersects()
-
-    if (intersects.length === 0) {
-      console.log('No children in the intersected mesh.')
-      return
-    }
-
-    // Filter out Sprites (ie the labels of PV systems)
+  /**
+   * Filter out Sprites (ie the labels of PV systems).
+   * Returns the first element of the intersects list that is not a sprite.
+   */
+  const ignoreSprites = (intersects) => {
     let i = 0
     while (i < intersects.length && intersects[i].object.type === 'Sprite') {
       i++
@@ -49,9 +42,20 @@ function CustomMapControl() {
       console.log('Only Sprite objects found in intersections.')
       return
     }
+    return intersects[i]
+  }
 
-    let intersectedMesh = intersects[i].object
-    console.log('Intersected Mesh', intersectedMesh)
+  const handleDoubleClick = (event) => {
+    event.preventDefault()
+
+    const intersects = getIntersects()
+
+    if (intersects.length === 0) {
+      console.log('No children in the intersected mesh.')
+      return
+    }
+
+    const intersectedMesh = ignoreSprites(intersects).object
 
     if (!intersectedMesh) return
     if (!intersectedMesh.geometry.name) {
@@ -60,6 +64,7 @@ function CustomMapControl() {
       )
       return
     }
+    console.log(intersectedMesh)
     if (
       intersectedMesh.geometry.name.includes('surrounding') ||
       intersectedMesh.geometry.name.includes('background')
@@ -71,17 +76,23 @@ function CustomMapControl() {
     }
   }
 
-  const handleDoubleClick = (event) => {
-    handleInteraction(event)
+  const handleMouseMove = (event) => {
+    event.preventDefault()
+    const intersects = getIntersects()
+    const intersectedFace = ignoreSprites(intersects).face
+    const slope = calculateSlopeFromNormal(intersectedFace.normal)
+    sceneContext.setSlope(Math.round(slope))
   }
 
   useEffect(() => {
     const canvas = gl.domElement
 
     canvas.addEventListener('dblclick', handleDoubleClick)
+    canvas.addEventListener('mousemove', handleMouseMove)
 
     return () => {
       canvas.removeEventListener('dblclick', handleDoubleClick)
+      canvas.addEventListener('mousemove', handleMouseMove)
     }
   }, [camera, scene])
 
@@ -113,3 +124,9 @@ function CustomMapControl() {
 }
 
 export default CustomMapControl
+
+const calculateSlopeFromNormal = (normal) => {
+  const up = new THREE.Vector3(0, 0, 1)
+  const angleRad = normal.angleTo(up)
+  return THREE.MathUtils.radToDeg(angleRad)
+}

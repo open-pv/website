@@ -21,9 +21,6 @@
   font-weight: 400;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-}
-
-.attribution {
   padding: 10px;
   background-color: #ffffffa0;
   width: fit-content;
@@ -62,4 +59,10 @@ button.maplibregl-popup-close-button {
 
 .maplibregl-popup-content {
   font-size: 1.5em;
+}
+
+#footer-on-hover {
+  right: 0;
+  left: auto;
+  z-index: 9999;
 }
