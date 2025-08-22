@@ -280,7 +280,7 @@ function Overlay({ frontendState, setFrontendState, geoLocation }) {
 
   return (
     <>
-      <MouseHoverInfo />
+      {!window.isTouchDevice && <MouseHoverInfo />}
       <OverlayWrapper>
         {sceneContext.selectedMesh.length > 0 && (
           <NotificationForSelectedBuilding geoLocation={geoLocation} />
