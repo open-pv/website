@@ -81,6 +81,7 @@ function CustomMapControl() {
     const intersects = getIntersects()
     const intersectedFace = ignoreSprites(intersects).face
     const slope = calculateSlopeFromNormal(intersectedFace.normal)
+    sceneContext.setSlope(Math.round(slope))
   }
 
   useEffect(() => {

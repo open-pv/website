@@ -34,7 +34,7 @@ const Scene = ({
   const [selectedMesh, setSelectedMesh] = useState([])
   // highlighted PVSystems for deletion or calculation
   const [selectedPVSystem, setSelectedPVSystem] = useState([])
-  const [slope, setSlope] = useState('Hallo')
+  const [slope, setSlope] = useState('')
 
   window.setPVPoints = setPVPoints
   const position = [

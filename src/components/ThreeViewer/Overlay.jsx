@@ -273,7 +273,7 @@ function Overlay({ frontendState, setFrontendState, geoLocation }) {
   const MouseHoverInfo = () => {
     return (
       <div className='attribution' id='footer-on-hover'>
-        {sceneContext.slope}
+        {t('slope') + ': ' + sceneContext.slope}°
       </div>
     )
   }
