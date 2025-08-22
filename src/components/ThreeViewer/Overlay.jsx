@@ -270,84 +270,101 @@ function Overlay({ frontendState, setFrontendState, geoLocation }) {
     )
   }
 
+  const MouseHoverInfo = () => {
+    return (
+      <div className='attribution' id='footer-on-hover'>
+        {sceneContext.slope}
+      </div>
+    )
+  }
+
   return (
-    <OverlayWrapper>
-      {sceneContext.selectedMesh.length > 0 && (
-        <NotificationForSelectedBuilding geoLocation={geoLocation} />
-      )}
-      {sceneContext.selectedPVSystem.length > 0 && (
-        <NotificationForSelectedPV />
-      )}
+    <>
+      <MouseHoverInfo />
+      <OverlayWrapper>
+        {sceneContext.selectedMesh.length > 0 && (
+          <NotificationForSelectedBuilding geoLocation={geoLocation} />
+        )}
+        {sceneContext.selectedPVSystem.length > 0 && (
+          <NotificationForSelectedPV />
+        )}
 
-      {frontendState == 'Results' && (
-        <>
-          <Button
-            variant='subtle'
-            onClick={() => {
-              setFrontendState('DrawPV')
-            }}
-          >
-            {t('button.drawPVSystem')}
-          </Button>
-        </>
-      )}
-      {frontendState == 'DrawPV' && (
-        <>
-          <Button variant='subtle' onClick={() => setFrontendState('Results')}>
-            {t('button.cancel')}
-          </Button>
-          {sceneContext.pvPoints.length > 2 && (
-            <Button variant='solid' onClick={handleCreatePVButtonClick}>
-              {t('button.createPVSystem')}
+        {frontendState == 'Results' && (
+          <>
+            <Button
+              variant='subtle'
+              onClick={() => {
+                setFrontendState('DrawPV')
+              }}
+            >
+              {t('button.drawPVSystem')}
             </Button>
-          )}
-          {sceneContext.pvPoints.length > 0 && (
-            <>
-              <Button
-                variant='subtle'
-                onClick={() => {
-                  sceneContext.setPVPoints(pvPoints.slice(0, -1))
-                }}
-              >
-                {t('button.deleteLastPoint')}
+          </>
+        )}
+        {frontendState == 'DrawPV' && (
+          <>
+            <Button
+              variant='subtle'
+              onClick={() => setFrontendState('Results')}
+            >
+              {t('button.cancel')}
+            </Button>
+            {sceneContext.pvPoints.length > 2 && (
+              <Button variant='solid' onClick={handleCreatePVButtonClick}>
+                {t('button.createPVSystem')}
               </Button>
-            </>
-          )}
-        </>
-      )}
+            )}
+            {sceneContext.pvPoints.length > 0 && (
+              <>
+                <Button
+                  variant='subtle'
+                  onClick={() => {
+                    sceneContext.setPVPoints(pvPoints.slice(0, -1))
+                  }}
+                >
+                  {t('button.deleteLastPoint')}
+                </Button>
+              </>
+            )}
+          </>
+        )}
 
-      <Menu.Root>
-        <Menu.Trigger>
-          <Button variant='subtle' size='sm'>
-            {t('button.more')}
-          </Button>
-        </Menu.Trigger>
-        <Menu.Content>
-          <Menu.Item
-            value='advertisment'
-            onClick={() => setIsOpenAdvertisment(true)}
-          >
-            {t('adbox.button')}
-          </Menu.Item>
-          <Menu.Item
-            value='options'
-            onClick={() => setIsOpenOptionsDialog(true)}
-          >
-            {t('button.options')}
-          </Menu.Item>
-          <Menu.Item value='help' onClick={() => setIsOpenControlHelp(true)}>
-            {t('mapControlHelp.button')}
-          </Menu.Item>
-          <Menu.Item value='legend' onClick={() => setIsOpenColorLegend(true)}>
-            {t(`colorLegend.button`)}
-          </Menu.Item>
-        </Menu.Content>
-      </Menu.Root>
-      <AdvertismentDialog />
-      <OptionsDialog />
-      <ControlHelperDialog />
-      <ColorLegend />
-    </OverlayWrapper>
+        <Menu.Root>
+          <Menu.Trigger>
+            <Button variant='subtle' size='sm'>
+              {t('button.more')}
+            </Button>
+          </Menu.Trigger>
+          <Menu.Content>
+            <Menu.Item
+              value='advertisment'
+              onClick={() => setIsOpenAdvertisment(true)}
+            >
+              {t('adbox.button')}
+            </Menu.Item>
+            <Menu.Item
+              value='options'
+              onClick={() => setIsOpenOptionsDialog(true)}
+            >
+              {t('button.options')}
+            </Menu.Item>
+            <Menu.Item value='help' onClick={() => setIsOpenControlHelp(true)}>
+              {t('mapControlHelp.button')}
+            </Menu.Item>
+            <Menu.Item
+              value='legend'
+              onClick={() => setIsOpenColorLegend(true)}
+            >
+              {t(`colorLegend.button`)}
+            </Menu.Item>
+          </Menu.Content>
+        </Menu.Root>
+        <AdvertismentDialog />
+        <OptionsDialog />
+        <ControlHelperDialog />
+        <ColorLegend />
+      </OverlayWrapper>
+    </>
   )
 }
 
