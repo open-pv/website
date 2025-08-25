@@ -35,6 +35,7 @@ const Scene = ({
   // highlighted PVSystems for deletion or calculation
   const [selectedPVSystem, setSelectedPVSystem] = useState([])
   const [slope, setSlope] = useState('')
+  const [azimuth, setAzimuth] = useState('')
 
   window.setPVPoints = setPVPoints
   const position = [
@@ -61,6 +62,8 @@ const Scene = ({
         setShowTerrain,
         slope,
         setSlope,
+        azimuth,
+        setAzimuth,
       }}
     >
       <Overlay

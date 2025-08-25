@@ -80,8 +80,11 @@ function CustomMapControl() {
     event.preventDefault()
     const intersects = getIntersects()
     const intersectedFace = ignoreSprites(intersects).face
-    const slope = calculateSlopeFromNormal(intersectedFace.normal)
+    const [slope, azimuth] = calculateSlopeAzimuthFromNormal(
+      intersectedFace.normal,
+    )
     sceneContext.setSlope(Math.round(slope))
+    sceneContext.setAzimuth(Math.round(azimuth))
   }
 
   useEffect(() => {
@@ -125,8 +128,17 @@ function CustomMapControl() {
 
 export default CustomMapControl
 
-const calculateSlopeFromNormal = (normal) => {
+const calculateSlopeAzimuthFromNormal = (normal) => {
   const up = new THREE.Vector3(0, 0, 1)
   const angleRad = normal.angleTo(up)
-  return THREE.MathUtils.radToDeg(angleRad)
+  const slope = THREE.MathUtils.radToDeg(angleRad)
+
+  // Swap y and x in atan to get clockwise angle from y-axis
+  const azimuthRad = Math.atan2(normal.x, normal.y)
+  let azimuth = THREE.MathUtils.radToDeg(azimuthRad)
+  if (azimuth < 0) {
+    azimuth += 360
+  }
+
+  return [slope, azimuth]
 }
