@@ -321,7 +321,7 @@ function Overlay({ frontendState, setFrontendState, geoLocation }) {
                 <Button
                   variant='subtle'
                   onClick={() => {
-                    sceneContext.setPVPoints(pvPoints.slice(0, -1))
+                    sceneContext.setPVPoints(sceneContext.pvPoints.slice(0, -1))
                   }}
                 >
                   {t('button.deleteLastPoint')}
