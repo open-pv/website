@@ -318,11 +318,11 @@ class LazyCOGDEM {
 }
 
 export const SONNY_DEM = new XYZDEM(
-  'https://vegetation.openpv.de/data/dem/sonny/{z}/{x}/{y}.webp',
+  'https://api.openpv.de/dem/sonny/{z}/{x}/{y}.webp',
   13,
 )
 
 export const VEGETATION_DEM = new XYZDEM(
-  'https://vegetation.openpv.de/data/vegetation/{z}/{x}/{y}.webp',
+  'https://api.openpv.de/vegetation/{z}/{x}/{y}.webp',
   17,
 )
