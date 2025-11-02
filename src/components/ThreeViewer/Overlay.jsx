@@ -25,10 +25,9 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react'
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { c0, c1, c2 } from '../../data/constants'
-import { simulationForNewBuilding } from '../../simulation/main'
 import { SceneContext } from '../context'
 import { createPVSystem } from './Meshes/PVSystems'
 
@@ -179,9 +178,6 @@ function Overlay({ frontendState, setFrontendState, geoLocation }) {
               <List.Item>
                 {t(`mapControlHelp.${touchDeviceText}wheel`)}
               </List.Item>
-              <List.Item>
-                {t(`mapControlHelp.${touchDeviceText}doubleClick`)}
-              </List.Item>
             </List.Root>
           </DialogBody>
           <DialogCloseTrigger />
@@ -284,9 +280,6 @@ function Overlay({ frontendState, setFrontendState, geoLocation }) {
     <>
       {!window.isTouchDevice && <MouseHoverInfo />}
       <OverlayWrapper>
-        {sceneContext.selectedMesh.length > 0 && (
-          <NotificationForSelectedBuilding geoLocation={geoLocation} />
-        )}
         {sceneContext.selectedPVSystem.length > 0 && (
           <NotificationForSelectedPV />
         )}
@@ -607,52 +600,6 @@ const NotificationForSelectedPV = () => {
         <DialogCloseTrigger
           onClick={() => sceneContext.setSelectedPVSystem([])}
         />
-      </DialogContent>
-    </DialogRoot>
-  )
-}
-
-const NotificationForSelectedBuilding = ({ geoLocation }) => {
-  const sceneContext = useContext(SceneContext)
-  const { t } = useTranslation()
-  const [loading, setLoading] = useState(false)
-  const handleResimulationClick = async () => {
-    setLoading(true)
-    try {
-      await simulationForNewBuilding({
-        selectedMesh: sceneContext.selectedMesh,
-        setSelectedMesh: sceneContext.setSelectedMesh,
-        simulationMeshes: sceneContext.simulationMeshes,
-        setSimulationMeshes: sceneContext.setSimulationMeshes,
-        geometries: sceneContext.geometries,
-        geoLocation,
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
-    <DialogRoot
-      open={true}
-      placement='bottom'
-      size='xs'
-      onInteractOutside={() => sceneContext.setSelectedMesh([])}
-    >
-      <DialogContent>
-        <DialogHeader></DialogHeader>
-        <DialogBody>
-          <SimpleGrid gap='5px'>
-            <Button
-              variant='subtle'
-              loading={loading}
-              onClick={handleResimulationClick}
-            >
-              {t('button.simulateBuilding')}
-            </Button>
-          </SimpleGrid>
-        </DialogBody>
-        <DialogCloseTrigger onClick={() => sceneContext.setSelectedMesh([])} />
       </DialogContent>
     </DialogRoot>
   )
