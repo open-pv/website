@@ -3,9 +3,7 @@
   "mainDescription": "Analysieren Sie das Solarpotenzial Ihres Gebäudes - Open Source, mit frei verfügbaren 3D-Daten und alles direkt im Browser. Datenschutz? Selbstverständlich: keine unnötiges Datensammeln, kein Tracking.",
   "sidebar": {
     "header": "Ziel des Tools",
-    "mainText": "Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche.",
-    "numberSimulations": "Anzahl an gemittelten Sonnenständen",
-    "numberSimulationsHover": "Für die Simulation mitteln wir über verschiedene Sonnenstände, welche gleichmäßig über das Jahr verteilt sind. Je größer du diese Zahl wählst, desto genauer wird die Simulation. Allerdings dauert die Simulation auch länger."
+    "mainText": "Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche."
   },
   "yes": "Ja",
   "no": "Nein",
