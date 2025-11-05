@@ -69,7 +69,6 @@
     "showMap": "Show Map",
     "start": "Start",
     "options": "Options",
-    "simulateBuilding": "Simulate Building",
     "createPVSystem": "Create PV System",
     "drawPVSystem": "Draw a new PV system",
     "drawPVSystemHover": "Create new edges of the PV system by clicking. Afterwards click on the 'Create PV System' button.",
@@ -97,12 +96,10 @@
     "leftMouse": "Left Mouse Button: Move on the map",
     "rightMouse": "Right Mouse Button: Rotate the map",
     "wheel": "Mouse Wheel: Zoom in and out",
-    "doubleClick": "Double click: Select a builing or PV system",
     "touch": {
       "leftMouse": "One finger: Move on the map",
       "rightMouse": "Two fingers: Rotate the map",
-      "wheel": "Two fingers: Zoom in and out",
-      "doubleClick": " "
+      "wheel": "Two fingers: Zoom in and out"
     }
   },
   "colorLegend": {

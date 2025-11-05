@@ -91,7 +91,6 @@
     "showMap": "Karte anzeigen",
     "start": "Start",
     "options": "Optionen",
-    "simulateBuilding": "Gebäude simulieren",
     "createPVSystem": "PV-Anlage erstellen",
     "drawPVSystem": "Neue PV-Anlage einzeichnen",
     "drawPVSystemHover": "Ecken der PV-Anlage mit Klicks in der Karte einzeichnen und anschließend die Anlage erstellen.",
@@ -118,12 +117,10 @@
     "leftMouse": "Linke Maustaste: Bewegung auf der Karte",
     "rightMouse": "Rechte Maustaste: Rotation der Karte",
     "wheel": "Mausrad: Vergrößern und Verkleinern",
-    "doubleClick": "Doppelklick: Auswählen von Gebäude oder PV-Anlage",
     "touch": {
       "leftMouse": "Ein Finger: Bewegung auf der Karte",
       "rightMouse": "Zwei Finger: Rotation der Karte",
-      "wheel": "Zwei Finger: Vergrößern und Verkleinern",
-      "doubleClick": " "
+      "wheel": "Zwei Finger: Vergrößern und Verkleinern"
     }
   },
   "colorLegend": {
