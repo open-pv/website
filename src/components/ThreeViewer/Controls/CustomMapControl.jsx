@@ -45,37 +45,6 @@ function CustomMapControl() {
     return intersects[i]
   }
 
-  const handleDoubleClick = (event) => {
-    event.preventDefault()
-
-    const intersects = getIntersects()
-
-    if (intersects.length === 0) {
-      console.log('No children in the intersected mesh.')
-      return
-    }
-
-    const intersectedMesh = ignoreSprites(intersects).object
-
-    if (!intersectedMesh) return
-    if (!intersectedMesh.geometry.name) {
-      console.log(
-        "There is a mesh, but it has no name so I don't know what to do.",
-      )
-      return
-    }
-    console.log(intersectedMesh)
-    if (
-      intersectedMesh.geometry.name.includes('surrounding') ||
-      intersectedMesh.geometry.name.includes('background')
-    ) {
-      sceneContext.setSelectedMesh([intersectedMesh])
-    }
-    if (intersectedMesh.geometry.name.includes('pvSystem')) {
-      sceneContext.setSelectedPVSystem([intersectedMesh.geometry])
-    }
-  }
-
   const handleMouseMove = (event) => {
     event.preventDefault()
     const intersects = getIntersects()
@@ -89,12 +58,9 @@ function CustomMapControl() {
 
   useEffect(() => {
     const canvas = gl.domElement
-
-    canvas.addEventListener('dblclick', handleDoubleClick)
     canvas.addEventListener('mousemove', handleMouseMove)
 
     return () => {
-      canvas.removeEventListener('dblclick', handleDoubleClick)
       canvas.addEventListener('mousemove', handleMouseMove)
     }
   }, [camera, scene])

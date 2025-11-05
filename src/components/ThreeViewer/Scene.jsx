@@ -6,7 +6,6 @@ import { SceneContext } from '../context'
 import CustomMapControl from './Controls/CustomMapControl'
 import DrawPVControl from './Controls/DrawPVControl'
 import { HighlightedPVSystem } from './Meshes/HighlitedPVSystem'
-import { HighlightedMesh } from './Meshes/HiglightedMesh'
 import { PVSystems } from './Meshes/PVSystems'
 import SimulationMesh from './Meshes/SimulationMesh'
 import SurroundingMesh from './Meshes/SurroundingMesh'
@@ -30,8 +29,6 @@ const Scene = ({
   const [pvSystems, setPVSystems] = useState([])
   // pvPoints are the red points that appear when drawing PV systems
   const [pvPoints, setPVPoints] = useState([])
-  // highlighted meshes for resimulation
-  const [selectedMesh, setSelectedMesh] = useState([])
   // highlighted PVSystems for deletion or calculation
   const [selectedPVSystem, setSelectedPVSystem] = useState([])
   const [slope, setSlope] = useState('')
@@ -56,8 +53,6 @@ const Scene = ({
         setSelectedPVSystem,
         pvSystems,
         setPVSystems,
-        selectedMesh,
-        setSelectedMesh,
         showTerrain,
         setShowTerrain,
         slope,
@@ -96,7 +91,6 @@ const Scene = ({
         )}
 
         {simulationMeshes.length > 0 && <SimulationMesh />}
-        {selectedMesh && <HighlightedMesh />}
         {selectedPVSystem && <HighlightedPVSystem />}
         {simulationMeshes.length > 0 && frontendState == 'Results' && (
           <CustomMapControl />
