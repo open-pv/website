@@ -23,7 +23,7 @@
     "react-helmet-async": "^2.0.5",
     "react-i18next": "^15.5.1",
     "react-icons": "^5.4.0",
-    "react-map-gl": "^7.1.8",
+    "react-map-gl": "^8.1.0",
     "react-router-dom": "^7.5.2",
     "react-three-fiber": "^6.0.13",
     "three": "^0.172.0"
