@@ -17,5 +17,11 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
     },
+    server: {
+      host: true,
+      port: Number(env.PORT) || 5173,
+      // Allow other devices (devcontainer / host) to connect
+      strictPort: false,
+    },
   }
 })
