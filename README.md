@@ -13,6 +13,8 @@ our npm package [simshady](https://github.com/open-pv/simshady).
 
 ## Setup
 
+### Local deployment
+
 If you want to deploy this website locally, you need to follow these steps:
 
 1. Clone the repository and enter it.
@@ -30,6 +32,24 @@ If you want to deploy this website locally, you need to follow these steps:
    npm run dev
    ```
    and visit [localhost:5173](http://localhost:5173).
+
+### Devcontainer
+
+You can run this project inside a VS Code devcontainer. This sets up a reproducible development environment with Node and common tools.
+
+Steps:
+
+1. Clone the repository.
+2. Install the Remote - Containers extension in VS Code.
+3. Open the repository in VS Code.
+4. Press F1 and choose `Remote-Containers: Reopen in Container`.
+5. After the container builds, the extensions from the devcontainer will be installed and `npm install` will run automatically.
+6. Start the dev server inside the container with:
+```bash
+npm run dev
+```
+and visit [localhost:5173](http://localhost:5173).
+
 
 ## How does this work?
 
