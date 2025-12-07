@@ -55,9 +55,8 @@ export async function downloadBuildings(loc) {
   const promises = filenames.map((filename) => downloadBuildingTile(filename))
   const results = await Promise.all(promises)
 
-  // `results` is an array of arrays (one per tile). Flatten it.
-  const flat = results.flat()
-  return flat
+  // `results` is an array of arrays (one per tile). Flatten it and return.
+  return results.flat()
 }
 
 /**
