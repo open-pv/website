@@ -27,35 +27,32 @@ export async function mainSimulation(location) {
     //    The function mutates the objects in‑place and also returns the same array.
     processGeometries(buildingObjects, new THREE.Vector3(0, 0, 0), 80)
 
-    // 3️⃣ Group geometries by the newly assigned type.
-    // This is a temporary change.
-    const geometries = {
-      simulation: buildingObjects
-        .filter((b) => b.type === 'simulation')
-        .map((b) => b.geometry),
-      surrounding: buildingObjects
-        .filter((b) => b.type === 'surrounding')
-        .map((b) => b.geometry),
-      background: buildingObjects
-        .filter((b) => b.type === 'background')
-        .map((b) => b.geometry),
+    // 3️⃣ Expose the full building list to the UI
+    if (window.setBuildings) {
+      window.setBuildings(buildingObjects)
     }
 
-    // 4️⃣ Expose the grouped geometries to the UI (unchanged API)
-    window.setGeometries(geometries)
-    if (geometries.simulation.length == 0) {
+    // 4️⃣ Separate out simulation‑type buildings for the shading engine
+    const simulationBuildings = buildingObjects.filter(
+      (b) => b.type === 'simulation',
+    )
+    const simulationGeometries = simulationBuildings.map((b) => b.geometry)
+
+    if (simulationGeometries.length == 0) {
       window.setFrontendState('ErrorAdress')
       return { simulationMesh: undefined }
     }
 
     const scene = new ShadingScene()
-    geometries.simulation.forEach((geom) => {
+    simulationGeometries.forEach((geom) => {
       scene.addSimulationGeometry(geom)
       scene.addShadingGeometry(geom)
     })
-    geometries.surrounding.forEach((geom) => {
-      scene.addShadingGeometry(geom)
-    })
+
+    // Add surrounding (non‑simulation) geometries for shading only
+    buildingObjects
+      .filter((b) => b.type === 'surrounding')
+      .forEach((b) => scene.addShadingGeometry(b.geometry))
 
     scene.addColorMap(
       colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),

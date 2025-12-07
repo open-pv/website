@@ -20,17 +20,14 @@ function Index() {
   const [federalState, setFederalState] = useState(false)
   window.setFederalState = setFederalState
 
-  // Simulation States
-  const [geometries, setGeometries] = useState({
-    simulation: [],
-    surrounding: [],
-    background: [],
-  })
+  // Buildings state – holds an array of building objects with {id, type, geometry}
+  const [buildings, setBuildings] = useState([])
 
   // meshes that were simulated
   const [simulationMeshes, setSimulationMeshes] = useState([])
 
-  window.setGeometries = setGeometries
+  // expose setters for the simulation core
+  window.setBuildings = setBuildings
   window.setFrontendState = setFrontendState
   window.setSimulationProgress = setSimulationProgress
 
@@ -58,7 +55,7 @@ function Index() {
           <Scene
             frontendState={frontendState}
             setFrontendState={setFrontendState}
-            geometries={geometries}
+            buildings={buildings}
             simulationMeshes={simulationMeshes}
             setSimulationMeshes={setSimulationMeshes}
             vegetationGeometries={vegetationGeometries}

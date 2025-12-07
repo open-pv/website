@@ -17,7 +17,7 @@ import Terrain from './Terrain'
 const Scene = ({
   frontendState,
   setFrontendState,
-  geometries,
+  buildings,
   simulationMeshes,
   setSimulationMeshes,
   vegetationGeometries,
@@ -41,10 +41,16 @@ const Scene = ({
     simulationMeshes[0].middle.z + 80,
   ]
   const cameraRef = useRef()
+  // Derive grouped building arrays from the unified buildings state
+  const surroundingBuildings = buildings.filter(
+    (b) => b.type === 'surrounding',
+  )
+  const backgroundBuildings = buildings.filter((b) => b.type === 'background')
+
   return (
     <SceneContext.Provider
       value={{
-        geometries,
+        buildings,
         simulationMeshes,
         setSimulationMeshes,
         pvPoints,
@@ -83,11 +89,11 @@ const Scene = ({
         <directionalLight intensity={0.5} position={[1, 0, -2]} />
         <directionalLight intensity={0.5} position={[-1, 0, -2]} />
 
-        {geometries.surrounding.length > 0 && (
-          <SurroundingMesh geometries={geometries.surrounding} />
+        {surroundingBuildings.length > 0 && (
+          <SurroundingMesh buildings={surroundingBuildings} />
         )}
-        {geometries.background.length > 0 && (
-          <SurroundingMesh geometries={geometries.background} />
+        {backgroundBuildings.length > 0 && (
+          <SurroundingMesh buildings={backgroundBuildings} />
         )}
 
         {simulationMeshes.length > 0 && <SimulationMesh />}
