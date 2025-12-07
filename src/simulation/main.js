@@ -20,15 +20,28 @@ export async function mainSimulation(location) {
   }
 
   if (typeof location !== 'undefined' && location != null) {
-    const buildingGeometries = await downloadBuildings(location)
-    //const vegetationData = await retrieveVegetationRasters(location)
+    // 1️⃣ Download raw building objects (each has {id, type, geometry})
+    const buildingObjects = await downloadBuildings(location)
 
-    let geometries = processGeometries(
-      buildingGeometries,
-      new THREE.Vector3(0, 0, 0),
-      80,
-    )
+    // 2️⃣ Tag each building with its correct type (simulation, surrounding, background)
+    //    The function mutates the objects in‑place and also returns the same array.
+    processGeometries(buildingObjects, new THREE.Vector3(0, 0, 0), 80)
 
+    // 3️⃣ Group geometries by the newly assigned type.
+    // This is a temporary change.
+    const geometries = {
+      simulation: buildingObjects
+        .filter((b) => b.type === 'simulation')
+        .map((b) => b.geometry),
+      surrounding: buildingObjects
+        .filter((b) => b.type === 'surrounding')
+        .map((b) => b.geometry),
+      background: buildingObjects
+        .filter((b) => b.type === 'background')
+        .map((b) => b.geometry),
+    }
+
+    // 4️⃣ Expose the grouped geometries to the UI (unchanged API)
     window.setGeometries(geometries)
     if (geometries.simulation.length == 0) {
       window.setFrontendState('ErrorAdress')

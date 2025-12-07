@@ -1,5 +1,3 @@
-import * as GeoTIFF from 'geotiff'
-
 import * as THREE from 'three'
 import { Matrix4 } from 'three'
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
@@ -28,6 +26,8 @@ dracoLoader.preload()
 const gltfLoader = new GLTFLoader()
 gltfLoader.setDRACOLoader(dracoLoader)
 
+let _globalBuildingId = 0
+
 function getFileNames(lon, lat) {
   let [x, y] = projectToWebMercator(lon, lat)
 
@@ -45,20 +45,33 @@ function getFileNames(lon, lat) {
   return downloads
 }
 
+/**
+ * Download building data for a given location.
+ * Returns an array of building objects:
+ *   { id: Number, type: 'background', geometry: THREE.BufferGeometry }
+ */
 export async function downloadBuildings(loc) {
   const filenames = getFileNames(Number(loc.lon), Number(loc.lat))
-  const promises = filenames.map((filename) => downloadFile(filename))
-  const geometries = await Promise.all(promises)
-  return geometries.flat()
+  const promises = filenames.map((filename) => downloadBuildingTile(filename))
+  const results = await Promise.all(promises)
+
+  // `results` is an array of arrays (one per tile). Flatten it.
+  const flat = results.flat()
+  return flat
 }
 
-async function downloadFile(download_spec) {
+/**
+ * Download a single tile, convert the GLB into a list of building objects.
+ * Each building gets a unique `id` and a default `type` of "background".
+ */
+async function downloadBuildingTile(download_spec) {
   const { tile, center } = download_spec
   const url = `https://maps.heidler.info/germany-draco/15-${tile.x}-${tile.y}.glb`
 
   try {
     const data = await gltfLoader.loadAsync(url)
-    let geometries = []
+    let buildingObjects = []
+
     for (let scene of data.scenes) {
       for (let child of scene.children) {
         let geometry = child.geometry
@@ -76,15 +89,15 @@ async function downloadFile(download_spec) {
         tx.multiply(scale2tile)
         geometry.applyMatrix4(tx)
 
-        // Essentially all of our code assumes that the geometries are not indexed
-        // i.e. that position[9*i...(9*i)+9] always refers to a single triangle
-        // This makes sure of that
+        // Ensure geometry is non‑indexed so that each three vertices form a triangle
         geometry = geometry.toNonIndexed()
 
+        // Group vertices by feature ID (building identifier present in the GLB)
         let buildings = {}
         const position = geometry.attributes.position.array
         const normal = geometry.attributes.normal.array
         const feature_ids = geometry.attributes._feature_id_0.array
+
         for (let i = 0; i < geometry.attributes.position.count; i++) {
           const key = feature_ids[i]
           if (!buildings.hasOwnProperty(key)) {
@@ -98,18 +111,31 @@ async function downloadFile(download_spec) {
             buildings[key].normal.push(normal[3 * i + j])
           }
         }
+
+        // Convert each grouped building into a BufferGeometry and wrap it
         for (let { position, normal } of Object.values(buildings)) {
-          let buildingGeometry = new THREE.BufferGeometry()
-          position = new THREE.BufferAttribute(new Float32Array(position), 3)
-          buildingGeometry.setAttribute('position', position)
-          normal = new THREE.BufferAttribute(new Float32Array(normal), 3)
-          buildingGeometry.setAttribute('normal', normal)
-          geometries.push(buildingGeometry)
+          const buildingGeometry = new THREE.BufferGeometry()
+          const posAttr = new THREE.BufferAttribute(
+            new Float32Array(position),
+            3,
+          )
+          const normAttr = new THREE.BufferAttribute(
+            new Float32Array(normal),
+            3,
+          )
+          buildingGeometry.setAttribute('position', posAttr)
+          buildingGeometry.setAttribute('normal', normAttr)
+
+          buildingObjects.push({
+            id: ++_globalBuildingId,
+            type: 'background', // default type; will be updated later by preprocessing
+            geometry: buildingGeometry,
+          })
         }
       }
     }
 
-    // Parse Bundesländer
+    // Parse Bundesländer (federal state) information
     const buffer = await data.parser.getDependency('bufferView', 0)
     const ids = new TextDecoder().decode(buffer)
     for (const bundesland of Object.keys(attributions)) {
@@ -119,7 +145,7 @@ async function downloadFile(download_spec) {
       }
     }
 
-    return geometries
+    return buildingObjects
   } catch (error) {
     console.warn(error)
     return []
