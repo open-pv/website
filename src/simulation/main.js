@@ -20,29 +20,39 @@ export async function mainSimulation(location) {
   }
 
   if (typeof location !== 'undefined' && location != null) {
-    const buildingGeometries = await downloadBuildings(location)
-    //const vegetationData = await retrieveVegetationRasters(location)
+    // 1️⃣ Download raw building objects (each has {id, type, geometry})
+    const buildingObjects = await downloadBuildings(location)
 
-    let geometries = processGeometries(
-      buildingGeometries,
-      new THREE.Vector3(0, 0, 0),
-      80,
+    // 2️⃣ Tag each building with its correct type (simulation, surrounding, background)
+    //    The function mutates the objects in‑place and also returns the same array.
+    processGeometries(buildingObjects, new THREE.Vector3(0, 0, 0), 80)
+
+    // 3️⃣ Expose the full building list to the UI
+    if (window.setBuildings) {
+      window.setBuildings(buildingObjects)
+    }
+
+    // 4️⃣ Separate out simulation‑type buildings for the shading engine
+    const simulationBuildings = buildingObjects.filter(
+      (b) => b.type === 'simulation',
     )
+    const simulationGeometries = simulationBuildings.map((b) => b.geometry)
 
-    window.setGeometries(geometries)
-    if (geometries.simulation.length == 0) {
+    if (simulationGeometries.length == 0) {
       window.setFrontendState('ErrorAdress')
       return { simulationMesh: undefined }
     }
 
     const scene = new ShadingScene()
-    geometries.simulation.forEach((geom) => {
+    simulationGeometries.forEach((geom) => {
       scene.addSimulationGeometry(geom)
       scene.addShadingGeometry(geom)
     })
-    geometries.surrounding.forEach((geom) => {
-      scene.addShadingGeometry(geom)
-    })
+
+    // Add surrounding (non‑simulation) geometries for shading only
+    buildingObjects
+      .filter((b) => b.type === 'surrounding')
+      .forEach((b) => scene.addShadingGeometry(b.geometry))
 
     scene.addColorMap(
       colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),

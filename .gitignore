@@ -47,3 +47,4 @@ build/
 
 # Nohup
 nohup.out
+.aider*
