@@ -42,9 +42,7 @@ const Scene = ({
   ]
   const cameraRef = useRef()
   // Derive grouped building arrays from the unified buildings state
-  const surroundingBuildings = buildings.filter(
-    (b) => b.type === 'surrounding',
-  )
+  const surroundingBuildings = buildings.filter((b) => b.type === 'surrounding')
   const backgroundBuildings = buildings.filter((b) => b.type === 'background')
 
   return (
