@@ -88,10 +88,10 @@ async function downloadBuildingTile(download_spec) {
         tx.multiply(scale2tile)
         geometry.applyMatrix4(tx)
 
-        // Ensure geometry is non‑indexed so that each three vertices form a triangle
+        // Essentially all of our code assumes that the geometries are not indexed
+        // This makes sure of that
         geometry = geometry.toNonIndexed()
 
-        // Group vertices by feature ID (building identifier present in the GLB)
         let buildings = {}
         const position = geometry.attributes.position.array
         const normal = geometry.attributes.normal.array
