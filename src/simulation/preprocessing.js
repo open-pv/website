@@ -19,9 +19,6 @@ import * as THREE from 'three'
  * state can hold all building information.
  */
 export function processGeometries(buildings, simulationCenter, shadingCutoff) {
-  console.log('simulationCenter', simulationCenter)
-  console.log('shadingCutoff', shadingCutoff)
-
   const simulationRadius = 10
   const simulationRadius2 = simulationRadius * simulationRadius
   const cutoff2 = shadingCutoff * shadingCutoff
