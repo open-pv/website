@@ -45,11 +45,12 @@ Steps:
 4. Press F1 and choose `Remote-Containers: Reopen in Container`.
 5. After the container builds, the extensions from the devcontainer will be installed and `npm install` will run automatically.
 6. Start the dev server inside the container with:
+
 ```bash
 npm run dev
 ```
-and visit [localhost:5173](http://localhost:5173).
 
+and visit [localhost:5173](http://localhost:5173).
 
 ## How does this work?
 
