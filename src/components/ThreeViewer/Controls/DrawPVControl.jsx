@@ -74,16 +74,14 @@ const DrawPVControl = () => {
           ) &&
           pvPointsRef.length > 2
         ) {
-          // Safely obtain simulation buildings – default to an empty array if undefined.
-          const simulationBuildings =
-            sceneContext.buildings?.filter((b) => b.type === 'simulation') || []
-
           createPVSystem({
             setPVSystems: sceneContext.setPVSystems,
             setSelectedPVSystem: sceneContext.setSelectedPVSystem,
             pvPoints: pvPointsRef,
             setPVPoints: sceneContext.setPVPoints,
-            simulationBuildings, // guaranteed to be an array (may be empty)
+            simulationBuildings:
+              sceneContext.buildings?.filter((b) => b.type === 'simulation') ||
+              [],
           })
           setFrontendState('Results')
         }
@@ -123,7 +121,7 @@ const DrawPVControl = () => {
     if (controls.current) controls.current.update()
   })
 
-  return null // No visual output
+  return null // This component does not render anything visible
 }
 
 export default DrawPVControl
