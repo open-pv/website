@@ -30,22 +30,17 @@ export async function mainSimulation(location) {
     const simulationBuildings = buildingObjects.filter(
       (b) => b.type === 'simulation',
     )
-    console.info('buildingObjects', buildingObjects)
-    console.info('simulationBuildings', simulationBuildings)
-    const simulationGeometries = simulationBuildings.map((b) => b.geometry)
 
-    if (simulationGeometries.length == 0) {
+    if (simulationBuildings.length == 0) {
       window.setFrontendState('ErrorAdress')
       return {}
     }
 
     const scene = new ShadingScene()
-    simulationGeometries.forEach((geom) => {
-      scene.addSimulationGeometry(geom)
-      scene.addShadingGeometry(geom)
-    })
+    buildingObjects
+      .filter((b) => b.type === 'simulation')
+      .forEach((b) => scene.addSimulationGeometry(b.geometry))
 
-    // Add surrounding (non‑simulation) geometries for shading only
     buildingObjects
       .filter((b) => b.type === 'surrounding')
       .forEach((b) => scene.addShadingGeometry(b.geometry))
@@ -110,7 +105,6 @@ export async function mainSimulation(location) {
     })
 
     // Attach the resulting simulation mesh to each simulation building.
-    // For now we store the whole mesh on each building; more granular handling can be added later.
     simulationBuildings.forEach((b) => {
       b.mesh = simulationMesh.clone()
     })
