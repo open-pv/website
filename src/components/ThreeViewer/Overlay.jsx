@@ -30,7 +30,7 @@ import { c0, c1, c2 } from '../../data/constants'
 import { SceneContext } from '../context'
 import { createPVSystem } from './Meshes/PVSystems'
 
-function Overlay({ frontendState, setFrontendState, geoLocation }) {
+function Overlay({ frontendState, setFrontendState }) {
   const sceneContext = useContext(SceneContext)
   const { t } = useTranslation()
   const handleCreatePVButtonClick = () => {
