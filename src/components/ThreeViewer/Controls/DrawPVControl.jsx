@@ -13,10 +13,24 @@ const DrawPVControl = () => {
   const controls = useRef()
   let pvPointsRef = []
 
+  // Helper to get the first simulation building (if any)
+  const getFirstSimulationBuilding = () => {
+    return sceneContext.buildings?.find((b) => b.type === 'simulation') || null
+  }
+
+  // Initialise OrbitControls with the middle point of the first simulation building
   useEffect(() => {
-    // Initialize OrbitControls
+    const firstSimBuilding = getFirstSimulationBuilding()
+    const target = firstSimBuilding?.simulationMiddle
+      ? new THREE.Vector3(
+          firstSimBuilding.simulationMiddle.x,
+          firstSimBuilding.simulationMiddle.y,
+          firstSimBuilding.simulationMiddle.z,
+        )
+      : new THREE.Vector3(0, 0, 0)
+
     controls.current = new OrbitControls(camera, gl.domElement)
-    controls.current.target = sceneContext.simulationMeshes[0].middle
+    controls.current.target.copy(target)
     controls.current.mouseButtons = {
       MIDDLE: THREE.MOUSE.DOLLY,
       RIGHT: THREE.MOUSE.ROTATE,
@@ -29,7 +43,7 @@ const DrawPVControl = () => {
     return () => {
       controls.current.dispose()
     }
-  }, [camera, gl, sceneContext.simulationMeshes[0].middle])
+  }, [camera, gl, sceneContext.buildings])
 
   const onPointerDown = (event) => {
     if (event.button !== 0) return
@@ -60,12 +74,16 @@ const DrawPVControl = () => {
           ) &&
           pvPointsRef.length > 2
         ) {
+          // Safely obtain simulation buildings – default to an empty array if undefined.
+          const simulationBuildings =
+            sceneContext.buildings?.filter((b) => b.type === 'simulation') || []
+
           createPVSystem({
             setPVSystems: sceneContext.setPVSystems,
             setSelectedPVSystem: sceneContext.setSelectedPVSystem,
             pvPoints: pvPointsRef,
             setPVPoints: sceneContext.setPVPoints,
-            simulationMeshes: sceneContext.simulationMeshes,
+            simulationBuildings, // guaranteed to be an array (may be empty)
           })
           setFrontendState('Results')
         }
@@ -98,13 +116,14 @@ const DrawPVControl = () => {
     return () => {
       gl.domElement.removeEventListener('pointerdown', onPointerDown)
     }
-  }, [gl])
+  }, [gl, sceneContext.buildings])
 
+  // Update controls each frame
   useFrame(() => {
     if (controls.current) controls.current.update()
   })
 
-  return null // This component does not render anything visible
+  return null // No visual output
 }
 
 export default DrawPVControl

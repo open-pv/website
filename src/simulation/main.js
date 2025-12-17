@@ -20,27 +20,23 @@ export async function mainSimulation(location) {
   }
 
   if (typeof location !== 'undefined' && location != null) {
-    // 1️⃣ Download raw building objects (each has {id, type, geometry})
+    // Download raw building objects (each has {id, type, geometry})
     const buildingObjects = await downloadBuildings(location)
-
-    // 2️⃣ Tag each building with its correct type (simulation, surrounding, background)
-    //    The function mutates the objects in‑place and also returns the same array.
     processGeometries(buildingObjects, new THREE.Vector3(0, 0, 0), 80)
-
-    // 3️⃣ Expose the full building list to the UI
     if (window.setBuildings) {
       window.setBuildings(buildingObjects)
     }
 
-    // 4️⃣ Separate out simulation‑type buildings for the shading engine
     const simulationBuildings = buildingObjects.filter(
       (b) => b.type === 'simulation',
     )
+    console.info('buildingObjects', buildingObjects)
+    console.info('simulationBuildings', simulationBuildings)
     const simulationGeometries = simulationBuildings.map((b) => b.geometry)
 
     if (simulationGeometries.length == 0) {
       window.setFrontendState('ErrorAdress')
-      return { simulationMesh: undefined }
+      return {}
     }
 
     const scene = new ShadingScene()
@@ -113,11 +109,19 @@ export async function mainSimulation(location) {
       progressCallback: loadingBarWrapperFunction,
     })
 
-    let middle = new THREE.Vector3()
-    simulationMesh.geometry.computeBoundingBox()
-    simulationMesh.geometry.boundingBox.getCenter(middle)
-    simulationMesh.middle = middle
+    // Attach the resulting simulation mesh to each simulation building.
+    // For now we store the whole mesh on each building; more granular handling can be added later.
+    simulationBuildings.forEach((b) => {
+      b.mesh = simulationMesh.clone()
+    })
 
-    return { simulationMesh }
+    // Store the centre point of the mesh on the first simulation building for camera positioning.
+    if (simulationBuildings.length > 0) {
+      const middle = new THREE.Vector3()
+      simulationMesh.geometry.computeBoundingBox()
+      simulationMesh.geometry.boundingBox.getCenter(middle)
+      simulationBuildings[0].simulationMiddle = middle
+    }
+    return {}
   }
 }

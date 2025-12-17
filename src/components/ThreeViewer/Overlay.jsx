@@ -39,7 +39,9 @@ function Overlay({ frontendState, setFrontendState, geoLocation }) {
       setSelectedPVSystem: sceneContext.setSelectedPVSystem,
       pvPoints: sceneContext.pvPoints,
       setPVPoints: sceneContext.setPVPoints,
-      simulationMeshes: sceneContext.simulationMeshes,
+      simulatedBuildings: sceneContext.buildings.filter(
+        (b) => b.type === 'simulation',
+      ),
     })
     setFrontendState('Results')
   }

@@ -20,11 +20,8 @@ function Index() {
   const [federalState, setFederalState] = useState(false)
   window.setFederalState = setFederalState
 
-  // Buildings state – holds an array of building objects with {id, type, geometry}
+  // Buildings state – holds an array of building objects with {id, type, geometry, simulationMesh}
   const [buildings, setBuildings] = useState([])
-
-  // meshes that were simulated
-  const [simulationMeshes, setSimulationMeshes] = useState([])
 
   // expose setters for the simulation core
   window.setBuildings = setBuildings
@@ -35,11 +32,8 @@ function Index() {
   window.setVegetationGeometries = setVegetationGeometries
 
   const loadAndSimulate = async () => {
-    const { simulationMesh } = await mainSimulation(location)
-    if (simulationMesh) {
-      setSimulationMeshes([...simulationMeshes, simulationMesh])
-      setFrontendState('Results')
-    }
+    await mainSimulation(location)
+    setFrontendState('Results')
   }
 
   useEffect(() => {
@@ -56,8 +50,6 @@ function Index() {
             frontendState={frontendState}
             setFrontendState={setFrontendState}
             buildings={buildings}
-            simulationMeshes={simulationMeshes}
-            setSimulationMeshes={setSimulationMeshes}
             vegetationGeometries={vegetationGeometries}
             geoLocation={location}
           />

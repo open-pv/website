@@ -5,10 +5,9 @@ import * as THREE from 'three'
 import { SceneContext } from '../context'
 import CustomMapControl from './Controls/CustomMapControl'
 import DrawPVControl from './Controls/DrawPVControl'
+import { BuildingMesh } from './Meshes/BuildingMesh'
 import { HighlightedPVSystem } from './Meshes/HighlitedPVSystem'
 import { PVSystems } from './Meshes/PVSystems'
-import SimulationMesh from './Meshes/SimulationMesh'
-import SurroundingMesh from './Meshes/SurroundingMesh'
 import VegetationMesh from './Meshes/VegetationMesh'
 import Overlay from './Overlay'
 import PointsAndEdges from './PointsAndEdges'
@@ -18,8 +17,6 @@ const Scene = ({
   frontendState,
   setFrontendState,
   buildings,
-  simulationMeshes,
-  setSimulationMeshes,
   vegetationGeometries,
   geoLocation,
 }) => {
@@ -35,22 +32,23 @@ const Scene = ({
   const [azimuth, setAzimuth] = useState('')
 
   window.setPVPoints = setPVPoints
-  const position = [
-    simulationMeshes[0].middle.x,
-    simulationMeshes[0].middle.y - 40,
-    simulationMeshes[0].middle.z + 80,
-  ]
+
+  // Determine camera start position based on the first simulation building (if any)
+  let position = [0, 0, 0]
+  const firstSimBuilding = buildings.find((b) => b.type === 'simulation')
+  if (firstSimBuilding && firstSimBuilding.simulationMiddle) {
+    const m = firstSimBuilding.simulationMiddle
+    position = [m.x, m.y - 40, m.z + 80]
+  }
+
   const cameraRef = useRef()
   // Derive grouped building arrays from the unified buildings state
-  const surroundingBuildings = buildings.filter((b) => b.type === 'surrounding')
-  const backgroundBuildings = buildings.filter((b) => b.type === 'background')
+  const simulationBuildings = buildings.filter((b) => b.type === 'simulation')
 
   return (
     <SceneContext.Provider
       value={{
         buildings,
-        simulationMeshes,
-        setSimulationMeshes,
         pvPoints,
         setPVPoints,
         selectedPVSystem,
@@ -87,16 +85,11 @@ const Scene = ({
         <directionalLight intensity={0.5} position={[1, 0, -2]} />
         <directionalLight intensity={0.5} position={[-1, 0, -2]} />
 
-        {surroundingBuildings.length > 0 && (
-          <SurroundingMesh buildings={surroundingBuildings} />
-        )}
-        {backgroundBuildings.length > 0 && (
-          <SurroundingMesh buildings={backgroundBuildings} />
-        )}
+        {buildings.length > 0 &&
+          buildings.map((b) => <BuildingMesh building={b} />)}
 
-        {simulationMeshes.length > 0 && <SimulationMesh />}
         {selectedPVSystem && <HighlightedPVSystem />}
-        {simulationMeshes.length > 0 && frontendState == 'Results' && (
+        {simulationBuildings.length > 0 && frontendState == 'Results' && (
           <CustomMapControl />
         )}
         {frontendState == 'DrawPV' && <DrawPVControl />}
@@ -117,7 +110,7 @@ const Scene = ({
           </>
         )}
 
-        {simulationMeshes.length > 0 && <Terrain />}
+        {simulationBuildings.length > 0 && <Terrain />}
       </Canvas>
     </SceneContext.Provider>
   )

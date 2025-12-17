@@ -22,7 +22,7 @@ export function processGeometries(buildings, simulationCenter, shadingCutoff) {
   console.log('simulationCenter', simulationCenter)
   console.log('shadingCutoff', shadingCutoff)
 
-  const simulationRadius = 10 // 10 m radius for simulation
+  const simulationRadius = 10
   const simulationRadius2 = simulationRadius * simulationRadius
   const cutoff2 = shadingCutoff * shadingCutoff
 
@@ -47,11 +47,7 @@ export function processGeometries(buildings, simulationCenter, shadingCutoff) {
     } else {
       b.type = 'background'
     }
-
-    // Cleanup the temporary property
     delete b._center
   }
-
-  // The function returns the same array (now enriched with proper `type`s)
   return buildings
 }
