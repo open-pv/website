@@ -2,7 +2,7 @@ import * as THREE from 'three'
 /**
  * Renders building.
  *
- * - If `building.mesh` exists, it is rendered as‑is.
+ * - If `building.type` == "simulation", it is rendered as‑is.
  * - Otherwise a simple `<mesh>` with the supplied geometry and a single
  *   Lambert material is created.
  */
