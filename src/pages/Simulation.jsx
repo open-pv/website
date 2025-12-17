@@ -20,7 +20,11 @@ function Index() {
   const [federalState, setFederalState] = useState(false)
   window.setFederalState = setFederalState
 
-  // Buildings state – holds an array of building objects with {id, type, geometry, simulationMesh}
+  // Buildings state – holds an array of building objects with
+  // {id:int,
+  // type:["simulation", "background", "surrounding"],
+  // geometry: Threejs geometry (all buildings),
+  // mesh: Threejs colored mesh (only simulated buildings)}
   const [buildings, setBuildings] = useState([])
 
   // expose setters for the simulation core
