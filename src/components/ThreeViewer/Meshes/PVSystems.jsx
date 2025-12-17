@@ -24,7 +24,7 @@ export const PVSystems = () => {
  * @param {Function} params.setSelectedPVSystem    - state setter for the currently selected PV system
  * @param {Array}    params.pvPoints               - array of points the user clicked (with normal vectors)
  * @param {Function} params.setPVPoints            - state setter to clear points after creation
- * @param {Array}    params.simulationBuildings    - array of building objects that contain the simulation mesh
+ * @param {Array}    params.simulatedBuildings     - array of building objects that contain the simulation mesh
  */
 export function createPVSystem({
   setPVSystems,
