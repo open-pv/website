@@ -10,18 +10,28 @@ export const PVSystems = () => {
   return (
     <>
       {sceneContext.pvSystems.map((geometry) => (
-        <PVSystem geometry={geometry} />
+        <PVSystem geometry={geometry} key={geometry.id} />
       ))}
     </>
   )
 }
 
+/**
+ * Creates a PV system mesh based on the user‑drawn points.
+ *
+ * @param {Object} params
+ * @param {Function} params.setPVSystems           - state setter for the list of PV systems
+ * @param {Function} params.setSelectedPVSystem    - state setter for the currently selected PV system
+ * @param {Array}    params.pvPoints               - array of points the user clicked (with normal vectors)
+ * @param {Function} params.setPVPoints            - state setter to clear points after creation
+ * @param {Array}    params.simulatedBuildings     - array of building objects that contain the simulation mesh
+ */
 export function createPVSystem({
   setPVSystems,
   setSelectedPVSystem,
   pvPoints,
   setPVPoints,
-  simulationMeshes,
+  simulatedBuildings,
 }) {
   const points = pvPoints.map((obj) => obj.point)
   if (pvPoints.length < 3) {
@@ -54,6 +64,7 @@ export function createPVSystem({
   )
   geometry.name = 'pvSystem'
 
+  // Subdivide triangles for higher resolution PV placement
   let subdividedTriangles = []
   const triangleSubdivisionThreshold = 0.8
   triangles.forEach((triangle) => {
@@ -63,11 +74,13 @@ export function createPVSystem({
   })
 
   const geometries = []
-
-  simulationMeshes.forEach((mesh) => {
-    const geom = mesh.geometry.clone()
-    geom.applyMatrix4(mesh.matrixWorld)
-    geometries.push(geom)
+  simulatedBuildings.forEach((building) => {
+    const mesh = building.mesh
+    if (mesh && mesh.geometry) {
+      const geom = mesh.geometry.clone()
+      geom.applyMatrix4(mesh.matrixWorld)
+      geometries.push(geom)
+    }
   })
   const simulationGeometry = BufferGeometryUtils.mergeGeometries(
     geometries,

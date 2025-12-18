@@ -20,29 +20,28 @@ export async function mainSimulation(location) {
   }
 
   if (typeof location !== 'undefined' && location != null) {
-    const buildingGeometries = await downloadBuildings(location)
-    //const vegetationData = await retrieveVegetationRasters(location)
+    // Download raw building objects (each has {id, type, geometry})
+    const buildingObjects = await downloadBuildings(location)
+    processGeometries(buildingObjects, new THREE.Vector3(0, 0, 0), 80)
+    window.setBuildings(buildingObjects)
 
-    let geometries = processGeometries(
-      buildingGeometries,
-      new THREE.Vector3(0, 0, 0),
-      80,
+    const simulationBuildings = buildingObjects.filter(
+      (b) => b.type === 'simulation',
     )
 
-    window.setGeometries(geometries)
-    if (geometries.simulation.length == 0) {
+    if (simulationBuildings.length == 0) {
       window.setFrontendState('ErrorAdress')
-      return { simulationMesh: undefined }
+      return {}
     }
 
     const scene = new ShadingScene()
-    geometries.simulation.forEach((geom) => {
-      scene.addSimulationGeometry(geom)
-      scene.addShadingGeometry(geom)
-    })
-    geometries.surrounding.forEach((geom) => {
-      scene.addShadingGeometry(geom)
-    })
+    buildingObjects
+      .filter((b) => b.type === 'simulation')
+      .forEach((b) => scene.addSimulationGeometry(b.geometry))
+
+    buildingObjects
+      .filter((b) => b.type === 'surrounding')
+      .forEach((b) => scene.addShadingGeometry(b.geometry))
 
     scene.addColorMap(
       colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
@@ -103,11 +102,18 @@ export async function mainSimulation(location) {
       progressCallback: loadingBarWrapperFunction,
     })
 
-    let middle = new THREE.Vector3()
-    simulationMesh.geometry.computeBoundingBox()
-    simulationMesh.geometry.boundingBox.getCenter(middle)
-    simulationMesh.middle = middle
+    // Attach the resulting simulation mesh to each simulation building.
+    simulationBuildings.forEach((b) => {
+      b.mesh = simulationMesh.clone()
+    })
 
-    return { simulationMesh }
+    // Store the centre point of the mesh on the first simulation building for camera positioning.
+    if (simulationBuildings.length > 0) {
+      const middle = new THREE.Vector3()
+      simulationMesh.geometry.computeBoundingBox()
+      simulationMesh.geometry.boundingBox.getCenter(middle)
+      simulationBuildings[0].simulationMiddle = middle
+    }
+    return {}
   }
 }

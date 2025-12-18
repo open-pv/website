@@ -30,7 +30,7 @@ import { c0, c1, c2 } from '../../data/constants'
 import { SceneContext } from '../context'
 import { createPVSystem } from './Meshes/PVSystems'
 
-function Overlay({ frontendState, setFrontendState, geoLocation }) {
+function Overlay({ frontendState, setFrontendState }) {
   const sceneContext = useContext(SceneContext)
   const { t } = useTranslation()
   const handleCreatePVButtonClick = () => {
@@ -39,7 +39,9 @@ function Overlay({ frontendState, setFrontendState, geoLocation }) {
       setSelectedPVSystem: sceneContext.setSelectedPVSystem,
       pvPoints: sceneContext.pvPoints,
       setPVPoints: sceneContext.setPVPoints,
-      simulationMeshes: sceneContext.simulationMeshes,
+      simulatedBuildings: sceneContext.buildings.filter(
+        (b) => b.type === 'simulation',
+      ),
     })
     setFrontendState('Results')
   }

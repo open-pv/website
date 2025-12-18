@@ -15,7 +15,7 @@ function CustomMapControl() {
    * Returns the list of intersected objects. An intersected object is an object
    * that lies directly below the mouse cursor.
    */
-  const getIntersects = () => {
+  const getIntersects = (event) => {
     const isTouch = window.isTouchDevice
     const clientX = isTouch ? event.touches[0].clientX : event.clientX
     const clientY = isTouch ? event.touches[0].clientY : event.clientY
@@ -47,8 +47,10 @@ function CustomMapControl() {
 
   const handleMouseMove = (event) => {
     event.preventDefault()
-    const intersects = getIntersects()
-    const intersectedFace = ignoreSprites(intersects).face
+    const intersects = getIntersects(event)
+    const intersected = ignoreSprites(intersects)
+    if (!intersected) return
+    const intersectedFace = intersected.face
     const [slope, azimuth] = calculateSlopeAzimuthFromNormal(
       intersectedFace.normal,
     )
@@ -56,26 +58,58 @@ function CustomMapControl() {
     sceneContext.setAzimuth(Math.round(azimuth))
   }
 
+  // Attach mouse move listener once
   useEffect(() => {
     const canvas = gl.domElement
     canvas.addEventListener('mousemove', handleMouseMove)
-
     return () => {
-      canvas.addEventListener('mousemove', handleMouseMove)
+      canvas.removeEventListener('mousemove', handleMouseMove)
     }
-  }, [camera, scene])
+  }, [gl])
 
+  // Update controls each frame
   useFrame(() => {
     if (controlsRef.current) {
       controlsRef.current.update()
     }
   })
 
+  // -------------------------------------------------
+  // Determine the initial target for the map controls.
+  // This should happen only once, after the building data
+  // has been loaded, and must not be overwritten by later
+  // renders or user interactions.
+  // -------------------------------------------------
+  const initialTarget = useRef(new THREE.Vector3(0, 0, 0))
+  const targetSet = useRef(false)
+
+  // Run when building data changes. Set the target only the first time
+  // we have a simulation building with a stored middle point.
+  useEffect(() => {
+    if (targetSet.current) return
+
+    const firstSimBuilding = sceneContext.buildings?.find(
+      (b) => b.type === 'simulation',
+    )
+    if (firstSimBuilding && firstSimBuilding.simulationMiddle) {
+      const m = firstSimBuilding.simulationMiddle
+      initialTarget.current.set(m.x, m.y, m.z)
+
+      // If the controls already exist, update its internal target immediately.
+      if (controlsRef.current) {
+        controlsRef.current.target.copy(initialTarget.current)
+        controlsRef.current.update()
+      }
+
+      targetSet.current = true
+    }
+  }, [sceneContext.buildings])
+
   return (
     <MapControls
       ref={controlsRef}
       args={[camera, gl.domElement]}
-      target={sceneContext.simulationMeshes[0].middle}
+      target={initialTarget.current}
       mouseButtons={{
         LEFT: THREE.MOUSE.PAN,
         MIDDLE: THREE.MOUSE.DOLLY,

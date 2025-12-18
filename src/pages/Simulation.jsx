@@ -20,17 +20,15 @@ function Index() {
   const [federalState, setFederalState] = useState(false)
   window.setFederalState = setFederalState
 
-  // Simulation States
-  const [geometries, setGeometries] = useState({
-    simulation: [],
-    surrounding: [],
-    background: [],
-  })
+  // Buildings state – holds an array of building objects with
+  // {id:int,
+  // type:["simulation", "background", "surrounding"],
+  // geometry: Threejs geometry (all buildings),
+  // mesh: Threejs colored mesh (only simulated buildings)}
+  const [buildings, setBuildings] = useState([])
 
-  // meshes that were simulated
-  const [simulationMeshes, setSimulationMeshes] = useState([])
-
-  window.setGeometries = setGeometries
+  // expose setters for the simulation core
+  window.setBuildings = setBuildings
   window.setFrontendState = setFrontendState
   window.setSimulationProgress = setSimulationProgress
 
@@ -38,11 +36,8 @@ function Index() {
   window.setVegetationGeometries = setVegetationGeometries
 
   const loadAndSimulate = async () => {
-    const { simulationMesh } = await mainSimulation(location)
-    if (simulationMesh) {
-      setSimulationMeshes([...simulationMeshes, simulationMesh])
-      setFrontendState('Results')
-    }
+    await mainSimulation(location)
+    setFrontendState('Results')
   }
 
   useEffect(() => {
@@ -58,9 +53,7 @@ function Index() {
           <Scene
             frontendState={frontendState}
             setFrontendState={setFrontendState}
-            geometries={geometries}
-            simulationMeshes={simulationMeshes}
-            setSimulationMeshes={setSimulationMeshes}
+            buildings={buildings}
             vegetationGeometries={vegetationGeometries}
             geoLocation={location}
           />
