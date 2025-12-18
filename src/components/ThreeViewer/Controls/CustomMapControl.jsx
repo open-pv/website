@@ -91,10 +91,7 @@ function CustomMapControl() {
     const firstSimBuilding = sceneContext.buildings?.find(
       (b) => b.type === 'simulation',
     )
-    if (
-      firstSimBuilding &&
-      firstSimBuilding.simulationMiddle
-    ) {
+    if (firstSimBuilding && firstSimBuilding.simulationMiddle) {
       const m = firstSimBuilding.simulationMiddle
       initialTarget.current.set(m.x, m.y, m.z)
 
