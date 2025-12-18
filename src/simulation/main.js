@@ -23,9 +23,7 @@ export async function mainSimulation(location) {
     // Download raw building objects (each has {id, type, geometry})
     const buildingObjects = await downloadBuildings(location)
     processGeometries(buildingObjects, new THREE.Vector3(0, 0, 0), 80)
-    if (window.setBuildings) {
-      window.setBuildings(buildingObjects)
-    }
+    window.setBuildings(buildingObjects)
 
     const simulationBuildings = buildingObjects.filter(
       (b) => b.type === 'simulation',
