@@ -50,9 +50,9 @@
     }
   },
   "loadingMessage": {
-    "tip1": "Double-click to select a different building on the map and restart the simulation.",
+    "tip1": "In 2026, fossil fuels will still cover almost 80% of German energy demand. We need more PV now!",
     "tip2": "The shadow calculation is done in your browser. If you have selected a large building or are using an old PC, the calculation will take longer.",
-    "tip3": "Sometimes parts of the building are displayed below the map. In this case, you can hide the map to see the entire building."
+    "tip3": "Your solar system is your contribution to the energy transition!"
   },
   "errorMessage": {
     "header": "An Error occured.",

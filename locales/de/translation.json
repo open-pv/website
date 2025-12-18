@@ -50,9 +50,9 @@
     }
   },
   "loadingMessage": {
-    "tip1": "Mit Doppelklick kannst du ein anderes Gebäude auf der Karte auswählen und die Simulation neu starten.",
+    "tip1": "2026 decken fossile Brennstoffe noch fast 80% unseres Energiebedarfs. Wir brauchen jetzt mehr PV!",
     "tip2": "Die Berechnung der Verschattung findet bei dir im Browser statt. Hast du ein großes Gebäude ausgewählt oder nutzt du einen alten PC, dann dauert die Berechnung länger.",
-    "tip3": "Manchmal werden Teile des Gebäudes unter der Karte angezeigt. In diesem Fall kannst du die Karte ausblenden, um das ganze Gebäude zu sehen."
+    "tip3": "Deine Solaranlage ist dein Beitrag zur Energiewende!"
   },
   "errorMessage": {
     "header": "Ein Fehler ist aufgetreten.",
