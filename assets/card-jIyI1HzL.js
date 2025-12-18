@@ -1,0 +1,1 @@
+import{J as o}from"./index-Dr9SeFfY.js";const{withProvider:e,withContext:t}=o({key:"card"}),d=e("div","root"),a=t("div","body"),i=t("div","header");t("div","footer");const s=t("h3","title"),c=t("p","description");export{d as C,a,s as b,c,i as d};
