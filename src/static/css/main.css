@@ -20,11 +20,10 @@
   font-size: 0.5em;
   font-weight: 400;
   letter-spacing: 0.25em;
-  text-transform: uppercase;
   padding: 10px;
   background-color: #ffffffa0;
   width: fit-content;
-  font-size: 0.6em;
+  font-size: 0.7em;
   display: flex;
   flex-direction: column;
   gap: 10px;
