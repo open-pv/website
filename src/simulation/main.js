@@ -23,16 +23,15 @@ export async function mainSimulation(location) {
     // Download raw building objects (each has {id, type, geometry})
     const buildingObjects = await downloadBuildings(location)
     processGeometries(buildingObjects, new THREE.Vector3(0, 0, 0), 80)
-    window.setBuildings(buildingObjects)
-
     const simulationBuildings = buildingObjects.filter(
       (b) => b.type === 'simulation',
     )
-
     if (simulationBuildings.length == 0) {
       window.setFrontendState('ErrorAdress')
       return {}
     }
+
+    window.setBuildings(buildingObjects)
 
     const scene = new ShadingScene()
     buildingObjects
@@ -108,12 +107,13 @@ export async function mainSimulation(location) {
     })
 
     // Store the centre point of the mesh on the first simulation building for camera positioning.
-    if (simulationBuildings.length > 0) {
-      const middle = new THREE.Vector3()
-      simulationMesh.geometry.computeBoundingBox()
-      simulationMesh.geometry.boundingBox.getCenter(middle)
-      simulationBuildings[0].simulationMiddle = middle
-    }
+    const middle = new THREE.Vector3()
+    simulationMesh.geometry.computeBoundingBox()
+    simulationMesh.geometry.boundingBox.getCenter(middle)
+    simulationBuildings[0].simulationMiddle = middle
+
+    setFrontendState('Results')
+
     return {}
   }
 }
