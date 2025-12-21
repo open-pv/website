@@ -1,6 +1,6 @@
 {
   "title": "OpenPV - A free solar calculator",
-  "mainDescription": "Analyze the solar potential of your building – open source, using freely available 3D data, all directly in your browser. Privacy? Absolutely: no unnecessary data collection, no tracking.",
+  "mainDescription": "Analyze the solar potential of your building - open source, using freely available 3D data, all directly in your browser. Privacy? Absolutely: no unnecessary data collection, no tracking.",
   "sidebar": {
     "header": "Goal of this website",
     "mainText": "The tool will then calculate the potential for a solar system on your roof and facade area."
@@ -56,7 +56,8 @@
   },
   "errorMessage": {
     "header": "An Error occured.",
-    "wrongAdress": "No buildings could be found for the specified location. This could be due to several reasons: 1. There is no building at the selected location. 2. There is a new building at the selected location that is not yet included in our data. 3. The selected location is outside of Germany or in the federal states of Saarland or Mecklenburg-Vorpommern. Unfortunately, we do not have building data for these federal states."
+    "wrongAdress": "No buildings could be found for the specified location. This could be due to several reasons: 1. There is no building at the selected location. 2. There is a new building at the selected location that is not yet included in our data. 3. The selected location is outside of Germany. Chose another location on the map.",
+    "backToMap": "Back to the openpv Map."
   },
   "WelcomeMessage": {
     "title": "Welcome to OpenPV",
