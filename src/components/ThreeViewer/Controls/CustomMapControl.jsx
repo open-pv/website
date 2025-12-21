@@ -56,6 +56,16 @@ function CustomMapControl() {
     )
     sceneContext.setSlope(Math.round(slope))
     sceneContext.setAzimuth(Math.round(azimuth))
+    if (!intersected.object.geometry.attributes?.intensities) {
+      sceneContext.setYieldPerKWP('')
+      return
+    }
+    // Continue only for simulated building
+    const intensityAttr = intersected.object.geometry.attributes.intensities
+    const faceIdx = intersected.faceIndex
+    const intensity = intensityAttr.array[faceIdx]
+    const yieldPerKWP = calculateYieldPerKKW(intensity)
+    sceneContext.setYieldPerKWP(Math.round(yieldPerKWP))
   }
 
   // Attach mouse move listener once
@@ -141,4 +151,8 @@ const calculateSlopeAzimuthFromNormal = (normal) => {
   }
 
   return [slope, azimuth]
+}
+
+const calculateYieldPerKKW = (intensity) => {
+  return intensity * 5.5
 }
