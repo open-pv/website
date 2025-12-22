@@ -23,16 +23,38 @@ export function processGeometries(buildings, simulationCenter, shadingCutoff) {
   const simulationRadius2 = simulationRadius * simulationRadius
   const cutoff2 = shadingCutoff * shadingCutoff
 
-  // Step 1: compute bounding boxes and centre points for each building
+  // --------------------------------------------------------------
+  // Step 1 – compute bounding boxes, store centres and find the
+  // closest centre to the current simulation centre.
+  // --------------------------------------------------------------
+  let minDist = 50 ** 2 // squared because we do not take the root afterwards
+  const closestCenter = new THREE.Vector3()
+
   for (let b of buildings) {
     b.geometry.computeBoundingBox()
     const center = new THREE.Vector3()
     b.geometry.boundingBox.getCenter(center)
-    b._center = center // store temporarily for later distance checks
+    b._center = center // temporary storage for later distance checks
+
+    const d2 =
+      (center.x - simulationCenter.x) ** 2 +
+      (center.y - simulationCenter.y) ** 2
+
+    if (d2 < minDist) {
+      minDist = d2
+      closestCenter.copy(center)
+    }
+  }
+
+  // --------------------------------------------------------------
+  // If nothing is inside the simulation radius, recenter it.
+  // --------------------------------------------------------------
+  if (minDist > simulationRadius2) {
+    simulationCenter.copy(closestCenter)
   }
 
   // Step 2 – assign type based on distance from the simulation centre
-  for (let b of buildings) {
+  for (const b of buildings) {
     const d2 =
       (b._center.x - simulationCenter.x) ** 2 +
       (b._center.y - simulationCenter.y) ** 2

@@ -56,7 +56,8 @@
   },
   "errorMessage": {
     "header": "Ein Fehler ist aufgetreten.",
-    "wrongAdress": "Für den angegebenen Ort konnten keine Gebäude gefunden werden. Dies kann mehrere Gründe haben: 1. Am ausgewählten Ort steht kein Gebäude. 2. Am ausgewählten Ort steht ein neues Gebäude, welches noch nicht in unseren Daten vorhanden ist. 3. Der ausgewählte Ort liegt außerhalb von Deutschland oder in den Bundesländern Saarland / Mecklenburg-Vorpommern. Für diese Bundesländer haben wir leider keine Gebäudedaten."
+    "wrongAdress": "Für den angegebenen Ort konnten keine Gebäude gefunden werden. Dies kann mehrere Gründe haben: 1. Am ausgewählten Ort steht kein Gebäude. 2. Am ausgewählten Ort steht ein neues Gebäude, welches noch nicht in unseren Daten vorhanden ist. 3. Der ausgewählte Ort liegt außerhalb von Deutschland. Wähle einen anderen Ort auf der Karte.",
+    "backToMap": "Zurück zur Karten von openpv.de"
   },
   "WelcomeMessage": {
     "title": "OpenPV - Ihr Solarrechner für ganz Deutschland.",

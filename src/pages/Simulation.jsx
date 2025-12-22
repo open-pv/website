@@ -37,7 +37,6 @@ function Index() {
 
   const loadAndSimulate = async () => {
     await mainSimulation(location)
-    setFrontendState('Results')
   }
 
   useEffect(() => {
