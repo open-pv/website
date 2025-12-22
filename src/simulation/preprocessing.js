@@ -61,7 +61,6 @@ export function processGeometries(buildings, simulationCenter, shadingCutoff) {
 
     if (d2 <= simulationRadius2) {
       b.type = 'simulation'
-      console.log('A simulation building, yeah')
     } else if (d2 <= cutoff2) {
       b.type = 'surrounding'
     } else {
