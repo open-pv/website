@@ -57,7 +57,7 @@
   "errorMessage": {
     "header": "An Error occured.",
     "wrongAdress": "No buildings could be found for the specified location. This could be due to several reasons: 1. There is no building at the selected location. 2. There is a new building at the selected location that is not yet included in our data. 3. The selected location is outside of Germany. Chose another location on the map.",
-    "backToMap": "Back to the openpv Map."
+    "backToMap": "Back to the openpv.de map."
   },
   "WelcomeMessage": {
     "title": "Welcome to OpenPV",
