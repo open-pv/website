@@ -37,9 +37,7 @@ export function renderWithProviders(ui, options = {}) {
         <I18nextProvider i18n={i18nInstance}>
           <HelmetProvider>
             <RouterComponent {...routerProps}>
-              <Suspense fallback={<div>Loading...</div>}>
-                {children}
-              </Suspense>
+              <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
             </RouterComponent>
           </HelmetProvider>
         </I18nextProvider>

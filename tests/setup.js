@@ -11,13 +11,13 @@ afterEach(() => {
 beforeAll(() => {
   Object.defineProperty(window, 'isTouchDevice', {
     writable: true,
-    value: false
+    value: false,
   })
 })
 
 // Mock MapLibre GL - it's canvas-based and won't render in jsdom
 vi.mock('maplibre-gl', () => ({
-  Map: vi.fn(function() {
+  Map: vi.fn(function () {
     return {
       on: vi.fn(),
       off: vi.fn(),
@@ -27,11 +27,11 @@ vi.mock('maplibre-gl', () => ({
       getCanvas: vi.fn(() => document.createElement('canvas')),
       getMap: vi.fn(() => ({
         dragRotate: { disable: vi.fn() },
-        touchZoomRotate: { disableRotation: vi.fn() }
-      }))
+        touchZoomRotate: { disableRotation: vi.fn() },
+      })),
     }
   }),
-  NavigationControl: vi.fn()
+  NavigationControl: vi.fn(),
 }))
 
 // Mock react-map-gl/maplibre wrapper
@@ -45,12 +45,13 @@ vi.mock('react-map-gl/maplibre', () => {
         {
           'data-testid': 'maplibre-map',
           onClick: (e) => onClick?.({ lngLat: { lng: 11.399, lat: 49.457 } }),
-          ...props
+          ...props,
         },
-        children
+        children,
       )
     },
-    NavigationControl: () => React.createElement('div', { 'data-testid': 'navigation-control' })
+    NavigationControl: () =>
+      React.createElement('div', { 'data-testid': 'navigation-control' }),
   }
 })
 
@@ -62,7 +63,7 @@ const mockWebGLContext = {
   getShaderPrecisionFormat: vi.fn(() => ({
     precision: 1,
     rangeMin: 1,
-    rangeMax: 1
+    rangeMax: 1,
   })),
   createProgram: vi.fn(),
   createShader: vi.fn(),
@@ -117,7 +118,7 @@ HTMLCanvasElement.prototype.getContext = vi.fn((contextType) => {
 // Mock matchMedia for responsive design tests
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -153,7 +154,7 @@ global.ResizeObserver = class ResizeObserver {
 
 // Mock WelcomeMessage component to not block UI during tests
 vi.mock('../src/components/Template/WelcomeMessage', () => ({
-  default: () => null
+  default: () => null,
 }))
 
 // Mock DRACOLoader to prevent WASM loading errors in tests
@@ -170,7 +171,7 @@ vi.mock('three/addons/loaders/DRACOLoader.js', () => ({
         setTimeout(() => onLoad({ geometry: null }), 0)
       }
     }
-  }
+  },
 }))
 
 vi.mock('three/examples/jsm/loaders/DRACOLoader', () => ({
@@ -185,7 +186,7 @@ vi.mock('three/examples/jsm/loaders/DRACOLoader', () => ({
         setTimeout(() => onLoad({ geometry: null }), 0)
       }
     }
-  }
+  },
 }))
 
 // Mock GLTFLoader which uses DRACOLoader
@@ -199,8 +200,8 @@ vi.mock('three/addons/loaders/GLTFLoader.js', () => ({
         scenes: [],
         animations: [],
         parser: {
-          getDependency: () => Promise.resolve(new ArrayBuffer(0))
-        }
+          getDependency: () => Promise.resolve(new ArrayBuffer(0)),
+        },
       }
       if (onLoad) {
         setTimeout(() => onLoad(mockGLTF), 0)
@@ -215,8 +216,8 @@ vi.mock('three/addons/loaders/GLTFLoader.js', () => ({
           scenes: [],
           animations: [],
           parser: {
-            getDependency: () => Promise.resolve(new ArrayBuffer(0))
-          }
+            getDependency: () => Promise.resolve(new ArrayBuffer(0)),
+          },
         }
         setTimeout(() => onLoad(mockGLTF), 0)
       }
@@ -229,11 +230,11 @@ vi.mock('three/addons/loaders/GLTFLoader.js', () => ({
         animations: [],
         userData: {},
         parser: {
-          getDependency: () => Promise.resolve(new ArrayBuffer(0))
-        }
+          getDependency: () => Promise.resolve(new ArrayBuffer(0)),
+        },
       })
     }
-  }
+  },
 }))
 
 vi.mock('three/examples/jsm/loaders/GLTFLoader', () => ({
@@ -245,8 +246,8 @@ vi.mock('three/examples/jsm/loaders/GLTFLoader', () => ({
         scenes: [],
         animations: [],
         parser: {
-          getDependency: () => Promise.resolve(new ArrayBuffer(0))
-        }
+          getDependency: () => Promise.resolve(new ArrayBuffer(0)),
+        },
       }
       if (onLoad) {
         setTimeout(() => onLoad(mockGLTF), 0)
@@ -261,8 +262,8 @@ vi.mock('three/examples/jsm/loaders/GLTFLoader', () => ({
           scenes: [],
           animations: [],
           parser: {
-            getDependency: () => Promise.resolve(new ArrayBuffer(0))
-          }
+            getDependency: () => Promise.resolve(new ArrayBuffer(0)),
+          },
         }
         setTimeout(() => onLoad(mockGLTF), 0)
       }
@@ -275,9 +276,9 @@ vi.mock('three/examples/jsm/loaders/GLTFLoader', () => ({
         animations: [],
         userData: {},
         parser: {
-          getDependency: () => Promise.resolve(new ArrayBuffer(0))
-        }
+          getDependency: () => Promise.resolve(new ArrayBuffer(0)),
+        },
       })
     }
-  }
+  },
 }))

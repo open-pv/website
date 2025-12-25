@@ -22,7 +22,7 @@ export default defineConfig({
     testTimeout: 60000,
 
     // Retry failed tests (helps with flaky API-dependent tests)
-    retry: 1
+    retry: 1,
   },
   resolve: {
     alias: {
