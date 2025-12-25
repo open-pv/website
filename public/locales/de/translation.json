@@ -155,5 +155,6 @@
     "bbe": "Kein eigenes Dach? Tritt doch einer Bürgerenergiegenossenschaft bei!"
   },
   "slope": "Neigung",
-  "azimuth": "Azimuth"
+  "azimuth": "Azimuth",
+  "yieldPerYear": "Ertrag pro Jahr"
 }

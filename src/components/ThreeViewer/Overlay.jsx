@@ -252,6 +252,12 @@ function Overlay({ frontendState, setFrontendState }) {
         {t('slope')}: {sceneContext.slope}°
         <br />
         {t('azimuth')}: {sceneContext.azimuth}°
+        {sceneContext.yieldPerKWP ? (
+          <p>
+            {t('yieldPerYear')}:{' '}
+            {Math.round(sceneContext.yieldPerKWP / 100) * 100} kWh/kWp
+          </p>
+        ) : null}
       </div>
     )
   }
