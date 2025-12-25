@@ -134,5 +134,6 @@
     "bbe": "No own roof? Join a community energy cooperative!"
   },
   "slope": "Slope",
-  "azimuth": "Azimuth"
+  "azimuth": "Azimuth",
+  "yieldPerYear": "Yield per year"
 }
