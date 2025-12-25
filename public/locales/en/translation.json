@@ -134,5 +134,5 @@
   },
   "slope": "Slope",
   "azimuth": "Azimuth",
-  "yieldPerKWP": "Yield"
+  "yieldPerYear": "Yield per year"
 }
