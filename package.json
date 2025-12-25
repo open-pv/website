@@ -3,9 +3,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "gh-pages -d dist -b build",
     "deploy:test": "gh-pages -d dist -b gh-pages",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.16.1",
@@ -29,10 +30,14 @@
     "three": "^0.172.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
     "@vitejs/plugin-react": "^4.3.4",
     "gh-pages": "^6.3.0",
+    "jsdom": "^27.3.0",
     "prettier": "3.5.3",
-    "vite": "^6.4.1"
+    "vite": "^6.4.1",
+    "vitest": "^4.0.16"
   },
   "browserslist": {
     "production": [
