@@ -1,16 +1,21 @@
+import TextSprite from '@/features/three-viewer/components/TextSprite'
+import { SceneContext } from '@/features/three-viewer/context/SceneContext'
+import {
+  calculateCenterFromGeometry,
+  calculateYieldPerKWP,
+  generatePVSystemId,
+} from '@/features/three-viewer/utils/pvSystemUtils'
 import { useContext, useRef } from 'react'
 import { useFrame } from 'react-three-fiber'
 import * as THREE from 'three'
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
-import { SceneContext } from '@/features/three-viewer/context/SceneContext'
-import TextSprite from '@/features/three-viewer/components/TextSprite'
 
 export const PVSystems = () => {
   const sceneContext = useContext(SceneContext)
   return (
     <>
-      {sceneContext.pvSystems.map((geometry) => (
-        <PVSystem geometry={geometry} key={geometry.id} />
+      {sceneContext.pvSystems.map((pvSystem) => (
+        <PVSystem pvSystem={pvSystem} key={pvSystem.id} />
       ))}
     </>
   )
@@ -132,18 +137,40 @@ export function createPVSystem({
   )
   const annualYield = polygonArea * polygonIntensity
 
+  // Keep geometry properties for backward compatibility
   geometry.annualYield = annualYield
   geometry.area = polygonArea
 
-  setPVSystems((prevSystems) => [...prevSystems, geometry])
+  // Calculate all pre-computed properties
+  const center = calculateCenterFromGeometry(geometry)
+  const yieldPerKWPPerYear = calculateYieldPerKWP(polygonIntensity)
+
+  // Create complete PV system object
+  const pvSystem = {
+    id: generatePVSystemId(),
+    points: [...pvPoints],
+    geometry: geometry,
+    center: center,
+    totalArea: polygonArea,
+    yieldPerArea: polygonIntensity,
+    annualYield: annualYield,
+    yieldPerKWPPerYear: yieldPerKWPPerYear,
+  }
+
+  setPVSystems((prevSystems) => [...prevSystems, pvSystem])
   setPVPoints([])
-  setSelectedPVSystem([geometry])
+  setSelectedPVSystem([pvSystem])
 }
 
-export const PVSystem = ({ geometry, highlighted = false }) => {
+export const PVSystem = ({ pvSystem, highlighted = false }) => {
   const textRef = useRef()
 
-  const center = calculateCenter(geometry.attributes.position.array)
+  // Use pre-computed center instead of calculating on every render
+  const center = new THREE.Vector3(
+    pvSystem.center.x,
+    pvSystem.center.y,
+    pvSystem.center.z,
+  )
 
   useFrame(({ camera }) => {
     if (textRef.current) {
@@ -166,30 +193,20 @@ export const PVSystem = ({ geometry, highlighted = false }) => {
 
   return (
     <>
-      <mesh geometry={geometry} material={material} />
+      <mesh geometry={pvSystem.geometry} material={material} />
 
       {!highlighted && (
         <TextSprite
-          text={`Jahresertrag: ${Math.round(geometry.annualYield).toLocaleString(
+          text={`Jahresertrag: ${Math.round(
+            pvSystem.annualYield,
+          ).toLocaleString(
             'de',
-          )} kWh pro Jahr\nFläche: ${geometry.area.toPrecision(3)}m²`}
+          )} kWh pro Jahr\nFläche: ${pvSystem.totalArea.toPrecision(3)}m²`}
           position={center}
         />
       )}
     </>
   )
-}
-
-const calculateCenter = (points) => {
-  const length = points.length / 3
-  const sum = points.reduce(
-    (acc, value, index) => {
-      acc[index % 3] += value
-      return acc
-    },
-    [0, 0, 0],
-  )
-  return new THREE.Vector3(sum[0] / length, sum[1] / length, sum[2] / length)
 }
 
 function subdivideTriangle(triangle, threshold) {

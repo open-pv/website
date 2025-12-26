@@ -21,11 +21,11 @@ const Scene = ({
 }) => {
   // showTerrain decides if the underlying Map is visible or not
   const [showTerrain, setShowTerrain] = useState(true)
-  // A list of visible PV Systems - they get visible after they are drawn on a building and calculated
+  // Array of PV system objects (see three-viewer/README.md for structure)
   const [pvSystems, setPVSystems] = useState([])
   // pvPoints are the red points that appear when drawing PV systems
   const [pvPoints, setPVPoints] = useState([])
-  // highlighted PVSystems for deletion or calculation
+  // Array of selected PV system objects for deletion or calculation
   const [selectedPVSystem, setSelectedPVSystem] = useState([])
   const [slope, setSlope] = useState('')
   const [azimuth, setAzimuth] = useState('')
@@ -91,8 +91,8 @@ const Scene = ({
           buildings.map((b) => <BuildingMesh building={b} />)}
 
         {selectedPVSystem &&
-          selectedPVSystem.map((geometry, index) => (
-            <PVSystem key={index} geometry={geometry} highlighted={true} />
+          selectedPVSystem.map((pvSystem) => (
+            <PVSystem key={pvSystem.id} pvSystem={pvSystem} highlighted={true} />
           ))}
         {simulationBuildings.length > 0 && frontendState == 'Results' && (
           <CustomMapControl />
