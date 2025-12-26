@@ -3,7 +3,10 @@ import { Matrix4 } from 'three'
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { attributions } from '@/constants/licenses'
-import { coordinatesLonLat, projectToWebMercator } from '@/features/simulation/core/location'
+import {
+  coordinatesLonLat,
+  projectToWebMercator,
+} from '@/features/simulation/core/location'
 
 let federalState = null
 
