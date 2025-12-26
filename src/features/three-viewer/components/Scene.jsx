@@ -2,15 +2,15 @@ import { useRef, useState } from 'react'
 import { Canvas } from 'react-three-fiber'
 import * as THREE from 'three'
 
+import Overlay from '@/features/three-viewer/components/Overlay'
+import PointsAndEdges from '@/features/three-viewer/components/PointsAndEdges'
+import Terrain from '@/features/three-viewer/components/Terrain'
 import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 import CustomMapControl from '@/features/three-viewer/controls/CustomMapControl'
 import DrawPVControl from '@/features/three-viewer/controls/DrawPVControl'
 import { BuildingMesh } from '@/features/three-viewer/meshes/BuildingMesh'
-import { PVSystem, PVSystems } from '@/features/three-viewer/meshes/PVSystems'
+import { PVSystem } from '@/features/three-viewer/meshes/PVSystems'
 import VegetationMesh from '@/features/three-viewer/meshes/VegetationMesh'
-import Overlay from '@/features/three-viewer/components/Overlay'
-import PointsAndEdges from '@/features/three-viewer/components/PointsAndEdges'
-import Terrain from '@/features/three-viewer/components/Terrain'
 
 const Scene = ({
   frontendState,
@@ -92,7 +92,11 @@ const Scene = ({
 
         {selectedPVSystem &&
           selectedPVSystem.map((pvSystem) => (
-            <PVSystem key={pvSystem.id} pvSystem={pvSystem} highlighted={true} />
+            <PVSystem
+              key={pvSystem.id}
+              pvSystem={pvSystem}
+              highlighted={true}
+            />
           ))}
         {simulationBuildings.length > 0 && frontendState == 'Results' && (
           <CustomMapControl />
@@ -100,7 +104,10 @@ const Scene = ({
         {frontendState == 'DrawPV' && <DrawPVControl />}
         {frontendState == 'DrawPV' && <PointsAndEdges />}
 
-        {pvSystems.length > 0 && <PVSystems />}
+        {pvSystems.length > 0 &&
+          pvSystems.map((pvSystem) => (
+            <PVSystem pvSystem={pvSystem} key={pvSystem.id} />
+          ))}
 
         {vegetationGeometries && (
           <>
