@@ -76,7 +76,6 @@ const DrawPVControl = () => {
         ) {
           createPVSystem({
             setPVSystems: sceneContext.setPVSystems,
-            setSelectedPVSystem: sceneContext.setSelectedPVSystem,
             pvPoints: pvPointsRef,
             setPVPoints: sceneContext.setPVPoints,
             simulationBuildings:

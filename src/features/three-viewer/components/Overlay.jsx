@@ -20,7 +20,6 @@ function Overlay({ frontendState, setFrontendState }) {
   const handleCreatePVButtonClick = () => {
     createPVSystem({
       setPVSystems: sceneContext.setPVSystems,
-      setSelectedPVSystem: sceneContext.setSelectedPVSystem,
       pvPoints: sceneContext.pvPoints,
       setPVPoints: sceneContext.setPVPoints,
       simulatedBuildings: sceneContext.buildings.filter(
@@ -39,7 +38,7 @@ function Overlay({ frontendState, setFrontendState }) {
     <>
       {!window.isTouchDevice && <MouseHoverInfo />}
       <OverlayWrapper>
-        {sceneContext.selectedPVSystem.length > 0 && (
+        {sceneContext.pvSystems.some((system) => system.selected) && (
           <NotificationForSelectedPV />
         )}
 

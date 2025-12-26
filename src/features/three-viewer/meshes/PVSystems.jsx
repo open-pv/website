@@ -10,14 +10,12 @@ import * as THREE from 'three'
  *
  * @param {Object} params
  * @param {Function} params.setPVSystems           - state setter for the list of PV systems
- * @param {Function} params.setSelectedPVSystem    - state setter for the currently selected PV system
  * @param {Array}    params.pvPoints               - array of points the user clicked (with normal vectors)
  * @param {Function} params.setPVPoints            - state setter to clear points after creation
  * @param {Array}    params.simulatedBuildings     - array of building objects that contain the simulation mesh
  */
 export function createPVSystem({
   setPVSystems,
-  setSelectedPVSystem,
   pvPoints,
   setPVPoints,
   simulatedBuildings,
@@ -31,9 +29,12 @@ export function createPVSystem({
     return
   }
 
-  setPVSystems((prevSystems) => [...prevSystems, pvSystemData])
+  // Mark the new system as selected and deselect all other systems
+  setPVSystems((prevSystems) => [
+    ...prevSystems.map((system) => ({ ...system, selected: false })),
+    { ...pvSystemData, selected: true },
+  ])
   setPVPoints([])
-  setSelectedPVSystem([pvSystemData])
 }
 
 /**
@@ -78,17 +79,13 @@ export const PVSystem = ({ pvSystem, highlighted = false }) => {
     <>
       <mesh geometry={pvSystem.geometry} material={material} />
 
-      {!highlighted && (
-        <TextSprite
-          ref={textRef}
-          text={`Jahresertrag: ${Math.round(
-            pvSystem.annualYield,
-          ).toLocaleString(
-            'de',
-          )} kWh pro Jahr\nFläche: ${pvSystem.totalArea.toPrecision(3)}m²`}
-          position={center}
-        />
-      )}
+      <TextSprite
+        ref={textRef}
+        text={`Jahresertrag: ${Math.round(pvSystem.annualYield).toLocaleString(
+          'de',
+        )} kWh pro Jahr\nFläche: ${pvSystem.totalArea.toPrecision(3)}m²`}
+        position={center}
+      />
     </>
   )
 }

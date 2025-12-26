@@ -25,8 +25,6 @@ const Scene = ({
   const [pvSystems, setPVSystems] = useState([])
   // pvPoints are the red points that appear when drawing PV systems
   const [pvPoints, setPVPoints] = useState([])
-  // Array of selected PV system objects for deletion or calculation
-  const [selectedPVSystem, setSelectedPVSystem] = useState([])
   const [slope, setSlope] = useState('')
   const [azimuth, setAzimuth] = useState('')
   const [yieldPerKWP, setYieldPerKWP] = useState('')
@@ -51,8 +49,6 @@ const Scene = ({
         buildings,
         pvPoints,
         setPVPoints,
-        selectedPVSystem,
-        setSelectedPVSystem,
         pvSystems,
         setPVSystems,
         showTerrain,
@@ -90,14 +86,6 @@ const Scene = ({
         {buildings.length > 0 &&
           buildings.map((b) => <BuildingMesh building={b} />)}
 
-        {selectedPVSystem &&
-          selectedPVSystem.map((pvSystem) => (
-            <PVSystem
-              key={pvSystem.id}
-              pvSystem={pvSystem}
-              highlighted={true}
-            />
-          ))}
         {simulationBuildings.length > 0 && frontendState == 'Results' && (
           <CustomMapControl />
         )}
@@ -106,7 +94,11 @@ const Scene = ({
 
         {pvSystems.length > 0 &&
           pvSystems.map((pvSystem) => (
-            <PVSystem pvSystem={pvSystem} key={pvSystem.id} />
+            <PVSystem
+              pvSystem={pvSystem}
+              key={pvSystem.id}
+              highlighted={pvSystem.selected || false}
+            />
           ))}
 
         {vegetationGeometries && (
