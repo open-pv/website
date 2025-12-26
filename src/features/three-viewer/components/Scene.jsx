@@ -2,16 +2,15 @@ import { useRef, useState } from 'react'
 import { Canvas } from 'react-three-fiber'
 import * as THREE from 'three'
 
+import Overlay from '@/features/three-viewer/components/Overlay'
+import PointsAndEdges from '@/features/three-viewer/components/PointsAndEdges'
+import Terrain from '@/features/three-viewer/components/Terrain'
 import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 import CustomMapControl from '@/features/three-viewer/controls/CustomMapControl'
 import DrawPVControl from '@/features/three-viewer/controls/DrawPVControl'
 import { BuildingMesh } from '@/features/three-viewer/meshes/BuildingMesh'
-import { HighlightedPVSystem } from '@/features/three-viewer/meshes/HighlitedPVSystem'
-import { PVSystems } from '@/features/three-viewer/meshes/PVSystems'
+import { PVSystem } from '@/features/three-viewer/meshes/PVSystems'
 import VegetationMesh from '@/features/three-viewer/meshes/VegetationMesh'
-import Overlay from '@/features/three-viewer/components/Overlay'
-import PointsAndEdges from '@/features/three-viewer/components/PointsAndEdges'
-import Terrain from '@/features/three-viewer/components/Terrain'
 
 const Scene = ({
   frontendState,
@@ -22,12 +21,10 @@ const Scene = ({
 }) => {
   // showTerrain decides if the underlying Map is visible or not
   const [showTerrain, setShowTerrain] = useState(true)
-  // A list of visible PV Systems - they get visible after they are drawn on a building and calculated
+  // Array of PV system objects (see three-viewer/README.md for structure)
   const [pvSystems, setPVSystems] = useState([])
   // pvPoints are the red points that appear when drawing PV systems
   const [pvPoints, setPVPoints] = useState([])
-  // highlighted PVSystems for deletion or calculation
-  const [selectedPVSystem, setSelectedPVSystem] = useState([])
   const [slope, setSlope] = useState('')
   const [azimuth, setAzimuth] = useState('')
   const [yieldPerKWP, setYieldPerKWP] = useState('')
@@ -52,8 +49,6 @@ const Scene = ({
         buildings,
         pvPoints,
         setPVPoints,
-        selectedPVSystem,
-        setSelectedPVSystem,
         pvSystems,
         setPVSystems,
         showTerrain,
@@ -91,14 +86,20 @@ const Scene = ({
         {buildings.length > 0 &&
           buildings.map((b) => <BuildingMesh building={b} />)}
 
-        {selectedPVSystem && <HighlightedPVSystem />}
         {simulationBuildings.length > 0 && frontendState == 'Results' && (
           <CustomMapControl />
         )}
         {frontendState == 'DrawPV' && <DrawPVControl />}
         {frontendState == 'DrawPV' && <PointsAndEdges />}
 
-        {pvSystems.length > 0 && <PVSystems />}
+        {pvSystems.length > 0 &&
+          pvSystems.map((pvSystem) => (
+            <PVSystem
+              pvSystem={pvSystem}
+              key={pvSystem.id}
+              highlighted={pvSystem.selected || false}
+            />
+          ))}
 
         {vegetationGeometries && (
           <>

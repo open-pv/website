@@ -7,10 +7,10 @@ import {
   DialogRoot,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 import { SimpleGrid } from '@chakra-ui/react'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 import { SavingCalculationDialog } from './SavingCalculationDialog'
 
 /**
@@ -19,14 +19,26 @@ import { SavingCalculationDialog } from './SavingCalculationDialog'
  */
 export const NotificationForSelectedPV = () => {
   const { t } = useTranslation()
-  const { setSelectedPVSystem, setPVSystems } = useContext(SceneContext)
+  const { setPVSystems } = useContext(SceneContext)
+
+  const deselectAll = () => {
+    setPVSystems((prevSystems) =>
+      prevSystems.map((system) => ({ ...system, selected: false })),
+    )
+  }
+
+  const deleteSelected = () => {
+    setPVSystems((prevSystems) =>
+      prevSystems.filter((system) => !system.selected),
+    )
+  }
 
   return (
     <DialogRoot
       open={true}
       placement='bottom'
       size='xs'
-      onInteractOutside={() => setSelectedPVSystem([])}
+      onInteractOutside={deselectAll}
     >
       <DialogContent>
         <DialogHeader>
@@ -35,18 +47,12 @@ export const NotificationForSelectedPV = () => {
         <DialogBody>
           <SimpleGrid gap='5px'>
             <SavingCalculationDialog />
-            <Button
-              variant='subtle'
-              onClick={() => {
-                setPVSystems([])
-                setSelectedPVSystem([])
-              }}
-            >
+            <Button variant='subtle' onClick={deleteSelected}>
               {t('delete')}
             </Button>
           </SimpleGrid>
         </DialogBody>
-        <DialogCloseTrigger onClick={() => setSelectedPVSystem([])} />
+        <DialogCloseTrigger onClick={deselectAll} />
       </DialogContent>
     </DialogRoot>
   )

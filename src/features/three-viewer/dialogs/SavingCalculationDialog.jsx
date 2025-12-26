@@ -22,7 +22,7 @@ import { calculateSavings } from '@/features/simulation/components/savingsCalcul
  */
 export const SavingCalculationDialog = () => {
   const { t } = useTranslation()
-  const { selectedPVSystem } = useContext(SceneContext)
+  const { pvSystems } = useContext(SceneContext)
 
   const [annualConsumption, setAnnualConsumption] = useState('3000')
   const [storageCapacity, setStorageCapacity] = useState('0')
@@ -31,10 +31,11 @@ export const SavingCalculationDialog = () => {
   const [annualSavings, setAnnualSavings] = useState(0)
   const [showResults, setShowResults] = useState(false)
 
+  const selectedPVSystems = pvSystems.filter((system) => system.selected)
   const pvProduction =
-    selectedPVSystem.length > 0
+    selectedPVSystems.length > 0
       ? Math.round(
-          selectedPVSystem.reduce(
+          selectedPVSystems.reduce(
             (previous, current) => previous + current.annualYield,
             0,
           ),

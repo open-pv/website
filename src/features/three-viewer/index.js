@@ -30,5 +30,9 @@ export { default as SavingCalculationDialog } from './dialogs/SavingCalculationD
 // Context
 export { SceneContext, SceneProvider } from './context/SceneContext'
 
+// Core business logic
+export * from './core'
+
 // Utils
 export * from './utils/colorMapUtils'
+export * from './utils/pvSystemUtils'

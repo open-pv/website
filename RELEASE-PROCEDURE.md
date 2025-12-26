@@ -12,6 +12,7 @@ It always has the format `MAJOR.MINOR.PATCH`, e.g. `1.5.0`.
 - Navigate to test.openpv.de
 - Check that this is the website you want to deploy
 - Check that it has no bugs
+- Update modified date in ./public/sitemap.xml
 
 ### 2. 🐙 Create a `GitHub Release`
 

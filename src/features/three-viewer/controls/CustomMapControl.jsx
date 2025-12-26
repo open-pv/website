@@ -1,8 +1,13 @@
+import { SceneContext } from '@/features/three-viewer/context/SceneContext'
+import {
+  calculateAzimuthFromNormal,
+  calculateSlopeFromNormal,
+  calculateYieldPerKWP,
+} from '@/features/three-viewer/utils/pvSystemUtils'
 import { MapControls } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useContext, useEffect, useRef } from 'react'
 import * as THREE from 'three'
-import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 
 function CustomMapControl() {
   const sceneContext = useContext(SceneContext)
@@ -51,9 +56,8 @@ function CustomMapControl() {
     const intersected = ignoreSprites(intersects)
     if (!intersected) return
     const intersectedFace = intersected.face
-    const [slope, azimuth] = calculateSlopeAzimuthFromNormal(
-      intersectedFace.normal,
-    )
+    const slope = calculateSlopeFromNormal(intersectedFace.normal)
+    const azimuth = calculateAzimuthFromNormal(intersectedFace.normal)
     sceneContext.setSlope(Math.round(slope))
     sceneContext.setAzimuth(Math.round(azimuth))
     if (!intersected.object.geometry.attributes?.intensities) {
@@ -64,7 +68,7 @@ function CustomMapControl() {
     const intensityAttr = intersected.object.geometry.attributes.intensities
     const faceIdx = intersected.faceIndex
     const intensity = intensityAttr.array[faceIdx]
-    const yieldPerKWP = calculateYieldPerKKW(intensity)
+    const yieldPerKWP = calculateYieldPerKWP(intensity)
     sceneContext.setYieldPerKWP(Math.round(yieldPerKWP))
   }
 
@@ -137,22 +141,3 @@ function CustomMapControl() {
 }
 
 export default CustomMapControl
-
-const calculateSlopeAzimuthFromNormal = (normal) => {
-  const up = new THREE.Vector3(0, 0, 1)
-  const angleRad = normal.angleTo(up)
-  const slope = THREE.MathUtils.radToDeg(angleRad)
-
-  // Swap y and x in atan to get clockwise angle from y-axis
-  const azimuthRad = Math.atan2(normal.x, normal.y)
-  let azimuth = THREE.MathUtils.radToDeg(azimuthRad)
-  if (azimuth < 0) {
-    azimuth += 360
-  }
-
-  return [slope, azimuth]
-}
-
-const calculateYieldPerKKW = (intensity) => {
-  return intensity * 5.5
-}
