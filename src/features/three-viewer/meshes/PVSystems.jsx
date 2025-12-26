@@ -140,7 +140,7 @@ export function createPVSystem({
   setSelectedPVSystem([geometry])
 }
 
-const PVSystem = ({ geometry }) => {
+export const PVSystem = ({ geometry, highlighted = false }) => {
   const textRef = useRef()
 
   const center = calculateCenter(geometry.attributes.position.array)
@@ -151,27 +151,31 @@ const PVSystem = ({ geometry }) => {
     }
   })
 
+  const material = highlighted
+    ? new THREE.MeshLambertMaterial({
+        color: 'red',
+        transparent: false,
+      })
+    : new THREE.MeshStandardMaterial({
+        color: '#2b2c40',
+        transparent: true,
+        opacity: 0.5,
+        metalness: 1,
+        side: THREE.DoubleSide,
+      })
+
   return (
     <>
-      <mesh
-        geometry={geometry}
-        material={
-          new THREE.MeshStandardMaterial({
-            color: '#2b2c40',
-            transparent: true,
-            opacity: 0.5,
-            metalness: 1,
-            side: THREE.DoubleSide,
-          })
-        }
-      />
+      <mesh geometry={geometry} material={material} />
 
-      <TextSprite
-        text={`Jahresertrag: ${Math.round(geometry.annualYield).toLocaleString(
-          'de',
-        )} kWh pro Jahr\nFläche: ${geometry.area.toPrecision(3)}m²`}
-        position={center}
-      />
+      {!highlighted && (
+        <TextSprite
+          text={`Jahresertrag: ${Math.round(geometry.annualYield).toLocaleString(
+            'de',
+          )} kWh pro Jahr\nFläche: ${geometry.area.toPrecision(3)}m²`}
+          position={center}
+        />
+      )}
     </>
   )
 }

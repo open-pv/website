@@ -6,8 +6,7 @@ import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 import CustomMapControl from '@/features/three-viewer/controls/CustomMapControl'
 import DrawPVControl from '@/features/three-viewer/controls/DrawPVControl'
 import { BuildingMesh } from '@/features/three-viewer/meshes/BuildingMesh'
-import { HighlightedPVSystem } from '@/features/three-viewer/meshes/HighlitedPVSystem'
-import { PVSystems } from '@/features/three-viewer/meshes/PVSystems'
+import { PVSystem, PVSystems } from '@/features/three-viewer/meshes/PVSystems'
 import VegetationMesh from '@/features/three-viewer/meshes/VegetationMesh'
 import Overlay from '@/features/three-viewer/components/Overlay'
 import PointsAndEdges from '@/features/three-viewer/components/PointsAndEdges'
@@ -91,7 +90,10 @@ const Scene = ({
         {buildings.length > 0 &&
           buildings.map((b) => <BuildingMesh building={b} />)}
 
-        {selectedPVSystem && <HighlightedPVSystem />}
+        {selectedPVSystem &&
+          selectedPVSystem.map((geometry, index) => (
+            <PVSystem key={index} geometry={geometry} highlighted={true} />
+          ))}
         {simulationBuildings.length > 0 && frontendState == 'Results' && (
           <CustomMapControl />
         )}
