@@ -1,11 +1,9 @@
 {
   "title": "OpenPV - A free solar calculator",
-  "mainDescription": "Analyze the solar potential of your building – open source, using freely available 3D data, all directly in your browser. Privacy? Absolutely: no unnecessary data collection, no tracking.",
+  "mainDescription": "Analyze the solar potential of your building - open source, using freely available 3D data, all directly in your browser. Privacy? Absolutely: no unnecessary data collection, no tracking.",
   "sidebar": {
     "header": "Goal of this website",
-    "mainText": "The tool will then calculate the potential for a solar system on your roof and facade area.",
-    "numberSimulations": "Number of Sun positions to average",
-    "numberSimulationsHover": "For the simulation, we average over different sun positions, which are evenly distributed throughout the year. The larger you choose this number, the more accurate the simulation becomes. However, the simulation also takes longer."
+    "mainText": "The tool will then calculate the potential for a solar system on your roof and facade area."
   },
   "yes": "yes",
   "no": "no",
@@ -52,13 +50,14 @@
     }
   },
   "loadingMessage": {
-    "tip1": "Double-click to select a different building on the map and restart the simulation.",
+    "tip1": "In 2026, fossil fuels will still cover almost 80% of German energy demand. We need more PV now!",
     "tip2": "The shadow calculation is done in your browser. If you have selected a large building or are using an old PC, the calculation will take longer.",
-    "tip3": "Sometimes parts of the building are displayed below the map. In this case, you can hide the map to see the entire building."
+    "tip3": "Your solar system is your contribution to the energy transition!"
   },
   "errorMessage": {
     "header": "An Error occured.",
-    "wrongAdress": "No buildings could be found for the specified location. This could be due to several reasons: 1. There is no building at the selected location. 2. There is a new building at the selected location that is not yet included in our data. 3. The selected location is outside of Germany or in the federal states of Saarland or Mecklenburg-Vorpommern. Unfortunately, we do not have building data for these federal states."
+    "wrongAdress": "No buildings could be found for the specified location. This could be due to several reasons: 1. There is no building at the selected location. 2. There is a new building at the selected location that is not yet included in our data. 3. The selected location is outside of Germany. Chose another location on the map.",
+    "backToMap": "Back to the openpv.de map."
   },
   "WelcomeMessage": {
     "title": "Welcome to OpenPV",
@@ -71,7 +70,6 @@
     "showMap": "Show Map",
     "start": "Start",
     "options": "Options",
-    "simulateBuilding": "Simulate Building",
     "createPVSystem": "Create PV System",
     "drawPVSystem": "Draw a new PV system",
     "drawPVSystemHover": "Create new edges of the PV system by clicking. Afterwards click on the 'Create PV System' button.",
@@ -99,12 +97,10 @@
     "leftMouse": "Left Mouse Button: Move on the map",
     "rightMouse": "Right Mouse Button: Rotate the map",
     "wheel": "Mouse Wheel: Zoom in and out",
-    "doubleClick": "Double click: Select a builing or PV system",
     "touch": {
       "leftMouse": "One finger: Move on the map",
       "rightMouse": "Two fingers: Rotate the map",
-      "wheel": "Two fingers: Zoom in and out",
-      "doubleClick": " "
+      "wheel": "Two fingers: Zoom in and out"
     }
   },
   "colorLegend": {
@@ -138,5 +134,6 @@
     "bbe": "No own roof? Join a community energy cooperative!"
   },
   "slope": "Slope",
-  "azimuth": "Azimuth"
+  "azimuth": "Azimuth",
+  "yieldPerYear": "Yield per year"
 }

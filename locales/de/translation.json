@@ -3,9 +3,7 @@
   "mainDescription": "Analysieren Sie das Solarpotenzial Ihres Gebäudes - Open Source, mit frei verfügbaren 3D-Daten und alles direkt im Browser. Datenschutz? Selbstverständlich: keine unnötiges Datensammeln, kein Tracking.",
   "sidebar": {
     "header": "Ziel des Tools",
-    "mainText": "Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche.",
-    "numberSimulations": "Anzahl an gemittelten Sonnenständen",
-    "numberSimulationsHover": "Für die Simulation mitteln wir über verschiedene Sonnenstände, welche gleichmäßig über das Jahr verteilt sind. Je größer du diese Zahl wählst, desto genauer wird die Simulation. Allerdings dauert die Simulation auch länger."
+    "mainText": "Das Tool berechnet dann das Potential für eine Solaranlage auf deiner Dach- und Fassadenfläche."
   },
   "yes": "Ja",
   "no": "Nein",
@@ -52,13 +50,14 @@
     }
   },
   "loadingMessage": {
-    "tip1": "Mit Doppelklick kannst du ein anderes Gebäude auf der Karte auswählen und die Simulation neu starten.",
+    "tip1": "2026 decken fossile Brennstoffe noch fast 80% unseres Energiebedarfs. Wir brauchen jetzt mehr PV!",
     "tip2": "Die Berechnung der Verschattung findet bei dir im Browser statt. Hast du ein großes Gebäude ausgewählt oder nutzt du einen alten PC, dann dauert die Berechnung länger.",
-    "tip3": "Manchmal werden Teile des Gebäudes unter der Karte angezeigt. In diesem Fall kannst du die Karte ausblenden, um das ganze Gebäude zu sehen."
+    "tip3": "Deine Solaranlage ist dein Beitrag zur Energiewende!"
   },
   "errorMessage": {
     "header": "Ein Fehler ist aufgetreten.",
-    "wrongAdress": "Für den angegebenen Ort konnten keine Gebäude gefunden werden. Dies kann mehrere Gründe haben: 1. Am ausgewählten Ort steht kein Gebäude. 2. Am ausgewählten Ort steht ein neues Gebäude, welches noch nicht in unseren Daten vorhanden ist. 3. Der ausgewählte Ort liegt außerhalb von Deutschland oder in den Bundesländern Saarland / Mecklenburg-Vorpommern. Für diese Bundesländer haben wir leider keine Gebäudedaten."
+    "wrongAdress": "Für den angegebenen Ort konnten keine Gebäude gefunden werden. Dies kann mehrere Gründe haben: 1. Am ausgewählten Ort steht kein Gebäude. 2. Am ausgewählten Ort steht ein neues Gebäude, welches noch nicht in unseren Daten vorhanden ist. 3. Der ausgewählte Ort liegt außerhalb von Deutschland. Wähle einen anderen Ort auf der Karte.",
+    "backToMap": "Zurück zur Karten von openpv.de"
   },
   "WelcomeMessage": {
     "title": "OpenPV - Ihr Solarrechner für ganz Deutschland.",
@@ -93,7 +92,6 @@
     "showMap": "Karte anzeigen",
     "start": "Start",
     "options": "Optionen",
-    "simulateBuilding": "Gebäude simulieren",
     "createPVSystem": "PV-Anlage erstellen",
     "drawPVSystem": "Neue PV-Anlage einzeichnen",
     "drawPVSystemHover": "Ecken der PV-Anlage mit Klicks in der Karte einzeichnen und anschließend die Anlage erstellen.",
@@ -120,12 +118,10 @@
     "leftMouse": "Linke Maustaste: Bewegung auf der Karte",
     "rightMouse": "Rechte Maustaste: Rotation der Karte",
     "wheel": "Mausrad: Vergrößern und Verkleinern",
-    "doubleClick": "Doppelklick: Auswählen von Gebäude oder PV-Anlage",
     "touch": {
       "leftMouse": "Ein Finger: Bewegung auf der Karte",
       "rightMouse": "Zwei Finger: Rotation der Karte",
-      "wheel": "Zwei Finger: Vergrößern und Verkleinern",
-      "doubleClick": " "
+      "wheel": "Zwei Finger: Vergrößern und Verkleinern"
     }
   },
   "colorLegend": {
@@ -159,5 +155,6 @@
     "bbe": "Kein eigenes Dach? Tritt doch einer Bürgerenergiegenossenschaft bei!"
   },
   "slope": "Neigung",
-  "azimuth": "Azimuth"
+  "azimuth": "Azimuth",
+  "yieldPerYear": "Ertrag pro Jahr"
 }
