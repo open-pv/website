@@ -6,7 +6,8 @@
     "deploy:test": "gh-pages -d dist -b gh-pages",
     "format": "prettier --write .",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "deploy": "gh-pages -d dist -b build"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.16.1",
