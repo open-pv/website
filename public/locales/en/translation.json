@@ -135,5 +135,23 @@
   },
   "slope": "Slope",
   "azimuth": "Azimuth",
-  "yieldPerYear": "Yield per year"
+  "yieldPerYear": "Yield per year",
+  "cardinal": {
+    "N": "North",
+    "NNE": "NNE",
+    "NE": "NE",
+    "ENE": "ENE",
+    "E": "East",
+    "ESE": "ESE",
+    "SE": "SE",
+    "SSE": "SSE",
+    "S": "South",
+    "SSW": "SSW",
+    "SW": "SW",
+    "WSW": "WSW",
+    "W": "West",
+    "WNW": "WNW",
+    "NW": "NW",
+    "NNW": "NNW"
+  }
 }
