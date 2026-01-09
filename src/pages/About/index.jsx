@@ -1,3 +1,4 @@
+import Footer from '@/components/layout/Footer'
 import {
   AccordionItem,
   AccordionItemContent,
@@ -13,9 +14,7 @@ import {
   SimpleGrid,
   Text,
 } from '@chakra-ui/react'
-import React from 'react'
 import { useTranslation } from 'react-i18next'
-import Footer from '@/components/layout/Footer'
 
 import App from '@/app/App'
 
@@ -24,7 +23,13 @@ const About = () => {
   return (
     <>
       <App title={t('about.title')} description={t('about.description')}>
-        <Card.Root height='100%' overflow='auto' padding={'20px'}>
+        <Card.Root
+          height='100%'
+          overflow='auto'
+          padding='20px'
+          maxWidth='800px'
+          marginX='auto'
+        >
           <Card.Header>
             <Heading as='h1'>{t('about.title')}</Heading>
           </Card.Header>
@@ -33,18 +38,24 @@ const About = () => {
             <AccordionRoot multiple>
               <AccordionItem value={0}>
                 <AccordionItemTrigger>
-                  {t('about.generalDescription.h')}
+                  <Heading as='h4'>{t('about.generalDescription.h')}</Heading>
                 </AccordionItemTrigger>
                 <AccordionItemContent>
                   <p>{t('about.generalDescription.p')}</p>
+                  <br />
                   <Text fontWeight='semibold'>
                     {t('about.steps.introduction')}
                   </Text>
                   <Box as='ul'>
+                    <br />
                     <li>{t('about.steps.1')}</li>
+                    <br />
                     <li>{t('about.steps.2')}</li>
+                    <br />
                     <li>{t('about.steps.3')}</li>
+                    <br />
                     <li>{t('about.steps.4')}</li>
+                    <br />
                   </Box>
                   <ImageRow
                     images={[
@@ -61,7 +72,9 @@ const About = () => {
                 </AccordionItemContent>
               </AccordionItem>
               <AccordionItem value={1}>
-                <AccordionItemTrigger>{t('about.data.h')}</AccordionItemTrigger>
+                <AccordionItemTrigger>
+                  <Heading as='h4'>{t('about.data.h')}</Heading>
+                </AccordionItemTrigger>
                 <AccordionItemContent>
                   {t('about.data.p1')}{' '}
                   <Link
@@ -90,14 +103,16 @@ const About = () => {
               </AccordionItem>
               <AccordionItem value={2}>
                 <AccordionItemTrigger>
-                  {t('about.whyOpenSource.h')}
+                  <Heading as='h4'>{t('about.whyOpenSource.h')}</Heading>
                 </AccordionItemTrigger>
                 <AccordionItemContent>
                   {t('about.whyOpenSource.p')}
                 </AccordionItemContent>
               </AccordionItem>
               <AccordionItem value={3}>
-                <AccordionItemTrigger>{t('about.team.h')}</AccordionItemTrigger>
+                <AccordionItemTrigger>
+                  <Heading as='h4'>{t('about.team.h')}</Heading>
+                </AccordionItemTrigger>
                 <AccordionItemContent>
                   <p>{t('about.team.p')}</p>
                   <Link
@@ -112,7 +127,7 @@ const About = () => {
 
               <AccordionItem value={4}>
                 <AccordionItemTrigger>
-                  {t('about.sponsors.h')}
+                  <Heading as='h4'>{t('about.sponsors.h')}</Heading>
                 </AccordionItemTrigger>
                 <AccordionItemContent>
                   <p>{t('about.sponsors.p')}</p>
