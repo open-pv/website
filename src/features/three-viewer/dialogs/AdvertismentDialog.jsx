@@ -17,17 +17,17 @@ export const AdvertismentDialog = ({ isOpen, onOpenChange }) => {
 
   const data = [
     {
-      label: t('adbox.balkonsolar'),
+      label: t('adbox.balkonsolar.p'),
       value: 'https://balkon.solar',
-      href: 'https://balkon.solar',
+      href: 'https://balkon.solar/montage/',
     },
     {
-      label: t('adbox.companies'),
+      label: t('adbox.companies.p'),
       value: 'https://www.sfv.de',
       href: 'https://www.sfv.de/solaranlagenberatung/sachverstaendige-1',
     },
     {
-      label: t('adbox.bbe'),
+      label: t('adbox.bbe.p'),
       value: 'https://www.buendnis-buergerenergie.de/',
       href: 'https://www.buendnis-buergerenergie.de/karte',
     },
