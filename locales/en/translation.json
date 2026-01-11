@@ -120,6 +120,7 @@
     "results": {
       "production": "Annual electricity generation of the solar system: ",
       "consumption": "Annual self-consumption: ",
+      "pvsystems": "PV Systems",
       "savings": "Annual savings: "
     },
     "calculate": "Calculate"

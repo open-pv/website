@@ -1,0 +1,1 @@
+import{K as e,e as o}from"./index-Bgssgrd4.js";const{withProvider:a,withContext:t}=e({key:"card"}),r=a("div","root"),s=t("div","body"),n=t("div","header");t("div","footer");const c=t("h3","title"),C=t("p","description"),{withContext:i}=o({key:"heading"}),h=i("h2");export{r as C,h as H,s as a,c as b,C as c,n as d};
