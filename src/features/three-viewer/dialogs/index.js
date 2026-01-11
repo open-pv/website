@@ -1,5 +1,5 @@
-export { OptionsDialog } from './OptionsDialog'
+export { AdvertismentDialog } from './AdvertismentDialog'
 export { ColorLegend } from './ColorLegend'
 export { ControlHelperDialog } from './ControlHelperDialog'
-export { AdvertismentDialog } from './AdvertismentDialog'
-export { NotificationForSelectedPV } from './NotificationForSelectedPV'
+export { OptionsDialog } from './OptionsDialog'
+export { SavingCalculationDialog } from './SavingCalculationDialog'

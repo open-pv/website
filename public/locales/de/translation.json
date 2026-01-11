@@ -141,6 +141,7 @@
     "results": {
       "production": "Jährliche Stromerzeugung der Solaranlage: ",
       "consumption": "Jährlicher Eigenverbrauch: ",
+      "pvsystems": "Solaranlagen",
       "savings": "Jährliche Einsparungen: "
     },
     "calculate": "Berechnen"

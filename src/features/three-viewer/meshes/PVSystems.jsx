@@ -29,11 +29,7 @@ export function createPVSystem({
     return
   }
 
-  // Mark the new system as selected and deselect all other systems
-  setPVSystems((prevSystems) => [
-    ...prevSystems.map((system) => ({ ...system, selected: false })),
-    { ...pvSystemData, selected: true },
-  ])
+  setPVSystems((prevSystems) => [...prevSystems, pvSystemData])
   setPVPoints([])
 }
 
@@ -43,9 +39,8 @@ export function createPVSystem({
  *
  * @param {Object} props
  * @param {Object} props.pvSystem - PV system object with geometry and yield data
- * @param {boolean} props.highlighted - Whether this PV system is highlighted/selected
  */
-export const PVSystem = ({ pvSystem, highlighted = false }) => {
+export const PVSystem = ({ pvSystem }) => {
   const textRef = useRef()
 
   // Use pre-computed center instead of calculating on every render
@@ -62,19 +57,13 @@ export const PVSystem = ({ pvSystem, highlighted = false }) => {
     }
   })
 
-  const material = highlighted
-    ? new THREE.MeshLambertMaterial({
-        color: 'red',
-        transparent: false,
-      })
-    : new THREE.MeshStandardMaterial({
-        color: '#2b2c40',
-        transparent: true,
-        opacity: 0.5,
-        metalness: 1,
-        side: THREE.DoubleSide,
-      })
-
+  const material = new THREE.MeshStandardMaterial({
+    color: '#2b2c40',
+    transparent: true,
+    opacity: 0.5,
+    metalness: 1,
+    side: THREE.DoubleSide,
+  })
   return (
     <>
       <mesh geometry={pvSystem.geometry} material={material} />

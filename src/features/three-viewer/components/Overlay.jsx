@@ -1,18 +1,18 @@
 import { Button } from '@/components/ui/button'
-import { Menu } from '@chakra-ui/react'
-import { useContext, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { SceneContext } from '@/features/three-viewer/context/SceneContext'
-import { createPVSystem } from '@/features/three-viewer/meshes/PVSystems'
-import { OverlayWrapper } from '@/features/three-viewer/components/OverlayWrapper'
 import { MouseHoverInfo } from '@/features/three-viewer/components/MouseHoverInfo'
+import { OverlayWrapper } from '@/features/three-viewer/components/OverlayWrapper'
+import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 import {
-  OptionsDialog,
+  AdvertismentDialog,
   ColorLegend,
   ControlHelperDialog,
-  AdvertismentDialog,
-  NotificationForSelectedPV,
+  OptionsDialog,
+  SavingCalculationDialog,
 } from '@/features/three-viewer/dialogs'
+import { createPVSystem } from '@/features/three-viewer/meshes/PVSystems'
+import { Menu } from '@chakra-ui/react'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 function Overlay({ frontendState, setFrontendState }) {
   const sceneContext = useContext(SceneContext)
@@ -33,15 +33,24 @@ function Overlay({ frontendState, setFrontendState }) {
   const [isOpenColorLegend, setIsOpenColorLegend] = useState(false)
   const [isOpenControlHelp, setIsOpenControlHelp] = useState(false)
   const [isOpenAdvertisment, setIsOpenAdvertisment] = useState(false)
+  const [isOpenSavingCalculation, setIsOpenSavingCalculation] = useState(false)
+
+  // Track PV system count to detect when new ones are created
+  const previousPVCountRef = useRef(sceneContext.pvSystems.length)
+
+  useEffect(() => {
+    const currentCount = sceneContext.pvSystems.length
+    if (currentCount > previousPVCountRef.current) {
+      // New PV system was added, open the dialog
+      setIsOpenSavingCalculation(true)
+    }
+    previousPVCountRef.current = currentCount
+  }, [sceneContext.pvSystems.length])
 
   return (
     <>
       {!window.isTouchDevice && <MouseHoverInfo />}
       <OverlayWrapper>
-        {sceneContext.pvSystems.some((system) => system.selected) && (
-          <NotificationForSelectedPV />
-        )}
-
         {frontendState === 'Results' && (
           <Button variant='subtle' onClick={() => setFrontendState('DrawPV')}>
             {t('button.drawPVSystem')}
@@ -108,6 +117,10 @@ function Overlay({ frontendState, setFrontendState }) {
         </Menu.Root>
 
         {/* Dialog Components */}
+        <SavingCalculationDialog
+          isOpen={isOpenSavingCalculation}
+          onOpenChange={(e) => setIsOpenSavingCalculation(e.open)}
+        />
         <AdvertismentDialog
           isOpen={isOpenAdvertisment}
           onOpenChange={(e) => setIsOpenAdvertisment(e.open)}
