@@ -130,9 +130,18 @@
     "button": "How do I install a PV system?",
     "title": "What can I do now?",
     "introduction": "It's great that you're interested in a solar system. With your own system, you make an important contribution to the energy transition. Here, we collect further links to help you plan your system.",
-    "balkonsolar": "Information on balcony solar systems",
-    "companies": "Installers near you",
-    "bbe": "No own roof? Join a community energy cooperative!"
+    "balkonsolar": {
+      "h": "Affordable solar system with self-installation?",
+      "p": "So-called plug-in solar systems can be purchased inexpensively, including inverter and small power storage. They are suitable for installation on balconies, smaller canopies, garages, carports, etc. The Balkonsolar association provides a lot of useful information:"
+    },
+    "companies": {
+      "h": "Solar system from a professional company?",
+      "p": "Professional companies can plan and install a solar system. Find the right craftsman business in your area on the website of the Solar Energy Promotion Association:"
+    },
+    "bbe": {
+      "h": "No solar system of your own?",
+      "p": "You can join an energy cooperative in your area to participate cooperatively in large PV systems and wind turbines. You can find a cooperative in your area on the website of 'Bündnis Bürgerenergie' (Citizens' Energy Alliance):"
+    }
   },
   "slope": "Slope",
   "azimuth": "Azimuth",

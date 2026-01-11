@@ -149,11 +149,20 @@
   "navigation": { "products": "Produkte und Leistungen" },
   "adbox": {
     "button": "Wie installiere ich eine Solaranlage?",
-    "title": "Was kann ich jetzt machen?",
+    "title": "Wie geht es nun weiter?",
     "introduction": "Es ist gut, dass Sie sich für eine Solaranlage interessieren. Mit einer eigenen Anlage leisten Sie einen wichtgen Beitrag zur Energiewende. Hier sammeln wir weiterführende Links, die Ihnen bei der Planung ihrer Anlage helfen.",
-    "balkonsolar": "Infos zu Balkonsolaranlagen",
-    "companies": "Installateure in Ihrer Nähe",
-    "bbe": "Kein eigenes Dach? Tritt doch einer Bürgerenergiegenossenschaft bei!"
+    "balkonsolar": {
+      "h": "Günstige Solaranlage in Eingenmontage?",
+      "p": "Sogenannte Steckersolaranlagen können günstig erworben werden, inklusive Wechselrichter und kleinem Stromspeicher. Sie eignen sich für die Motage am Balkon, auf kleineren Vordächern, Garagen, Carports, etc. Der Verein Balkonsolar stellt viele nützliche Infos bereit:"
+    },
+    "companies": {
+      "h": "Solaranlage vom Fachbetrieb?",
+      "p": "Fachbetriebe können eine Solaranlage planen und installieren. Finden sie den passenden Handwerksbetrieb in Ihrer Nähe auf der Website des Solarenergie Fördervereins:"
+    },
+    "bbe": {
+      "h": "Keine eigene Solaranlage?",
+      "p": "Sie können einer Energiegenossenschaft in Iher Nähe beitreten, um sich an großen PV-Anlagen und Windrädern genossenschaftlich zu beteiligen. Eine Genossenschaft in Ihrer Nähe finden Sie auf der Website des 'Bündnis Bürgerenergie':"
+    }
   },
   "slope": "Neigung",
   "azimuth": "Azimuth",
