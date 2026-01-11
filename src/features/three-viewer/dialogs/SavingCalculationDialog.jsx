@@ -23,13 +23,13 @@ import {
   SimpleGrid,
   Text,
 } from '@chakra-ui/react'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 /**
  * Dialog for calculating PV system savings based on consumption and storage.
  */
-export const SavingCalculationDialog = () => {
+export const SavingCalculationDialog = ({ isOpen, onOpenChange }) => {
   const { t } = useTranslation()
   const { pvSystems } = useContext(SceneContext)
 
@@ -40,11 +40,17 @@ export const SavingCalculationDialog = () => {
   const [annualSavings, setAnnualSavings] = useState(0)
   const [showResults, setShowResults] = useState(false)
 
-  const selectedPVSystems = pvSystems.filter((system) => system.selected)
+  // Reset showResults when dialog is closed
+  useEffect(() => {
+    if (!isOpen) {
+      setShowResults(false)
+    }
+  }, [isOpen])
+
   const pvProduction =
-    selectedPVSystems.length > 0
+    pvSystems.length > 0
       ? Math.round(
-          selectedPVSystems.reduce(
+          pvSystems.reduce(
             (previous, current) => previous + current.annualYield,
             0,
           ),
@@ -87,10 +93,7 @@ export const SavingCalculationDialog = () => {
   }
 
   return (
-    <DialogRoot size='lg'>
-      <DialogTrigger asChild>
-        <Button variant='subtle'>{t('savingsCalculation.button')}</Button>
-      </DialogTrigger>
+    <DialogRoot size='lg' open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('savingsCalculation.button')}</DialogTitle>
@@ -152,6 +155,22 @@ export const SavingCalculationDialog = () => {
                 <Text>{t('savingsCalculation.disclaimer')}</Text>
                 <br />
                 <List.Root>
+                  {pvSystems.length > 1 && (
+                    <List.Item>
+                      <Text as='b' color='white'>
+                        {pvSystems.length}{' '}
+                        {t('savingsCalculation.results.pvsystems')}:
+                      </Text>
+                      <List.Root mt='2' ml='4'>
+                        {pvSystems.map((system, index) => (
+                          <List.Item key={system.id}>
+                            System {index + 1}: {Math.round(system.annualYield)}{' '}
+                            kWh/year ({system.totalArea.toPrecision(3)}m²)
+                          </List.Item>
+                        ))}
+                      </List.Root>
+                    </List.Item>
+                  )}
                   <List.Item>
                     {t('savingsCalculation.results.production')}
                     <Text as='b' color='fg.success'>

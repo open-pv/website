@@ -94,11 +94,7 @@ const Scene = ({
 
         {pvSystems.length > 0 &&
           pvSystems.map((pvSystem) => (
-            <PVSystem
-              pvSystem={pvSystem}
-              key={pvSystem.id}
-              highlighted={pvSystem.selected || false}
-            />
+            <PVSystem pvSystem={pvSystem} key={pvSystem.id} />
           ))}
 
         {vegetationGeometries && (
