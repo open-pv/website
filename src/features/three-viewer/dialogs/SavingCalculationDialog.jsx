@@ -157,10 +157,8 @@ export const SavingCalculationDialog = ({ isOpen, onOpenChange }) => {
                 <List.Root>
                   {pvSystems.length > 1 && (
                     <List.Item>
-                      <Text as='b' color='white'>
-                        {pvSystems.length}{' '}
-                        {t('savingsCalculation.results.pvsystems')}:
-                      </Text>
+                      {pvSystems.length}{' '}
+                      {t('savingsCalculation.results.pvsystems')}:
                       <List.Root mt='2' ml='4'>
                         {pvSystems.map((system, index) => (
                           <List.Item key={system.id}>
