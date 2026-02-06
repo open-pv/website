@@ -22,6 +22,11 @@ export const AdvertismentDialog = ({ isOpen, onOpenChange }) => {
       href: 'https://balkon.solar/montage/',
     },
     {
+      label: t('adbox.selfbuilding.p'),
+      value: 'https://machsdirselbst.solar/',
+      href: 'https://machsdirselbst.solar/',
+    },
+    {
       label: t('adbox.companies.p'),
       value: 'https://www.sfv.de',
       href: 'https://www.sfv.de/solaranlagenberatung/sachverstaendige-1',

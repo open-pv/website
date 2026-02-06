@@ -71,6 +71,12 @@ export const SavingCalculationDialog = ({ isOpen, onOpenChange }) => {
       linkText: 'https://balkon.solar',
       href: 'https://balkon.solar/montage/',
     },
+    { value: 'b2',
+      title: t('adbox.selfbuilding.h'),
+      text: t('adbox.selfbuilding.p'),
+      linkText: 'https://machsdirselbst.solar/',
+      href: 'https://machsdirselbst.solar/',
+    },
     {
       value: 'c',
       title: t('adbox.bbe.h'),
