@@ -46,7 +46,7 @@ Domain-specific features with their own components, logic, and utilities.
 
 Shared, reusable components used across the app.
 
-- `layout/` - Navigation, Footer, AppLayout, LoadingBar, WelcomeMessage
+- `layout/` - Navigation, Footer, AppLayout, LoadingBar
 - `ui/` - Chakra UI component wrappers
 - `errors/` - Error display components
 
