@@ -99,12 +99,10 @@ function Index() {
   return (
     <App title={pageTitle} description={pageDescription}>
       <div className='map-landing-container'>
-        <header>
-          <div className='title'>
+        <div className='map-full-section'>
+          <div className='map-search-overlay'>
             <SearchField callback={searchCallback} />
           </div>
-        </header>
-        <div className='map-full-section'>
           <Map
             ref={setMapRef}
             {...viewState}

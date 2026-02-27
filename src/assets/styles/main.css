@@ -73,20 +73,42 @@ button.maplibregl-popup-close-button {
   overflow-y: auto;
 }
 
-/* Map section: fixed height so text is already visible below */
+/* Map section: fixed height so text is already visible below.
+   Height is increased by ~65px to compensate for the search bar
+   now overlaying the map (keeps the bottom boundary at the same position). */
 .map-full-section {
   display: grid;
-  height: 75vh;
+  height: calc(75vh + 65px);
   position: relative;
 }
 
-/* Stack Map + attribution as overlapping grid cells */
+/* Stack Map + attribution + header as overlapping grid cells */
 .map-full-section > * {
   grid-row: 1;
   grid-column: 1;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+}
+
+/* Search bar overlay: floats on top of the map */
+.map-search-overlay {
+  overflow: visible !important;
+  align-self: start;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.map-search-overlay > * {
+  pointer-events: auto;
+}
+
+.map-search-overlay form {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(4px);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  margin: 10px;
 }
 
 /* Map attribution: sits at the bottom-left of the map */
