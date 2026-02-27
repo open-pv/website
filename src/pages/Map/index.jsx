@@ -26,9 +26,7 @@ function Index() {
     )
   const matchedStadt =
     stadtKey &&
-    Object.keys(STAEDTE).find(
-      (k) => k.toLowerCase() === stadtKey.toLowerCase(),
-    )
+    Object.keys(STAEDTE).find((k) => k.toLowerCase() === stadtKey.toLowerCase())
 
   // stadt takes precedence over bundesland if both are set
   const location = matchedStadt
