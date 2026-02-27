@@ -65,3 +65,66 @@ button.maplibregl-popup-close-button {
   left: auto;
   z-index: 9999;
 }
+
+/* Scrollable container that fills the remaining flex space */
+.map-landing-container {
+  flex-grow: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Map section: fixed height so text is already visible below */
+.map-full-section {
+  display: grid;
+  height: 75vh;
+  position: relative;
+}
+
+/* Stack Map + attribution as overlapping grid cells */
+.map-full-section > * {
+  grid-row: 1;
+  grid-column: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Map attribution: sits at the bottom-left of the map */
+.map-attribution {
+  overflow: visible !important;
+  align-self: end;
+  justify-self: start;
+  z-index: 10;
+  padding: 6px 10px;
+  background-color: rgba(255, 255, 255, 0.75);
+  font-size: 0.7em;
+  pointer-events: auto;
+}
+
+.map-attribution .copyright {
+  margin: 0;
+}
+
+/* Info sections below the map */
+.landing-info {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.landing-step {
+  margin-bottom: 2rem;
+}
+
+.landing-step h2 {
+  margin-bottom: 0.5rem;
+}
+
+.landing-footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #d0d0d0;
+  font-size: 0.85em;
+  color: #555;
+  text-align: center;
+}

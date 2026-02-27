@@ -1,20 +1,19 @@
-import React, { useCallback, useRef, useState } from 'react'
 import App from '@/app/App'
+import { Heading, Image, Link, Text } from '@chakra-ui/react'
+import React, { useCallback, useRef, useState } from 'react'
 
 import { toaster } from '@/components/ui/toaster'
+import { BUNDESLAENDER } from '@/data/bundeslaender'
+import { STAEDTE } from '@/data/staedte'
+import MapPopup from '@/features/map/components/MapPopup'
+import SearchField from '@/features/map/components/SearchField'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { useTranslation } from 'react-i18next'
 import { Map, NavigationControl } from 'react-map-gl/maplibre'
 import { useSearchParams } from 'react-router-dom'
-import Footer from '@/components/layout/Footer'
-import MapPopup from '@/features/map/components/MapPopup'
-import SearchField from '@/features/map/components/SearchField'
-import WelcomeMessage from '@/components/layout/WelcomeMessage'
-import { BUNDESLAENDER } from '@/data/bundeslaender'
-import { STAEDTE } from '@/data/staedte'
 
 function Index() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [searchParams] = useSearchParams()
   const bundeslandKey = searchParams.get('bundesland')
   const stadtKey = searchParams.get('stadt')
@@ -125,48 +124,140 @@ function Index() {
 
   return (
     <App title={pageTitle} description={pageDescription}>
-      <h1
-        style={{
-          position: 'absolute',
-          width: '1px',
-          height: '1px',
-          overflow: 'hidden',
-          clip: 'rect(0,0,0,0)',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {location ? `Solaranlage ${location.name}` : t('title')}
-      </h1>
-      <header>
-        <div className='title'>
-          <SearchField callback={searchCallback} />
+      <div className='map-landing-container'>
+        <header>
+          <div className='title'>
+            <SearchField callback={searchCallback} />
+          </div>
+        </header>
+        <div className='map-full-section'>
+          <Map
+            ref={setMapRef}
+            {...viewState}
+            maxZoom={19}
+            style={{ width: '100%', height: '100%' }}
+            mapStyle='https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json'
+            onMove={(evt) => setViewState(evt.viewState)}
+            onClick={mapClick}
+            attributionControl={false}
+            maxBounds={[-10, 35, 30, 65]}
+          >
+            <>{mapMarkers}</>
+            {clickPoint && (
+              <MapPopup
+                key='userSelectiion'
+                lat={clickPoint[0]}
+                lon={clickPoint[1]}
+                display_name={t('map.userSelection')}
+              />
+            )}
+            <NavigationControl position='bottom-right' showCompass={false} />
+          </Map>
+          <div className='map-attribution'>
+            <p className='copyright'>
+              Basiskarte &copy;{' '}
+              <a
+                href='https://www.bkg.bund.de'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                BKG
+              </a>
+              &nbsp;(
+              <a
+                href='https://www.govdata.de/dl-de/by-2-0'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                dl-de/by-2-0
+              </a>
+              ) | Geländemodell:&nbsp;
+              <a
+                href='https://sonny.4lima.de'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                &copy;&nbsp;Sonny
+              </a>
+              &nbsp;(
+              <a
+                href='https://creativecommons.org/licenses/by/4.0/deed.en'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                CC-BY-4.0
+              </a>
+              ), erstellt aus{' '}
+              <a
+                href='https://drive.google.com/file/d/1rgGA22Ha42ulQORK9Pfp4JPpPAIKFx6Q/view'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                verschiedenen Quellen
+              </a>
+            </p>
+          </div>
         </div>
-      </header>
-      <WelcomeMessage />
-      <div className='content'>
-        <Map
-          ref={setMapRef}
-          {...viewState}
-          maxZoom={19}
-          style={{ width: '100%', height: '100%' }}
-          mapStyle='https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json'
-          onMove={(evt) => setViewState(evt.viewState)}
-          onClick={mapClick}
-          attributionControl={false}
-          maxBounds={[-10, 35, 30, 65]}
-        >
-          <>{mapMarkers}</>
-          {clickPoint && (
-            <MapPopup
-              key='userSelectiion'
-              lat={clickPoint[0]}
-              lon={clickPoint[1]}
-              display_name={t('map.userSelection')}
-            />
-          )}
-          <NavigationControl position='bottom-right' showCompass={false} />
-        </Map>
-        <Footer federalState='' frontendState='Map' />
+
+        <div className='landing-info'>
+          <Heading as='h1' size='2xl' mb='4'>
+            {t(`title`) + (location ? ` in ${location.name}` : '')}
+          </Heading>
+          <Text mb='6'>{t('WelcomeMessage.introduction')}</Text>
+          {[0, 1, 2, 3, 4].map((i) => (
+            <section key={i} className='landing-step'>
+              <Heading as='h2' size='lg' mb='2'>
+                {t(`WelcomeMessage.${i}.title`)}
+              </Heading>
+              {t(`WelcomeMessage.${i}.alt`) && (
+                <Image
+                  src={`/images/WelcomeMessage${i}.png`}
+                  alt={t(`WelcomeMessage.${i}.alt`)}
+                  maxH='250px'
+                  borderRadius='md'
+                  my='2'
+                />
+              )}
+              <Text>{t(`WelcomeMessage.${i}.text`)}</Text>
+            </section>
+          ))}
+          <footer className='landing-footer'>
+            <Text>
+              &copy;&nbsp;
+              <Link
+                href='https://github.com/open-pv'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                Team OpenPV
+              </Link>
+              {' | '}
+              <Link href='/Impressum'>Impressum</Link>
+              {' | '}
+              <Link href='/Datenschutz'>{t('Footer.privacyPolicy')}</Link>
+              {' | '}
+              <Link
+                href=''
+                onClick={(e) => {
+                  e.preventDefault()
+                  i18n.changeLanguage('en')
+                }}
+              >
+                English
+              </Link>
+              {' | '}
+              <Link
+                href=''
+                onClick={(e) => {
+                  e.preventDefault()
+                  i18n.changeLanguage('de')
+                }}
+              >
+                German
+              </Link>
+            </Text>
+          </footer>
+        </div>
       </div>
     </App>
   )
