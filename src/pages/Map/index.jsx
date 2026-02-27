@@ -5,13 +5,35 @@ import { toaster } from '@/components/ui/toaster'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { useTranslation } from 'react-i18next'
 import { Map, NavigationControl } from 'react-map-gl/maplibre'
+import { useSearchParams } from 'react-router-dom'
 import Footer from '@/components/layout/Footer'
 import MapPopup from '@/features/map/components/MapPopup'
 import SearchField from '@/features/map/components/SearchField'
 import WelcomeMessage from '@/components/layout/WelcomeMessage'
+import { BUNDESLAENDER } from '@/data/bundeslaender'
+import { STAEDTE } from '@/data/staedte'
 
 function Index() {
   const { t } = useTranslation()
+  const [searchParams] = useSearchParams()
+  const bundeslandKey = searchParams.get('bundesland')
+  const stadtKey = searchParams.get('stadt')
+
+  const matchedBundesland =
+    bundeslandKey &&
+    Object.keys(BUNDESLAENDER).find(
+      (k) => k.toLowerCase() === bundeslandKey.toLowerCase(),
+    )
+  const matchedStadt =
+    stadtKey &&
+    Object.keys(STAEDTE).find((k) => k.toLowerCase() === stadtKey.toLowerCase())
+
+  // stadt takes precedence over bundesland if both are set
+  const location = matchedStadt
+    ? STAEDTE[matchedStadt]
+    : matchedBundesland
+      ? BUNDESLAENDER[matchedBundesland]
+      : null
 
   const basemap_source = {
     id: 'basemap-source',
@@ -39,12 +61,17 @@ function Index() {
     // maxzoom: 22,
   }
 
-  const boundingBox = [5.98, 47.3, 15.1, 55.0]
+  const defaultBounds = [5.98, 47.3, 15.1, 55.0]
 
   const [viewState, setViewState] = useState({
-    bounds: boundingBox,
+    bounds: location ? location.bounds : defaultBounds,
     zoom: 6,
   })
+
+  const pageTitle = location ? `Solaranlage ${location.name}` : null
+  const pageDescription = location
+    ? `Berechne kostenlos das Solarpotenzial deines Hauses in ${location.name}. OpenPV zeigt dir, wie viel Solarenergie dein Dach erzeugen kann.`
+    : null
 
   const [mapMarkers, setMapMarkers] = useState([])
 
@@ -82,6 +109,9 @@ function Index() {
     if (current !== null) {
       current.getMap().dragRotate.disable()
       current.getMap().touchZoomRotate.disableRotation()
+      if (location) {
+        current.fitBounds(location.bounds)
+      }
     }
   }, [])
 
@@ -94,7 +124,19 @@ function Index() {
   })
 
   return (
-    <App description={t('mainDescription')}>
+    <App title={pageTitle} description={pageDescription}>
+      <h1
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          overflow: 'hidden',
+          clip: 'rect(0,0,0,0)',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {location ? `Solaranlage ${location.name}` : t('title')}
+      </h1>
       <header>
         <div className='title'>
           <SearchField callback={searchCallback} />

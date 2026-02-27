@@ -10,7 +10,7 @@ const Datenschutz = () => {
           <Heading as='h1'>Datenschutz</Heading>
         </Card.Header>
         <Card.Body>
-          <h1>Datenschutzerklärung</h1>
+          <h2>Datenschutzerklärung</h2>
           <p>
             Verantwortlicher im Sinne der Datenschutzgesetze, insbesondere der
             EU-Datenschutzgrundverordnung (DSGVO), ist:
