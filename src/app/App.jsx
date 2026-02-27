@@ -7,6 +7,8 @@ import Navigation from '@/components/layout/Navigation'
 
 const App = (props) => {
   const { t } = useTranslation()
+  const description = props.description || t('mainDescription')
+  const ogTitle = props.title ? `${props.title} | OpenPV` : t('title')
   return (
     <HelmetProvider>
       <Helmet
@@ -15,8 +17,23 @@ const App = (props) => {
         defer={false}
       >
         {props.title && <title>{props.title}</title>}
-        <meta name='description' content={props.description} />
-        <meta name='Beschreibung' content={props.description} />
+        <meta name='description' content={description} />
+        <meta name='robots' content='index, follow' />
+        <meta property='og:type' content='website' />
+        <meta property='og:site_name' content='OpenPV' />
+        <meta property='og:title' content={ogTitle} />
+        <meta property='og:description' content={description} />
+        <meta
+          property='og:image'
+          content='https://openpv.de/images/favicon/android-chrome-512x512.png'
+        />
+        <meta name='twitter:card' content='summary' />
+        <meta name='twitter:title' content={ogTitle} />
+        <meta name='twitter:description' content={description} />
+        <meta
+          name='twitter:image'
+          content='https://openpv.de/images/favicon/android-chrome-512x512.png'
+        />
       </Helmet>
       <AppLayout>
         <Navigation />
@@ -40,7 +57,7 @@ App.defaultProps = {
   children: null,
   fullPage: false,
   title: null,
-  description: 'Ermittle das Potential für eine Solaranlage.',
+  description: null,
 }
 
 export default App
