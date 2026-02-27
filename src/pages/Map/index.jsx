@@ -135,7 +135,11 @@ function Index() {
             ref={setMapRef}
             {...viewState}
             maxZoom={19}
-            style={{ width: '100%', height: '100%' }}
+            style={{
+              width: '100%',
+              height: '100%',
+              backgroundColor: '#d3d3d3',
+            }}
             mapStyle='https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json'
             onMove={(evt) => setViewState(evt.viewState)}
             onClick={mapClick}

@@ -1,4 +1,5 @@
-import { Link, Tabs } from '@chakra-ui/react'
+import { Box, Flex, Link, Tabs } from '@chakra-ui/react'
+import { ColorModeButton } from '@/components/ui/color-mode'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
@@ -9,26 +10,31 @@ const Navigation = () => {
   const isActive = (path) => location.pathname === path
 
   return (
-    <Tabs.Root value={isActive('/about') ? '/about' : '/'}>
-      <Tabs.List bg='bg.muted' rounded='l3'>
-        <Tabs.Trigger value='/'>
-          <Link textStyle='xl' href='/'>
-            OpenPV
-          </Link>
-        </Tabs.Trigger>
-        <Tabs.Trigger value='/about'>
-          <Link unstyled href='/about'>
-            {t('about.title')}
-          </Link>
-        </Tabs.Trigger>
-        <Tabs.Trigger value='blog'>
-          <Link unstyled href='https://blog.openpv.de'>
-            {t('navigation.products')}
-          </Link>
-        </Tabs.Trigger>
-        <Tabs.Indicator rounded='l2' />
-      </Tabs.List>
-    </Tabs.Root>
+    <Flex align='center' px='2'>
+      <Tabs.Root value={isActive('/about') ? '/about' : '/'}>
+        <Tabs.List bg='bg.muted' rounded='l3'>
+          <Tabs.Trigger value='/'>
+            <Link textStyle='xl' href='/'>
+              OpenPV
+            </Link>
+          </Tabs.Trigger>
+          <Tabs.Trigger value='/about'>
+            <Link unstyled href='/about'>
+              {t('about.title')}
+            </Link>
+          </Tabs.Trigger>
+          <Tabs.Trigger value='blog'>
+            <Link unstyled href='https://blog.openpv.de'>
+              {t('navigation.products')}
+            </Link>
+          </Tabs.Trigger>
+          <Tabs.Indicator rounded='l2' />
+        </Tabs.List>
+      </Tabs.Root>
+      <Box ml='auto'>
+        <ColorModeButton />
+      </Box>
+    </Flex>
   )
 }
 
