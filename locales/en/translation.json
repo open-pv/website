@@ -60,6 +60,7 @@
     "backToMap": "Back to the openpv.de map."
   },
   "WelcomeMessage": {
+    "title": "How to use the solar calculator",
     "introduction": "Is a solar system worth it for my roof or balcony? OpenPV is a free tool for shading calculation and yield forecasting of solar systems. With OpenPV, you can determine the solar potential of your building in just a few steps using freely available 3D building data.",
     "0": {
       "title": "Step 1: Select a Building",
