@@ -60,11 +60,33 @@
     "backToMap": "Back to the openpv.de map."
   },
   "WelcomeMessage": {
-    "title": "Welcome to OpenPV",
-    "firstPage": "Is a solar system worth it for my roof or balcony? With OpenPV, you can determine the solar potential of your building in just a few steps with the help of openly available 3D building data. Simply enter your address in the search field and click Start.",
-    "secondPage": "On the map, you can view the results of the shading simulation. You can select additional buildings for simulation by double-clicking.",
-    "thirdPage": "In Options -> Draw PV System, you can create a solar system and calculate the annual yield.",
-    "fourthPage": "The best thing about OpenPV: We are open-source, free, store no data, and use no cookies!"
+    "title": "How to use the solar calculator",
+    "introduction": "Is a solar system worth it for my roof or balcony? OpenPV is a free tool for shading calculation and yield forecasting of solar systems. With OpenPV, you can determine the solar potential of your building in just a few steps using freely available 3D building data.",
+    "0": {
+      "title": "Step 1: Select a Building",
+      "text": "On the OpenPV homepage, the first step is to select a building for the simulation. This can be done either by entering and searching for an address or by zooming and selecting on the map. Left-clicking on the building displays a menu. Clicking 'Start simulation' begins the calculation.",
+      "alt": "A screenshot of the search field. An address has been entered. The map below is zoomed to that address. A panel with a 'Start simulation' button is shown."
+    },
+    "1": {
+      "title": "Step 2: View Results",
+      "text": "You can then view the shading simulation for the selected building. Bright colours represent good solar yield, dark areas are frequently shaded. Interested in the details of the shading simulation? Click on the 'About openpv.de' tab for a detailed description.",
+      "alt": "A screenshot of a simulated building. Bright colours represent good solar yield, dark colours represent poorer yield."
+    },
+    "2": {
+      "title": "Step 3: Draw a Solar System",
+      "text": "Using 'Draw a new PV system', you can create a solar system. Place the corner points on a surface of the building and finish by clicking 'Create PV System'. You can then see the drawn solar system and the estimated annual yield.",
+      "alt": ""
+    },
+    "3": {
+      "title": "Step 4: Determine Economic Viability",
+      "text": "You can then use the 'Calculate Earnings' button to determine the annual savings from self-consumption of the generated electricity. You will need to provide some information. This data stays in your browser and is never sent to our servers.",
+      "alt": "A screenshot of the economic calculation. After entering annual electricity consumption, battery capacity, and the electricity price per kWh, the annual savings are calculated."
+    },
+    "4": {
+      "title": "Extra: We are Open Source and Privacy-Friendly!",
+      "text": "The best thing about OpenPV: We are open-source, free, store no data, and use no tracking cookies!",
+      "alt": ""
+    }
   },
   "button": {
     "showMap": "Show Map",

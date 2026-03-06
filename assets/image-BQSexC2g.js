@@ -1,0 +1,1 @@
+import{r as o,j as c,H as i,I as m}from"./index-C_EGiUP_.js";const f=o.forwardRef(function(a,s){const{align:t,fit:e="cover",...r}=a;return c.jsx(i.img,{ref:s,objectFit:e,objectPosition:t,className:m("chakra-image",a.className),...r})});export{f as I};
