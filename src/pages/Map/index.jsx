@@ -177,7 +177,8 @@ function Index() {
 
         <div className='landing-info'>
           <Heading as='h1' size='2xl' mb='4'>
-            {t(`title`) + (location ? ` in ${location.name}` : '')}
+            {t(`WelcomeMessage.title`) +
+              (location ? ` in ${location.name}` : '')}
           </Heading>
           <Text mb='6'>{t('WelcomeMessage.introduction')}</Text>
           {[0, 1, 2, 3, 4].map((i) => (
