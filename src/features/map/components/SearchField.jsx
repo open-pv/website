@@ -1,4 +1,11 @@
-import { Button, IconButton, Input, InputGroup, List, Spinner } from '@chakra-ui/react'
+import {
+  Button,
+  IconButton,
+  Input,
+  InputGroup,
+  List,
+  Spinner,
+} from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { LuSearch, LuX } from 'react-icons/lu'
 import { useTranslation } from 'react-i18next'
@@ -86,7 +93,13 @@ export default function SearchField({ callback }) {
               display += ' ' + streetAddressNumber
             }
             display += ', ' + postcode + ' ' + city
-            return { display, streetName, postcode, city, houseNumber: streetAddressNumber }
+            return {
+              display,
+              streetName,
+              postcode,
+              city,
+              houseNumber: streetAddressNumber,
+            }
           })
           setSuggestions(fetchedSuggestions)
           setSuggestionsVisible(true)
@@ -184,11 +197,7 @@ export default function SearchField({ callback }) {
     }
   }, [focusedIndex])
 
-  const startElement = isFetching ? (
-    <Spinner size='xs' />
-  ) : (
-    <LuSearch />
-  )
+  const startElement = isFetching ? <Spinner size='xs' /> : <LuSearch />
 
   const endElement =
     inputValue.length > 0 && !isSubmitting ? (
@@ -225,7 +234,11 @@ export default function SearchField({ callback }) {
             ref={inputRef}
             value={inputValue}
             placeholder={t('searchField.placeholder')}
-            onChange={(evt) => { setInputValue(evt.target.value); setSubmitError(false); setNeedsHouseNumber(false) }}
+            onChange={(evt) => {
+              setInputValue(evt.target.value)
+              setSubmitError(false)
+              setNeedsHouseNumber(false)
+            }}
             onKeyDown={handleKeyDown}
             autoComplete='off'
             disabled={isSubmitting}
@@ -246,7 +259,9 @@ export default function SearchField({ callback }) {
         </Button>
       </div>
       {needsHouseNumber && (
-        <div style={{ color: '#b45309', fontSize: '0.875em', padding: '4px 10px' }}>
+        <div
+          style={{ color: '#b45309', fontSize: '0.875em', padding: '4px 10px' }}
+        >
           {t('searchField.enterHouseNumber')}
         </div>
       )}
@@ -271,11 +286,7 @@ export default function SearchField({ callback }) {
           boxShadow='md'
         >
           {suggestions.length === 0 ? (
-            <List.Item
-              p={2}
-              style={{ paddingLeft: '1em' }}
-              color={'gray.500'}
-            >
+            <List.Item p={2} style={{ paddingLeft: '1em' }} color={'gray.500'}>
               {t('searchField.noResults')}
             </List.Item>
           ) : (
