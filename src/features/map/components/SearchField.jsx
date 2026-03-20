@@ -13,6 +13,7 @@ export default function SearchField({ callback }) {
   const [isSelectedAdress, setIsSelectedAdress] = useState(false)
   const [isFetching, setIsFetching] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState(false)
   const suggestionsRef = useRef([])
   const inputRef = useRef()
   const formRef = useRef()
@@ -107,22 +108,31 @@ export default function SearchField({ callback }) {
   const handleSubmit = async (event) => {
     event.preventDefault()
     setIsSubmitting(true)
+    setSubmitError(false)
     try {
       const locations = await processAddress(inputValue)
-      callback(locations)
+      if (locations.length === 0) {
+        setSubmitError(true)
+      } else {
+        callback(locations)
+      }
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleSuggestionClick = (suggestion) => {
+  const handleSuggestionClick = async (suggestion) => {
     setInputValue(suggestion)
-    processAddress(suggestion).then((locations) => {
-      callback(locations)
-    })
     setSuggestions([])
     setSuggestionsVisible(false)
     setIsSelectedAdress(true)
+    setSubmitError(false)
+    const locations = await processAddress(suggestion)
+    if (locations.length === 0) {
+      setSubmitError(true)
+    } else {
+      callback(locations)
+    }
   }
 
   const handleClear = () => {
@@ -197,7 +207,7 @@ export default function SearchField({ callback }) {
             ref={inputRef}
             value={inputValue}
             placeholder={t('searchField.placeholder')}
-            onChange={(evt) => setInputValue(evt.target.value)}
+            onChange={(evt) => { setInputValue(evt.target.value); setSubmitError(false) }}
             onKeyDown={handleKeyDown}
             autoComplete='off'
             disabled={isSubmitting}
@@ -217,6 +227,11 @@ export default function SearchField({ callback }) {
           {t('Search')}
         </Button>
       </div>
+      {submitError && (
+        <div style={{ color: 'red', fontSize: '0.875em', padding: '4px 10px' }}>
+          {t('noSearchResults.description')}
+        </div>
+      )}
       {suggestionsVisible && (
         <List.Root
           as='ul'
