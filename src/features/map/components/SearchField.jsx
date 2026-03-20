@@ -8,9 +8,9 @@ export default function SearchField({ callback }) {
   const [inputValue, setInputValue] = useState('')
   const [suggestions, setSuggestions] = useState([])
   const [suggestionsVisible, setSuggestionsVisible] = useState(false)
-  // isSelectedAdress is used so that if an adress is already selected,
+  // isSelectedAddress is used so that if an adress is already selected,
   // the autocomplete does stop to run
-  const [isSelectedAdress, setIsSelectedAdress] = useState(false)
+  const [isSelectedAddress, setIsSelectedAddress] = useState(false)
   const [isFetching, setIsFetching] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState(false)
@@ -42,9 +42,9 @@ export default function SearchField({ callback }) {
       if (inputValue.length < 3) {
         // If the input is deleted or replaced with one
         // charakter, the autocomplete should start again
-        setIsSelectedAdress(false)
+        setIsSelectedAddress(false)
       }
-      if (isSelectedAdress) {
+      if (isSelectedAddress) {
         return
       }
       if (inputValue.length > 2) {
@@ -59,7 +59,7 @@ export default function SearchField({ callback }) {
               //drop last character (ie the comma)
               inputPart = inputPart.slice(0, -1)
             }
-            if (inputPart.length == 5) {
+            if (inputPart.length === 5) {
               // continue if it has the length of a zip code
               continue
             }
@@ -103,14 +103,13 @@ export default function SearchField({ callback }) {
 
     const debounceTimer = setTimeout(fetchSuggestions, 200)
     return () => clearTimeout(debounceTimer)
-  }, [inputValue, isSelectedAdress])
+  }, [inputValue, isSelectedAddress])
 
-  const handleSubmit = async (event) => {
-    event.preventDefault()
+  const submitAddress = async (address) => {
     setIsSubmitting(true)
     setSubmitError(false)
     try {
-      const locations = await processAddress(inputValue)
+      const locations = await processAddress(address)
       if (locations.length === 0) {
         setSubmitError(true)
       } else {
@@ -121,6 +120,11 @@ export default function SearchField({ callback }) {
     }
   }
 
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    submitAddress(inputValue)
+  }
+
   const handleSuggestionClick = (suggestion) => {
     const { streetName, postcode, city, houseNumber } = suggestion
     if (houseNumber) {
@@ -129,13 +133,9 @@ export default function SearchField({ callback }) {
       setInputValue(fullAddress)
       setSuggestions([])
       setSuggestionsVisible(false)
-      setIsSelectedAdress(true)
-      setSubmitError(false)
+      setIsSelectedAddress(true)
       setNeedsHouseNumber(false)
-      processAddress(fullAddress).then((locations) => {
-        if (locations.length === 0) setSubmitError(true)
-        else callback(locations)
-      })
+      submitAddress(fullAddress)
     } else {
       // No house number yet — ask user to type it
       const newValue = `${streetName} , ${postcode} ${city}`
@@ -143,8 +143,7 @@ export default function SearchField({ callback }) {
       setInputValue(newValue)
       setSuggestions([])
       setSuggestionsVisible(false)
-      setIsSelectedAdress(true)
-      setSubmitError(false)
+      setIsSelectedAddress(true)
       setNeedsHouseNumber(true)
       setTimeout(() => {
         inputRef.current?.focus()
@@ -157,7 +156,7 @@ export default function SearchField({ callback }) {
     setInputValue('')
     setSuggestions([])
     setSuggestionsVisible(false)
-    setIsSelectedAdress(false)
+    setIsSelectedAddress(false)
     setNeedsHouseNumber(false)
     inputRef.current?.focus()
   }
