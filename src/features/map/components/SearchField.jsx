@@ -1,5 +1,13 @@
-import { Button, Input, List } from '@chakra-ui/react'
+import {
+  Button,
+  IconButton,
+  Input,
+  InputGroup,
+  List,
+  Spinner,
+} from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
+import { LuSearch, LuX } from 'react-icons/lu'
 import { useTranslation } from 'react-i18next'
 import { processAddress } from '@/features/simulation/core/location'
 
@@ -7,14 +15,17 @@ export default function SearchField({ callback }) {
   const [inputValue, setInputValue] = useState('')
   const [suggestions, setSuggestions] = useState([])
   const [suggestionsVisible, setSuggestionsVisible] = useState(false)
-  // isSelectedAdress is used so that if an adress is already selected,
+  // isSelectedAddress is used so that if an adress is already selected,
   // the autocomplete does stop to run
-  const [isSelectedAdress, setIsSelectedAdress] = useState(false)
+  const [isSelectedAddress, setIsSelectedAddress] = useState(false)
+  const [isFetching, setIsFetching] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState(false)
+  const [needsHouseNumber, setNeedsHouseNumber] = useState(false)
   const suggestionsRef = useRef([])
   const inputRef = useRef()
   const formRef = useRef()
   const [focusedIndex, setFocusedIndex] = useState(-1)
-  window.searchFieldInput = inputValue
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -31,19 +42,20 @@ export default function SearchField({ callback }) {
       document.removeEventListener('mousedown', handleClickOutside)
       document.removeEventListener('touchstart', handleClickOutside)
     }
-  })
+  }, [])
 
   useEffect(() => {
     const fetchSuggestions = async () => {
       if (inputValue.length < 3) {
         // If the input is deleted or replaced with one
         // charakter, the autocomplete should start again
-        setIsSelectedAdress(false)
+        setIsSelectedAddress(false)
       }
-      if (isSelectedAdress) {
+      if (isSelectedAddress) {
         return
       }
       if (inputValue.length > 2) {
+        setIsFetching(true)
         try {
           const inputValueParts = inputValue.split(' ')
           let streetAddressNumber = null
@@ -54,7 +66,7 @@ export default function SearchField({ callback }) {
               //drop last character (ie the comma)
               inputPart = inputPart.slice(0, -1)
             }
-            if (inputPart.length == 5) {
+            if (inputPart.length === 5) {
               // continue if it has the length of a zip code
               continue
             }
@@ -71,50 +83,95 @@ export default function SearchField({ callback }) {
             )}&bbox=5.98865807458,47.3024876979,15.0169958839,54.983104153&limit=5&lang=de&layer=street`,
           )
           const data = await response.json()
-          console.log('data', data)
 
-          setSuggestions(
-            data.features.map((feature) => {
-              let suggestion = feature.properties.name
-              if (streetAddressNumber) {
-                suggestion += ' ' + streetAddressNumber
-              }
-              suggestion +=
-                ', ' +
-                feature.properties.postcode +
-                ' ' +
-                feature.properties.city
-              return suggestion
-            }),
-          )
+          const fetchedSuggestions = data.features.map((feature) => {
+            const streetName = feature.properties.name
+            const postcode = feature.properties.postcode
+            const city = feature.properties.city
+            let display = streetName
+            if (streetAddressNumber) {
+              display += ' ' + streetAddressNumber
+            }
+            display += ', ' + postcode + ' ' + city
+            return {
+              display,
+              streetName,
+              postcode,
+              city,
+              houseNumber: streetAddressNumber,
+            }
+          })
+          setSuggestions(fetchedSuggestions)
+          setSuggestionsVisible(true)
         } catch (error) {
           console.error('Error fetching suggestions:', error)
+        } finally {
+          setIsFetching(false)
         }
       } else {
         setSuggestions([])
+        setSuggestionsVisible(false)
       }
-      setSuggestionsVisible(suggestions.length > 0)
     }
 
     const debounceTimer = setTimeout(fetchSuggestions, 200)
     return () => clearTimeout(debounceTimer)
-  }, [inputValue, isSelectedAdress])
+  }, [inputValue, isSelectedAddress])
 
-  const handleSubmit = async (event) => {
+  const submitAddress = async (address) => {
+    setIsSubmitting(true)
+    setSubmitError(false)
+    try {
+      const locations = await processAddress(address)
+      if (locations.length === 0) {
+        setSubmitError(true)
+      } else {
+        callback(locations)
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleSubmit = (event) => {
     event.preventDefault()
-    const locations = await processAddress(inputValue)
-    console.warn(locations)
-    callback(locations)
+    submitAddress(inputValue)
   }
 
   const handleSuggestionClick = (suggestion) => {
-    setInputValue(suggestion)
-    processAddress(suggestion).then((locations) => {
-      console.warn(locations)
-      callback(locations)
-    })
+    const { streetName, postcode, city, houseNumber } = suggestion
+    if (houseNumber) {
+      // House number already known — fill completely and submit
+      const fullAddress = `${streetName} ${houseNumber}, ${postcode} ${city}`
+      setInputValue(fullAddress)
+      setSuggestions([])
+      setSuggestionsVisible(false)
+      setIsSelectedAddress(true)
+      setNeedsHouseNumber(false)
+      submitAddress(fullAddress)
+    } else {
+      // No house number yet — ask user to type it
+      const newValue = `${streetName} , ${postcode} ${city}`
+      const cursorPos = streetName.length + 1
+      setInputValue(newValue)
+      setSuggestions([])
+      setSuggestionsVisible(false)
+      setIsSelectedAddress(true)
+      setNeedsHouseNumber(true)
+      setTimeout(() => {
+        inputRef.current?.focus()
+        inputRef.current?.setSelectionRange(cursorPos, cursorPos)
+      }, 0)
+    }
+  }
+
+  const handleClear = () => {
+    setInputValue('')
     setSuggestions([])
-    setIsSelectedAdress(true)
+    setSuggestionsVisible(false)
+    setIsSelectedAddress(false)
+    setNeedsHouseNumber(false)
+    inputRef.current?.focus()
   }
 
   const handleKeyDown = (event) => {
@@ -140,6 +197,20 @@ export default function SearchField({ callback }) {
     }
   }, [focusedIndex])
 
+  const startElement = isFetching ? <Spinner size='xs' /> : <LuSearch />
+
+  const endElement =
+    inputValue.length > 0 && !isSubmitting ? (
+      <IconButton
+        variant='ghost'
+        size='xs'
+        aria-label={t('searchField.clear')}
+        onClick={handleClear}
+      >
+        <LuX />
+      </IconButton>
+    ) : null
+
   return (
     <form
       ref={formRef}
@@ -153,27 +224,56 @@ export default function SearchField({ callback }) {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Input
-          ref={inputRef}
-          value={inputValue}
-          placeholder={t('searchField.placeholder')}
-          onChange={(evt) => setInputValue(evt.target.value)}
-          onKeyDown={handleKeyDown}
+        <InputGroup
+          startElement={startElement}
+          endElement={endElement}
+          flex='1'
           margin={'5px'}
-          autoComplete='street-address'
-        />
+        >
+          <Input
+            ref={inputRef}
+            value={inputValue}
+            placeholder={t('searchField.placeholder')}
+            onChange={(evt) => {
+              setInputValue(evt.target.value)
+              setSubmitError(false)
+              setNeedsHouseNumber(false)
+            }}
+            onKeyDown={handleKeyDown}
+            autoComplete='off'
+            disabled={isSubmitting}
+            role='combobox'
+            aria-expanded={suggestionsVisible}
+            aria-autocomplete='list'
+            aria-haspopup='listbox'
+          />
+        </InputGroup>
         <Button
           margin={'5px'}
           minWidth={'150px'}
           type='submit'
           variant='subtle'
+          loading={isSubmitting}
         >
           {t('Search')}
         </Button>
       </div>
+      {needsHouseNumber && (
+        <div
+          style={{ color: '#b45309', fontSize: '0.875em', padding: '4px 10px' }}
+        >
+          {t('searchField.enterHouseNumber')}
+        </div>
+      )}
+      {submitError && (
+        <div style={{ color: 'red', fontSize: '0.875em', padding: '4px 10px' }}>
+          {t('noSearchResults.description')}
+        </div>
+      )}
       {suggestionsVisible && (
         <List.Root
           as='ul'
+          role='listbox'
           style={{ paddingLeft: '0', marginTop: '0' }}
           variant='plain'
           borderWidth={1}
@@ -185,22 +285,31 @@ export default function SearchField({ callback }) {
           zIndex={1}
           boxShadow='md'
         >
-          {suggestions.map((suggestion, index) => (
-            <List.Item
-              ref={(elem) => (suggestionsRef.current[index] = elem)}
-              key={index}
-              p={2}
-              style={{ paddingLeft: '1em' }}
-              cursor='pointer'
-              _hover={{ backgroundColor: 'gray.100' }}
-              backgroundColor={focusedIndex === index ? 'gray.100' : 'white'}
-              onClick={() => handleSuggestionClick(suggestion)}
-              onKeyDown={handleKeyDown}
-              color={'black'}
-            >
-              {suggestion}
+          {suggestions.length === 0 ? (
+            <List.Item p={2} style={{ paddingLeft: '1em' }} color={'gray.500'}>
+              {t('searchField.noResults')}
             </List.Item>
-          ))}
+          ) : (
+            suggestions.map((suggestion, index) => (
+              <List.Item
+                ref={(elem) => (suggestionsRef.current[index] = elem)}
+                key={index}
+                p={2}
+                style={{ paddingLeft: '1em' }}
+                cursor='pointer'
+                _hover={{ backgroundColor: 'gray.100' }}
+                backgroundColor={focusedIndex === index ? 'gray.100' : 'white'}
+                onClick={() => handleSuggestionClick(suggestion)}
+                onKeyDown={handleKeyDown}
+                color={'black'}
+                tabIndex={0}
+                role='option'
+                aria-selected={focusedIndex === index}
+              >
+                {suggestion.display}
+              </List.Item>
+            ))
+          )}
         </List.Root>
       )}
     </form>
