@@ -199,7 +199,7 @@ export default function SearchField({ callback }) {
             placeholder={t('searchField.placeholder')}
             onChange={(evt) => setInputValue(evt.target.value)}
             onKeyDown={handleKeyDown}
-            autoComplete='street-address'
+            autoComplete='off'
             disabled={isSubmitting}
             role='combobox'
             aria-expanded={suggestionsVisible}
