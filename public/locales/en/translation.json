@@ -12,7 +12,9 @@
   "close": "Close",
   "delete": "Delete",
   "searchField": {
-    "placeholder": "Enter your address or coordinates - e.g. Lange Point 20, Freising"
+    "placeholder": "Enter your address or coordinates - e.g. Lange Point 20, Freising",
+    "clear": "Clear input",
+    "noResults": "No suggestions found"
   },
   "about": {
     "title": "About the Project",

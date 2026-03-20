@@ -1,5 +1,6 @@
-import { Button, Input, List } from '@chakra-ui/react'
+import { Button, IconButton, Input, InputGroup, List, Spinner } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
+import { LuSearch, LuX } from 'react-icons/lu'
 import { useTranslation } from 'react-i18next'
 import { processAddress } from '@/features/simulation/core/location'
 
@@ -10,11 +11,12 @@ export default function SearchField({ callback }) {
   // isSelectedAdress is used so that if an adress is already selected,
   // the autocomplete does stop to run
   const [isSelectedAdress, setIsSelectedAdress] = useState(false)
+  const [isFetching, setIsFetching] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const suggestionsRef = useRef([])
   const inputRef = useRef()
   const formRef = useRef()
   const [focusedIndex, setFocusedIndex] = useState(-1)
-  window.searchFieldInput = inputValue
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function SearchField({ callback }) {
       document.removeEventListener('mousedown', handleClickOutside)
       document.removeEventListener('touchstart', handleClickOutside)
     }
-  })
+  }, [])
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -44,6 +46,7 @@ export default function SearchField({ callback }) {
         return
       }
       if (inputValue.length > 2) {
+        setIsFetching(true)
         try {
           const inputValueParts = inputValue.split(' ')
           let streetAddressNumber = null
@@ -71,29 +74,30 @@ export default function SearchField({ callback }) {
             )}&bbox=5.98865807458,47.3024876979,15.0169958839,54.983104153&limit=5&lang=de&layer=street`,
           )
           const data = await response.json()
-          console.log('data', data)
 
-          setSuggestions(
-            data.features.map((feature) => {
-              let suggestion = feature.properties.name
-              if (streetAddressNumber) {
-                suggestion += ' ' + streetAddressNumber
-              }
-              suggestion +=
-                ', ' +
-                feature.properties.postcode +
-                ' ' +
-                feature.properties.city
-              return suggestion
-            }),
-          )
+          const fetchedSuggestions = data.features.map((feature) => {
+            let suggestion = feature.properties.name
+            if (streetAddressNumber) {
+              suggestion += ' ' + streetAddressNumber
+            }
+            suggestion +=
+              ', ' +
+              feature.properties.postcode +
+              ' ' +
+              feature.properties.city
+            return suggestion
+          })
+          setSuggestions(fetchedSuggestions)
+          setSuggestionsVisible(true)
         } catch (error) {
           console.error('Error fetching suggestions:', error)
+        } finally {
+          setIsFetching(false)
         }
       } else {
         setSuggestions([])
+        setSuggestionsVisible(false)
       }
-      setSuggestionsVisible(suggestions.length > 0)
     }
 
     const debounceTimer = setTimeout(fetchSuggestions, 200)
@@ -102,19 +106,31 @@ export default function SearchField({ callback }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    const locations = await processAddress(inputValue)
-    console.warn(locations)
-    callback(locations)
+    setIsSubmitting(true)
+    try {
+      const locations = await processAddress(inputValue)
+      callback(locations)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleSuggestionClick = (suggestion) => {
     setInputValue(suggestion)
     processAddress(suggestion).then((locations) => {
-      console.warn(locations)
       callback(locations)
     })
     setSuggestions([])
+    setSuggestionsVisible(false)
     setIsSelectedAdress(true)
+  }
+
+  const handleClear = () => {
+    setInputValue('')
+    setSuggestions([])
+    setSuggestionsVisible(false)
+    setIsSelectedAdress(false)
+    inputRef.current?.focus()
   }
 
   const handleKeyDown = (event) => {
@@ -140,6 +156,24 @@ export default function SearchField({ callback }) {
     }
   }, [focusedIndex])
 
+  const startElement = isFetching ? (
+    <Spinner size='xs' />
+  ) : (
+    <LuSearch />
+  )
+
+  const endElement =
+    inputValue.length > 0 && !isSubmitting ? (
+      <IconButton
+        variant='ghost'
+        size='xs'
+        aria-label={t('searchField.clear')}
+        onClick={handleClear}
+      >
+        <LuX />
+      </IconButton>
+    ) : null
+
   return (
     <form
       ref={formRef}
@@ -153,20 +187,32 @@ export default function SearchField({ callback }) {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Input
-          ref={inputRef}
-          value={inputValue}
-          placeholder={t('searchField.placeholder')}
-          onChange={(evt) => setInputValue(evt.target.value)}
-          onKeyDown={handleKeyDown}
+        <InputGroup
+          startElement={startElement}
+          endElement={endElement}
+          flex='1'
           margin={'5px'}
-          autoComplete='street-address'
-        />
+        >
+          <Input
+            ref={inputRef}
+            value={inputValue}
+            placeholder={t('searchField.placeholder')}
+            onChange={(evt) => setInputValue(evt.target.value)}
+            onKeyDown={handleKeyDown}
+            autoComplete='street-address'
+            disabled={isSubmitting}
+            role='combobox'
+            aria-expanded={suggestionsVisible}
+            aria-autocomplete='list'
+            aria-haspopup='listbox'
+          />
+        </InputGroup>
         <Button
           margin={'5px'}
           minWidth={'150px'}
           type='submit'
           variant='subtle'
+          loading={isSubmitting}
         >
           {t('Search')}
         </Button>
@@ -174,6 +220,7 @@ export default function SearchField({ callback }) {
       {suggestionsVisible && (
         <List.Root
           as='ul'
+          role='listbox'
           style={{ paddingLeft: '0', marginTop: '0' }}
           variant='plain'
           borderWidth={1}
@@ -185,22 +232,35 @@ export default function SearchField({ callback }) {
           zIndex={1}
           boxShadow='md'
         >
-          {suggestions.map((suggestion, index) => (
+          {suggestions.length === 0 ? (
             <List.Item
-              ref={(elem) => (suggestionsRef.current[index] = elem)}
-              key={index}
               p={2}
               style={{ paddingLeft: '1em' }}
-              cursor='pointer'
-              _hover={{ backgroundColor: 'gray.100' }}
-              backgroundColor={focusedIndex === index ? 'gray.100' : 'white'}
-              onClick={() => handleSuggestionClick(suggestion)}
-              onKeyDown={handleKeyDown}
-              color={'black'}
+              color={'gray.500'}
             >
-              {suggestion}
+              {t('searchField.noResults')}
             </List.Item>
-          ))}
+          ) : (
+            suggestions.map((suggestion, index) => (
+              <List.Item
+                ref={(elem) => (suggestionsRef.current[index] = elem)}
+                key={index}
+                p={2}
+                style={{ paddingLeft: '1em' }}
+                cursor='pointer'
+                _hover={{ backgroundColor: 'gray.100' }}
+                backgroundColor={focusedIndex === index ? 'gray.100' : 'white'}
+                onClick={() => handleSuggestionClick(suggestion)}
+                onKeyDown={handleKeyDown}
+                color={'black'}
+                tabIndex={0}
+                role='option'
+                aria-selected={focusedIndex === index}
+              >
+                {suggestion}
+              </List.Item>
+            ))
+          )}
         </List.Root>
       )}
     </form>

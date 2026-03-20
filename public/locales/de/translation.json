@@ -12,7 +12,9 @@
   "close": "Schließen",
   "delete": "Löschen",
   "searchField": {
-    "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Lange Point 20, Freising"
+    "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Lange Point 20, Freising",
+    "clear": "Eingabe löschen",
+    "noResults": "Keine Vorschläge gefunden"
   },
   "about": {
     "title": "Über openpv.de",
