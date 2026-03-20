@@ -14,6 +14,7 @@ export default function SearchField({ callback }) {
   const [isFetching, setIsFetching] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState(false)
+  const [needsHouseNumber, setNeedsHouseNumber] = useState(false)
   const suggestionsRef = useRef([])
   const inputRef = useRef()
   const formRef = useRef()
@@ -77,16 +78,15 @@ export default function SearchField({ callback }) {
           const data = await response.json()
 
           const fetchedSuggestions = data.features.map((feature) => {
-            let suggestion = feature.properties.name
+            const streetName = feature.properties.name
+            const postcode = feature.properties.postcode
+            const city = feature.properties.city
+            let display = streetName
             if (streetAddressNumber) {
-              suggestion += ' ' + streetAddressNumber
+              display += ' ' + streetAddressNumber
             }
-            suggestion +=
-              ', ' +
-              feature.properties.postcode +
-              ' ' +
-              feature.properties.city
-            return suggestion
+            display += ', ' + postcode + ' ' + city
+            return { display, streetName, postcode, city, houseNumber: streetAddressNumber }
           })
           setSuggestions(fetchedSuggestions)
           setSuggestionsVisible(true)
@@ -121,17 +121,35 @@ export default function SearchField({ callback }) {
     }
   }
 
-  const handleSuggestionClick = async (suggestion) => {
-    setInputValue(suggestion)
-    setSuggestions([])
-    setSuggestionsVisible(false)
-    setIsSelectedAdress(true)
-    setSubmitError(false)
-    const locations = await processAddress(suggestion)
-    if (locations.length === 0) {
-      setSubmitError(true)
+  const handleSuggestionClick = (suggestion) => {
+    const { streetName, postcode, city, houseNumber } = suggestion
+    if (houseNumber) {
+      // House number already known — fill completely and submit
+      const fullAddress = `${streetName} ${houseNumber}, ${postcode} ${city}`
+      setInputValue(fullAddress)
+      setSuggestions([])
+      setSuggestionsVisible(false)
+      setIsSelectedAdress(true)
+      setSubmitError(false)
+      setNeedsHouseNumber(false)
+      processAddress(fullAddress).then((locations) => {
+        if (locations.length === 0) setSubmitError(true)
+        else callback(locations)
+      })
     } else {
-      callback(locations)
+      // No house number yet — ask user to type it
+      const newValue = `${streetName} , ${postcode} ${city}`
+      const cursorPos = streetName.length + 1
+      setInputValue(newValue)
+      setSuggestions([])
+      setSuggestionsVisible(false)
+      setIsSelectedAdress(true)
+      setSubmitError(false)
+      setNeedsHouseNumber(true)
+      setTimeout(() => {
+        inputRef.current?.focus()
+        inputRef.current?.setSelectionRange(cursorPos, cursorPos)
+      }, 0)
     }
   }
 
@@ -140,6 +158,7 @@ export default function SearchField({ callback }) {
     setSuggestions([])
     setSuggestionsVisible(false)
     setIsSelectedAdress(false)
+    setNeedsHouseNumber(false)
     inputRef.current?.focus()
   }
 
@@ -207,7 +226,7 @@ export default function SearchField({ callback }) {
             ref={inputRef}
             value={inputValue}
             placeholder={t('searchField.placeholder')}
-            onChange={(evt) => { setInputValue(evt.target.value); setSubmitError(false) }}
+            onChange={(evt) => { setInputValue(evt.target.value); setSubmitError(false); setNeedsHouseNumber(false) }}
             onKeyDown={handleKeyDown}
             autoComplete='off'
             disabled={isSubmitting}
@@ -227,6 +246,11 @@ export default function SearchField({ callback }) {
           {t('Search')}
         </Button>
       </div>
+      {needsHouseNumber && (
+        <div style={{ color: '#b45309', fontSize: '0.875em', padding: '4px 10px' }}>
+          {t('searchField.enterHouseNumber')}
+        </div>
+      )}
       {submitError && (
         <div style={{ color: 'red', fontSize: '0.875em', padding: '4px 10px' }}>
           {t('noSearchResults.description')}
@@ -272,7 +296,7 @@ export default function SearchField({ callback }) {
                 role='option'
                 aria-selected={focusedIndex === index}
               >
-                {suggestion}
+                {suggestion.display}
               </List.Item>
             ))
           )}
