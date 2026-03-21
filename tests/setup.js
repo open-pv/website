@@ -39,10 +39,26 @@ vi.mock('maplibre-gl', () => ({
 vi.mock('react-map-gl/maplibre', () => {
   const React = require('react')
   const MAP_ONLY_PROPS = [
-    'mapStyle', 'maxZoom', 'minZoom', 'maxBounds', 'attributionControl',
-    'onMove', 'onLoad', 'onError', 'onIdle', 'onSourceData', 'onStyleData',
-    'initialViewState', 'viewState', 'interactiveLayerIds', 'cursor',
-    'reuseMaps', 'terrain', 'fog', 'light', 'projection',
+    'mapStyle',
+    'maxZoom',
+    'minZoom',
+    'maxBounds',
+    'attributionControl',
+    'onMove',
+    'onLoad',
+    'onError',
+    'onIdle',
+    'onSourceData',
+    'onStyleData',
+    'initialViewState',
+    'viewState',
+    'interactiveLayerIds',
+    'cursor',
+    'reuseMaps',
+    'terrain',
+    'fog',
+    'light',
+    'projection',
   ]
   return {
     Map: React.forwardRef(({ children, onClick, ...props }, ref) => {
