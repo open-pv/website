@@ -10,7 +10,7 @@ import {
   SavingCalculationDialog,
 } from '@/features/three-viewer/dialogs'
 import { createPVSystem } from '@/features/three-viewer/meshes/PVSystems'
-import { Menu } from '@chakra-ui/react'
+import { Box, Menu } from '@chakra-ui/react'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -30,7 +30,6 @@ function Overlay({ frontendState, setFrontendState }) {
   }
   // Dialog state management
   const [isOpenOptionsDialog, setIsOpenOptionsDialog] = useState(false)
-  const [isOpenColorLegend, setIsOpenColorLegend] = useState(false)
   const [isOpenControlHelp, setIsOpenControlHelp] = useState(false)
   const [isOpenAdvertisment, setIsOpenAdvertisment] = useState(false)
   const [isOpenSavingCalculation, setIsOpenSavingCalculation] = useState(false)
@@ -49,7 +48,28 @@ function Overlay({ frontendState, setFrontendState }) {
 
   return (
     <>
-      {!window.isTouchDevice && <MouseHoverInfo />}
+      <Box
+        position='fixed'
+        bottom='16px'
+        right='16px'
+        display='flex'
+        flexDirection='column'
+        zIndex={9999}
+        pointerEvents='none'
+        backgroundColor='rgba(245, 245, 245, 0.92)'
+        borderRadius='8px'
+        boxShadow='0 2px 8px rgba(0, 0, 0, 0.2)'
+        padding='8px 12px'
+        width={window.isTouchDevice ? 'fit-content' : '220px'}
+      >
+        {!window.isTouchDevice && (
+          <>
+            <MouseHoverInfo />
+            <Box borderTop='1px solid rgba(0,0,0,0.12)' my='4px' />
+          </>
+        )}
+        <ColorLegend />
+      </Box>
       <OverlayWrapper>
         {frontendState === 'Results' && (
           <Button variant='subtle' onClick={() => setFrontendState('DrawPV')}>
@@ -107,12 +127,6 @@ function Overlay({ frontendState, setFrontendState }) {
             <Menu.Item value='help' onClick={() => setIsOpenControlHelp(true)}>
               {t('mapControlHelp.button')}
             </Menu.Item>
-            <Menu.Item
-              value='legend'
-              onClick={() => setIsOpenColorLegend(true)}
-            >
-              {t('colorLegend.button')}
-            </Menu.Item>
           </Menu.Content>
         </Menu.Root>
 
@@ -132,10 +146,6 @@ function Overlay({ frontendState, setFrontendState }) {
         <ControlHelperDialog
           isOpen={isOpenControlHelp}
           onOpenChange={(e) => setIsOpenControlHelp(e.open)}
-        />
-        <ColorLegend
-          isOpen={isOpenColorLegend}
-          onOpenChange={(e) => setIsOpenColorLegend(e.open)}
         />
       </OverlayWrapper>
     </>

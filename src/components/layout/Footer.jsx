@@ -27,12 +27,21 @@ const WrapperForLaptopDevice = ({ children }) => {
 const WrapperForTouchDevice = ({ children }) => {
   return (
     <div className='overlay'>
-      <div className='attribution'>
+      <div className='attribution' style={{ backgroundColor: 'transparent' }}>
         <DialogRoot>
           <DialogTrigger asChild>
-            <Button variant='outline' size='sm'>
+            <a
+              href='#'
+              style={{
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+                fontSize: '0.8em',
+                fontWeight: 500,
+                letterSpacing: 0,
+                color: '#3c3b3b',
+              }}
+            >
               License Information
-            </Button>
+            </a>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
