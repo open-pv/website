@@ -1,14 +1,17 @@
 import PropTypes from 'prop-types'
-import React from 'react'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import { useTranslation } from 'react-i18next'
 import AppLayout from '@/components/layout/AppLayout'
 import Navigation from '@/components/layout/Navigation'
 
-const App = (props) => {
+const App = ({
+  children = null,
+  title = null,
+  description: descriptionProp = null,
+}) => {
   const { t } = useTranslation()
-  const description = props.description || t('mainDescription')
-  const ogTitle = props.title ? `${props.title} | OpenPV` : t('title')
+  const description = descriptionProp || t('mainDescription')
+  const ogTitle = title ? `${title} | OpenPV` : t('title')
   return (
     <HelmetProvider>
       <Helmet
@@ -16,7 +19,7 @@ const App = (props) => {
         defaultTitle={t('title')}
         defer={false}
       >
-        {props.title && <title>{props.title}</title>}
+        {title && <title>{title}</title>}
         <meta name='description' content={description} />
         <meta name='robots' content='index, follow' />
         <meta property='og:type' content='website' />
@@ -37,7 +40,7 @@ const App = (props) => {
       </Helmet>
       <AppLayout>
         <Navigation />
-        {props.children}
+        {children}
       </AppLayout>
     </HelmetProvider>
   )
@@ -48,16 +51,8 @@ App.propTypes = {
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node,
   ]),
-  fullPage: PropTypes.bool,
   title: PropTypes.string,
   description: PropTypes.string,
-}
-
-App.defaultProps = {
-  children: null,
-  fullPage: false,
-  title: null,
-  description: null,
 }
 
 export default App
