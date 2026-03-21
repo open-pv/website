@@ -42,9 +42,8 @@ export const MouseHoverInfo = () => {
   return (
     <div className='mouse-hover-info'>
       {t('slope')}: {slope}° &nbsp;|&nbsp; {t('azimuth')}: {cardinalDirection}
-      {yieldPerKWP
-        ? ` \u00a0|\u00a0 ${t('yieldPerYear')}: ${Math.round(yieldPerKWP / 100) * 100} kWh/kWp`
-        : ''}
+      <br /> {t('yieldPerYear')}:
+      {yieldPerKWP ? ` ${Math.round(yieldPerKWP / 100) * 100} kWh/kWp` : ''}
     </div>
   )
 }

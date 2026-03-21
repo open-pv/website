@@ -41,9 +41,6 @@
   font-weight: 500;
   letter-spacing: 0;
   color: #3c3b3b;
-  padding: 6px 8px;
-  background-color: transparent;
-  white-space: nowrap;
 }
 
 .mouse-hover-info p {
@@ -51,8 +48,6 @@
 }
 
 .color-legend {
-  padding: 6px 8px;
-  background-color: transparent;
   width: fit-content;
   display: flex;
   flex-direction: column;

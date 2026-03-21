@@ -50,15 +50,24 @@ function Overlay({ frontendState, setFrontendState }) {
     <>
       <Box
         position='fixed'
-        bottom={0}
-        right={0}
+        bottom='16px'
+        right='16px'
         display='flex'
-        flexDirection='row'
-        alignItems='flex-end'
+        flexDirection='column'
         zIndex={9999}
         pointerEvents='none'
+        backgroundColor='rgba(245, 245, 245, 0.92)'
+        borderRadius='8px'
+        boxShadow='0 2px 8px rgba(0, 0, 0, 0.2)'
+        padding='8px 12px'
+        width={window.isTouchDevice ? 'fit-content' : '220px'}
       >
-        {!window.isTouchDevice && <MouseHoverInfo />}
+        {!window.isTouchDevice && (
+          <>
+            <MouseHoverInfo />
+            <Box borderTop='1px solid rgba(0,0,0,0.12)' my='4px' />
+          </>
+        )}
         <ColorLegend />
       </Box>
       <OverlayWrapper>
