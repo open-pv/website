@@ -1,7 +1,7 @@
 import TextSprite from '@/features/three-viewer/components/TextSprite'
 import { createPVSystemData } from '@/features/three-viewer/core/pvSystemCreation'
 import { useRef } from 'react'
-import { useFrame } from 'react-three-fiber'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 /**
