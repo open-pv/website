@@ -38,18 +38,51 @@ vi.mock('maplibre-gl', () => ({
 // Note: Using createElement to avoid JSX in .js file
 vi.mock('react-map-gl/maplibre', () => {
   const React = require('react')
+  const MAP_ONLY_PROPS = [
+    'mapStyle',
+    'maxZoom',
+    'minZoom',
+    'maxBounds',
+    'attributionControl',
+    'onMove',
+    'onLoad',
+    'onError',
+    'onIdle',
+    'onSourceData',
+    'onStyleData',
+    'initialViewState',
+    'viewState',
+    'interactiveLayerIds',
+    'cursor',
+    'reuseMaps',
+    'terrain',
+    'fog',
+    'light',
+    'projection',
+  ]
   return {
-    Map: ({ children, onClick, onMove, ...props }) => {
+    Map: React.forwardRef(({ children, onClick, ...props }, ref) => {
+      React.useImperativeHandle(ref, () => ({
+        getMap: () => ({
+          dragRotate: { disable: vi.fn() },
+          touchZoomRotate: { disableRotation: vi.fn() },
+        }),
+        fitBounds: vi.fn(),
+        flyTo: vi.fn(),
+      }))
+      const domProps = Object.fromEntries(
+        Object.entries(props).filter(([k]) => !MAP_ONLY_PROPS.includes(k)),
+      )
       return React.createElement(
         'div',
         {
           'data-testid': 'maplibre-map',
           onClick: (e) => onClick?.({ lngLat: { lng: 11.399, lat: 49.457 } }),
-          ...props,
+          ...domProps,
         },
         children,
       )
-    },
+    }),
     NavigationControl: () =>
       React.createElement('div', { 'data-testid': 'navigation-control' }),
   }
