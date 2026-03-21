@@ -1,6 +1,6 @@
+import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 
 const CARDINAL_DIRECTIONS = [
   'N',
@@ -40,15 +40,11 @@ export const MouseHoverInfo = () => {
       : null
 
   return (
-    <div className='attribution' id='footer-on-hover'>
-      {t('slope')}: {slope}°
-      <br />
-      {t('azimuth')}: {cardinalDirection}
-      {yieldPerKWP ? (
-        <p>
-          {t('yieldPerYear')}: {Math.round(yieldPerKWP / 100) * 100} kWh/kWp
-        </p>
-      ) : null}
+    <div className='mouse-hover-info'>
+      {t('slope')}: {slope}° &nbsp;|&nbsp; {t('azimuth')}: {cardinalDirection}
+      {yieldPerKWP
+        ? ` \u00a0|\u00a0 ${t('yieldPerYear')}: ${Math.round(yieldPerKWP / 100) * 100} kWh/kWp`
+        : ''}
     </div>
   )
 }

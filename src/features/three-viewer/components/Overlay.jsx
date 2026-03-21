@@ -53,7 +53,7 @@ function Overlay({ frontendState, setFrontendState }) {
         bottom={0}
         right={0}
         display='flex'
-        flexDirection='column'
+        flexDirection='row'
         alignItems='flex-end'
         zIndex={9999}
         pointerEvents='none'
