@@ -129,6 +129,10 @@ button.maplibregl-popup-close-button {
   margin: 10px;
 }
 
+.dark .map-search-overlay form {
+  background: rgba(26, 32, 44, 0.85);
+}
+
 /* Map attribution: sits at the bottom-left of the map */
 .map-attribution {
   overflow: visible !important;
