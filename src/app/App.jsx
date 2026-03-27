@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import { useTranslation } from 'react-i18next'
 import AppLayout from '@/components/layout/AppLayout'
@@ -44,15 +43,6 @@ const App = ({
       </AppLayout>
     </HelmetProvider>
   )
-}
-
-App.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node,
-  ]),
-  title: PropTypes.string,
-  description: PropTypes.string,
 }
 
 export default App
