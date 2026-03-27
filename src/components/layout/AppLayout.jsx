@@ -1,5 +1,4 @@
 import { Box } from '@chakra-ui/react'
-import PropTypes from 'prop-types'
 import React from 'react'
 
 const AppLayout = ({ children }) => {
@@ -33,13 +32,6 @@ const AppLayout = ({ children }) => {
       </Box>
     </Box>
   )
-}
-
-AppLayout.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node,
-  ]),
 }
 
 export default AppLayout
