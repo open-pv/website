@@ -23,6 +23,7 @@ export default function SearchField({ callback }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const [needsHouseNumber, setNeedsHouseNumber] = useState(false)
+  const [baseAddress, setBaseAddress] = useState(null)
   const suggestionsRef = useRef([])
   const inputRef = useRef()
   const formRef = useRef()
@@ -128,7 +129,10 @@ export default function SearchField({ callback }) {
     setIsSubmitting(true)
     setSubmitError(false)
     try {
-      const locations = await processAddress(address)
+      let locations = await processAddress(address)
+      if (locations.length === 0 && baseAddress && address !== baseAddress) {
+        locations = await processAddress(baseAddress)
+      }
       if (locations.length === 0) {
         setSubmitError(true)
       } else {
@@ -157,6 +161,7 @@ export default function SearchField({ callback }) {
       submitAddress(fullAddress)
     } else {
       // No house number yet — ask user to type it
+      setBaseAddress(`${streetName}, ${postcode} ${city}`)
       const newValue = `${streetName} , ${postcode} ${city}`
       const cursorPos = streetName.length + 1
       setInputValue(newValue)
@@ -177,6 +182,7 @@ export default function SearchField({ callback }) {
     setSuggestionsVisible(false)
     setIsSelectedAddress(false)
     setNeedsHouseNumber(false)
+    setBaseAddress(null)
     inputRef.current?.focus()
   }
 
