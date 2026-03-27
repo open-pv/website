@@ -1,3 +1,5 @@
+import { useColorModeValue } from '@/components/ui/color-mode'
+import { processAddress } from '@/features/simulation/core/location'
 import {
   Button,
   IconButton,
@@ -7,9 +9,8 @@ import {
   Spinner,
 } from '@chakra-ui/react'
 import React, { useEffect, useRef, useState } from 'react'
-import { LuSearch, LuX } from 'react-icons/lu'
 import { useTranslation } from 'react-i18next'
-import { processAddress } from '@/features/simulation/core/location'
+import { LuSearch, LuX } from 'react-icons/lu'
 
 export default function SearchField({ callback }) {
   const [inputValue, setInputValue] = useState('')
@@ -22,11 +23,17 @@ export default function SearchField({ callback }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const [needsHouseNumber, setNeedsHouseNumber] = useState(false)
+  const [baseAddress, setBaseAddress] = useState(null)
   const suggestionsRef = useRef([])
   const inputRef = useRef()
   const formRef = useRef()
   const [focusedIndex, setFocusedIndex] = useState(-1)
   const { t } = useTranslation()
+  const inputBg = useColorModeValue('white', 'gray.700')
+  const listBg = useColorModeValue('white', 'gray.800')
+  const listItemHoverBg = useColorModeValue('gray.100', 'gray.700')
+  const listItemFocusedBg = useColorModeValue('gray.100', 'gray.700')
+  const listItemColor = useColorModeValue('black', 'white')
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -122,7 +129,10 @@ export default function SearchField({ callback }) {
     setIsSubmitting(true)
     setSubmitError(false)
     try {
-      const locations = await processAddress(address)
+      let locations = await processAddress(address)
+      if (locations.length === 0 && baseAddress && address !== baseAddress) {
+        locations = await processAddress(baseAddress)
+      }
       if (locations.length === 0) {
         setSubmitError(true)
       } else {
@@ -151,6 +161,7 @@ export default function SearchField({ callback }) {
       submitAddress(fullAddress)
     } else {
       // No house number yet — ask user to type it
+      setBaseAddress(`${streetName}, ${postcode} ${city}`)
       const newValue = `${streetName} , ${postcode} ${city}`
       const cursorPos = streetName.length + 1
       setInputValue(newValue)
@@ -171,6 +182,7 @@ export default function SearchField({ callback }) {
     setSuggestionsVisible(false)
     setIsSelectedAddress(false)
     setNeedsHouseNumber(false)
+    setBaseAddress(null)
     inputRef.current?.focus()
   }
 
@@ -233,6 +245,7 @@ export default function SearchField({ callback }) {
           <Input
             ref={inputRef}
             value={inputValue}
+            bg={inputBg}
             placeholder={t('searchField.placeholder')}
             onChange={(evt) => {
               setInputValue(evt.target.value)
@@ -284,6 +297,7 @@ export default function SearchField({ callback }) {
           right={0}
           zIndex={1}
           boxShadow='md'
+          backgroundColor={listBg}
         >
           {suggestions.length === 0 ? (
             <List.Item p={2} style={{ paddingLeft: '1em' }} color={'gray.500'}>
@@ -297,11 +311,13 @@ export default function SearchField({ callback }) {
                 p={2}
                 style={{ paddingLeft: '1em' }}
                 cursor='pointer'
-                _hover={{ backgroundColor: 'gray.100' }}
-                backgroundColor={focusedIndex === index ? 'gray.100' : 'white'}
+                _hover={{ backgroundColor: listItemHoverBg }}
+                backgroundColor={
+                  focusedIndex === index ? listItemFocusedBg : listBg
+                }
                 onClick={() => handleSuggestionClick(suggestion)}
                 onKeyDown={handleKeyDown}
-                color={'black'}
+                color={listItemColor}
                 tabIndex={0}
                 role='option'
                 aria-selected={focusedIndex === index}
