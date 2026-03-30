@@ -12,7 +12,7 @@
   "dependencies": {
     "@chakra-ui/react": "^3.16.1",
     "@emotion/react": "^11.14.0",
-    "@openpv/simshady": "^0.1.1",
+    "@openpv/simshady": "^0.2.1",
     "@react-three/drei": "^10.7.7",
     "geotiff": "^3.0.5",
     "i18next": "^25.7.3",
