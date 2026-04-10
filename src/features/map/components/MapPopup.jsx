@@ -13,7 +13,11 @@ export default function MapPopup({
   const { t } = useTranslation()
 
   const navigate = useNavigate()
+  const [visible, setVisible] = useState(true)
+
   const action = () => {
+    setVisible(false)
+
     if (onStartSimulation) {
       onStartSimulation({ lat, lon, display_name })
       return
@@ -21,8 +25,6 @@ export default function MapPopup({
 
     navigate(`/simulation/${lon}/${lat}`)
   }
-
-  const [visible, setVisible] = useState(true)
 
   return (
     <>

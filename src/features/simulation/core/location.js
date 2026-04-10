@@ -2,6 +2,36 @@
  */
 export var coordinatesXY15, coordinatesLonLat, coordinatesWebMercator
 
+export function lonLatToTileXY(lon, lat, zoom = 15) {
+  const lat_rad = (lat * Math.PI) / 180.0
+  const n = Math.pow(2, zoom)
+
+  return [
+    n * ((lon + 180) / 360),
+    (n * (1 - Math.log(Math.tan(lat_rad) + 1 / Math.cos(lat_rad)) / Math.PI)) /
+      2,
+  ]
+}
+
+export function lonLatToMercatorMeters(lon, lat) {
+  const [xtile, ytile] = lonLatToTileXY(lon, lat)
+
+  return [1222.992452 * xtile - 20037508.34, 20037508.34 - 1222.992452 * ytile]
+}
+
+export function getTileRangeForBounds(bounds, zoom = 15, padding = 1) {
+  const [west, south, east, north] = bounds.map(Number)
+  const [westX, northY] = lonLatToTileXY(west, north, zoom)
+  const [eastX, southY] = lonLatToTileXY(east, south, zoom)
+
+  return {
+    xMin: Math.floor(Math.min(westX, eastX)) - padding,
+    xMax: Math.floor(Math.max(westX, eastX)) + padding,
+    yMin: Math.floor(Math.min(northY, southY)) - padding,
+    yMax: Math.floor(Math.max(northY, southY)) + padding,
+  }
+}
+
 export async function processAddress(searchString) {
   let url =
     'https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q='
@@ -33,7 +63,7 @@ function format_address(address) {
   const part1 = (address.road || '') + ' ' + (address.house_number || '')
   const part2 = (address.postcode || '') + ' ' + (address.city || '')
 
-  if (part1 != ' ' && part2 != ' ') {
+  if (part1 !== ' ' && part2 !== ' ') {
     return part1 + ', ' + part2
   } else {
     return part1 + part2
@@ -55,17 +85,9 @@ async function fetchCoordinates(url) {
 
 export function projectToWebMercator(lon, lat) {
   coordinatesLonLat = [lon, lat]
-  const lat_rad = (lat * Math.PI) / 180.0
-  const n = Math.pow(2, 15)
-  const xtile = n * ((lon + 180) / 360)
-  const ytile =
-    (n * (1 - Math.log(Math.tan(lat_rad) + 1 / Math.cos(lat_rad)) / Math.PI)) /
-    2
+  const [xtile, ytile] = lonLatToTileXY(lon, lat)
   coordinatesXY15 = [xtile, ytile]
-  coordinatesWebMercator = [
-    1222.992452 * xtile - 20037508.34,
-    20037508.34 - 1222.992452 * ytile,
-  ]
+  coordinatesWebMercator = lonLatToMercatorMeters(lon, lat)
   return [xtile, ytile]
 }
 

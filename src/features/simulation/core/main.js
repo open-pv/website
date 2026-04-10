@@ -4,6 +4,7 @@ import { c0, c1, c2 } from '@/constants/colors'
 import {
   createSkydomeURL,
   downloadBuildings,
+  downloadBuildingsInBounds,
   getFederalState,
 } from '@/features/simulation/core/download'
 import { VEGETATION_DEM } from '@/features/simulation/core/elevation'
@@ -33,31 +34,45 @@ function emptyVegetationGeometries() {
   }
 }
 
-export async function mainSimulation(location, callbacks = {}) {
-  const setBuildings = resolveCallback(callbacks.setBuildings, 'setBuildings')
-  const setFederalState = resolveCallback(
-    callbacks.setFederalState,
-    'setFederalState',
-  )
-  const setFrontendState = resolveCallback(
-    callbacks.setFrontendState,
-    'setFrontendState',
-  )
-  const setSimulationProgress = resolveCallback(
-    callbacks.setSimulationProgress,
-    'setSimulationProgress',
-  )
-  const setVegetationGeometries = resolveCallback(
-    callbacks.setVegetationGeometries,
-    'setVegetationGeometries',
-  )
-
-  const result = {
+function createSimulationResult() {
+  return {
     buildings: [],
     federalState: false,
     status: 'Loading',
     vegetationGeometries: emptyVegetationGeometries(),
   }
+}
+
+function resolveCallbacks(callbacks = {}) {
+  return {
+    setBuildings: resolveCallback(callbacks.setBuildings, 'setBuildings'),
+    setFederalState: resolveCallback(
+      callbacks.setFederalState,
+      'setFederalState',
+    ),
+    setFrontendState: resolveCallback(
+      callbacks.setFrontendState,
+      'setFrontendState',
+    ),
+    setSimulationProgress: resolveCallback(
+      callbacks.setSimulationProgress,
+      'setSimulationProgress',
+    ),
+    setVegetationGeometries: resolveCallback(
+      callbacks.setVegetationGeometries,
+      'setVegetationGeometries',
+    ),
+  }
+}
+
+async function loadBaseSceneData(location, callbacks = {}) {
+  const {
+    setBuildings,
+    setFederalState,
+    setFrontendState,
+    setVegetationGeometries,
+  } = callbacks
+  const result = createSimulationResult()
 
   // Clear previous attributions if any
   if (typeof window !== 'undefined' && window.setAttribution) {
@@ -66,117 +81,145 @@ export async function mainSimulation(location, callbacks = {}) {
     }
   }
 
-  if (typeof location !== 'undefined' && location !== null) {
-    // Download raw building objects (each has {id, type, geometry})
-    const buildingObjects = await downloadBuildings(location)
-    result.buildings = buildingObjects
-    processGeometries(buildingObjects, new THREE.Vector3(0, 0, 0), 80)
-    const simulationBuildings = buildingObjects.filter(
-      (b) => b.type === 'simulation',
+  if (typeof location === 'undefined' || location === null) {
+    return { result, simulationBuildings: [] }
+  }
+
+  const buildingObjects = await downloadBuildings(location)
+  result.buildings = buildingObjects
+  processGeometries(buildingObjects, new THREE.Vector3(0, 0, 0), 80)
+
+  const simulationBuildings = buildingObjects.filter(
+    (b) => b.type === 'simulation',
+  )
+  if (simulationBuildings.length === 0) {
+    result.status = 'ErrorAdress'
+    setFrontendState?.('ErrorAdress')
+    return { result, simulationBuildings }
+  }
+
+  setBuildings?.(buildingObjects)
+
+  result.federalState = getFederalState()
+  setFederalState?.(result.federalState)
+  setVegetationGeometries?.(result.vegetationGeometries)
+
+  if (getFederalState() === 'BY') {
+    const [cx, cy] = coordinatesWebMercator
+    const bufferDistance = 200
+    const bbox = [
+      cx - bufferDistance,
+      cy - bufferDistance,
+      cx + bufferDistance,
+      cy + bufferDistance,
+    ]
+
+    const vegetationHeightmap = await VEGETATION_DEM.getGridPoints(...bbox)
+    const vegetationGeometries = await processVegetationData(
+      vegetationHeightmap,
+      new THREE.Vector3(0, 0, 0),
+      30,
+      80,
     )
-    if (simulationBuildings.length === 0) {
-      result.status = 'ErrorAdress'
-      setFrontendState?.('ErrorAdress')
-      return result
-    }
 
-    setBuildings?.(buildingObjects)
+    result.vegetationGeometries = vegetationGeometries
+    setVegetationGeometries?.(vegetationGeometries)
+  }
 
-    const scene = new ShadingScene()
-    buildingObjects
-      .filter((b) => b.type === 'simulation')
-      .forEach((b) => {
-        scene.addSimulationGeometry(b.geometry)
-      })
+  result.status = 'Preview'
 
-    buildingObjects
-      .filter((b) => b.type === 'surrounding')
-      .forEach((b) => {
-        scene.addShadingGeometry(b.geometry)
-      })
+  return { result, simulationBuildings }
+}
 
-    scene.addColorMap(
-      colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
-    )
+export async function preloadSimulationScene(location, callbacks = {}) {
+  const resolvedCallbacks = resolveCallbacks(callbacks)
+  const { result } = await loadBaseSceneData(location, resolvedCallbacks)
+  return result
+}
 
-    const irradianceUrl = createSkydomeURL(location.lat, location.lon)
-    await scene.addSolarIrradianceFromURL(irradianceUrl)
+export async function preloadSimulationSceneForBounds(region, callbacks = {}) {
+  const { setBuildings, setFederalState, setVegetationGeometries } =
+    resolveCallbacks(callbacks)
+  const result = createSimulationResult()
 
-    setFederalState?.(getFederalState())
-    setVegetationGeometries?.(result.vegetationGeometries)
-
-    if (getFederalState() === 'BY') {
-      const [cx, cy] = coordinatesWebMercator
-      const bufferDistance = 200 // 1km buffer, adjust as needed
-      const bbox = [
-        cx - bufferDistance,
-        cy - bufferDistance,
-        cx + bufferDistance,
-        cy + bufferDistance,
-      ]
-
-      const vegetationHeightmap = await VEGETATION_DEM.getGridPoints(...bbox)
-
-      console.log('Processing vegetation geometries...')
-      const vegetationGeometries = await processVegetationData(
-        vegetationHeightmap,
-        new THREE.Vector3(0, 0, 0),
-        30,
-        80,
-      )
-
-      console.log('Vegetation Geometries processed successfully')
-      console.log(
-        `Number of surrounding geometries: ${vegetationGeometries.surrounding.length}`,
-      )
-      console.log(
-        `Number of background geometries: ${vegetationGeometries.background.length}`,
-      )
-
-      result.vegetationGeometries = vegetationGeometries
-      setVegetationGeometries?.(vegetationGeometries)
-
-      console.log('Adding vegetation geometries to the scene...')
-      vegetationGeometries.surrounding.forEach((geom) => {
-        scene.addShadingGeometry(geom)
-      })
-      console.log('Vegetation geometries added to the scene')
-
-      console.log('Vegetation processing completed')
-    }
-
-    function loadingBarWrapperFunction(progress, total) {
-      return setSimulationProgress?.((progress * 100) / total)
-    }
-
-    const simulationMesh = await scene.calculate({
-      // .21 is the efficiency of a solar panel
-      // .78 is the coverage factor of panels on a roof
-
-      solarToElectricityConversionEfficiency: 0.21 * 0.78,
-
-      progressCallback: loadingBarWrapperFunction,
-    })
-
-    // Attach the resulting simulation mesh to each simulation building.
-    simulationBuildings.forEach((b) => {
-      b.mesh = simulationMesh.clone()
-    })
-
-    // Store the centre point of the mesh on the first simulation building for camera positioning.
-    const middle = new THREE.Vector3()
-    simulationMesh.geometry.computeBoundingBox()
-    simulationMesh.geometry.boundingBox.getCenter(middle)
-    simulationBuildings[0].simulationMiddle = middle
-
-    result.federalState = getFederalState()
-    result.status = 'Results'
-
-    setBuildings?.([...buildingObjects])
-    setFrontendState?.('Results')
-
+  if (!region?.bounds || !region?.center) {
     return result
   }
+
+  const buildingObjects = await downloadBuildingsInBounds(
+    region.bounds,
+    region.center,
+  )
+  result.buildings = buildingObjects
+  result.federalState = getFederalState()
+  result.status = 'Preview'
+
+  setBuildings?.(buildingObjects)
+  setFederalState?.(result.federalState)
+  setVegetationGeometries?.(result.vegetationGeometries)
+
+  return result
+}
+
+export async function mainSimulation(location, callbacks = {}) {
+  const resolvedCallbacks = resolveCallbacks(callbacks)
+  const { setBuildings, setFrontendState, setSimulationProgress } =
+    resolvedCallbacks
+  const { result, simulationBuildings } = await loadBaseSceneData(
+    location,
+    resolvedCallbacks,
+  )
+
+  if (result.status !== 'Preview') {
+    return result
+  }
+
+  const scene = new ShadingScene()
+  result.buildings
+    .filter((b) => b.type === 'simulation')
+    .forEach((b) => {
+      scene.addSimulationGeometry(b.geometry)
+    })
+
+  result.buildings
+    .filter((b) => b.type === 'surrounding')
+    .forEach((b) => {
+      scene.addShadingGeometry(b.geometry)
+    })
+
+  scene.addColorMap(
+    colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
+  )
+
+  const irradianceUrl = createSkydomeURL(location.lat, location.lon)
+  await scene.addSolarIrradianceFromURL(irradianceUrl)
+
+  result.vegetationGeometries.surrounding.forEach((geom) => {
+    scene.addShadingGeometry(geom)
+  })
+
+  function loadingBarWrapperFunction(progress, total) {
+    return setSimulationProgress?.((progress * 100) / total)
+  }
+
+  const simulationMesh = await scene.calculate({
+    solarToElectricityConversionEfficiency: 0.21 * 0.78,
+    progressCallback: loadingBarWrapperFunction,
+  })
+
+  simulationBuildings.forEach((b) => {
+    b.mesh = simulationMesh.clone()
+  })
+
+  const middle = new THREE.Vector3()
+  simulationMesh.geometry.computeBoundingBox()
+  simulationMesh.geometry.boundingBox.getCenter(middle)
+  simulationBuildings[0].simulationMiddle = middle
+
+  result.status = 'Results'
+
+  setBuildings?.([...result.buildings])
+  setFrontendState?.('Results')
 
   return result
 }

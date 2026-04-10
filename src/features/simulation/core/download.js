@@ -5,6 +5,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { attributions } from '@/constants/licenses'
 import {
   coordinatesLonLat,
+  getTileRangeForBounds,
   projectToWebMercator,
 } from '@/features/simulation/core/location'
 
@@ -57,6 +58,26 @@ function getFileNames(lon, lat) {
   return downloads
 }
 
+function getFileNamesInBounds(bounds, center, padding = 1) {
+  const [centerX, centerY] = projectToWebMercator(
+    Number(center.lon),
+    Number(center.lat),
+  )
+  const { xMin, xMax, yMin, yMax } = getTileRangeForBounds(bounds, 15, padding)
+
+  const downloads = []
+  for (let y = yMin; y <= yMax; y++) {
+    for (let x = xMin; x <= xMax; x++) {
+      downloads.push({
+        tile: { x, y },
+        center: { x: centerX, y: centerY },
+      })
+    }
+  }
+
+  return downloads
+}
+
 /**
  * Download building data for a given location.
  * Returns an array of building objects:
@@ -68,6 +89,14 @@ export async function downloadBuildings(loc) {
   const results = await Promise.all(promises)
 
   // `results` is an array of arrays (one per tile). Flatten it and return.
+  return results.flat()
+}
+
+export async function downloadBuildingsInBounds(bounds, center) {
+  const filenames = getFileNamesInBounds(bounds, center)
+  const promises = filenames.map((filename) => downloadBuildingTile(filename))
+  const results = await Promise.all(promises)
+
   return results.flat()
 }
 

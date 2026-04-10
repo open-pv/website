@@ -39,6 +39,19 @@ const createMockMapInstance = () => {
     getTerrain: vi.fn(() => terrain),
     getStyle: vi.fn(() => ({ layers: [] })),
     triggerRepaint: vi.fn(),
+    transform: {
+      getMatrixForModel: vi.fn(() => [
+        1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+      ]),
+    },
+    getZoom: vi.fn(() => 18),
+    getBounds: vi.fn(() => ({
+      getWest: () => 11.39,
+      getSouth: () => 49.45,
+      getEast: () => 11.41,
+      getNorth: () => 49.46,
+    })),
+    getCenter: vi.fn(() => ({ lng: 11.399, lat: 49.457 })),
     getPitch: vi.fn(() => 0),
     getBearing: vi.fn(() => 0),
     getCanvas: vi.fn(() => document.createElement('canvas')),
@@ -77,6 +90,7 @@ vi.mock('react-map-gl/maplibre', () => {
     'attributionControl',
     'canvasContextAttributes',
     'onMove',
+    'onMoveEnd',
     'onLoad',
     'onError',
     'onIdle',

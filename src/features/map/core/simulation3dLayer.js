@@ -1,9 +1,22 @@
-import { mainSimulation } from '@/features/simulation/core/main'
+import {
+  mainSimulation,
+  preloadSimulationSceneForBounds,
+} from '@/features/simulation/core/main'
+import { getTileRangeForBounds } from '@/features/simulation/core/location'
 import { MercatorCoordinate } from 'maplibre-gl'
 import * as THREE from 'three'
 
 const DEM_SOURCE_ID = 'openpv-dem'
 export const MAP_SIMULATION_LAYER_ID = 'openpv-simulation-3d'
+const PREVIEW_FADE_START_ZOOM = 15
+const PREVIEW_FADE_END_ZOOM = 16
+const PULSE_BASE_COLOR = new THREE.Color(0xbfc3c8)
+const PULSE_PEAK_COLOR = new THREE.Color(0xffffff)
+const LOCAL_ENU_TO_MAPLIBRE_MODEL = new THREE.Matrix4().makeBasis(
+  new THREE.Vector3(1, 0, 0),
+  new THREE.Vector3(0, 0, -1),
+  new THREE.Vector3(0, 1, 0),
+)
 
 function createEmptyVegetationGeometries() {
   return {
@@ -81,40 +94,77 @@ function disposeSimulationData(data, sharedMaterials = []) {
   })
 }
 
-function createSceneGroup(data) {
+function getGeometryCenter(geometry) {
+  geometry.computeBoundingBox()
+  return geometry.boundingBox.getCenter(new THREE.Vector3())
+}
+
+function setMaterialOpacity(material, opacity) {
+  const isOpaque = opacity >= 0.999
+  if (material.transparent === isOpaque) {
+    material.transparent = !isOpaque
+    material.needsUpdate = true
+  }
+
+  material.depthWrite = true
+  material.opacity = opacity
+}
+
+function createPreviewGroup(data) {
   const group = new THREE.Group()
   const buildingMaterial = new THREE.MeshLambertMaterial({
     color: 0xc4b69f,
     side: THREE.DoubleSide,
+    transparent: true,
   })
-  const vegetationMaterial = new THREE.MeshLambertMaterial({
-    color: '#3C9000',
-    side: THREE.DoubleSide,
-  })
+  buildingMaterial.polygonOffset = true
+  buildingMaterial.polygonOffsetFactor = -1
+  buildingMaterial.polygonOffsetUnits = -4
+  const entries = []
 
   data.buildings.forEach((building) => {
-    if (building.type === 'simulation' && building.mesh) {
-      group.add(building.mesh)
-      return
-    }
-
     if (!building.geometry) {
       return
     }
 
-    group.add(new THREE.Mesh(building.geometry, buildingMaterial))
-  })
-
-  data.vegetationGeometries.background.forEach((geometry) => {
-    group.add(new THREE.Mesh(geometry, vegetationMaterial))
-  })
-  data.vegetationGeometries.surrounding.forEach((geometry) => {
-    group.add(new THREE.Mesh(geometry, vegetationMaterial))
+    const mesh = new THREE.Mesh(building.geometry, buildingMaterial)
+    group.add(mesh)
+    entries.push({
+      building,
+      center: getGeometryCenter(building.geometry),
+      mesh,
+    })
   })
 
   return {
     group,
-    materials: [buildingMaterial, vegetationMaterial],
+    buildingMaterial,
+    entries,
+    materials: [buildingMaterial],
+  }
+}
+
+function createSimulationOverlayGroup(data) {
+  const simulationBuilding = data.buildings.find(
+    (building) => building.type === 'simulation' && building.mesh,
+  )
+
+  if (!simulationBuilding?.mesh) {
+    return {
+      group: null,
+      materials: [],
+    }
+  }
+
+  const group = new THREE.Group()
+  group.add(simulationBuilding.mesh)
+
+  const materials = new Set()
+  collectObjectResources(simulationBuilding.mesh, new Set(), materials)
+
+  return {
+    group,
+    materials: [...materials],
   }
 }
 
@@ -174,13 +224,45 @@ export function createSimulation3DLayerController({
       this.scene = new THREE.Scene()
       this.scene.matrixAutoUpdate = false
       createLights(this.scene)
-      this.root = null
       this.renderer = null
-      this.modelMatrix = null
-      this.data = null
-      this.sharedMaterials = []
-      this.requestVersion = 0
-      this.activeLocationKey = null
+      this.preview = {
+        data: null,
+        entries: [],
+        group: null,
+        key: null,
+        modelMatrix: null,
+        origin: null,
+        pendingKey: null,
+        material: null,
+        materials: [],
+      }
+      this.simulation = {
+        data: null,
+        group: null,
+        hiddenPreviewMeshes: [],
+        key: null,
+        modelMatrix: null,
+        materials: [],
+      }
+      this.pulse = {
+        locationKey: null,
+        material: null,
+        mesh: null,
+        originalMaterial: null,
+      }
+      this.previewRequestVersion = 0
+      this.simulationRequestVersion = 0
+    }
+
+    getModelMatrix(location) {
+      return new THREE.Matrix4()
+        .fromArray(
+          this.map.transform.getMatrixForModel({
+            lng: Number(location.lon),
+            lat: Number(location.lat),
+          }),
+        )
+        .multiply(LOCAL_ENU_TO_MAPLIBRE_MODEL)
     }
 
     onAdd(mapInstance, gl) {
@@ -201,45 +283,328 @@ export function createSimulation3DLayerController({
     }
 
     render(_gl, options) {
-      if (!this.renderer || !this.modelMatrix || !this.root) {
+      if (
+        !this.renderer ||
+        (!this.preview.group && !this.simulation.group && !this.pulse.mesh)
+      ) {
         return
       }
 
       const projectionMatrix = new THREE.Matrix4().fromArray(
         options.defaultProjectionData.mainMatrix,
       )
-      this.camera.projectionMatrix
-        .copy(projectionMatrix)
-        .multiply(this.modelMatrix)
+      this.camera.projectionMatrix.copy(projectionMatrix)
+
+      const fadeOpacity = THREE.MathUtils.clamp(
+        (this.map.getZoom() - PREVIEW_FADE_START_ZOOM) /
+          (PREVIEW_FADE_END_ZOOM - PREVIEW_FADE_START_ZOOM),
+        0,
+        1,
+      )
+
+      if (this.preview.material) {
+        setMaterialOpacity(this.preview.material, fadeOpacity)
+      }
+
+      this.simulation.materials.forEach((material) => {
+        setMaterialOpacity(material, fadeOpacity)
+      })
+
+      if (this.pulse.material) {
+        const pulse = 0.5 + 0.5 * Math.sin(performance.now() * 0.008)
+        this.pulse.material.color
+          .copy(PULSE_BASE_COLOR)
+          .lerp(PULSE_PEAK_COLOR, pulse)
+        setMaterialOpacity(this.pulse.material, fadeOpacity)
+        this.map.triggerRepaint()
+      }
 
       this.renderer.resetState()
-      this.renderer.render(this.scene, this.camera)
+
+      if (this.preview.group && this.preview.modelMatrix) {
+        if (this.simulation.group) {
+          this.simulation.group.visible = false
+        }
+
+        this.camera.projectionMatrix
+          .copy(projectionMatrix)
+          .multiply(this.preview.modelMatrix)
+        this.renderer.render(this.scene, this.camera)
+
+        if (this.simulation.group) {
+          this.simulation.group.visible = true
+        }
+      }
+
+      if (this.simulation.group && this.simulation.modelMatrix) {
+        if (this.preview.group) {
+          this.preview.group.visible = false
+        }
+
+        this.camera.projectionMatrix
+          .copy(projectionMatrix)
+          .multiply(this.simulation.modelMatrix)
+        this.renderer.resetState()
+        this.renderer.render(this.scene, this.camera)
+
+        if (this.preview.group) {
+          this.preview.group.visible = true
+        }
+      }
     }
 
     clearScene() {
-      if (this.root) {
-        this.scene.remove(this.root)
-        this.root = null
-      }
-
-      disposeSimulationData(this.data, this.sharedMaterials)
-      this.data = null
-      this.sharedMaterials = []
-      this.modelMatrix = null
-      this.activeLocationKey = null
+      this.clearSimulation()
+      this.clearPreview()
       this.map.triggerRepaint()
     }
 
-    updateModelTransform(location) {
-      const modelOrigin = MercatorCoordinate.fromLngLat({
+    clearPreview() {
+      this.stopPulse()
+
+      if (this.preview.group) {
+        this.scene.remove(this.preview.group)
+      }
+
+      disposeSimulationData(this.preview.data, this.preview.materials)
+      this.preview = {
+        data: null,
+        entries: [],
+        group: null,
+        key: null,
+        modelMatrix: null,
+        origin: null,
+        pendingKey: null,
+        material: null,
+        materials: [],
+      }
+    }
+
+    clearSimulation() {
+      this.stopPulse()
+
+      this.simulation.hiddenPreviewMeshes.forEach((mesh) => {
+        mesh.visible = true
+      })
+
+      if (this.simulation.group) {
+        this.scene.remove(this.simulation.group)
+      }
+
+      disposeSimulationData(this.simulation.data, this.simulation.materials)
+      this.simulation = {
+        data: null,
+        group: null,
+        hiddenPreviewMeshes: [],
+        key: null,
+        modelMatrix: null,
+        materials: [],
+      }
+    }
+
+    findClosestPreviewEntry(location) {
+      if (
+        this.preview.entries.length === 0 ||
+        !this.preview.group ||
+        !this.preview.origin
+      ) {
+        return null
+      }
+
+      const target = MercatorCoordinate.fromLngLat({
         lng: Number(location.lon),
         lat: Number(location.lat),
       })
-      const modelScale = modelOrigin.meterInMercatorCoordinateUnits()
 
-      this.modelMatrix = new THREE.Matrix4()
-        .makeTranslation(modelOrigin.x, modelOrigin.y, modelOrigin.z)
-        .scale(new THREE.Vector3(modelScale, -modelScale, modelScale))
+      let closestEntry = null
+      let minDistance = Infinity
+      const previewOrigin = MercatorCoordinate.fromLngLat({
+        lng: Number(this.preview.origin.lon),
+        lat: Number(this.preview.origin.lat),
+      })
+      const previewScale = previewOrigin.meterInMercatorCoordinateUnits()
+      const targetLocal = new THREE.Vector3(
+        (target.x - previewOrigin.x) / previewScale,
+        -(target.y - previewOrigin.y) / previewScale,
+        (target.z - previewOrigin.z) / previewScale,
+      )
+
+      for (const entry of this.preview.entries) {
+        const distance =
+          (entry.center.x - targetLocal.x) * (entry.center.x - targetLocal.x) +
+          (entry.center.y - targetLocal.y) * (entry.center.y - targetLocal.y)
+
+        if (distance < minDistance) {
+          minDistance = distance
+          closestEntry = entry
+        }
+      }
+
+      return closestEntry
+    }
+
+    startPulse(location) {
+      this.stopPulse()
+
+      const entry = this.findClosestPreviewEntry(location)
+      if (!entry) {
+        return null
+      }
+
+      const pulseMaterial = entry.mesh.material.clone()
+      entry.mesh.material = pulseMaterial
+      this.pulse = {
+        locationKey: `${location.lon}:${location.lat}`,
+        material: pulseMaterial,
+        mesh: entry.mesh,
+        originalMaterial: this.preview.material,
+      }
+      this.map.triggerRepaint()
+
+      return entry
+    }
+
+    stopPulse() {
+      if (
+        !this.pulse.mesh ||
+        !this.pulse.material ||
+        !this.pulse.originalMaterial
+      ) {
+        this.pulse = {
+          locationKey: null,
+          material: null,
+          mesh: null,
+          originalMaterial: null,
+        }
+        return
+      }
+
+      this.pulse.mesh.material = this.pulse.originalMaterial
+      this.pulse.material.dispose()
+      this.pulse = {
+        locationKey: null,
+        material: null,
+        mesh: null,
+        originalMaterial: null,
+      }
+    }
+
+    renderPreviewData(result, location, key) {
+      this.clearPreview()
+
+      this.preview.data = {
+        buildings: result.buildings,
+        vegetationGeometries:
+          result.vegetationGeometries || createEmptyVegetationGeometries(),
+      }
+
+      const { buildingMaterial, entries, group, materials } =
+        createPreviewGroup(this.preview.data)
+      this.preview.entries = entries
+      this.preview.group = group
+      this.preview.key = key
+      this.preview.modelMatrix = this.getModelMatrix(location)
+      this.preview.origin = location
+      this.preview.material = buildingMaterial
+      this.preview.materials = materials
+      this.scene.add(group)
+      this.map.triggerRepaint()
+    }
+
+    renderSimulationOverlay(result, location, key) {
+      const { group, materials } = createSimulationOverlayGroup(result)
+      if (!group) {
+        this.stopPulse()
+        return
+      }
+
+      const hiddenPreviewMeshes = []
+      const pulseMesh = this.pulse.mesh
+      this.stopPulse()
+      if (pulseMesh) {
+        pulseMesh.visible = false
+        hiddenPreviewMeshes.push(pulseMesh)
+      }
+
+      this.simulation = {
+        data: result,
+        group,
+        hiddenPreviewMeshes,
+        key,
+        modelMatrix: this.getModelMatrix(location),
+        materials,
+      }
+      this.scene.add(group)
+      this.map.triggerRepaint()
+    }
+
+    async preloadBounds(region) {
+      const normalizedRegion =
+        region?.bounds && region?.center
+          ? {
+              bounds: region.bounds.map(Number),
+              center: {
+                lat: Number(region.center.lat),
+                lon: Number(region.center.lon),
+              },
+            }
+          : null
+
+      if (!normalizedRegion) {
+        this.previewRequestVersion += 1
+        this.clearScene()
+        return
+      }
+
+      addTerrainSource(this.map)
+
+      const tileRange = getTileRangeForBounds(normalizedRegion.bounds)
+      const previewKey = [
+        tileRange.xMin,
+        tileRange.xMax,
+        tileRange.yMin,
+        tileRange.yMax,
+      ].join(':')
+      this.simulationRequestVersion += 1
+      this.clearSimulation()
+
+      if (
+        previewKey === this.preview.key ||
+        previewKey === this.preview.pendingKey
+      ) {
+        return
+      }
+
+      const requestVersion = ++this.previewRequestVersion
+      this.preview.pendingKey = previewKey
+      onLoadStateChange?.(true)
+
+      try {
+        const result = await preloadSimulationSceneForBounds(normalizedRegion)
+        if (requestVersion !== this.previewRequestVersion) {
+          disposeSimulationData(result)
+          return
+        }
+
+        if (result.status === 'ErrorAdress') {
+          this.clearScene()
+          return
+        }
+
+        this.renderPreviewData(result, normalizedRegion.center, previewKey)
+      } catch (error) {
+        if (requestVersion !== this.previewRequestVersion) {
+          return
+        }
+
+        this.clearPreview()
+        onError?.(error)
+      } finally {
+        if (requestVersion === this.previewRequestVersion) {
+          this.preview.pendingKey = null
+          onLoadStateChange?.(false)
+        }
+      }
     }
 
     async setLocation(location) {
@@ -251,58 +616,46 @@ export function createSimulation3DLayerController({
         : null
 
       if (!normalizedLocation) {
-        this.requestVersion += 1
-        this.clearScene()
+        this.simulationRequestVersion += 1
+        this.clearSimulation()
         return
       }
 
       addTerrainSource(this.map)
 
       const locationKey = `${normalizedLocation.lon}:${normalizedLocation.lat}`
-      if (locationKey === this.activeLocationKey) {
+      if (locationKey === this.simulation.key && this.simulation.group) {
         return
       }
 
-      const requestVersion = ++this.requestVersion
-      this.activeLocationKey = locationKey
+      this.clearSimulation()
+      this.startPulse(normalizedLocation)
+
+      const requestVersion = ++this.simulationRequestVersion
       onLoadStateChange?.(true)
 
       try {
         const result = await mainSimulation(normalizedLocation)
-        if (requestVersion !== this.requestVersion) {
+        if (requestVersion !== this.simulationRequestVersion) {
           disposeSimulationData(result)
           return
         }
 
         if (result.status !== 'Results') {
-          this.clearScene()
+          this.clearSimulation()
           return
         }
 
-        this.clearScene()
-        this.data = {
-          buildings: result.buildings,
-          vegetationGeometries:
-            result.vegetationGeometries || createEmptyVegetationGeometries(),
-        }
-
-        const { group, materials } = createSceneGroup(this.data)
-        this.root = group
-        this.sharedMaterials = materials
-        this.scene.add(group)
-        this.updateModelTransform(normalizedLocation)
-        this.activeLocationKey = locationKey
-        this.map.triggerRepaint()
+        this.renderSimulationOverlay(result, normalizedLocation, locationKey)
       } catch (error) {
-        if (requestVersion !== this.requestVersion) {
+        if (requestVersion !== this.simulationRequestVersion) {
           return
         }
 
-        this.clearScene()
-        this.activeLocationKey = null
+        this.clearSimulation()
         onError?.(error)
       } finally {
-        if (requestVersion === this.requestVersion) {
+        if (requestVersion === this.simulationRequestVersion) {
           onLoadStateChange?.(false)
         }
       }
@@ -321,16 +674,26 @@ export function createSimulation3DLayerController({
 
   const handleStyleLoad = () => {
     ensureMounted()
-    if (layer.data && layer.root) {
-      layer.scene.add(layer.root)
-      map.triggerRepaint()
+    if (
+      layer.preview.group &&
+      !layer.scene.children.includes(layer.preview.group)
+    ) {
+      layer.scene.add(layer.preview.group)
     }
+    if (
+      layer.simulation.group &&
+      !layer.scene.children.includes(layer.simulation.group)
+    ) {
+      layer.scene.add(layer.simulation.group)
+    }
+    map.triggerRepaint()
   }
 
   ensureMounted()
   map.on('style.load', handleStyleLoad)
 
   return {
+    preloadBounds: (region) => layer.preloadBounds(region),
     setLocation: (location) => layer.setLocation(location),
     clear: () => layer.setLocation(null),
     remove: () => {

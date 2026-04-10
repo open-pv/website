@@ -51,8 +51,10 @@ function Index() {
 
   const [mapMarkers, setMapMarkers] = useState([])
   const [mapLoaded, setMapLoaded] = useState(false)
+  const [previewRegion, setPreviewRegion] = useState(null)
   const [simulationLocation, setSimulationLocation] = useState(null)
   const simulationLayerRef = useRef(null)
+  const PREVIEW_MIN_ZOOM = 15
 
   const focusMapOnLocation = useCallback((lat, lon, use3DView = false) => {
     const map = mapRef.current?.getMap()
@@ -81,6 +83,34 @@ function Index() {
     },
     [focusMapOnLocation],
   )
+
+  const updatePreviewRegion = useCallback(() => {
+    if (!mapRef.current || simulationLocation) {
+      return
+    }
+
+    const map = mapRef.current.getMap()
+    const zoom = map.getZoom()
+    if (zoom < PREVIEW_MIN_ZOOM) {
+      setPreviewRegion(null)
+      return
+    }
+
+    const bounds = map.getBounds()
+    const center = map.getCenter()
+    setPreviewRegion({
+      bounds: [
+        bounds.getWest(),
+        bounds.getSouth(),
+        bounds.getEast(),
+        bounds.getNorth(),
+      ],
+      center: {
+        lat: center.lat,
+        lon: center.lng,
+      },
+    })
+  }, [simulationLocation])
 
   const searchCallback = (locations) => {
     if (locations.length === 0) {
@@ -128,8 +158,6 @@ function Index() {
     (current) => {
       mapRef.current = current
       if (current !== null) {
-        current.getMap().dragRotate.disable()
-        current.getMap().touchZoomRotate.disableRotation()
         if (location) {
           current.fitBounds(location.bounds)
         }
@@ -175,29 +203,18 @@ function Index() {
       return
     }
 
-    if (!simulationLocation) {
-      simulationLayerRef.current.clear()
+    if (simulationLocation) {
+      simulationLayerRef.current.setLocation(simulationLocation)
       return
     }
 
-    simulationLayerRef.current.setLocation(simulationLocation)
-  }, [mapLoaded, simulationLocation])
-
-  useEffect(() => {
-    if (!mapRef.current) {
+    if (previewRegion) {
+      simulationLayerRef.current.preloadBounds(previewRegion)
       return
     }
 
-    const map = mapRef.current.getMap()
-    if (simulationLocation || viewState.pitch > 0) {
-      map.dragRotate.enable()
-      map.touchZoomRotate.enableRotation()
-      return
-    }
-
-    map.dragRotate.disable()
-    map.touchZoomRotate.disableRotation()
-  }, [simulationLocation, viewState.pitch])
+    simulationLayerRef.current.clear()
+  }, [mapLoaded, previewRegion, simulationLocation])
 
   return (
     <App title={pageTitle} description={pageDescription}>
@@ -219,8 +236,12 @@ function Index() {
             canvasContextAttributes={{ antialias: true }}
             mapStyle='https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json'
             onMove={(evt) => setViewState(evt.viewState)}
+            onMoveEnd={updatePreviewRegion}
             onClick={mapClick}
-            onLoad={() => setMapLoaded(true)}
+            onLoad={() => {
+              setMapLoaded(true)
+              updatePreviewRegion()
+            }}
             attributionControl={false}
             maxBounds={[-10, 35, 30, 65]}
           >
@@ -234,10 +255,7 @@ function Index() {
                 onStartSimulation={startSimulationInMap}
               />
             )}
-            <NavigationControl
-              position='bottom-right'
-              showCompass={Boolean(simulationLocation || viewState.pitch > 0)}
-            />
+            <NavigationControl position='bottom-right' showCompass />
           </MapLibreMap>
           <div className='map-attribution'>
             <p className='copyright'>
