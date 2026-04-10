@@ -123,7 +123,11 @@ vi.mock('react-map-gl/maplibre', () => {
         'div',
         {
           'data-testid': 'maplibre-map',
-          onClick: (e) => onClick?.({ lngLat: { lng: 11.399, lat: 49.457 } }),
+          onClick: (e) =>
+            onClick?.({
+              lngLat: { lng: 11.399, lat: 49.457 },
+              point: { x: 100, y: 100 },
+            }),
           ...domProps,
         },
         children,

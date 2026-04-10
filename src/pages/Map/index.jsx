@@ -170,7 +170,10 @@ function Index() {
   const [clickPoint, setClickPoint] = useState(null)
   const mapClick = useCallback(
     (evt) => {
-      const { lng, lat } = evt.lngLat
+      const pickedBuilding = simulationLayerRef.current?.pickBuildingAtPoint(
+        evt.point,
+      )
+      const { lng, lat } = pickedBuilding || evt.lngLat
       setClickPoint([lat, lng])
       setMapMarkers([])
       setSimulationLocation(null)
@@ -234,7 +237,7 @@ function Index() {
               backgroundColor: '#d3d3d3',
             }}
             canvasContextAttributes={{ antialias: true }}
-            mapStyle='https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json'
+            mapStyle='./basemap_de_nobuildings.json'
             onMove={(evt) => setViewState(evt.viewState)}
             onMoveEnd={updatePreviewRegion}
             onClick={mapClick}

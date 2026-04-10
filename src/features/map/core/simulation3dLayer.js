@@ -10,6 +10,7 @@ const DEM_SOURCE_ID = 'openpv-dem'
 export const MAP_SIMULATION_LAYER_ID = 'openpv-simulation-3d'
 const PREVIEW_FADE_START_ZOOM = 15
 const PREVIEW_FADE_END_ZOOM = 16
+const VEGETATION_FADE_DURATION_MS = 800
 const PULSE_BASE_COLOR = new THREE.Color(0xbfc3c8)
 const PULSE_PEAK_COLOR = new THREE.Color(0xffffff)
 const LOCAL_ENU_TO_MAPLIBRE_MODEL = new THREE.Matrix4().makeBasis(
@@ -23,6 +24,13 @@ function createEmptyVegetationGeometries() {
     background: [],
     surrounding: [],
   }
+}
+
+function hasVegetationGeometries(vegetationGeometries) {
+  return (
+    (vegetationGeometries?.background?.length || 0) > 0 ||
+    (vegetationGeometries?.surrounding?.length || 0) > 0
+  )
 }
 
 function collectObjectResources(object, geometries, materials) {
@@ -46,6 +54,14 @@ function collectObjectResources(object, geometries, materials) {
 
     if (child.material) {
       materials.add(child.material)
+    }
+  })
+}
+
+function setPickLocationOnObject(object, pickLocation) {
+  object.traverse((child) => {
+    if (child.isMesh) {
+      child.userData.pickLocation = pickLocation
     }
   })
 }
@@ -89,6 +105,12 @@ function disposeSimulationData(data, sharedMaterials = []) {
   geometries.forEach((geometry) => {
     geometry.dispose()
   })
+  materials.forEach((material) => {
+    disposeMaterial(material)
+  })
+}
+
+function disposeMaterialsOnly(materials = []) {
   materials.forEach((material) => {
     disposeMaterial(material)
   })
@@ -144,40 +166,81 @@ function createPreviewGroup(data) {
   }
 }
 
+function createVegetationMeshes(vegetationGeometries) {
+  if (!hasVegetationGeometries(vegetationGeometries)) {
+    return {
+      materials: [],
+      meshes: [],
+    }
+  }
+
+  const vegetationMaterial = new THREE.MeshLambertMaterial({
+    color: '#3C9000',
+    side: THREE.DoubleSide,
+    transparent: true,
+  })
+  const meshes = []
+
+  vegetationGeometries.background.forEach((geometry) => {
+    meshes.push(new THREE.Mesh(geometry, vegetationMaterial))
+  })
+  vegetationGeometries.surrounding.forEach((geometry) => {
+    meshes.push(new THREE.Mesh(geometry, vegetationMaterial))
+  })
+
+  return {
+    materials: [vegetationMaterial],
+    meshes,
+  }
+}
+
 function createSimulationOverlayGroup(data) {
   const simulationBuilding = data.buildings.find(
     (building) => building.type === 'simulation' && building.mesh,
   )
 
-  if (!simulationBuilding?.mesh) {
+  const group = new THREE.Group()
+  const materials = new Set()
+  const buildingMaterials = new Set()
+  const pickObjects = []
+
+  if (simulationBuilding?.mesh) {
+    group.add(simulationBuilding.mesh)
+    collectObjectResources(
+      simulationBuilding.mesh,
+      new Set(),
+      buildingMaterials,
+    )
+    buildingMaterials.forEach((material) => {
+      materials.add(material)
+    })
+    pickObjects.push(simulationBuilding.mesh)
+  }
+
+  const vegetation = createVegetationMeshes(data.vegetationGeometries)
+  vegetation.meshes.forEach((mesh) => {
+    group.add(mesh)
+  })
+  vegetation.materials.forEach((material) => {
+    materials.add(material)
+  })
+
+  if (group.children.length === 0) {
     return {
       group: null,
       materials: [],
+      buildingMaterials: [],
+      pickObjects: [],
+      vegetationMaterials: [],
     }
   }
 
-  const group = new THREE.Group()
-  group.add(simulationBuilding.mesh)
-
-  const materials = new Set()
-  collectObjectResources(simulationBuilding.mesh, new Set(), materials)
-
-  const vegetationMaterial = new THREE.MeshLambertMaterial({
-    color: '#3C9000',
-    side: THREE.DoubleSide,
-  })
-  materials.add(vegetationMaterial)
-
-  data.vegetationGeometries.background.forEach((geometry) => {
-    group.add(new THREE.Mesh(geometry, vegetationMaterial))
-  })
-  data.vegetationGeometries.surrounding.forEach((geometry) => {
-    group.add(new THREE.Mesh(geometry, vegetationMaterial))
-  })
-
   return {
     group,
+    buildingMaterials: [...buildingMaterials],
     materials: [...materials],
+    pickObjects,
+    vegetationMaterials: vegetation.materials,
   }
 }
 
@@ -234,10 +297,14 @@ export function createSimulation3DLayerController({
       this.map = map
       this.camera = new THREE.Camera()
       this.camera.matrixAutoUpdate = false
+      this.camera.matrixWorld.identity()
+      this.camera.matrixWorldInverse.identity()
       this.scene = new THREE.Scene()
       this.scene.matrixAutoUpdate = false
       createLights(this.scene)
       this.renderer = null
+      this.raycaster = new THREE.Raycaster()
+      this.lastProjectionMatrix = null
       this.preview = {
         data: null,
         entries: [],
@@ -248,6 +315,7 @@ export function createSimulation3DLayerController({
         pendingKey: null,
         material: null,
         materials: [],
+        pickObjects: [],
       }
       this.simulations = new Map()
       this.activeSimulationKey = null
@@ -270,6 +338,94 @@ export function createSimulation3DLayerController({
           }),
         )
         .multiply(LOCAL_ENU_TO_MAPLIBRE_MODEL)
+    }
+
+    setCameraProjectionForLayer(modelMatrix) {
+      if (!this.lastProjectionMatrix || !modelMatrix) {
+        return false
+      }
+
+      this.camera.projectionMatrix
+        .copy(this.lastProjectionMatrix)
+        .multiply(modelMatrix)
+      this.camera.projectionMatrixInverse
+        .copy(this.camera.projectionMatrix)
+        .invert()
+
+      return true
+    }
+
+    localPointToLngLat(origin, point) {
+      const mercatorOrigin = MercatorCoordinate.fromLngLat({
+        lng: Number(origin.lon),
+        lat: Number(origin.lat),
+      })
+      const scale = mercatorOrigin.meterInMercatorCoordinateUnits()
+
+      return new MercatorCoordinate(
+        mercatorOrigin.x + point.x * scale,
+        mercatorOrigin.y - point.y * scale,
+        mercatorOrigin.z + point.z * scale,
+      ).toLngLat()
+    }
+
+    pickObjectsAtPoint(point, objects, modelMatrix) {
+      if (!objects.length || !this.setCameraProjectionForLayer(modelMatrix)) {
+        return null
+      }
+
+      const canvas = this.map.getCanvas()
+      const rect = canvas.getBoundingClientRect()
+      const ndc = new THREE.Vector2(
+        (point.x / rect.width) * 2 - 1,
+        1 - (point.y / rect.height) * 2,
+      )
+
+      this.raycaster.setFromCamera(ndc, this.camera)
+      const intersections = this.raycaster.intersectObjects(objects, true)
+
+      return (
+        intersections.find(
+          (intersection) => intersection.object.userData.pickLocation,
+        ) || null
+      )
+    }
+
+    pickBuildingAtPoint(point) {
+      if (!point) {
+        return null
+      }
+
+      const hits = []
+
+      if (this.preview.group && this.preview.modelMatrix) {
+        const previewHit = this.pickObjectsAtPoint(
+          point,
+          this.preview.pickObjects,
+          this.preview.modelMatrix,
+        )
+        if (previewHit) {
+          hits.push(previewHit)
+        }
+      }
+
+      this.simulations.forEach((simulation) => {
+        const simulationHit = this.pickObjectsAtPoint(
+          point,
+          simulation.pickObjects || [],
+          simulation.modelMatrix,
+        )
+        if (simulationHit) {
+          hits.push(simulationHit)
+        }
+      })
+
+      if (hits.length === 0) {
+        return null
+      }
+
+      hits.sort((left, right) => left.distance - right.distance)
+      return hits[0].object.userData.pickLocation || null
     }
 
     onAdd(mapInstance, gl) {
@@ -300,6 +456,7 @@ export function createSimulation3DLayerController({
       const projectionMatrix = new THREE.Matrix4().fromArray(
         options.defaultProjectionData.mainMatrix,
       )
+      this.lastProjectionMatrix = projectionMatrix.clone()
       this.camera.projectionMatrix.copy(projectionMatrix)
 
       const fadeOpacity = THREE.MathUtils.clamp(
@@ -314,10 +471,27 @@ export function createSimulation3DLayerController({
       }
 
       const simulationEntries = [...this.simulations.values()]
+      const now = performance.now()
       simulationEntries.forEach((simulation) => {
-        simulation.materials.forEach((material) => {
+        simulation.buildingMaterials.forEach((material) => {
           setMaterialOpacity(material, fadeOpacity)
         })
+
+        const vegetationFade = simulation.vegetationFadeStartedAt
+          ? THREE.MathUtils.clamp(
+              (now - simulation.vegetationFadeStartedAt) /
+                VEGETATION_FADE_DURATION_MS,
+              0,
+              1,
+            )
+          : 1
+        simulation.vegetationMaterials.forEach((material) => {
+          setMaterialOpacity(material, fadeOpacity * vegetationFade)
+        })
+
+        if (vegetationFade < 1) {
+          this.map.triggerRepaint()
+        }
       })
 
       if (this.pulse.material) {
@@ -398,6 +572,7 @@ export function createSimulation3DLayerController({
         pendingKey: null,
         material: null,
         materials: [],
+        pickObjects: [],
       }
     }
 
@@ -405,20 +580,40 @@ export function createSimulation3DLayerController({
       this.stopPulse()
 
       this.simulations.forEach((simulation) => {
-        simulation.hiddenPreviewMeshes.forEach((mesh) => {
-          mesh.visible = true
-        })
-        if (simulation.group) {
-          this.scene.remove(simulation.group)
-        }
-        disposeSimulationData(simulation.data, simulation.materials)
+        this.removeSimulationEntry(simulation.key)
       })
 
       this.simulations.clear()
       this.activeSimulationKey = null
     }
 
+    removeSimulationEntry(key) {
+      const simulation = this.simulations.get(key)
+      if (!simulation) {
+        return
+      }
+
+      simulation.hiddenPreviewMeshes.forEach((mesh) => {
+        mesh.visible = true
+      })
+      if (simulation.group) {
+        this.scene.remove(simulation.group)
+      }
+      disposeSimulationData(simulation.data, simulation.materials)
+      this.simulations.delete(key)
+    }
+
     clearActiveSimulationSelection() {
+      if (this.activeSimulationKey) {
+        const activeSimulation = this.simulations.get(this.activeSimulationKey)
+        if (
+          activeSimulation &&
+          activeSimulation.buildingMaterials.length === 0
+        ) {
+          this.removeSimulationEntry(this.activeSimulationKey)
+        }
+      }
+
       this.simulationRequestVersion += 1
       this.activeSimulationKey = null
       this.stopPulse()
@@ -430,6 +625,10 @@ export function createSimulation3DLayerController({
           mesh.visible = true
         })
         simulation.hiddenPreviewMeshes = []
+
+        if (simulation.buildingMaterials.length === 0) {
+          return
+        }
 
         const entry = this.findClosestPreviewEntry(simulation.location)
         if (entry) {
@@ -537,6 +736,12 @@ export function createSimulation3DLayerController({
 
       const { buildingMaterial, entries, group, materials } =
         createPreviewGroup(this.preview.data)
+      entries.forEach((entry) => {
+        entry.mesh.userData.pickLocation = this.localPointToLngLat(
+          location,
+          entry.center,
+        )
+      })
       this.preview.entries = entries
       this.preview.group = group
       this.preview.key = key
@@ -544,35 +749,108 @@ export function createSimulation3DLayerController({
       this.preview.origin = location
       this.preview.material = buildingMaterial
       this.preview.materials = materials
+      this.preview.pickObjects = entries.map((entry) => entry.mesh)
       this.scene.add(group)
       this.syncPreviewVisibilityForSimulations()
       this.map.triggerRepaint()
     }
 
+    renderSimulationVegetation(vegetationGeometries, location, key) {
+      if (!hasVegetationGeometries(vegetationGeometries)) {
+        return
+      }
+
+      const existing = this.simulations.get(key)
+      if (existing?.vegetationMaterials?.length) {
+        return
+      }
+
+      const partialResult = {
+        buildings: existing?.data?.buildings || [],
+        vegetationGeometries,
+      }
+      const {
+        group,
+        buildingMaterials,
+        materials,
+        pickObjects,
+        vegetationMaterials,
+      } = createSimulationOverlayGroup(partialResult)
+      if (!group) {
+        return
+      }
+
+      if (existing?.group) {
+        this.scene.remove(existing.group)
+        disposeMaterialsOnly(existing.materials)
+      }
+
+      const simulation = {
+        data: partialResult,
+        group,
+        hiddenPreviewMeshes: existing?.hiddenPreviewMeshes || [],
+        key,
+        location,
+        modelMatrix: this.getModelMatrix(location),
+        materials,
+        buildingMaterials,
+        pickObjects,
+        vegetationFadeStartedAt:
+          existing?.vegetationFadeStartedAt || performance.now(),
+        vegetationMaterials,
+      }
+      this.simulations.set(key, simulation)
+      this.scene.add(group)
+      this.map.triggerRepaint()
+    }
+
     renderSimulationOverlay(result, location, key) {
-      if (this.simulations.has(key)) {
+      const existing = this.simulations.get(key)
+      if (existing?.buildingMaterials?.length) {
         this.stopPulse()
         return
       }
 
-      const { group, materials } = createSimulationOverlayGroup(result)
+      const {
+        group,
+        buildingMaterials,
+        materials,
+        pickObjects,
+        vegetationMaterials,
+      } = createSimulationOverlayGroup(result)
+      const pickLocation = {
+        lng: Number(location.lon),
+        lat: Number(location.lat),
+      }
+      pickObjects.forEach((pickObject) => {
+        setPickLocationOnObject(pickObject, pickLocation)
+      })
       if (!group) {
         this.stopPulse()
         return
       }
 
-      const hiddenPreviewMeshes = []
-      const pulseMesh = this.pulse.mesh
-      this.stopPulse()
-      if (pulseMesh) {
-        pulseMesh.visible = false
-        hiddenPreviewMeshes.push(pulseMesh)
-      } else {
-        const entry = this.findClosestPreviewEntry(location)
-        if (entry) {
-          entry.mesh.visible = false
-          hiddenPreviewMeshes.push(entry.mesh)
+      const hiddenPreviewMeshes = existing?.hiddenPreviewMeshes || []
+      if (hiddenPreviewMeshes.length === 0) {
+        const pulseMesh = this.pulse.mesh
+        this.stopPulse()
+        if (pulseMesh) {
+          pulseMesh.visible = false
+          hiddenPreviewMeshes.push(pulseMesh)
+        } else {
+          const entry = this.findClosestPreviewEntry(location)
+          if (entry) {
+            entry.mesh.visible = false
+            hiddenPreviewMeshes.push(entry.mesh)
+          }
         }
+      } else {
+        this.stopPulse()
+      }
+
+      if (existing?.group) {
+        this.scene.remove(existing.group)
+        disposeMaterialsOnly(existing.materials)
       }
 
       const simulation = {
@@ -583,6 +861,12 @@ export function createSimulation3DLayerController({
         location,
         modelMatrix: this.getModelMatrix(location),
         materials,
+        buildingMaterials,
+        pickObjects,
+        vegetationFadeStartedAt:
+          existing?.vegetationFadeStartedAt ||
+          (vegetationMaterials.length ? performance.now() : null),
+        vegetationMaterials,
       }
       this.simulations.set(key, simulation)
       this.scene.add(group)
@@ -685,13 +969,32 @@ export function createSimulation3DLayerController({
       onLoadStateChange?.(true)
 
       try {
-        const result = await mainSimulation(normalizedLocation)
+        const result = await mainSimulation(normalizedLocation, {
+          setVegetationGeometries: (vegetationGeometries) => {
+            if (requestVersion !== this.simulationRequestVersion) {
+              return
+            }
+
+            this.renderSimulationVegetation(
+              vegetationGeometries,
+              normalizedLocation,
+              locationKey,
+            )
+          },
+        })
         if (requestVersion !== this.simulationRequestVersion) {
           disposeSimulationData(result)
           return
         }
 
         if (result.status !== 'Results') {
+          const pendingSimulation = this.simulations.get(locationKey)
+          if (
+            pendingSimulation &&
+            pendingSimulation.buildingMaterials.length === 0
+          ) {
+            this.removeSimulationEntry(locationKey)
+          }
           this.stopPulse()
           return
         }
@@ -702,6 +1005,13 @@ export function createSimulation3DLayerController({
           return
         }
 
+        const pendingSimulation = this.simulations.get(locationKey)
+        if (
+          pendingSimulation &&
+          pendingSimulation.buildingMaterials.length === 0
+        ) {
+          this.removeSimulationEntry(locationKey)
+        }
         this.stopPulse()
         onError?.(error)
       } finally {
@@ -746,6 +1056,7 @@ export function createSimulation3DLayerController({
   map.on('style.load', handleStyleLoad)
 
   return {
+    pickBuildingAtPoint: (point) => layer.pickBuildingAtPoint(point),
     preloadBounds: (region) => layer.preloadBounds(region),
     setLocation: (location) => layer.setLocation(location),
     clear: () => layer.setLocation(null),
