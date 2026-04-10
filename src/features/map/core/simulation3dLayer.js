@@ -253,7 +253,6 @@ export function createSimulation3DLayerController({
       if (!normalizedLocation) {
         this.requestVersion += 1
         this.clearScene()
-        this.map.setTerrain(null)
         return
       }
 
@@ -277,7 +276,6 @@ export function createSimulation3DLayerController({
 
         if (result.status !== 'Results') {
           this.clearScene()
-          this.map.setTerrain(null)
           return
         }
 
@@ -302,7 +300,6 @@ export function createSimulation3DLayerController({
 
         this.clearScene()
         this.activeLocationKey = null
-        this.map.setTerrain(null)
         onError?.(error)
       } finally {
         if (requestVersion === this.requestVersion) {
@@ -315,6 +312,8 @@ export function createSimulation3DLayerController({
   const layer = new Simulation3DLayer()
 
   const ensureMounted = () => {
+    addTerrainSource(map)
+
     if (!map.getLayer(layer.id)) {
       map.addLayer(layer, getLayerInsertionPoint(map))
     }
@@ -323,7 +322,6 @@ export function createSimulation3DLayerController({
   const handleStyleLoad = () => {
     ensureMounted()
     if (layer.data && layer.root) {
-      addTerrainSource(map)
       layer.scene.add(layer.root)
       map.triggerRepaint()
     }

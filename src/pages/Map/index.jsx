@@ -55,11 +55,21 @@ function Index() {
   const simulationLayerRef = useRef(null)
 
   const focusMapOnLocation = useCallback((lat, lon, use3DView = false) => {
-    mapRef.current?.getMap().easeTo({
+    const map = mapRef.current?.getMap()
+    const currentPitch = map?.getPitch() ?? 0
+    const currentBearing = map?.getBearing() ?? 0
+    const targetPitch = use3DView ? (currentPitch > 0 ? currentPitch : 60) : 0
+    const targetBearing = use3DView
+      ? currentPitch > 0 || currentBearing !== 0
+        ? currentBearing
+        : -20
+      : 0
+
+    map?.easeTo({
       center: [Number(lon), Number(lat)],
       zoom: 18,
-      pitch: use3DView ? 60 : 0,
-      bearing: use3DView ? -20 : 0,
+      pitch: targetPitch,
+      bearing: targetBearing,
       duration: 1200,
     })
   }, [])
@@ -99,7 +109,7 @@ function Index() {
           />,
         ])
 
-        focusMapOnLocation(location.lat, location.lon)
+        focusMapOnLocation(location.lat, location.lon, viewState.pitch > 0)
         return
       } else {
         setMapMarkers([])
@@ -136,9 +146,9 @@ function Index() {
       setClickPoint([lat, lng])
       setMapMarkers([])
       setSimulationLocation(null)
-      focusMapOnLocation(lat, lng)
+      focusMapOnLocation(lat, lng, viewState.pitch > 0)
     },
-    [focusMapOnLocation],
+    [focusMapOnLocation, viewState.pitch],
   )
 
   useEffect(() => {
@@ -179,7 +189,7 @@ function Index() {
     }
 
     const map = mapRef.current.getMap()
-    if (simulationLocation) {
+    if (simulationLocation || viewState.pitch > 0) {
       map.dragRotate.enable()
       map.touchZoomRotate.enableRotation()
       return
@@ -187,14 +197,7 @@ function Index() {
 
     map.dragRotate.disable()
     map.touchZoomRotate.disableRotation()
-    if (map.getPitch() > 0 || map.getBearing() !== 0) {
-      map.easeTo({
-        pitch: 0,
-        bearing: 0,
-        duration: 600,
-      })
-    }
-  }, [simulationLocation])
+  }, [simulationLocation, viewState.pitch])
 
   return (
     <App title={pageTitle} description={pageDescription}>
@@ -233,7 +236,7 @@ function Index() {
             )}
             <NavigationControl
               position='bottom-right'
-              showCompass={Boolean(simulationLocation)}
+              showCompass={Boolean(simulationLocation || viewState.pitch > 0)}
             />
           </MapLibreMap>
           <div className='map-attribution'>
