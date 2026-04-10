@@ -1,15 +1,16 @@
 import App from '@/app/App'
 import { Heading, Image, Link, Text } from '@chakra-ui/react'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { toaster } from '@/components/ui/toaster'
 import { BUNDESLAENDER } from '@/data/bundeslaender'
 import { STAEDTE } from '@/data/staedte'
+import { createSimulation3DLayerController } from '@/features/map/core/simulation3dLayer'
 import MapPopup from '@/features/map/components/MapPopup'
 import SearchField from '@/features/map/components/SearchField'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { useTranslation } from 'react-i18next'
-import { Map, NavigationControl } from 'react-map-gl/maplibre'
+import { Map as MapLibreMap, NavigationControl } from 'react-map-gl/maplibre'
 import { useSearchParams } from 'react-router-dom'
 
 function Index() {
@@ -38,6 +39,8 @@ function Index() {
 
   const [viewState, setViewState] = useState({
     bounds: location ? location.bounds : defaultBounds,
+    bearing: 0,
+    pitch: 0,
     zoom: 6,
   })
 
@@ -47,9 +50,30 @@ function Index() {
     : null
 
   const [mapMarkers, setMapMarkers] = useState([])
+  const [mapLoaded, setMapLoaded] = useState(false)
+  const [simulationLocation, setSimulationLocation] = useState(null)
+  const simulationLayerRef = useRef(null)
+
+  const focusMapOnLocation = useCallback((lat, lon, use3DView = false) => {
+    mapRef.current?.getMap().easeTo({
+      center: [Number(lon), Number(lat)],
+      zoom: 18,
+      pitch: use3DView ? 60 : 0,
+      bearing: use3DView ? -20 : 0,
+      duration: 1200,
+    })
+  }, [])
+
+  const startSimulationInMap = useCallback(
+    ({ lat, lon }) => {
+      setSimulationLocation({ lat, lon })
+      focusMapOnLocation(lat, lon, true)
+    },
+    [focusMapOnLocation],
+  )
 
   const searchCallback = (locations) => {
-    if (locations.length == 0) {
+    if (locations.length === 0) {
       console.error('No search results!')
       toaster.create({
         title: t('noSearchResults.title'),
@@ -65,10 +89,23 @@ function Index() {
 
       if (location.addressType === 'building') {
         // Only add popup when search result is a building!
-        setMapMarkers([<MapPopup key={location.key} {...location} />])
+        setSimulationLocation(null)
+        setClickPoint(null)
+        setMapMarkers([
+          <MapPopup
+            key={location.key}
+            {...location}
+            onStartSimulation={startSimulationInMap}
+          />,
+        ])
+
+        focusMapOnLocation(location.lat, location.lon)
+        return
+      } else {
+        setMapMarkers([])
+        setSimulationLocation(null)
       }
-      console.log('bounds')
-      console.log(bounds)
+
       mapRef.current.fitBounds(bounds, {
         maxZoom: 17,
         speed: 2,
@@ -77,24 +114,87 @@ function Index() {
   }
 
   const mapRef = useRef()
-  const setMapRef = useCallback((current) => {
-    mapRef.current = current
-    if (current !== null) {
-      current.getMap().dragRotate.disable()
-      current.getMap().touchZoomRotate.disableRotation()
-      if (location) {
-        current.fitBounds(location.bounds)
+  const setMapRef = useCallback(
+    (current) => {
+      mapRef.current = current
+      if (current !== null) {
+        current.getMap().dragRotate.disable()
+        current.getMap().touchZoomRotate.disableRotation()
+        if (location) {
+          current.fitBounds(location.bounds)
+        }
       }
-    }
-  }, [])
+    },
+    [location],
+  )
 
   // Handling map click for manual location selection
   const [clickPoint, setClickPoint] = useState(null)
-  const mapClick = useCallback((evt) => {
-    console.log(evt)
-    const { lng, lat } = evt.lngLat
-    setClickPoint([lat, lng])
-  })
+  const mapClick = useCallback(
+    (evt) => {
+      const { lng, lat } = evt.lngLat
+      setClickPoint([lat, lng])
+      setMapMarkers([])
+      setSimulationLocation(null)
+      focusMapOnLocation(lat, lng)
+    },
+    [focusMapOnLocation],
+  )
+
+  useEffect(() => {
+    if (!mapLoaded || !mapRef.current || simulationLayerRef.current) {
+      return
+    }
+
+    const map = mapRef.current.getMap()
+    simulationLayerRef.current = createSimulation3DLayerController({
+      map,
+      onError: (error) => {
+        console.error('Error loading map simulation layer', error)
+      },
+    })
+
+    return () => {
+      simulationLayerRef.current?.remove()
+      simulationLayerRef.current = null
+    }
+  }, [mapLoaded])
+
+  useEffect(() => {
+    if (!mapLoaded || !simulationLayerRef.current) {
+      return
+    }
+
+    if (!simulationLocation) {
+      simulationLayerRef.current.clear()
+      return
+    }
+
+    simulationLayerRef.current.setLocation(simulationLocation)
+  }, [mapLoaded, simulationLocation])
+
+  useEffect(() => {
+    if (!mapRef.current) {
+      return
+    }
+
+    const map = mapRef.current.getMap()
+    if (simulationLocation) {
+      map.dragRotate.enable()
+      map.touchZoomRotate.enableRotation()
+      return
+    }
+
+    map.dragRotate.disable()
+    map.touchZoomRotate.disableRotation()
+    if (map.getPitch() > 0 || map.getBearing() !== 0) {
+      map.easeTo({
+        pitch: 0,
+        bearing: 0,
+        duration: 600,
+      })
+    }
+  }, [simulationLocation])
 
   return (
     <App title={pageTitle} description={pageDescription}>
@@ -103,32 +203,39 @@ function Index() {
           <div className='map-search-overlay'>
             <SearchField callback={searchCallback} />
           </div>
-          <Map
+          <MapLibreMap
             ref={setMapRef}
             {...viewState}
             maxZoom={19}
+            maxPitch={85}
             style={{
               width: '100%',
               height: '100%',
               backgroundColor: '#d3d3d3',
             }}
+            canvasContextAttributes={{ antialias: true }}
             mapStyle='https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json'
             onMove={(evt) => setViewState(evt.viewState)}
             onClick={mapClick}
+            onLoad={() => setMapLoaded(true)}
             attributionControl={false}
             maxBounds={[-10, 35, 30, 65]}
           >
             <>{mapMarkers}</>
             {clickPoint && (
               <MapPopup
-                key='userSelectiion'
+                key={`${clickPoint[0]}:${clickPoint[1]}`}
                 lat={clickPoint[0]}
                 lon={clickPoint[1]}
                 display_name={t('map.userSelection')}
+                onStartSimulation={startSimulationInMap}
               />
             )}
-            <NavigationControl position='bottom-right' showCompass={false} />
-          </Map>
+            <NavigationControl
+              position='bottom-right'
+              showCompass={Boolean(simulationLocation)}
+            />
+          </MapLibreMap>
           <div className='map-attribution'>
             <p className='copyright'>
               Basiskarte &copy;{' '}

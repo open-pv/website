@@ -14,6 +14,9 @@
     "@emotion/react": "^11.14.0",
     "@openpv/simshady": "^0.1.1",
     "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
+    "baseline-browser-mapping": "^2.10.17",
+    "caniuse-lite": "^1.0.30001787",
     "geotiff": "^3.0.5",
     "i18next": "^25.7.3",
     "i18next-http-backend": "^3.0.2",
@@ -39,11 +42,7 @@
     "vitest": "^4.0.16"
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
+    "production": [">0.2%", "not dead", "not op_mini all"],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",

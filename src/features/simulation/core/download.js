@@ -14,6 +14,15 @@ export function getFederalState() {
   return federalState
 }
 
+function setFederalStateIfAvailable(value) {
+  if (
+    typeof window !== 'undefined' &&
+    typeof window.setFederalState === 'function'
+  ) {
+    window.setFederalState(value)
+  }
+}
+
 export function tile2meters() {
   return 1222.992452 * mercator2meters()
 }
@@ -142,7 +151,7 @@ async function downloadBuildingTile(download_spec) {
     const ids = new TextDecoder().decode(buffer)
     for (const bundesland of Object.keys(attributions)) {
       if (ids.includes(`DE${bundesland}`)) {
-        window.setFederalState(bundesland)
+        setFederalStateIfAvailable(bundesland)
         federalState = bundesland
       }
     }

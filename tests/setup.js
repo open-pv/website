@@ -16,19 +16,49 @@ beforeAll(() => {
 })
 
 // Mock MapLibre GL - it's canvas-based and won't render in jsdom
+const createMockMapInstance = () => {
+  let terrain = null
+
+  return {
+    on: vi.fn(),
+    off: vi.fn(),
+    once: vi.fn(),
+    remove: vi.fn(),
+    fitBounds: vi.fn(),
+    flyTo: vi.fn(),
+    easeTo: vi.fn(),
+    addSource: vi.fn(),
+    getSource: vi.fn(() => null),
+    removeSource: vi.fn(),
+    addLayer: vi.fn(),
+    getLayer: vi.fn(() => null),
+    removeLayer: vi.fn(),
+    setTerrain: vi.fn((value) => {
+      terrain = value
+    }),
+    getTerrain: vi.fn(() => terrain),
+    getStyle: vi.fn(() => ({ layers: [] })),
+    triggerRepaint: vi.fn(),
+    getPitch: vi.fn(() => 0),
+    getBearing: vi.fn(() => 0),
+    getCanvas: vi.fn(() => document.createElement('canvas')),
+    dragRotate: {
+      disable: vi.fn(),
+      enable: vi.fn(),
+    },
+    touchZoomRotate: {
+      disableRotation: vi.fn(),
+      enableRotation: vi.fn(),
+    },
+  }
+}
+
 vi.mock('maplibre-gl', () => ({
   Map: vi.fn(function () {
+    const mapInstance = createMockMapInstance()
     return {
-      on: vi.fn(),
-      off: vi.fn(),
-      remove: vi.fn(),
-      fitBounds: vi.fn(),
-      flyTo: vi.fn(),
-      getCanvas: vi.fn(() => document.createElement('canvas')),
-      getMap: vi.fn(() => ({
-        dragRotate: { disable: vi.fn() },
-        touchZoomRotate: { disableRotation: vi.fn() },
-      })),
+      ...mapInstance,
+      getMap: vi.fn(() => mapInstance),
     }
   }),
   NavigationControl: vi.fn(),
@@ -41,9 +71,11 @@ vi.mock('react-map-gl/maplibre', () => {
   const MAP_ONLY_PROPS = [
     'mapStyle',
     'maxZoom',
+    'maxPitch',
     'minZoom',
     'maxBounds',
     'attributionControl',
+    'canvasContextAttributes',
     'onMove',
     'onLoad',
     'onError',
@@ -62,14 +94,14 @@ vi.mock('react-map-gl/maplibre', () => {
   ]
   return {
     Map: React.forwardRef(({ children, onClick, ...props }, ref) => {
+      const mapInstance = React.useMemo(() => createMockMapInstance(), [])
+
       React.useImperativeHandle(ref, () => ({
-        getMap: () => ({
-          dragRotate: { disable: vi.fn() },
-          touchZoomRotate: { disableRotation: vi.fn() },
-        }),
-        fitBounds: vi.fn(),
-        flyTo: vi.fn(),
+        getMap: () => mapInstance,
+        fitBounds: mapInstance.fitBounds,
+        flyTo: mapInstance.flyTo,
       }))
+
       const domProps = Object.fromEntries(
         Object.entries(props).filter(([k]) => !MAP_ONLY_PROPS.includes(k)),
       )

@@ -11,36 +11,89 @@ import { coordinatesWebMercator } from '@/features/simulation/core/location'
 import { processGeometries } from '@/features/simulation/core/preprocessing'
 import { processVegetationData } from '@/features/simulation/core/processVegetationTiffs'
 
-export async function mainSimulation(location) {
+function resolveCallback(callback, globalName) {
+  if (callback) {
+    return callback
+  }
+
+  if (
+    typeof window !== 'undefined' &&
+    typeof window[globalName] === 'function'
+  ) {
+    return window[globalName]
+  }
+
+  return null
+}
+
+function emptyVegetationGeometries() {
+  return {
+    background: [],
+    surrounding: [],
+  }
+}
+
+export async function mainSimulation(location, callbacks = {}) {
+  const setBuildings = resolveCallback(callbacks.setBuildings, 'setBuildings')
+  const setFederalState = resolveCallback(
+    callbacks.setFederalState,
+    'setFederalState',
+  )
+  const setFrontendState = resolveCallback(
+    callbacks.setFrontendState,
+    'setFrontendState',
+  )
+  const setSimulationProgress = resolveCallback(
+    callbacks.setSimulationProgress,
+    'setSimulationProgress',
+  )
+  const setVegetationGeometries = resolveCallback(
+    callbacks.setVegetationGeometries,
+    'setVegetationGeometries',
+  )
+
+  const result = {
+    buildings: [],
+    federalState: false,
+    status: 'Loading',
+    vegetationGeometries: emptyVegetationGeometries(),
+  }
+
   // Clear previous attributions if any
-  if (window.setAttribution) {
+  if (typeof window !== 'undefined' && window.setAttribution) {
     for (let attributionSetter of Object.values(window.setAttribution)) {
       attributionSetter(false)
     }
   }
 
-  if (typeof location !== 'undefined' && location != null) {
+  if (typeof location !== 'undefined' && location !== null) {
     // Download raw building objects (each has {id, type, geometry})
     const buildingObjects = await downloadBuildings(location)
+    result.buildings = buildingObjects
     processGeometries(buildingObjects, new THREE.Vector3(0, 0, 0), 80)
     const simulationBuildings = buildingObjects.filter(
       (b) => b.type === 'simulation',
     )
-    if (simulationBuildings.length == 0) {
-      window.setFrontendState('ErrorAdress')
-      return {}
+    if (simulationBuildings.length === 0) {
+      result.status = 'ErrorAdress'
+      setFrontendState?.('ErrorAdress')
+      return result
     }
 
-    window.setBuildings(buildingObjects)
+    setBuildings?.(buildingObjects)
 
     const scene = new ShadingScene()
     buildingObjects
       .filter((b) => b.type === 'simulation')
-      .forEach((b) => scene.addSimulationGeometry(b.geometry))
+      .forEach((b) => {
+        scene.addSimulationGeometry(b.geometry)
+      })
 
     buildingObjects
       .filter((b) => b.type === 'surrounding')
-      .forEach((b) => scene.addShadingGeometry(b.geometry))
+      .forEach((b) => {
+        scene.addShadingGeometry(b.geometry)
+      })
 
     scene.addColorMap(
       colormaps.interpolateThreeColors({ c0: c0, c1: c1, c2: c2 }),
@@ -49,7 +102,10 @@ export async function mainSimulation(location) {
     const irradianceUrl = createSkydomeURL(location.lat, location.lon)
     await scene.addSolarIrradianceFromURL(irradianceUrl)
 
-    if (getFederalState() == 'BY') {
+    setFederalState?.(getFederalState())
+    setVegetationGeometries?.(result.vegetationGeometries)
+
+    if (getFederalState() === 'BY') {
       const [cx, cy] = coordinatesWebMercator
       const bufferDistance = 200 // 1km buffer, adjust as needed
       const bbox = [
@@ -77,7 +133,8 @@ export async function mainSimulation(location) {
         `Number of background geometries: ${vegetationGeometries.background.length}`,
       )
 
-      window.setVegetationGeometries(vegetationGeometries)
+      result.vegetationGeometries = vegetationGeometries
+      setVegetationGeometries?.(vegetationGeometries)
 
       console.log('Adding vegetation geometries to the scene...')
       vegetationGeometries.surrounding.forEach((geom) => {
@@ -89,7 +146,7 @@ export async function mainSimulation(location) {
     }
 
     function loadingBarWrapperFunction(progress, total) {
-      return window.setSimulationProgress((progress * 100) / total)
+      return setSimulationProgress?.((progress * 100) / total)
     }
 
     const simulationMesh = await scene.calculate({
@@ -112,8 +169,14 @@ export async function mainSimulation(location) {
     simulationMesh.geometry.boundingBox.getCenter(middle)
     simulationBuildings[0].simulationMiddle = middle
 
-    setFrontendState('Results')
+    result.federalState = getFederalState()
+    result.status = 'Results'
 
-    return {}
+    setBuildings?.([...buildingObjects])
+    setFrontendState?.('Results')
+
+    return result
   }
+
+  return result
 }

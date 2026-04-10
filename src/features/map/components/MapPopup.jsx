@@ -1,22 +1,28 @@
 import { Button, Text } from '@chakra-ui/react'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Popup } from 'react-map-gl/maplibre'
 import { useNavigate } from 'react-router-dom'
 
-export default function MapPopup({ lat, lon, display_name }) {
+export default function MapPopup({
+  lat,
+  lon,
+  display_name,
+  onStartSimulation,
+}) {
   const { t } = useTranslation()
 
   const navigate = useNavigate()
   const action = () => {
+    if (onStartSimulation) {
+      onStartSimulation({ lat, lon, display_name })
+      return
+    }
+
     navigate(`/simulation/${lon}/${lat}`)
   }
 
   const [visible, setVisible] = useState(true)
-  useEffect(() => {
-    console.log('effect changed')
-    setVisible(true)
-  }, [lat, lon])
 
   return (
     <>
