@@ -162,6 +162,19 @@ function createSimulationOverlayGroup(data) {
   const materials = new Set()
   collectObjectResources(simulationBuilding.mesh, new Set(), materials)
 
+  const vegetationMaterial = new THREE.MeshLambertMaterial({
+    color: '#3C9000',
+    side: THREE.DoubleSide,
+  })
+  materials.add(vegetationMaterial)
+
+  data.vegetationGeometries.background.forEach((geometry) => {
+    group.add(new THREE.Mesh(geometry, vegetationMaterial))
+  })
+  data.vegetationGeometries.surrounding.forEach((geometry) => {
+    group.add(new THREE.Mesh(geometry, vegetationMaterial))
+  })
+
   return {
     group,
     materials: [...materials],
@@ -236,14 +249,8 @@ export function createSimulation3DLayerController({
         material: null,
         materials: [],
       }
-      this.simulation = {
-        data: null,
-        group: null,
-        hiddenPreviewMeshes: [],
-        key: null,
-        modelMatrix: null,
-        materials: [],
-      }
+      this.simulations = new Map()
+      this.activeSimulationKey = null
       this.pulse = {
         locationKey: null,
         material: null,
@@ -285,7 +292,7 @@ export function createSimulation3DLayerController({
     render(_gl, options) {
       if (
         !this.renderer ||
-        (!this.preview.group && !this.simulation.group && !this.pulse.mesh)
+        (!this.preview.group && this.simulations.size === 0 && !this.pulse.mesh)
       ) {
         return
       }
@@ -306,8 +313,11 @@ export function createSimulation3DLayerController({
         setMaterialOpacity(this.preview.material, fadeOpacity)
       }
 
-      this.simulation.materials.forEach((material) => {
-        setMaterialOpacity(material, fadeOpacity)
+      const simulationEntries = [...this.simulations.values()]
+      simulationEntries.forEach((simulation) => {
+        simulation.materials.forEach((material) => {
+          setMaterialOpacity(material, fadeOpacity)
+        })
       })
 
       if (this.pulse.material) {
@@ -322,39 +332,50 @@ export function createSimulation3DLayerController({
       this.renderer.resetState()
 
       if (this.preview.group && this.preview.modelMatrix) {
-        if (this.simulation.group) {
-          this.simulation.group.visible = false
-        }
+        simulationEntries.forEach((simulation) => {
+          simulation.group.visible = false
+        })
 
         this.camera.projectionMatrix
           .copy(projectionMatrix)
           .multiply(this.preview.modelMatrix)
         this.renderer.render(this.scene, this.camera)
 
-        if (this.simulation.group) {
-          this.simulation.group.visible = true
-        }
+        simulationEntries.forEach((simulation) => {
+          simulation.group.visible = true
+        })
       }
 
-      if (this.simulation.group && this.simulation.modelMatrix) {
+      simulationEntries.forEach((simulation) => {
+        if (!simulation.group || !simulation.modelMatrix) {
+          return
+        }
+
         if (this.preview.group) {
           this.preview.group.visible = false
         }
 
+        simulationEntries.forEach((otherSimulation) => {
+          otherSimulation.group.visible = otherSimulation === simulation
+        })
+
         this.camera.projectionMatrix
           .copy(projectionMatrix)
-          .multiply(this.simulation.modelMatrix)
+          .multiply(simulation.modelMatrix)
         this.renderer.resetState()
         this.renderer.render(this.scene, this.camera)
+      })
 
-        if (this.preview.group) {
-          this.preview.group.visible = true
-        }
+      if (this.preview.group) {
+        this.preview.group.visible = true
       }
+      simulationEntries.forEach((simulation) => {
+        simulation.group.visible = true
+      })
     }
 
     clearScene() {
-      this.clearSimulation()
+      this.clearAllSimulations()
       this.clearPreview()
       this.map.triggerRepaint()
     }
@@ -380,26 +401,42 @@ export function createSimulation3DLayerController({
       }
     }
 
-    clearSimulation() {
+    clearAllSimulations() {
       this.stopPulse()
 
-      this.simulation.hiddenPreviewMeshes.forEach((mesh) => {
-        mesh.visible = true
+      this.simulations.forEach((simulation) => {
+        simulation.hiddenPreviewMeshes.forEach((mesh) => {
+          mesh.visible = true
+        })
+        if (simulation.group) {
+          this.scene.remove(simulation.group)
+        }
+        disposeSimulationData(simulation.data, simulation.materials)
       })
 
-      if (this.simulation.group) {
-        this.scene.remove(this.simulation.group)
-      }
+      this.simulations.clear()
+      this.activeSimulationKey = null
+    }
 
-      disposeSimulationData(this.simulation.data, this.simulation.materials)
-      this.simulation = {
-        data: null,
-        group: null,
-        hiddenPreviewMeshes: [],
-        key: null,
-        modelMatrix: null,
-        materials: [],
-      }
+    clearActiveSimulationSelection() {
+      this.simulationRequestVersion += 1
+      this.activeSimulationKey = null
+      this.stopPulse()
+    }
+
+    syncPreviewVisibilityForSimulations() {
+      this.simulations.forEach((simulation) => {
+        simulation.hiddenPreviewMeshes.forEach((mesh) => {
+          mesh.visible = true
+        })
+        simulation.hiddenPreviewMeshes = []
+
+        const entry = this.findClosestPreviewEntry(simulation.location)
+        if (entry) {
+          entry.mesh.visible = false
+          simulation.hiddenPreviewMeshes = [entry.mesh]
+        }
+      })
     }
 
     findClosestPreviewEntry(location) {
@@ -508,10 +545,16 @@ export function createSimulation3DLayerController({
       this.preview.material = buildingMaterial
       this.preview.materials = materials
       this.scene.add(group)
+      this.syncPreviewVisibilityForSimulations()
       this.map.triggerRepaint()
     }
 
     renderSimulationOverlay(result, location, key) {
+      if (this.simulations.has(key)) {
+        this.stopPulse()
+        return
+      }
+
       const { group, materials } = createSimulationOverlayGroup(result)
       if (!group) {
         this.stopPulse()
@@ -524,16 +567,24 @@ export function createSimulation3DLayerController({
       if (pulseMesh) {
         pulseMesh.visible = false
         hiddenPreviewMeshes.push(pulseMesh)
+      } else {
+        const entry = this.findClosestPreviewEntry(location)
+        if (entry) {
+          entry.mesh.visible = false
+          hiddenPreviewMeshes.push(entry.mesh)
+        }
       }
 
-      this.simulation = {
+      const simulation = {
         data: result,
         group,
         hiddenPreviewMeshes,
         key,
+        location,
         modelMatrix: this.getModelMatrix(location),
         materials,
       }
+      this.simulations.set(key, simulation)
       this.scene.add(group)
       this.map.triggerRepaint()
     }
@@ -565,8 +616,6 @@ export function createSimulation3DLayerController({
         tileRange.yMin,
         tileRange.yMax,
       ].join(':')
-      this.simulationRequestVersion += 1
-      this.clearSimulation()
 
       if (
         previewKey === this.preview.key ||
@@ -616,19 +665,20 @@ export function createSimulation3DLayerController({
         : null
 
       if (!normalizedLocation) {
-        this.simulationRequestVersion += 1
-        this.clearSimulation()
+        this.clearActiveSimulationSelection()
         return
       }
 
       addTerrainSource(this.map)
 
       const locationKey = `${normalizedLocation.lon}:${normalizedLocation.lat}`
-      if (locationKey === this.simulation.key && this.simulation.group) {
+      if (this.simulations.has(locationKey)) {
+        this.clearActiveSimulationSelection()
         return
       }
 
-      this.clearSimulation()
+      this.clearActiveSimulationSelection()
+      this.activeSimulationKey = locationKey
       this.startPulse(normalizedLocation)
 
       const requestVersion = ++this.simulationRequestVersion
@@ -642,7 +692,7 @@ export function createSimulation3DLayerController({
         }
 
         if (result.status !== 'Results') {
-          this.clearSimulation()
+          this.stopPulse()
           return
         }
 
@@ -652,10 +702,11 @@ export function createSimulation3DLayerController({
           return
         }
 
-        this.clearSimulation()
+        this.stopPulse()
         onError?.(error)
       } finally {
         if (requestVersion === this.simulationRequestVersion) {
+          this.activeSimulationKey = null
           onLoadStateChange?.(false)
         }
       }
@@ -680,12 +731,14 @@ export function createSimulation3DLayerController({
     ) {
       layer.scene.add(layer.preview.group)
     }
-    if (
-      layer.simulation.group &&
-      !layer.scene.children.includes(layer.simulation.group)
-    ) {
-      layer.scene.add(layer.simulation.group)
-    }
+    layer.simulations.forEach((simulation) => {
+      if (
+        simulation.group &&
+        !layer.scene.children.includes(simulation.group)
+      ) {
+        layer.scene.add(simulation.group)
+      }
+    })
     map.triggerRepaint()
   }
 
