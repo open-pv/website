@@ -1,7 +1,5 @@
 import TextSprite from '@/features/three-viewer/components/TextSprite'
 import { createPVSystemData } from '@/features/three-viewer/core/pvSystemCreation'
-import { useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 
 /**
@@ -41,21 +39,11 @@ export function createPVSystem({
  * @param {Object} props.pvSystem - PV system object with geometry and yield data
  */
 export const PVSystem = ({ pvSystem }) => {
-  const textRef = useRef()
-
-  // Use pre-computed center instead of calculating on every render
   const center = new THREE.Vector3(
     pvSystem.center.x,
     pvSystem.center.y,
     pvSystem.center.z,
   )
-
-  // Update text sprite rotation to face camera
-  useFrame(({ camera }) => {
-    if (textRef.current) {
-      textRef.current.quaternion.copy(camera.quaternion)
-    }
-  })
 
   const material = new THREE.MeshStandardMaterial({
     color: '#2b2c40',
@@ -69,11 +57,11 @@ export const PVSystem = ({ pvSystem }) => {
       <mesh geometry={pvSystem.geometry} material={material} />
 
       <TextSprite
-        ref={textRef}
         text={`Jahresertrag: ${Math.round(pvSystem.annualYield).toLocaleString(
           'de',
         )} kWh pro Jahr\nFläche: ${pvSystem.totalArea.toPrecision(3)}m²`}
         position={center}
+        buttons={[{ label: 'Hello', onClick: () => console.log('Hello from button') }]}
       />
     </>
   )

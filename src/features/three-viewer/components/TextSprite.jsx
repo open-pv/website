@@ -1,40 +1,52 @@
-import React, { useEffect, useRef } from 'react'
-import * as THREE from 'three'
+import { Html } from '@react-three/drei'
 
-const TextSprite = ({ text, position }) => {
-  const spriteRef = useRef()
-
-  useEffect(() => {
-    const canvas = document.createElement('canvas')
-    const context = canvas.getContext('2d')
-    const canvasRatio = 7
-    canvas.width = 128 * canvasRatio
-    canvas.height = 128
-
-    context.font = '55px Arial'
-    context.fillStyle = 'rgba(0, 0, 0, 0.3)'
-    context.fillRect(0, 0, canvas.width, canvas.height)
-
-    const lines = text.split('\n')
-    context.font = '55px Arial'
-    context.fillStyle = 'white'
-    lines.forEach((line, index) => {
-      context.fillText(line, 10, 60 + index * 60)
-    })
-
-    const texture = new THREE.CanvasTexture(canvas)
-    const spriteMaterial = new THREE.SpriteMaterial({
-      map: texture,
-      depthTest: false,
-    })
-
-    spriteRef.current.material = spriteMaterial
-    spriteRef.current.position.copy(position)
-    spriteRef.current.scale.set(canvasRatio, 1, 1)
-    spriteRef.current.renderOrder = 999
-  }, [text, position])
-
-  return <sprite ref={spriteRef} />
+const TextSprite = ({ text, position, buttons = [] }) => {
+  return (
+    <Html
+      position={[position.x, position.y, position.z]}
+      center
+      style={{ pointerEvents: 'none' }}
+    >
+      <div
+        style={{
+          background: 'rgba(0, 0, 0, 0.3)',
+          color: 'white',
+          padding: '8px 12px',
+          fontFamily: 'Arial',
+          fontSize: '14px',
+          whiteSpace: 'pre',
+          borderRadius: '4px',
+          pointerEvents: 'auto',
+        }}
+      >
+        {text}
+        {buttons.length > 0 && (
+          <div style={{ marginTop: '8px', display: 'flex', gap: '6px' }}>
+            {buttons.map((btn, i) => (
+              <button
+                key={i}
+                onClick={btn.onClick}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  color: 'white',
+                  border: '1px solid rgba(255, 255, 255, 0.5)',
+                  borderRadius: '4px',
+                  padding: '4px 10px',
+                  fontFamily: 'Arial',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={(e) => (e.target.style.background = 'rgba(255, 255, 255, 0.3)')}
+                onMouseLeave={(e) => (e.target.style.background = 'rgba(255, 255, 255, 0.15)')}
+              >
+                {btn.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </Html>
+  )
 }
 
 export default TextSprite
