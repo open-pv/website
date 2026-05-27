@@ -1,5 +1,7 @@
 import TextSprite from '@/features/three-viewer/components/TextSprite'
 import { createPVSystemData } from '@/features/three-viewer/core/pvSystemCreation'
+import { useContext } from 'react'
+import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 import * as THREE from 'three'
 
 /**
@@ -39,6 +41,11 @@ export function createPVSystem({
  * @param {Object} props.pvSystem - PV system object with geometry and yield data
  */
 export const PVSystem = ({ pvSystem }) => {
+  const { setPVSystems } = useContext(SceneContext)
+
+  const deleteSelf = () =>
+    setPVSystems((prev) => prev.filter((s) => s.id !== pvSystem.id))
+
   const center = new THREE.Vector3(
     pvSystem.center.x,
     pvSystem.center.y,
@@ -61,7 +68,7 @@ export const PVSystem = ({ pvSystem }) => {
           'de',
         )} kWh pro Jahr\nFläche: ${pvSystem.totalArea.toPrecision(3)}m²`}
         position={center}
-        buttons={[{ label: 'Hello', onClick: () => console.log('Hello from button') }]}
+        buttons={[{ label: 'Löschen', onClick: deleteSelf }]}
       />
     </>
   )
