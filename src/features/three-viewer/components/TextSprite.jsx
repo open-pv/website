@@ -36,8 +36,12 @@ const TextSprite = ({ text, position, buttons = [] }) => {
                   fontSize: '13px',
                   cursor: 'pointer',
                 }}
-                onMouseEnter={(e) => (e.target.style.background = 'rgba(255, 255, 255, 0.3)')}
-                onMouseLeave={(e) => (e.target.style.background = 'rgba(255, 255, 255, 0.15)')}
+                onMouseEnter={(e) =>
+                  (e.target.style.background = 'rgba(255, 255, 255, 0.3)')
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.background = 'rgba(255, 255, 255, 0.15)')
+                }
               >
                 {btn.label}
               </button>
