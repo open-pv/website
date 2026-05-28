@@ -62,6 +62,12 @@
     "wrongAdress": "Für den angegebenen Ort konnten keine Gebäude gefunden werden. Dies kann mehrere Gründe haben: 1. Am ausgewählten Ort steht kein Gebäude. 2. Am ausgewählten Ort steht ein neues Gebäude, welches noch nicht in unseren Daten vorhanden ist. 3. Der ausgewählte Ort liegt außerhalb von Deutschland. Wähle einen anderen Ort auf der Karte.",
     "backToMap": "Zurück zur Karten von openpv.de"
   },
+  "notFound": {
+    "heading": "404",
+    "title": "Seite nicht gefunden",
+    "description": "Die gesuchte Seite existiert nicht.",
+    "backToHome": "Zurück zur Startseite"
+  },
   "WelcomeMessage": {
     "title": "So verwenden Sie den kostenlosen Solarrechner",
     "introduction": "Lohnt sich eine Solaranlage auf meinem Dach oder Balkon? OpenPV ist ein kostenloses Tool für die Verschattungsberechnung und Ertragsprognose von Solaranalgen. Mit OpenPV können Sie das solare Potential ihres Gebäudes in wenigen Schritten und mit Hilfe von frei verfügbaren 3D-Gebäudedaten bestimmen.",
