@@ -62,6 +62,12 @@
     "wrongAdress": "No buildings could be found for the specified location. This could be due to several reasons: 1. There is no building at the selected location. 2. There is a new building at the selected location that is not yet included in our data. 3. The selected location is outside of Germany. Chose another location on the map.",
     "backToMap": "Back to the openpv.de map."
   },
+  "notFound": {
+    "heading": "404",
+    "title": "Page Not Found",
+    "description": "The page you are looking for does not exist.",
+    "backToHome": "Back to Home"
+  },
   "WelcomeMessage": {
     "title": "How to use the solar calculator",
     "introduction": "Is a solar system worth it for my roof or balcony? OpenPV is a free tool for shading calculation and yield forecasting of solar systems. With OpenPV, you can determine the solar potential of your building in just a few steps using freely available 3D building data.",
