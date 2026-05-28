@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 import {
   calculateCenterFromGeometry,
+  calculateInstalledKWp,
   calculateYieldPerKWP,
   generatePVSystemId,
 } from '@/features/three-viewer/utils/pvSystemUtils'
@@ -154,6 +155,7 @@ export function createPVSystemData({ pvPoints, simulatedBuildings }) {
   // Step 8: Calculate pre-computed properties
   const center = calculateCenterFromGeometry(geometry)
   const yieldPerKWPPerYear = calculateYieldPerKWP(polygonIntensity)
+  const installedKWp = calculateInstalledKWp(polygonArea)
 
   // Step 9: Return complete PV system object
   return {
@@ -165,5 +167,6 @@ export function createPVSystemData({ pvPoints, simulatedBuildings }) {
     yieldPerArea: polygonIntensity,
     annualYield: annualYield,
     yieldPerKWPPerYear: yieldPerKWPPerYear,
+    installedKWp: installedKWp,
   }
 }

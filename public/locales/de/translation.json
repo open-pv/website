@@ -171,6 +171,7 @@
   "slope": "Neigung",
   "azimuth": "Azimuth",
   "yieldPerYear": "Ertrag pro Jahr",
+  "possibleKWp": "Mögliche Leistung",
   "cardinal": {
     "N": "Nord",
     "NNE": "NNO",

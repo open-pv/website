@@ -105,6 +105,13 @@ export function calculateAzimuthFromNormal(normal) {
  * const yieldPerKWP = calculateYieldPerKWP(yieldPerArea)
  * // Returns: 5500 (kWh/kWp/year)
  */
+// m² of panel area per kWp of installed capacity
+export const M2_PER_KWP = 5.5
+
 export function calculateYieldPerKWP(yieldPerArea) {
-  return yieldPerArea * 5.5
+  return yieldPerArea * M2_PER_KWP
+}
+
+export function calculateInstalledKWp(area) {
+  return area / M2_PER_KWP
 }

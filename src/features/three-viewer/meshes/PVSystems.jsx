@@ -1,8 +1,8 @@
 import TextSprite from '@/features/three-viewer/components/TextSprite'
+import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 import { createPVSystemData } from '@/features/three-viewer/core/pvSystemCreation'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 import * as THREE from 'three'
 
 /**
@@ -66,12 +66,13 @@ export const PVSystem = ({ pvSystem }) => {
       <mesh geometry={pvSystem.geometry} material={material} />
 
       <TextSprite
-        text={`Jahresertrag: ${Math.round(pvSystem.annualYield).toLocaleString(
-          'de',
-        )} kWh pro Jahr\nFläche: ${pvSystem.totalArea.toPrecision(3)}m²`}
+        text={`${t('yieldPerYear')}: ${Math.round(pvSystem.annualYield).toLocaleString()} kWh\n${t('possibleKWp')}: ${pvSystem.installedKWp.toPrecision(3)} kWp`}
         position={center}
         buttons={[
-          { label: t('details'), onClick: () => setIsOpenSavingCalculation(true) },
+          {
+            label: t('details'),
+            onClick: () => setIsOpenSavingCalculation(true),
+          },
           { label: t('delete'), onClick: deleteSelf },
         ]}
       />

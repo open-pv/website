@@ -172,6 +172,7 @@
   "slope": "Slope",
   "azimuth": "Azimuth",
   "yieldPerYear": "Yield per year",
+  "possibleKWp": "Possible capacity",
   "cardinal": {
     "N": "North",
     "NNE": "NNE",
