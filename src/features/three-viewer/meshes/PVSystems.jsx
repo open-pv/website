@@ -43,7 +43,7 @@ export function createPVSystem({
  */
 export const PVSystem = ({ pvSystem }) => {
   const { setPVSystems, setIsOpenSavingCalculation } = useContext(SceneContext)
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const deleteSelf = () =>
     setPVSystems((prev) => prev.filter((s) => s.id !== pvSystem.id))
@@ -66,7 +66,7 @@ export const PVSystem = ({ pvSystem }) => {
       <mesh geometry={pvSystem.geometry} material={material} />
 
       <TextSprite
-        text={`${t('yieldPerYear')}: ${Math.round(pvSystem.annualYield).toLocaleString()} kWh\n${t('possibleKWp')}: ${pvSystem.installedKWp.toPrecision(3)} kWp`}
+        text={`${t('yieldPerYear')}: ${Math.round(pvSystem.annualYield).toLocaleString(i18n.language)} kWh\n${t('possibleKWp')}: ${pvSystem.installedKWp.toLocaleString(i18n.language, { maximumSignificantDigits: 3 })} kWp`}
         position={center}
         buttons={[
           {
