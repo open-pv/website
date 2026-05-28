@@ -11,6 +11,7 @@
   "previous": "Previous",
   "close": "Close",
   "delete": "Delete",
+  "details": "Details",
   "searchField": {
     "placeholder": "Enter your address or coordinates - e.g. Lange Point 20, Freising",
     "clear": "Clear input",

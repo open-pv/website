@@ -42,7 +42,7 @@ export function createPVSystem({
  * @param {Object} props.pvSystem - PV system object with geometry and yield data
  */
 export const PVSystem = ({ pvSystem }) => {
-  const { setPVSystems } = useContext(SceneContext)
+  const { setPVSystems, setIsOpenSavingCalculation } = useContext(SceneContext)
   const { t } = useTranslation()
 
   const deleteSelf = () =>
@@ -70,7 +70,10 @@ export const PVSystem = ({ pvSystem }) => {
           'de',
         )} kWh pro Jahr\nFläche: ${pvSystem.totalArea.toPrecision(3)}m²`}
         position={center}
-        buttons={[{ label: t('delete'), onClick: deleteSelf }]}
+        buttons={[
+          { label: t('details'), onClick: () => setIsOpenSavingCalculation(true) },
+          { label: t('delete'), onClick: deleteSelf },
+        ]}
       />
     </>
   )
