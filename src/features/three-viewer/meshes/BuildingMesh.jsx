@@ -7,12 +7,11 @@ import * as THREE from 'three'
  *   Lambert material is created.
  */
 export const BuildingMesh = ({ building }) => {
-  if (building.type == 'simulation')
-    return <primitive key={building.id} object={building.simulationResult.mesh} dispose={null} />
+  // Simulation buildings are rendered via the scene-level SimulationResult mesh in Scene.jsx
+  if (building.type == 'simulation') return null
 
-  // Fallback: create a basic mesh from the geometry for surrounding buildings.
   return (
-    <mesh key={building.id} geometry={building.geometry}>
+    <mesh geometry={building.geometry}>
       <meshLambertMaterial
         vertexColors={false}
         color={0xc4b69f}

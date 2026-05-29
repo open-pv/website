@@ -101,17 +101,12 @@ export async function mainSimulation(location) {
       progressCallback: loadingBarWrapperFunction,
     })
 
-    // Compute the centre of the simulation area once, then attach simulationResult
-    // to every simulation building so the type is uniform (no optional fields).
     const center = new THREE.Vector3()
     simulationMesh.geometry.computeBoundingBox()
     simulationMesh.geometry.boundingBox.getCenter(center)
 
-    simulationBuildings.forEach((b) => {
-      b.simulationResult = { mesh: simulationMesh.clone(), center }
-    })
-
-    setFrontendState('Results')
+    window.setSimulationResult({ mesh: simulationMesh, center })
+    window.setFrontendState('Results')
 
     return {}
   }

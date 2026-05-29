@@ -27,10 +27,13 @@ function Index() {
   // mesh: Threejs colored mesh (only simulated buildings)}
   const [buildings, setBuildings] = useState([])
 
+  const [simulationResult, setSimulationResult] = useState(null)
+
   // expose setters for the simulation core
   window.setBuildings = setBuildings
   window.setFrontendState = setFrontendState
   window.setSimulationProgress = setSimulationProgress
+  window.setSimulationResult = setSimulationResult
 
   const [vegetationGeometries, setVegetationGeometries] = useState([])
   window.setVegetationGeometries = setVegetationGeometries
@@ -53,6 +56,7 @@ function Index() {
             frontendState={frontendState}
             setFrontendState={setFrontendState}
             buildings={buildings}
+            simulationResult={simulationResult}
             vegetationGeometries={vegetationGeometries}
             geoLocation={location}
           />

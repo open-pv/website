@@ -6,24 +6,23 @@ import { useTranslation } from 'react-i18next'
 import * as THREE from 'three'
 
 /**
- * Wrapper function for backward compatibility.
  * Creates a PV system and updates state.
  *
- * @param {Object} params
- * @param {Function} params.setPVSystems           - state setter for the list of PV systems
- * @param {Array}    params.pvPoints               - array of points the user clicked (with normal vectors)
- * @param {Function} params.setPVPoints            - state setter to clear points after creation
- * @param {Array}    params.simulatedBuildings     - array of building objects that contain the simulation mesh
+ * @param {Object}                  params
+ * @param {Function}                params.setPVSystems    - state setter for the list of PV systems
+ * @param {Array}                   params.pvPoints        - array of points the user clicked (with normal vectors)
+ * @param {Function}                params.setPVPoints     - state setter to clear points after creation
+ * @param {import('three').Mesh}    params.simulationMesh  - the scene-level simulation mesh
  */
 export function createPVSystem({
   setPVSystems,
   pvPoints,
   setPVPoints,
-  simulatedBuildings,
+  simulationMesh,
 }) {
   const pvSystemData = createPVSystemData({
     pvPoints,
-    simulatedBuildings,
+    simulationMesh,
   })
 
   if (!pvSystemData) {

@@ -97,19 +97,14 @@ function CustomMapControl() {
   const initialTarget = useRef(new THREE.Vector3(0, 0, 0))
   const targetSet = useRef(false)
 
-  // Run when building data changes. Set the target only the first time
-  // we have a simulation building with a stored middle point.
+  // Set the camera target once when the scene-level simulation result arrives.
   useEffect(() => {
     if (targetSet.current) return
 
-    const firstSimBuilding = sceneContext.buildings?.find(
-      (b) => b.type === 'simulation',
-    )
-    if (firstSimBuilding?.simulationResult) {
-      const m = firstSimBuilding.simulationResult.center
+    if (sceneContext.simulationResult?.center) {
+      const m = sceneContext.simulationResult.center
       initialTarget.current.set(m.x, m.y, m.z)
 
-      // If the controls already exist, update its internal target immediately.
       if (controlsRef.current) {
         controlsRef.current.target.copy(initialTarget.current)
         controlsRef.current.update()
@@ -117,7 +112,7 @@ function CustomMapControl() {
 
       targetSet.current = true
     }
-  }, [sceneContext.buildings])
+  }, [sceneContext.simulationResult])
 
   return (
     <MapControls

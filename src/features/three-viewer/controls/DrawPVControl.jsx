@@ -13,16 +13,10 @@ const DrawPVControl = () => {
   const controls = useRef()
   let pvPointsRef = []
 
-  // Helper to get the first simulation building (if any)
-  const getFirstSimulationBuilding = () => {
-    return sceneContext.buildings?.find((b) => b.type === 'simulation') || null
-  }
-
-  // Initialise OrbitControls with the middle point of the first simulation building
+  // Initialise OrbitControls targeting the simulation area center
   useEffect(() => {
-    const firstSimBuilding = getFirstSimulationBuilding()
-    const target = firstSimBuilding?.simulationResult?.center
-      ? firstSimBuilding.simulationResult.center.clone()
+    const target = sceneContext.simulationResult?.center
+      ? sceneContext.simulationResult.center.clone()
       : new THREE.Vector3(0, 0, 0)
 
     controls.current = new OrbitControls(camera, gl.domElement)
@@ -39,7 +33,7 @@ const DrawPVControl = () => {
     return () => {
       controls.current.dispose()
     }
-  }, [camera, gl, sceneContext.buildings])
+  }, [camera, gl, sceneContext.simulationResult])
 
   const onPointerDown = (event) => {
     if (event.button !== 0) return
@@ -74,11 +68,9 @@ const DrawPVControl = () => {
             setPVSystems: sceneContext.setPVSystems,
             pvPoints: pvPointsRef,
             setPVPoints: sceneContext.setPVPoints,
-            simulationBuildings:
-              sceneContext.buildings?.filter((b) => b.type === 'simulation') ||
-              [],
+            simulationMesh: sceneContext.simulationResult?.mesh,
           })
-          setFrontendState('Results')
+          sceneContext.setFrontendState('Results')
         }
       }
       const point = intersection.point
@@ -93,7 +85,7 @@ const DrawPVControl = () => {
         .clone()
         .transformDirection(intersection.object.matrixWorld)
 
-      setPVPoints((prevPoints) => {
+      sceneContext.setPVPoints((prevPoints) => {
         const newPoints = [...prevPoints, { point, normal }]
         pvPointsRef = newPoints // Keep ref updated
         return newPoints

@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 import {
   calculateCenterFromGeometry,
   calculateInstalledKWp,
@@ -27,10 +26,10 @@ import {
  *
  * @param {Object} params
  * @param {Array} params.pvPoints - Array of points the user clicked (with {point, normal} structure)
- * @param {Array} params.simulatedBuildings - Array of building objects containing simulation meshes
+ * @param {import('three').Mesh} params.simulationMesh - The single scene-level simulation mesh
  * @returns {Object|null} PV system object with geometry, area, and yield data, or null if invalid
  */
-export function createPVSystemData({ pvPoints, simulatedBuildings }) {
+export function createPVSystemData({ pvPoints, simulationMesh }) {
   const points = pvPoints.map((obj) => obj.point)
 
   // Validation: need at least 3 points to create a polygon
@@ -77,20 +76,9 @@ export function createPVSystemData({ pvPoints, simulatedBuildings }) {
     )
   })
 
-  // Step 4: Merge all simulated building geometries
-  const geometries = []
-  simulatedBuildings.forEach((building) => {
-    const mesh = building.simulationResult?.mesh
-    if (mesh && mesh.geometry) {
-      const geom = mesh.geometry.clone()
-      geom.applyMatrix4(mesh.matrixWorld)
-      geometries.push(geom)
-    }
-  })
-  const simulationGeometry = BufferGeometryUtils.mergeGeometries(
-    geometries,
-    true,
-  )
+  // Step 4: Extract the simulation geometry from the single scene-level mesh
+  const simulationGeometry = simulationMesh.geometry.clone()
+  simulationGeometry.applyMatrix4(simulationMesh.matrixWorld)
 
   // Step 5: Pre-filter building polygons by distance to PV points
   const polygonPrefilteringCutoff = 10 // meters
@@ -147,10 +135,6 @@ export function createPVSystemData({ pvPoints, simulatedBuildings }) {
     newIntensities,
   )
   const annualYield = polygonArea * polygonIntensity
-
-  // Keep geometry properties for backward compatibility
-  geometry.annualYield = annualYield
-  geometry.area = polygonArea
 
   // Step 8: Calculate pre-computed properties
   const center = calculateCenterFromGeometry(geometry)
