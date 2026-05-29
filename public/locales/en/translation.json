@@ -11,6 +11,7 @@
   "previous": "Previous",
   "close": "Close",
   "delete": "Delete",
+  "details": "Details",
   "searchField": {
     "placeholder": "Enter your address or coordinates - e.g. Lange Point 20, Freising",
     "clear": "Clear input",
@@ -177,6 +178,7 @@
   "slope": "Slope",
   "azimuth": "Azimuth",
   "yieldPerYear": "Yield per year",
+  "possibleKWp": "Possible capacity",
   "cardinal": {
     "N": "North",
     "NNE": "NNE",

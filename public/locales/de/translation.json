@@ -11,6 +11,7 @@
   "previous": "Vorherige",
   "close": "Schließen",
   "delete": "Löschen",
+  "details": "Details",
   "searchField": {
     "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Lange Point 20, Freising",
     "clear": "Eingabe löschen",
@@ -176,6 +177,7 @@
   "slope": "Neigung",
   "azimuth": "Azimuth",
   "yieldPerYear": "Ertrag pro Jahr",
+  "possibleKWp": "Mögliche Leistung",
   "cardinal": {
     "N": "Nord",
     "NNE": "NNO",
