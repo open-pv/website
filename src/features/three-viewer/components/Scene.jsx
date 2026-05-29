@@ -11,6 +11,7 @@ import DrawPVControl from '@/features/three-viewer/controls/DrawPVControl'
 import { BuildingMesh } from '@/features/three-viewer/meshes/BuildingMesh'
 import { PVSystem } from '@/features/three-viewer/meshes/PVSystems'
 import VegetationMesh from '@/features/three-viewer/meshes/VegetationMesh'
+import { FrontendState } from '@/types'
 
 const Scene = ({
   frontendState,
@@ -20,19 +21,14 @@ const Scene = ({
   vegetationGeometries,
   geoLocation,
 }) => {
-  // showTerrain decides if the underlying Map is visible or not
   const [showTerrain, setShowTerrain] = useState(true)
-  // Array of PV system objects (see three-viewer/README.md for structure)
   const [pvSystems, setPVSystems] = useState([])
-  // pvPoints are the red points that appear when drawing PV systems
   const [pvPoints, setPVPoints] = useState([])
   const [slope, setSlope] = useState('')
   const [azimuth, setAzimuth] = useState('')
   const [yieldPerKWP, setYieldPerKWP] = useState('')
   const [isOpenSavingCalculation, setIsOpenSavingCalculation] = useState(false)
   const [selectedPVSystem, setSelectedPVSystem] = useState(null)
-
-  window.setPVPoints = setPVPoints
 
   // Determine camera start position from the scene-level simulation result
   let position = [0, 0, 0]
@@ -96,11 +92,11 @@ const Scene = ({
           <primitive object={simulationResult.mesh} dispose={null} />
         )}
 
-        {simulationResult && frontendState == 'Results' && (
+        {simulationResult && frontendState === FrontendState.Results && (
           <CustomMapControl />
         )}
-        {frontendState == 'DrawPV' && <DrawPVControl />}
-        {frontendState == 'DrawPV' && <PointsAndEdges />}
+        {frontendState === FrontendState.DrawPV && <DrawPVControl />}
+        {frontendState === FrontendState.DrawPV && <PointsAndEdges />}
 
         {pvSystems.length > 0 &&
           pvSystems.map((pvSystem) => (

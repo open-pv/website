@@ -6,40 +6,35 @@ import LoadingBar from '@/components/layout/LoadingBar'
 import Scene from '@/features/three-viewer/components/Scene'
 import App from '@/app/App'
 import { mainSimulation } from '@/features/simulation/core/main'
+import { FrontendState } from '@/types'
 
 function Index() {
   const location = useParams()
 
-  // frontendState defines the general state of the frontend (Results, Loading, DrawPV)
-  const [frontendState, setFrontendState] = useState('Loading')
-
-  // simulationProgress is used for the loading bar
+  const [frontendState, setFrontendState] = useState(FrontendState.Loading)
   const [simulationProgress, setSimulationProgress] = useState(0)
-
-  // The federal State where the material comes from, ie "BY"
   const [federalState, setFederalState] = useState(false)
-  window.setFederalState = setFederalState
-
-  // Buildings state – holds an array of building objects with
-  // {id:int,
-  // type:["simulation", "background", "surrounding"],
-  // geometry: Threejs geometry (all buildings),
-  // mesh: Threejs colored mesh (only simulated buildings)}
   const [buildings, setBuildings] = useState([])
-
   const [simulationResult, setSimulationResult] = useState(null)
-
-  // expose setters for the simulation core
-  window.setBuildings = setBuildings
-  window.setFrontendState = setFrontendState
-  window.setSimulationProgress = setSimulationProgress
-  window.setSimulationResult = setSimulationResult
-
-  const [vegetationGeometries, setVegetationGeometries] = useState([])
-  window.setVegetationGeometries = setVegetationGeometries
+  const [vegetationGeometries, setVegetationGeometries] = useState({
+    surrounding: [],
+    background: [],
+  })
 
   const loadAndSimulate = async () => {
-    await mainSimulation(location)
+    const out = await mainSimulation(location, {
+      onProgress: (progress, total) =>
+        setSimulationProgress((progress * 100) / total),
+    })
+    if (!out) {
+      setFrontendState(FrontendState.ErrorAddress)
+      return
+    }
+    setBuildings(out.buildings)
+    setSimulationResult(out.simulationResult)
+    setVegetationGeometries(out.vegetation)
+    setFederalState(out.federalState)
+    setFrontendState(FrontendState.Results)
   }
 
   useEffect(() => {
@@ -49,9 +44,10 @@ function Index() {
   return (
     <App description={'Berechne das Potential deiner Solaranlage.'}>
       <div className='content'>
-        {frontendState == 'ErrorAdress' && <WrongAdress />}
+        {frontendState === FrontendState.ErrorAddress && <WrongAdress />}
 
-        {(frontendState == 'Results' || frontendState == 'DrawPV') && (
+        {(frontendState === FrontendState.Results ||
+          frontendState === FrontendState.DrawPV) && (
           <Scene
             frontendState={frontendState}
             setFrontendState={setFrontendState}
@@ -62,7 +58,7 @@ function Index() {
           />
         )}
 
-        {frontendState == 'Loading' && (
+        {frontendState === FrontendState.Loading && (
           <LoadingBar progress={simulationProgress} />
         )}
         <Footer federalState={federalState} frontendState={frontendState} />

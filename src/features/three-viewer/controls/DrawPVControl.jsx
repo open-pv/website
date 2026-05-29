@@ -4,6 +4,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 import { createPVSystem } from '@/features/three-viewer/meshes/PVSystems'
+import { FrontendState } from '@/types'
 
 const DrawPVControl = () => {
   const sceneContext = useContext(SceneContext)
@@ -70,7 +71,7 @@ const DrawPVControl = () => {
             setPVPoints: sceneContext.setPVPoints,
             simulationMesh: sceneContext.simulationResult?.mesh,
           })
-          sceneContext.setFrontendState('Results')
+          sceneContext.setFrontendState(FrontendState.Results)
         }
       }
       const point = intersection.point

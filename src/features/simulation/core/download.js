@@ -8,12 +8,6 @@ import {
   projectToWebMercator,
 } from '@/features/simulation/core/location'
 
-let federalState = null
-
-export function getFederalState() {
-  return federalState
-}
-
 export function tile2meters() {
   return 1222.992452 * mercator2meters()
 }
@@ -50,21 +44,23 @@ function getFileNames(lon, lat) {
 
 /**
  * Download building data for a given location.
- * Returns an array of building objects:
- *   { id: Number, type: 'background', geometry: THREE.BufferGeometry }
+ * Returns { buildings, federalState } where federalState is a Bundesland code
+ * (e.g. "BY") or false if not detected.
  */
 export async function downloadBuildings(loc) {
   const filenames = getFileNames(Number(loc.lon), Number(loc.lat))
   const promises = filenames.map((filename) => downloadBuildingTile(filename))
   const results = await Promise.all(promises)
 
-  // `results` is an array of arrays (one per tile). Flatten it and return.
-  return results.flat()
+  const buildings = results.flatMap((r) => r.buildingObjects)
+  const federalState = results.find((r) => r.federalState)?.federalState || false
+  return { buildings, federalState }
 }
 
 /**
  * Download a single tile, convert the GLB into a list of building objects.
  * Each building gets a unique `id` and a default `type` of "background".
+ * Returns { buildingObjects, federalState }.
  */
 async function downloadBuildingTile(download_spec) {
   const { tile, center } = download_spec
@@ -140,17 +136,17 @@ async function downloadBuildingTile(download_spec) {
     // Parse Bundesländer (federal state) information
     const buffer = await data.parser.getDependency('bufferView', 0)
     const ids = new TextDecoder().decode(buffer)
+    let detectedFederalState = false
     for (const bundesland of Object.keys(attributions)) {
       if (ids.includes(`DE${bundesland}`)) {
-        window.setFederalState(bundesland)
-        federalState = bundesland
+        detectedFederalState = bundesland
       }
     }
 
-    return buildingObjects
+    return { buildingObjects, federalState: detectedFederalState }
   } catch (error) {
     console.warn(error)
-    return []
+    return { buildingObjects: [], federalState: false }
   }
 }
 
