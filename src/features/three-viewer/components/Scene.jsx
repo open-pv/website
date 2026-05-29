@@ -29,6 +29,7 @@ const Scene = ({
   const [azimuth, setAzimuth] = useState('')
   const [yieldPerKWP, setYieldPerKWP] = useState('')
   const [isOpenSavingCalculation, setIsOpenSavingCalculation] = useState(false)
+  const [selectedPVSystem, setSelectedPVSystem] = useState(null)
 
   window.setPVPoints = setPVPoints
 
@@ -62,6 +63,8 @@ const Scene = ({
         setYieldPerKWP,
         isOpenSavingCalculation,
         setIsOpenSavingCalculation,
+        selectedPVSystem,
+        setSelectedPVSystem,
       }}
     >
       <Overlay
