@@ -1,11 +1,13 @@
+// @ts-check
 import * as THREE from 'three'
-import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 import {
   calculateCenterFromGeometry,
   calculateInstalledKWp,
   calculateYieldPerKWP,
   generatePVSystemId,
 } from '@/features/three-viewer/utils/pvSystemUtils'
+/** @typedef {import('@/types/pvSystem').PVPoint} PVPoint */
+/** @typedef {import('@/types/pvSystem').PVSystem} PVSystem */
 import {
   triangulate,
   subdivideTriangle,
@@ -22,15 +24,13 @@ import {
 
 /**
  * Creates PV system data from user-drawn points.
- * Handles triangulation, building intersection analysis, and yield calculations.
- * Returns a complete PV system object ready for rendering.
  *
- * @param {Object} params
- * @param {Array} params.pvPoints - Array of points the user clicked (with {point, normal} structure)
- * @param {Array} params.simulatedBuildings - Array of building objects containing simulation meshes
- * @returns {Object|null} PV system object with geometry, area, and yield data, or null if invalid
+ * @param {Object}               params
+ * @param {PVPoint[]}            params.pvPoints       - points the user clicked
+ * @param {import('three').Mesh} params.simulationMesh - the scene-level simulation mesh
+ * @returns {PVSystem|null}
  */
-export function createPVSystemData({ pvPoints, simulatedBuildings }) {
+export function createPVSystemData({ pvPoints, simulationMesh }) {
   const points = pvPoints.map((obj) => obj.point)
 
   // Validation: need at least 3 points to create a polygon
@@ -47,7 +47,7 @@ export function createPVSystemData({ pvPoints, simulatedBuildings }) {
 
   // Step 2: Apply normal offset for visual clarity and prepare triangles
   for (const { a, b, c } of trianglesWithNormals) {
-    const shift = (element) => ({
+    const shift = (/** @type {PVPoint} */ element) => ({
       x: element.point.x + element.normal.x * normalOffset,
       y: element.point.y + element.normal.y * normalOffset,
       z: element.point.z + element.normal.z * normalOffset,
@@ -69,6 +69,7 @@ export function createPVSystemData({ pvPoints, simulatedBuildings }) {
   geometry.name = 'pvSystem'
 
   // Step 3: Subdivide large triangles for higher resolution intensity sampling
+  /** @type {Array<{a: THREE.Vector3, b: THREE.Vector3, c: THREE.Vector3}>} */
   let subdividedTriangles = []
   const triangleSubdivisionThreshold = 0.8 // m²
   triangles.forEach((triangle) => {
@@ -77,20 +78,9 @@ export function createPVSystemData({ pvPoints, simulatedBuildings }) {
     )
   })
 
-  // Step 4: Merge all simulated building geometries
-  const geometries = []
-  simulatedBuildings.forEach((building) => {
-    const mesh = building.mesh
-    if (mesh && mesh.geometry) {
-      const geom = mesh.geometry.clone()
-      geom.applyMatrix4(mesh.matrixWorld)
-      geometries.push(geom)
-    }
-  })
-  const simulationGeometry = BufferGeometryUtils.mergeGeometries(
-    geometries,
-    true,
-  )
+  // Step 4: Extract the simulation geometry from the single scene-level mesh
+  const simulationGeometry = simulationMesh.geometry.clone()
+  simulationGeometry.applyMatrix4(simulationMesh.matrixWorld)
 
   // Step 5: Pre-filter building polygons by distance to PV points
   const polygonPrefilteringCutoff = 10 // meters
@@ -101,6 +91,7 @@ export function createPVSystemData({ pvPoints, simulatedBuildings }) {
   )
 
   // Step 6: For each vertex, find closest building polygon and extract intensity
+  /** @type {number[]} */
   const newVertices = []
   const newColors = []
   const newIntensities = []
@@ -147,10 +138,6 @@ export function createPVSystemData({ pvPoints, simulatedBuildings }) {
     newIntensities,
   )
   const annualYield = polygonArea * polygonIntensity
-
-  // Keep geometry properties for backward compatibility
-  geometry.annualYield = annualYield
-  geometry.area = polygonArea
 
   // Step 8: Calculate pre-computed properties
   const center = calculateCenterFromGeometry(geometry)

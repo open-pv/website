@@ -22,9 +22,7 @@ function Overlay({ frontendState, setFrontendState }) {
       setPVSystems: sceneContext.setPVSystems,
       pvPoints: sceneContext.pvPoints,
       setPVPoints: sceneContext.setPVPoints,
-      simulatedBuildings: sceneContext.buildings.filter(
-        (b) => b.type === 'simulation',
-      ),
+      simulationMesh: sceneContext.simulationResult?.mesh,
     })
     setFrontendState('Results')
   }
