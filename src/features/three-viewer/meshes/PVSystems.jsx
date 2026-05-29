@@ -4,6 +4,7 @@ import { createPVSystemData } from '@/features/three-viewer/core/pvSystemCreatio
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import * as THREE from 'three'
+/** @typedef {import('@/types/pvSystem').PVSystem} PVSystem */
 
 /**
  * Creates a PV system and updates state.
@@ -35,10 +36,9 @@ export function createPVSystem({
 
 /**
  * Pure rendering component for a single PV system.
- * Displays the PV panel mesh and label with yield information.
  *
- * @param {Object} props
- * @param {Object} props.pvSystem - PV system object with geometry and yield data
+ * @param {Object}   props
+ * @param {PVSystem} props.pvSystem
  */
 export const PVSystem = ({ pvSystem }) => {
   const { setPVSystems, setIsOpenSavingCalculation, setSelectedPVSystem } =
@@ -47,12 +47,6 @@ export const PVSystem = ({ pvSystem }) => {
 
   const deleteSelf = () =>
     setPVSystems((prev) => prev.filter((s) => s.id !== pvSystem.id))
-
-  const center = new THREE.Vector3(
-    pvSystem.center.x,
-    pvSystem.center.y,
-    pvSystem.center.z,
-  )
 
   const material = new THREE.MeshStandardMaterial({
     color: '#2b2c40',
@@ -67,7 +61,7 @@ export const PVSystem = ({ pvSystem }) => {
 
       <TextSprite
         text={`${t('yieldPerYear')}: ${Math.round(pvSystem.annualYield).toLocaleString(i18n.language)} kWh\n${t('possibleKWp')}: ${pvSystem.installedKWp.toLocaleString(i18n.language, { maximumSignificantDigits: 3 })} kWp`}
-        position={center}
+        position={pvSystem.center}
         buttons={[
           {
             label: t('details'),

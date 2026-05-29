@@ -21,11 +21,7 @@ export function generatePVSystemId() {
  * Averages all vertex positions from the geometry's position attribute.
  *
  * @param {THREE.BufferGeometry} geometry - The geometry to calculate center from
- * @returns {{x: number, y: number, z: number}} The geometric center point
- *
- * @example
- * const center = calculateCenterFromGeometry(geometry)
- * // Returns: {x: 10.5, y: 20.3, z: 5.7}
+ * @returns {THREE.Vector3} The geometric center point
  */
 export function calculateCenterFromGeometry(geometry) {
   const points = geometry.attributes.position.array
@@ -37,11 +33,7 @@ export function calculateCenterFromGeometry(geometry) {
     },
     [0, 0, 0],
   )
-  return {
-    x: sum[0] / length,
-    y: sum[1] / length,
-    z: sum[2] / length,
-  }
+  return new THREE.Vector3(sum[0] / length, sum[1] / length, sum[2] / length)
 }
 
 /**

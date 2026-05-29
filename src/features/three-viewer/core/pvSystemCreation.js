@@ -1,3 +1,4 @@
+// @ts-check
 import * as THREE from 'three'
 import {
   calculateCenterFromGeometry,
@@ -5,6 +6,8 @@ import {
   calculateYieldPerKWP,
   generatePVSystemId,
 } from '@/features/three-viewer/utils/pvSystemUtils'
+/** @typedef {import('@/types/pvSystem').PVPoint} PVPoint */
+/** @typedef {import('@/types/pvSystem').PVSystem} PVSystem */
 import {
   triangulate,
   subdivideTriangle,
@@ -21,13 +24,11 @@ import {
 
 /**
  * Creates PV system data from user-drawn points.
- * Handles triangulation, building intersection analysis, and yield calculations.
- * Returns a complete PV system object ready for rendering.
  *
- * @param {Object} params
- * @param {Array} params.pvPoints - Array of points the user clicked (with {point, normal} structure)
- * @param {import('three').Mesh} params.simulationMesh - The single scene-level simulation mesh
- * @returns {Object|null} PV system object with geometry, area, and yield data, or null if invalid
+ * @param {Object}               params
+ * @param {PVPoint[]}            params.pvPoints       - points the user clicked
+ * @param {import('three').Mesh} params.simulationMesh - the scene-level simulation mesh
+ * @returns {PVSystem|null}
  */
 export function createPVSystemData({ pvPoints, simulationMesh }) {
   const points = pvPoints.map((obj) => obj.point)
