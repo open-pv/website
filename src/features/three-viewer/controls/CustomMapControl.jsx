@@ -61,7 +61,7 @@ function CustomMapControl() {
     sceneContext.setSlope(Math.round(slope))
     sceneContext.setAzimuth(Math.round(azimuth))
     if (!intersected.object.geometry.attributes?.intensities) {
-      sceneContext.setYieldPerKWP('')
+      sceneContext.setYieldPerKWP(null)
       return
     }
     // Continue only for simulated building

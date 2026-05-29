@@ -24,9 +24,9 @@ const Scene = ({
   const [showTerrain, setShowTerrain] = useState(true)
   const [pvSystems, setPVSystems] = useState([])
   const [pvPoints, setPVPoints] = useState([])
-  const [slope, setSlope] = useState('')
-  const [azimuth, setAzimuth] = useState('')
-  const [yieldPerKWP, setYieldPerKWP] = useState('')
+  const [slope, setSlope] = useState(null)
+  const [azimuth, setAzimuth] = useState(null)
+  const [yieldPerKWP, setYieldPerKWP] = useState(null)
   const [isOpenSavingCalculation, setIsOpenSavingCalculation] = useState(false)
   const [selectedPVSystem, setSelectedPVSystem] = useState(null)
 
