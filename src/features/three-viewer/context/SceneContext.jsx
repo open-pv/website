@@ -24,5 +24,6 @@ import { createContext } from 'react'
  * @property {function}                                           setSelectedPVSystem
  */
 
-/** @type {import('react').Context<SceneContextValue|null>} */
-export const SceneContext = createContext(null)
+export const SceneContext = createContext(
+  /** @type {SceneContextValue|null} */ (null),
+)

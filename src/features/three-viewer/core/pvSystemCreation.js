@@ -47,7 +47,7 @@ export function createPVSystemData({ pvPoints, simulationMesh }) {
 
   // Step 2: Apply normal offset for visual clarity and prepare triangles
   for (const { a, b, c } of trianglesWithNormals) {
-    const shift = (element) => ({
+    const shift = (/** @type {PVPoint} */ element) => ({
       x: element.point.x + element.normal.x * normalOffset,
       y: element.point.y + element.normal.y * normalOffset,
       z: element.point.z + element.normal.z * normalOffset,
@@ -69,6 +69,7 @@ export function createPVSystemData({ pvPoints, simulationMesh }) {
   geometry.name = 'pvSystem'
 
   // Step 3: Subdivide large triangles for higher resolution intensity sampling
+  /** @type {Array<{a: THREE.Vector3, b: THREE.Vector3, c: THREE.Vector3}>} */
   let subdividedTriangles = []
   const triangleSubdivisionThreshold = 0.8 // m²
   triangles.forEach((triangle) => {
@@ -90,6 +91,7 @@ export function createPVSystemData({ pvPoints, simulationMesh }) {
   )
 
   // Step 6: For each vertex, find closest building polygon and extract intensity
+  /** @type {number[]} */
   const newVertices = []
   const newColors = []
   const newIntensities = []

@@ -1,3 +1,4 @@
+// @ts-check
 import * as THREE from 'three'
 
 /**
@@ -26,14 +27,15 @@ export function generatePVSystemId() {
 export function calculateCenterFromGeometry(geometry) {
   const points = geometry.attributes.position.array
   const length = points.length / 3
-  const sum = points.reduce(
-    (acc, value, index) => {
-      acc[index % 3] += value
-      return acc
-    },
-    [0, 0, 0],
-  )
-  return new THREE.Vector3(sum[0] / length, sum[1] / length, sum[2] / length)
+  let sx = 0,
+    sy = 0,
+    sz = 0
+  for (let i = 0; i < points.length; i += 3) {
+    sx += points[i]
+    sy += points[i + 1]
+    sz += points[i + 2]
+  }
+  return new THREE.Vector3(sx / length, sy / length, sz / length)
 }
 
 /**
@@ -100,10 +102,12 @@ export function calculateAzimuthFromNormal(normal) {
 // m² of panel area per kWp of installed capacity
 export const M2_PER_KWP = 5.5
 
+/** @param {number} yieldPerArea @returns {number} */
 export function calculateYieldPerKWP(yieldPerArea) {
   return yieldPerArea * M2_PER_KWP
 }
 
+/** @param {number} area @returns {number} */
 export function calculateInstalledKWp(area) {
   return area / M2_PER_KWP
 }
