@@ -8,7 +8,7 @@ import * as THREE from 'three'
  */
 export const BuildingMesh = ({ building }) => {
   if (building.type == 'simulation')
-    return <primitive key={building.id} object={building.mesh} dispose={null} />
+    return <primitive key={building.id} object={building.simulationResult.mesh} dispose={null} />
 
   // Fallback: create a basic mesh from the geometry for surrounding buildings.
   return (

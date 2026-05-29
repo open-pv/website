@@ -21,12 +21,8 @@ const DrawPVControl = () => {
   // Initialise OrbitControls with the middle point of the first simulation building
   useEffect(() => {
     const firstSimBuilding = getFirstSimulationBuilding()
-    const target = firstSimBuilding?.simulationMiddle
-      ? new THREE.Vector3(
-          firstSimBuilding.simulationMiddle.x,
-          firstSimBuilding.simulationMiddle.y,
-          firstSimBuilding.simulationMiddle.z,
-        )
+    const target = firstSimBuilding?.simulationResult?.center
+      ? firstSimBuilding.simulationResult.center.clone()
       : new THREE.Vector3(0, 0, 0)
 
     controls.current = new OrbitControls(camera, gl.domElement)

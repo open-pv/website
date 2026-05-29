@@ -101,16 +101,15 @@ export async function mainSimulation(location) {
       progressCallback: loadingBarWrapperFunction,
     })
 
-    // Attach the resulting simulation mesh to each simulation building.
-    simulationBuildings.forEach((b) => {
-      b.mesh = simulationMesh.clone()
-    })
-
-    // Store the centre point of the mesh on the first simulation building for camera positioning.
-    const middle = new THREE.Vector3()
+    // Compute the centre of the simulation area once, then attach simulationResult
+    // to every simulation building so the type is uniform (no optional fields).
+    const center = new THREE.Vector3()
     simulationMesh.geometry.computeBoundingBox()
-    simulationMesh.geometry.boundingBox.getCenter(middle)
-    simulationBuildings[0].simulationMiddle = middle
+    simulationMesh.geometry.boundingBox.getCenter(center)
+
+    simulationBuildings.forEach((b) => {
+      b.simulationResult = { mesh: simulationMesh.clone(), center }
+    })
 
     setFrontendState('Results')
 

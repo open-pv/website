@@ -36,8 +36,8 @@ const Scene = ({
   // Determine camera start position based on the first simulation building (if any)
   let position = [0, 0, 0]
   const firstSimBuilding = buildings.find((b) => b.type === 'simulation')
-  if (firstSimBuilding && firstSimBuilding.simulationMiddle) {
-    const m = firstSimBuilding.simulationMiddle
+  if (firstSimBuilding?.simulationResult) {
+    const m = firstSimBuilding.simulationResult.center
     position = [m.x, m.y - 40, m.z + 80]
   }
 

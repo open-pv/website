@@ -80,7 +80,7 @@ export function createPVSystemData({ pvPoints, simulatedBuildings }) {
   // Step 4: Merge all simulated building geometries
   const geometries = []
   simulatedBuildings.forEach((building) => {
-    const mesh = building.mesh
+    const mesh = building.simulationResult?.mesh
     if (mesh && mesh.geometry) {
       const geom = mesh.geometry.clone()
       geom.applyMatrix4(mesh.matrixWorld)

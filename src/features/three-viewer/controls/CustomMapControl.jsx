@@ -105,8 +105,8 @@ function CustomMapControl() {
     const firstSimBuilding = sceneContext.buildings?.find(
       (b) => b.type === 'simulation',
     )
-    if (firstSimBuilding && firstSimBuilding.simulationMiddle) {
-      const m = firstSimBuilding.simulationMiddle
+    if (firstSimBuilding?.simulationResult) {
+      const m = firstSimBuilding.simulationResult.center
       initialTarget.current.set(m.x, m.y, m.z)
 
       // If the controls already exist, update its internal target immediately.
