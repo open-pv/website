@@ -31,7 +31,7 @@ Domain-specific features with their own components, logic, and utilities.
   - `meshes/` - Building, vegetation, PV system meshes
   - `controls/` - Map controls, drawing tools
   - `dialogs/` - Options, notifications, legends
-  - `context/` - Scene state management
+  - `context/` - Scene state management (`SceneContextValue` typedef in `SceneContext.jsx`)
   - `utils/` - Color mapping utilities
 
 - **map/** - Map functionality
@@ -49,6 +49,25 @@ Shared, reusable components used across the app.
 - `layout/` - Navigation, Footer, AppLayout, LoadingBar
 - `ui/` - Chakra UI component wrappers
 - `errors/` - Error display components
+
+### 📐 **types/**
+
+Domain type definitions (JSDoc `@typedef`s). Enable editor and `tsc` validation
+without converting the project to TypeScript.
+
+- `building.js` — `Building`, `BuildingType`
+- `simulation.js` — `SimulationResult`, `SimulationMesh` (with vertex-attribute contract)
+- `vegetation.js` — `VegetationGeometries`
+- `pvSystem.js` — `PVSystem`, `PVPoint`
+- `frontendState.js` — `FrontendState` runtime const + typedef
+- `scene.js` — `SimulationOutput` (return type of `mainSimulation`)
+- `index.js` — barrel re-exporting runtime values
+
+**Rules:**
+
+- `SimulationResult` is scene-level — one instance per run, never attached to a `Building`.
+- `mainSimulation()` returns a `SimulationOutput`; it does **not** push state via `window.*`.
+- `window.isTouchDevice` is the only intentional global; all other `window.*` assignments are forbidden.
 
 ### ⚙️ **lib/**
 

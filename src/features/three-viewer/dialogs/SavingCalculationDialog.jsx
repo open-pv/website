@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next'
  */
 export const SavingCalculationDialog = ({ isOpen, onOpenChange }) => {
   const { t } = useTranslation()
-  const { pvSystems } = useContext(SceneContext)
+  const { selectedPVSystem } = useContext(SceneContext)
 
   const [annualConsumption, setAnnualConsumption] = useState('3000')
   const [storageCapacity, setStorageCapacity] = useState('0')
@@ -47,15 +47,9 @@ export const SavingCalculationDialog = ({ isOpen, onOpenChange }) => {
     }
   }, [isOpen])
 
-  const pvProduction =
-    pvSystems.length > 0
-      ? Math.round(
-          pvSystems.reduce(
-            (previous, current) => previous + current.annualYield,
-            0,
-          ),
-        )
-      : 0
+  const pvProduction = selectedPVSystem
+    ? Math.round(selectedPVSystem.annualYield)
+    : 0
   const items = [
     {
       value: 'a',
@@ -155,20 +149,6 @@ export const SavingCalculationDialog = ({ isOpen, onOpenChange }) => {
                 <Text>{t('savingsCalculation.disclaimer')}</Text>
                 <br />
                 <List.Root>
-                  {pvSystems.length > 1 && (
-                    <List.Item>
-                      {pvSystems.length}{' '}
-                      {t('savingsCalculation.results.pvsystems')}:
-                      <List.Root mt='2' ml='4'>
-                        {pvSystems.map((system, index) => (
-                          <List.Item key={system.id}>
-                            System {index + 1}: {Math.round(system.annualYield)}{' '}
-                            kWh/year ({system.totalArea.toPrecision(3)}m²)
-                          </List.Item>
-                        ))}
-                      </List.Root>
-                    </List.Item>
-                  )}
                   <List.Item>
                     {t('savingsCalculation.results.production')}
                     <Text as='b' color='fg.success'>

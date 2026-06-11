@@ -1,18 +1,19 @@
 import * as THREE from 'three'
+/** @typedef {import('@/types/building').Building} Building */
+
 /**
- * Renders building.
+ * Renders a single building.
+ * Simulation buildings return null — their mesh is rendered once via the
+ * scene-level SimulationResult in Scene.jsx.
  *
- * - If `building.type` == "simulation", it is rendered as‑is.
- * - Otherwise a simple `<mesh>` with the supplied geometry and a single
- *   Lambert material is created.
+ * @param {Object}   props
+ * @param {Building} props.building
  */
 export const BuildingMesh = ({ building }) => {
-  if (building.type == 'simulation')
-    return <primitive key={building.id} object={building.mesh} dispose={null} />
+  if (building.type == 'simulation') return null
 
-  // Fallback: create a basic mesh from the geometry for surrounding buildings.
   return (
-    <mesh key={building.id} geometry={building.geometry}>
+    <mesh geometry={building.geometry}>
       <meshLambertMaterial
         vertexColors={false}
         color={0xc4b69f}

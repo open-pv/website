@@ -1,3 +1,6 @@
+// @ts-check
+/** @typedef {import('@/types/building').Building} Building */
+/** @typedef {Building & { _center?: import('three').Vector3 }} BuildingInProgress */
 import * as THREE from 'three'
 
 /**
@@ -18,6 +21,12 @@ import * as THREE from 'three'
  * The same building objects are returned (mutated in‑place) so that a single
  * state can hold all building information.
  */
+/**
+ * @param {BuildingInProgress[]} buildings
+ * @param {import('three').Vector3} simulationCenter
+ * @param {number}           shadingCutoff
+ * @returns {Building[]}
+ */
 export function processGeometries(buildings, simulationCenter, shadingCutoff) {
   const simulationRadius = 10
   const simulationRadius2 = simulationRadius * simulationRadius
@@ -33,7 +42,7 @@ export function processGeometries(buildings, simulationCenter, shadingCutoff) {
   for (let b of buildings) {
     b.geometry.computeBoundingBox()
     const center = new THREE.Vector3()
-    b.geometry.boundingBox.getCenter(center)
+    b.geometry.boundingBox?.getCenter(center)
     b._center = center // temporary storage for later distance checks
 
     const d2 =
@@ -55,9 +64,9 @@ export function processGeometries(buildings, simulationCenter, shadingCutoff) {
 
   // Step 2 – assign type based on distance from the simulation centre
   for (const b of buildings) {
-    const d2 =
-      (b._center.x - simulationCenter.x) ** 2 +
-      (b._center.y - simulationCenter.y) ** 2
+    const cx = b._center?.x ?? 0
+    const cy = b._center?.y ?? 0
+    const d2 = (cx - simulationCenter.x) ** 2 + (cy - simulationCenter.y) ** 2
 
     if (d2 <= simulationRadius2) {
       b.type = 'simulation'

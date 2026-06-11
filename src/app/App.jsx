@@ -7,6 +7,7 @@ const App = ({
   children = null,
   title = null,
   description: descriptionProp = null,
+  robots = 'index, follow',
 }) => {
   const { t } = useTranslation()
   const description = descriptionProp || t('mainDescription')
@@ -20,7 +21,7 @@ const App = ({
       >
         {title && <title>{title}</title>}
         <meta name='description' content={description} />
-        <meta name='robots' content='index, follow' />
+        <meta name='robots' content={robots} />
         <meta property='og:type' content='website' />
         <meta property='og:site_name' content='OpenPV' />
         <meta property='og:title' content={ogTitle} />

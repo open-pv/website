@@ -11,7 +11,7 @@ import {
 } from '@/features/three-viewer/dialogs'
 import { createPVSystem } from '@/features/three-viewer/meshes/PVSystems'
 import { Box, Menu } from '@chakra-ui/react'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 function Overlay({ frontendState, setFrontendState }) {
@@ -22,9 +22,7 @@ function Overlay({ frontendState, setFrontendState }) {
       setPVSystems: sceneContext.setPVSystems,
       pvPoints: sceneContext.pvPoints,
       setPVPoints: sceneContext.setPVPoints,
-      simulatedBuildings: sceneContext.buildings.filter(
-        (b) => b.type === 'simulation',
-      ),
+      simulationMesh: sceneContext.simulationResult?.mesh,
     })
     setFrontendState('Results')
   }
@@ -32,19 +30,7 @@ function Overlay({ frontendState, setFrontendState }) {
   const [isOpenOptionsDialog, setIsOpenOptionsDialog] = useState(false)
   const [isOpenControlHelp, setIsOpenControlHelp] = useState(false)
   const [isOpenAdvertisment, setIsOpenAdvertisment] = useState(false)
-  const [isOpenSavingCalculation, setIsOpenSavingCalculation] = useState(false)
-
-  // Track PV system count to detect when new ones are created
-  const previousPVCountRef = useRef(sceneContext.pvSystems.length)
-
-  useEffect(() => {
-    const currentCount = sceneContext.pvSystems.length
-    if (currentCount > previousPVCountRef.current) {
-      // New PV system was added, open the dialog
-      setIsOpenSavingCalculation(true)
-    }
-    previousPVCountRef.current = currentCount
-  }, [sceneContext.pvSystems.length])
+  const { isOpenSavingCalculation, setIsOpenSavingCalculation } = sceneContext
 
   return (
     <>

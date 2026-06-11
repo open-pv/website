@@ -11,6 +11,7 @@
   "previous": "Vorherige",
   "close": "Schließen",
   "delete": "Löschen",
+  "details": "Details",
   "searchField": {
     "placeholder": "Geben Sie Ihre Adresse oder Koordinaten ein - z.B. Lange Point 20, Freising",
     "clear": "Eingabe löschen",
@@ -61,6 +62,12 @@
     "header": "Ein Fehler ist aufgetreten.",
     "wrongAdress": "Für den angegebenen Ort konnten keine Gebäude gefunden werden. Dies kann mehrere Gründe haben: 1. Am ausgewählten Ort steht kein Gebäude. 2. Am ausgewählten Ort steht ein neues Gebäude, welches noch nicht in unseren Daten vorhanden ist. 3. Der ausgewählte Ort liegt außerhalb von Deutschland. Wähle einen anderen Ort auf der Karte.",
     "backToMap": "Zurück zur Karten von openpv.de"
+  },
+  "notFound": {
+    "heading": "404",
+    "title": "Seite nicht gefunden",
+    "description": "Die gesuchte Seite existiert nicht.",
+    "backToHome": "Zurück zur Startseite"
   },
   "WelcomeMessage": {
     "title": "So verwenden Sie den kostenlosen Solarrechner",
@@ -170,6 +177,7 @@
   "slope": "Neigung",
   "azimuth": "Azimuth",
   "yieldPerYear": "Ertrag pro Jahr",
+  "possibleKWp": "Mögliche Leistung",
   "cardinal": {
     "N": "Nord",
     "NNE": "NNO",

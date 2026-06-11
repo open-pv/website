@@ -17,7 +17,7 @@ export async function calculateSavings({
   setAnnualSavings,
 }) {
   const response = await fetch(
-    'https://www.openpv.de/data/savings_calculation/cons_prod.json',
+    'https://api.openpv.de/savings_calculation/cons_prod.json',
   )
   const data = await response.json()
 

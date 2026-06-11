@@ -1,28 +1,29 @@
 import TextSprite from '@/features/three-viewer/components/TextSprite'
+import { SceneContext } from '@/features/three-viewer/context/SceneContext'
 import { createPVSystemData } from '@/features/three-viewer/core/pvSystemCreation'
-import { useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useContext } from 'react'
+import { useTranslation } from 'react-i18next'
 import * as THREE from 'three'
+/** @typedef {import('@/types/pvSystem').PVSystem} PVSystem */
 
 /**
- * Wrapper function for backward compatibility.
  * Creates a PV system and updates state.
  *
- * @param {Object} params
- * @param {Function} params.setPVSystems           - state setter for the list of PV systems
- * @param {Array}    params.pvPoints               - array of points the user clicked (with normal vectors)
- * @param {Function} params.setPVPoints            - state setter to clear points after creation
- * @param {Array}    params.simulatedBuildings     - array of building objects that contain the simulation mesh
+ * @param {Object}                  params
+ * @param {Function}                params.setPVSystems    - state setter for the list of PV systems
+ * @param {Array}                   params.pvPoints        - array of points the user clicked (with normal vectors)
+ * @param {Function}                params.setPVPoints     - state setter to clear points after creation
+ * @param {import('three').Mesh}    params.simulationMesh  - the scene-level simulation mesh
  */
 export function createPVSystem({
   setPVSystems,
   pvPoints,
   setPVPoints,
-  simulatedBuildings,
+  simulationMesh,
 }) {
   const pvSystemData = createPVSystemData({
     pvPoints,
-    simulatedBuildings,
+    simulationMesh,
   })
 
   if (!pvSystemData) {
@@ -35,27 +36,17 @@ export function createPVSystem({
 
 /**
  * Pure rendering component for a single PV system.
- * Displays the PV panel mesh and label with yield information.
  *
- * @param {Object} props
- * @param {Object} props.pvSystem - PV system object with geometry and yield data
+ * @param {Object}   props
+ * @param {PVSystem} props.pvSystem
  */
 export const PVSystem = ({ pvSystem }) => {
-  const textRef = useRef()
+  const { setPVSystems, setIsOpenSavingCalculation, setSelectedPVSystem } =
+    useContext(SceneContext)
+  const { t, i18n } = useTranslation()
 
-  // Use pre-computed center instead of calculating on every render
-  const center = new THREE.Vector3(
-    pvSystem.center.x,
-    pvSystem.center.y,
-    pvSystem.center.z,
-  )
-
-  // Update text sprite rotation to face camera
-  useFrame(({ camera }) => {
-    if (textRef.current) {
-      textRef.current.quaternion.copy(camera.quaternion)
-    }
-  })
+  const deleteSelf = () =>
+    setPVSystems((prev) => prev.filter((s) => s.id !== pvSystem.id))
 
   const material = new THREE.MeshStandardMaterial({
     color: '#2b2c40',
@@ -69,11 +60,18 @@ export const PVSystem = ({ pvSystem }) => {
       <mesh geometry={pvSystem.geometry} material={material} />
 
       <TextSprite
-        ref={textRef}
-        text={`Jahresertrag: ${Math.round(pvSystem.annualYield).toLocaleString(
-          'de',
-        )} kWh pro Jahr\nFläche: ${pvSystem.totalArea.toPrecision(3)}m²`}
-        position={center}
+        text={`${t('yieldPerYear')}: ${Math.round(pvSystem.annualYield).toLocaleString(i18n.language)} kWh\n${t('possibleKWp')}: ${pvSystem.installedKWp.toLocaleString(i18n.language, { maximumSignificantDigits: 3 })} kWp`}
+        position={pvSystem.center}
+        buttons={[
+          {
+            label: t('details'),
+            onClick: () => {
+              setSelectedPVSystem(pvSystem)
+              setIsOpenSavingCalculation(true)
+            },
+          },
+          { label: t('delete'), onClick: deleteSelf },
+        ]}
       />
     </>
   )

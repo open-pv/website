@@ -1,3 +1,5 @@
+// @ts-check
+/** @typedef {import('@/types/building').Building} Building */
 import * as THREE from 'three'
 import { Matrix4 } from 'three'
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
@@ -7,12 +9,6 @@ import {
   coordinatesLonLat,
   projectToWebMercator,
 } from '@/features/simulation/core/location'
-
-let federalState = null
-
-export function getFederalState() {
-  return federalState
-}
 
 export function tile2meters() {
   return 1222.992452 * mercator2meters()
@@ -31,6 +27,10 @@ gltfLoader.setDRACOLoader(dracoLoader)
 
 let _globalBuildingId = 0
 
+/**
+ * @param {number} lon
+ * @param {number} lat
+ */
 function getFileNames(lon, lat) {
   let [x, y] = projectToWebMercator(lon, lat)
 
@@ -50,21 +50,30 @@ function getFileNames(lon, lat) {
 
 /**
  * Download building data for a given location.
- * Returns an array of building objects:
- *   { id: Number, type: 'background', geometry: THREE.BufferGeometry }
+ *
+ * @param {Object} loc
+ * @param {string} loc.lat
+ * @param {string} loc.lon
+ * @returns {Promise<{buildings: Building[], federalState: string|false}>}
  */
 export async function downloadBuildings(loc) {
   const filenames = getFileNames(Number(loc.lon), Number(loc.lat))
   const promises = filenames.map((filename) => downloadBuildingTile(filename))
   const results = await Promise.all(promises)
 
-  // `results` is an array of arrays (one per tile). Flatten it and return.
-  return results.flat()
+  const buildings = results.flatMap((r) => r.buildingObjects)
+  const federalState =
+    results.find((r) => r.federalState)?.federalState || false
+  return { buildings, federalState }
 }
 
 /**
  * Download a single tile, convert the GLB into a list of building objects.
  * Each building gets a unique `id` and a default `type` of "background".
+ * Returns { buildingObjects, federalState }.
+ *
+ * @param {{ tile: {x:number, y:number}, center: {x:number, y:number} }} download_spec
+ * @returns {Promise<{buildingObjects: Building[], federalState: string|false}>}
  */
 async function downloadBuildingTile(download_spec) {
   const { tile, center } = download_spec
@@ -72,10 +81,12 @@ async function downloadBuildingTile(download_spec) {
 
   try {
     const data = await gltfLoader.loadAsync(url)
+    /** @type {Building[]} */
     let buildingObjects = []
 
     for (let scene of data.scenes) {
       for (let child of scene.children) {
+        // @ts-ignore — GLTF child nodes carry .geometry; not reflected in THREE.Object3D types
         let geometry = child.geometry
 
         const scale2tile = new Matrix4()
@@ -95,9 +106,11 @@ async function downloadBuildingTile(download_spec) {
         // This makes sure of that
         geometry = geometry.toNonIndexed()
 
+        /** @type {Object.<string, {position: number[], normal: number[]}>} */
         let buildings = {}
         const position = geometry.attributes.position.array
         const normal = geometry.attributes.normal.array
+        // @ts-ignore — _feature_id_0 is a custom GLTF attribute not in THREE types
         const feature_ids = geometry.attributes._feature_id_0.array
 
         for (let i = 0; i < geometry.attributes.position.count; i++) {
@@ -130,7 +143,9 @@ async function downloadBuildingTile(download_spec) {
 
           buildingObjects.push({
             id: ++_globalBuildingId,
-            type: 'background', // default type; will be updated later by preprocessing
+            type: /** @type {import('@/types/building').BuildingType} */ (
+              'background'
+            ),
             geometry: buildingGeometry,
           })
         }
@@ -140,21 +155,31 @@ async function downloadBuildingTile(download_spec) {
     // Parse Bundesländer (federal state) information
     const buffer = await data.parser.getDependency('bufferView', 0)
     const ids = new TextDecoder().decode(buffer)
+    /** @type {string|false} */
+    let detectedFederalState = false
     for (const bundesland of Object.keys(attributions)) {
       if (ids.includes(`DE${bundesland}`)) {
-        window.setFederalState(bundesland)
-        federalState = bundesland
+        detectedFederalState = bundesland
       }
     }
 
-    return buildingObjects
+    return { buildingObjects, federalState: detectedFederalState }
   } catch (error) {
     console.warn(error)
-    return []
+    return {
+      buildingObjects: /** @type {Building[]} */ ([]),
+      federalState: /** @type {false} */ (false),
+    }
   }
 }
 
+/**
+ * @param {number} lat
+ * @param {number} lon
+ * @returns {string}
+ */
 export const createSkydomeURL = (lat, lon) => {
+  /** @param {number} value @param {number} multiple */
   function roundToNearest(value, multiple) {
     return Math.round(value / multiple) * multiple
   }

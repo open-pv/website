@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "checkJs": false,
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": { "@/*": ["src/*"] },
+    "target": "ESNext",
+    "module": "ESNext",
+    "jsx": "preserve",
+    "ignoreDeprecations": "6.0"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "coverage"]
+}

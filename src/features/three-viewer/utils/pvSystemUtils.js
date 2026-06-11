@@ -1,3 +1,4 @@
+// @ts-check
 import * as THREE from 'three'
 
 /**
@@ -21,27 +22,20 @@ export function generatePVSystemId() {
  * Averages all vertex positions from the geometry's position attribute.
  *
  * @param {THREE.BufferGeometry} geometry - The geometry to calculate center from
- * @returns {{x: number, y: number, z: number}} The geometric center point
- *
- * @example
- * const center = calculateCenterFromGeometry(geometry)
- * // Returns: {x: 10.5, y: 20.3, z: 5.7}
+ * @returns {THREE.Vector3} The geometric center point
  */
 export function calculateCenterFromGeometry(geometry) {
   const points = geometry.attributes.position.array
   const length = points.length / 3
-  const sum = points.reduce(
-    (acc, value, index) => {
-      acc[index % 3] += value
-      return acc
-    },
-    [0, 0, 0],
-  )
-  return {
-    x: sum[0] / length,
-    y: sum[1] / length,
-    z: sum[2] / length,
+  let sx = 0,
+    sy = 0,
+    sz = 0
+  for (let i = 0; i < points.length; i += 3) {
+    sx += points[i]
+    sy += points[i + 1]
+    sz += points[i + 2]
   }
+  return new THREE.Vector3(sx / length, sy / length, sz / length)
 }
 
 /**
@@ -105,6 +99,15 @@ export function calculateAzimuthFromNormal(normal) {
  * const yieldPerKWP = calculateYieldPerKWP(yieldPerArea)
  * // Returns: 5500 (kWh/kWp/year)
  */
+// m² of panel area per kWp of installed capacity
+export const M2_PER_KWP = 5.5
+
+/** @param {number} yieldPerArea @returns {number} */
 export function calculateYieldPerKWP(yieldPerArea) {
-  return yieldPerArea * 5.5
+  return yieldPerArea * M2_PER_KWP
+}
+
+/** @param {number} area @returns {number} */
+export function calculateInstalledKWp(area) {
+  return area / M2_PER_KWP
 }

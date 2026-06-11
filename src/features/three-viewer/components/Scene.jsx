@@ -11,42 +11,40 @@ import DrawPVControl from '@/features/three-viewer/controls/DrawPVControl'
 import { BuildingMesh } from '@/features/three-viewer/meshes/BuildingMesh'
 import { PVSystem } from '@/features/three-viewer/meshes/PVSystems'
 import VegetationMesh from '@/features/three-viewer/meshes/VegetationMesh'
+import { FrontendState } from '@/types'
 
 const Scene = ({
   frontendState,
   setFrontendState,
   buildings,
+  simulationResult,
   vegetationGeometries,
   geoLocation,
 }) => {
-  // showTerrain decides if the underlying Map is visible or not
   const [showTerrain, setShowTerrain] = useState(true)
-  // Array of PV system objects (see three-viewer/README.md for structure)
   const [pvSystems, setPVSystems] = useState([])
-  // pvPoints are the red points that appear when drawing PV systems
   const [pvPoints, setPVPoints] = useState([])
-  const [slope, setSlope] = useState('')
-  const [azimuth, setAzimuth] = useState('')
-  const [yieldPerKWP, setYieldPerKWP] = useState('')
+  const [slope, setSlope] = useState(null)
+  const [azimuth, setAzimuth] = useState(null)
+  const [yieldPerKWP, setYieldPerKWP] = useState(null)
+  const [isOpenSavingCalculation, setIsOpenSavingCalculation] = useState(false)
+  const [selectedPVSystem, setSelectedPVSystem] = useState(null)
 
-  window.setPVPoints = setPVPoints
-
-  // Determine camera start position based on the first simulation building (if any)
+  // Determine camera start position from the scene-level simulation result
   let position = [0, 0, 0]
-  const firstSimBuilding = buildings.find((b) => b.type === 'simulation')
-  if (firstSimBuilding && firstSimBuilding.simulationMiddle) {
-    const m = firstSimBuilding.simulationMiddle
+  if (simulationResult?.center) {
+    const m = simulationResult.center
     position = [m.x, m.y - 40, m.z + 80]
   }
 
   const cameraRef = useRef()
-  // Derive grouped building arrays from the unified buildings state
-  const simulationBuildings = buildings.filter((b) => b.type === 'simulation')
 
   return (
     <SceneContext.Provider
       value={{
         buildings,
+        simulationResult,
+        setFrontendState,
         pvPoints,
         setPVPoints,
         pvSystems,
@@ -59,6 +57,10 @@ const Scene = ({
         setAzimuth,
         yieldPerKWP,
         setYieldPerKWP,
+        isOpenSavingCalculation,
+        setIsOpenSavingCalculation,
+        selectedPVSystem,
+        setSelectedPVSystem,
       }}
     >
       <Overlay
@@ -84,13 +86,17 @@ const Scene = ({
         <directionalLight intensity={0.5} position={[-1, 0, -2]} />
 
         {buildings.length > 0 &&
-          buildings.map((b) => <BuildingMesh building={b} />)}
+          buildings.map((b) => <BuildingMesh key={b.id} building={b} />)}
 
-        {simulationBuildings.length > 0 && frontendState == 'Results' && (
+        {simulationResult && (
+          <primitive object={simulationResult.mesh} dispose={null} />
+        )}
+
+        {simulationResult && frontendState === FrontendState.Results && (
           <CustomMapControl />
         )}
-        {frontendState == 'DrawPV' && <DrawPVControl />}
-        {frontendState == 'DrawPV' && <PointsAndEdges />}
+        {frontendState === FrontendState.DrawPV && <DrawPVControl />}
+        {frontendState === FrontendState.DrawPV && <PointsAndEdges />}
 
         {pvSystems.length > 0 &&
           pvSystems.map((pvSystem) => (
@@ -110,7 +116,7 @@ const Scene = ({
           </>
         )}
 
-        {simulationBuildings.length > 0 && <Terrain />}
+        {simulationResult && <Terrain />}
       </Canvas>
     </SceneContext.Provider>
   )
