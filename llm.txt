@@ -1,0 +1,51 @@
+# OpenPV
+
+> OpenPV (openpv.de) is a free, open-source web tool that simulates the solar (photovoltaic) potential of buildings across Germany directly in the browser. Users can find their building on a map, run a shading simulation, draw a PV system on the roof, and get an estimated annual electricity yield and economic savings — all without any server-side computation.
+
+## Key Features
+
+- Browser-based shading simulation using 3D building data (LOD2), terrain models, and climate data
+- Coverage: all German federal states where open LOD2 data is available
+- Vegetation shading support in states that provide open laser point cloud data (e.g. Bavaria)
+- Draw custom PV systems on roofs or facades to get yield estimates
+- Economic feasibility calculator: compares generation vs. consumption, optional battery storage, annual savings
+- Fully static site — no backend, all simulation runs client-side via the simshady npm package
+- Open source (Public Money, Public Code — funded through public grants)
+- As few data as possible sent to the server, no cookies at all
+
+## Pages
+
+- [Home / Map](https://openpv.de/) — Select a building by address search or map click, then start the simulation
+- [Simulation](https://openpv.de/simulation/:lon/:lat) — 3D viewer showing shading results, PV drawing tools, and savings calculator
+- [About](https://openpv.de/about) — How the tool works, data sources, team, and sponsors
+- [Impressum](https://openpv.de/impressum) — Legal notice
+- [Datenschutz](https://openpv.de/datenschutz) — Privacy policy
+
+## Data Sources
+
+- **3D building data**: LOD2 data from German state surveying offices
+- **Solar irradiation**: Annual direct and diffuse radiation data from the DWD (Deutscher Wetterdienst / German Weather Service)
+- **Terrain model**: Digital elevation model from Sonny (30 m resolution)
+- **Base map**: BKG (Bundesamt für Kartographie und Geodäsie / Federal Agency for Cartography and Geodesy)
+- **Vegetation**: Laser point clouds from states that publish open data (e.g. Bavaria)
+
+## How the Simulation Works
+
+1. User selects a building on the map
+2. All relevant data (3D buildings, terrain, vegetation) is loaded into the browser
+3. Two shading simulations run client-side: one for direct radiation (averaged over ~100 random sun positions per year), one for diffuse radiation
+4. Climate data from DWD is applied based on the building's coordinates
+5. Results are displayed as a color-coded 3D model (yellow = high potential, dark blue = heavily shaded)
+6. User can draw PV system polygons on any roof or facade surface
+7. Optional economic calculation: hourly generation vs. consumption time series, optional battery storage, annual savings estimate
+
+
+## Source Code
+
+- Website: https://github.com/open-pv/website
+- Simulation engine: https://github.com/open-pv/simshady
+
+## Contact
+
+- Email: info[at]openpv.de
+- GitHub organization: https://github.com/open-pv
