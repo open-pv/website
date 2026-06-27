@@ -1,0 +1,1 @@
+import{Ct as e}from"./index-RNv0W56N.js";var{withContext:t,PropsProvider:n}=e({key:`text`}),r=t(`p`);export{r as t};
