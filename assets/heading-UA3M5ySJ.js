@@ -1,0 +1,1 @@
+import{Ct as e}from"./index-BZ5ts3ij.js";var{withContext:t,PropsProvider:n}=e({key:`heading`}),r=t(`h2`);export{r as t};
