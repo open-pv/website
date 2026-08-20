@@ -32,7 +32,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/three": "^0.184.1",
-    "@vitejs/plugin-react": "^5.2.0",
+    "@vitejs/plugin-react": "^6.0.3",
     "gh-pages": "^6.3.0",
     "jsdom": "^27.3.0",
     "prettier": "3.5.3",
