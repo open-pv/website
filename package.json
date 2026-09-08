@@ -10,7 +10,7 @@
     "deploy": "gh-pages -d dist -b build"
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.16.1",
+    "@chakra-ui/react": "^3.36.0",
     "@emotion/react": "^11.14.0",
     "@openpv/simshady": "^0.2.2",
     "@react-three/drei": "^10.7.7",
