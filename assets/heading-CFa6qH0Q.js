@@ -1,0 +1,1 @@
+import{Sn as e}from"./index-tApaDIIm.js";var{withContext:t,PropsProvider:n}=e({key:`heading`}),r=t(`h2`);export{r as t};

@@ -1,0 +1,1 @@
+import{r as e}from"./chunk-QTnfLwEv.js";import{An as t,En as n,On as r,jn as i}from"./index-tApaDIIm.js";var a=i(),o=(0,e(t(),1).forwardRef)(function(e,t){let{align:i,fit:o=`cover`,...s}=e;return(0,a.jsx)(n.img,{ref:t,objectFit:o,objectPosition:i,className:r(`chakra-image`,e.className),...s})});o.displayName=`Image`;export{o as t};
