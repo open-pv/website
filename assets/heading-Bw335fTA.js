@@ -1,0 +1,1 @@
+import{Sn as e}from"./index-DNqSes0c.js";var{withContext:t,PropsProvider:n}=e({key:`heading`}),r=t(`h2`);export{r as t};
