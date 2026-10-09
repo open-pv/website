@@ -32,6 +32,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@turf/buffer": "^7.4.0",
     "@types/three": "^0.185.0",
     "@vitejs/plugin-react": "^5.2.0",
     "gh-pages": "^6.3.0",

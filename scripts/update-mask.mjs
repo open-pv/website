@@ -15,9 +15,10 @@
 // To cover more regions later, drop a boundary file into scripts/data/coverage/
 // and add { name, file } to COVERED below.
 
+import { buffer as turfBuffer } from '@turf/buffer'
 import { readFileSync, writeFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 
@@ -31,6 +32,14 @@ const COVERED = [{ name: 'Germany', file: 'germany.geojson' }]
 // zoom 12 and a 1.5px border, so ~65k official border vertices are far more
 // than the output needs. Lower = crisper but bigger; raise to shrink further.
 const SIMPLIFY_TOLERANCE = 0.005
+
+// The clickable area (the mask hole) is inflated past the true border by this
+// many meters. The official border is far finer than the RDP simplification
+// (which can eat up to ~555m near the border), so the shipped mask is slightly
+// smaller than the real coverage and border buildings get unclickable. Buffering
+// one simplification-tolerance's worth (~1km) past the border recovers them;
+// the downstream "no data" check rejects the rare overshoot.
+const BUFFER_METERS = 500
 
 // Coordinates are truncated to this many decimals (~0.00001° ≈ 1m). The raw
 // floats from JSON.parse carry ~15 significant digits; that precision is
@@ -122,30 +131,28 @@ function featureRings(feature) {
 
 const holes = []
 let holeCount = 0
+const tolSq = SIMPLIFY_TOLERANCE ** 2
 for (const { name, file } of COVERED) {
-  const data = JSON.parse(
+  let data = JSON.parse(
     readFileSync(path.join(ROOT, 'scripts/data/coverage', file), 'utf8'),
   )
-  const features = data.type === 'FeatureCollection' ? data.features : [data]
-  const tolSq = SIMPLIFY_TOLERANCE ** 2
-  for (const f of features) {
-    for (const ring of featureRings(f)) {
-      const rounded = ring.map(([x, y]) => [roundCoord(x), roundCoord(y)])
-      const simplified = simplifyRing(ring, tolSq)
-      // A ring that collapses below 4 points (tiny islet) is kept whole: it adds
-      // ~no size and must stay a valid closed polygon.
-      const chosen = simplified.length >= 4 ? simplified : rounded
-      holes.push(
-        reorientAndClose(
-          chosen.map(([x, y]) => [roundCoord(x), roundCoord(y)]),
-        ),
-      )
-      holeCount++
-    }
+  // Inflate the covered region so the mask hole is larger than the true border
+  // (handles RDP simplification shrinking the hole; see BUFFER_METERS).
+  // Turf returns a FeatureCollection; take its single feature's rings.
+  data = turfBuffer(data, BUFFER_METERS, { units: 'meters' })
+  const buffered = data.type === 'FeatureCollection' ? data.features[0] : data
+  for (const ring of featureRings(buffered)) {
+    const rounded = ring.map(([x, y]) => [roundCoord(x), roundCoord(y)])
+    const simplified = simplifyRing(ring, tolSq)
+    // A ring that collapses below 4 points (tiny islet) is kept whole: it adds
+    // ~no size and must stay a valid closed polygon.
+    const chosen = simplified.length >= 4 ? simplified : rounded
+    holes.push(
+      reorientAndClose(chosen.map(([x, y]) => [roundCoord(x), roundCoord(y)])),
+    )
+    holeCount++
   }
-  console.log(
-    `  ${name}: ${features.length} feature(s) → ${holeCount} hole(s) so far`,
-  )
+  console.log(`  ${name}: buffered → ${holeCount} hole(s) so far`)
 }
 
 const geojson = {
