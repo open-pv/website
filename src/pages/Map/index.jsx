@@ -9,7 +9,7 @@ import MapPopup from '@/features/map/components/MapPopup'
 import SearchField from '@/features/map/components/SearchField'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { useTranslation } from 'react-i18next'
-import { Map, NavigationControl } from 'react-map-gl/maplibre'
+import { Layer, Map, NavigationControl, Source } from 'react-map-gl/maplibre'
 import { useSearchParams } from 'react-router-dom'
 
 function Index() {
@@ -91,9 +91,16 @@ function Index() {
   // Handling map click for manual location selection
   const [clickPoint, setClickPoint] = useState(null)
   const mapClick = useCallback((evt) => {
-    console.log(evt)
-    const { lng, lat } = evt.lngLat
-    setClickPoint([lat, lng])
+    const features = mapRef.current
+      .getMap()
+      .queryRenderedFeatures(evt.point, { layers: ['nodata'] })
+    if (features.length > 0) {
+      // Nodata mask was clicked -> unset click point
+      setClickPoint(null)
+    } else {
+      const { lng, lat } = evt.lngLat
+      setClickPoint([lat, lng])
+    }
   })
 
   return (
@@ -112,12 +119,34 @@ function Index() {
               height: '100%',
               backgroundColor: '#d3d3d3',
             }}
-            mapStyle='https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json'
+            mapStyle='./mapstyle-bright-localname.json'
             onMove={(evt) => setViewState(evt.viewState)}
             onClick={mapClick}
             attributionControl={false}
             maxBounds={[-10, 35, 30, 65]}
           >
+            <Source
+              id='nodata'
+              type='geojson'
+              data='./nodata.geojson'
+            >
+              <Layer
+                id='nodata'
+                type='fill'
+                paint={{
+                  'fill-color': '#000',
+                  'fill-opacity': [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    8,
+                    0.5,
+                    12,
+                    0,
+                  ],
+                }}
+              />
+            </Source>
             <>{mapMarkers}</>
             {clickPoint && (
               <MapPopup
@@ -131,21 +160,29 @@ function Index() {
           </Map>
           <div className='map-attribution'>
             <p className='copyright'>
-              Basiskarte &copy;{' '}
+              Karte &copy;{' '}
               <a
-                href='https://www.bkg.bund.de'
+                href='https://www.openstreetmap.org/copyright'
                 target='_blank'
                 rel='noopener noreferrer'
               >
-                BKG
+                OpenStreetMap contributors
+              </a>{' '}
+              (&copy;{' '}
+              <a
+                href='https://openfreemap.org'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                OpenFreeMap
               </a>
-              &nbsp;(
+              , &copy;{' '}
               <a
-                href='https://www.govdata.de/dl-de/by-2-0'
+                href='https://openmaptiles.org'
                 target='_blank'
                 rel='noopener noreferrer'
               >
-                dl-de/by-2-0
+                OpenMapTiles
               </a>
               ) | Geländemodell:&nbsp;
               <a
