@@ -85,6 +85,9 @@ vi.mock('react-map-gl/maplibre', () => {
     }),
     NavigationControl: () =>
       React.createElement('div', { 'data-testid': 'navigation-control' }),
+    Source: ({ children }) =>
+      React.createElement(React.Fragment, null, children),
+    Layer: () => null,
   }
 })
 
