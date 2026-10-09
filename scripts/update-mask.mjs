@@ -18,24 +18,37 @@
 import { buffer as turfBuffer } from '@turf/buffer'
 import { readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
+import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
+// jsts is a CJS package already in node_modules (a transitive dep); give it a
+// require from this module's location so it resolves without a new dependency.
+const require = createRequire(import.meta.url)
+const jsts = require('jsts')
+const geomReader = new jsts.io.GeoJSONReader()
+const geomWriter = new jsts.io.GeoJSONWriter()
+const IsValidOp = jsts.operation.valid.IsValidOp
+const topologySimplify = jsts.simplify.TopologyPreservingSimplifier
 
 // Covered regions. `file` is a GeoJSON file (one or more features) whose
 // exterior rings become holes in the world mask. Prefer the finest-resolution
 // boundary available (official/1:250k sources beat Natural Earth 10m).
 const COVERED = [{ name: 'Germany', file: 'germany.geojson' }]
 
-// RDP simplification tolerance, in degrees (~0.005° ≈ 360m E-W / 555m N-S at
-// German latitudes). The mask only renders as a dim fill that fades out below
-// zoom 12 and a 1.5px border, so ~65k official border vertices are far more
-// than the output needs. Lower = crisper but bigger; raise to shrink further.
+// TopologyPreservingSimplifier distance tolerance, in degrees (~0.005° ≈ 360m
+// E-W / 555m N-S at German latitudes). The mask only renders as a dim fill that
+// fades out below zoom 12 and a 1.5px border, so ~65k official border vertices
+// are far more than the output needs. Lower = crisper but bigger; raise to
+// shrink further. Unlike a plain RDP drop-points loop, this simplifier is
+// guaranteed not to introduce self-intersections (RDP at 0.005 shipped an
+// invalid mask: it let long chords cross back over the ring, which MapLibre
+// rendered as moving shaded shards while zooming).
 const SIMPLIFY_TOLERANCE = 0.005
 
 // The clickable area (the mask hole) is inflated past the true border by this
-// many meters. The official border is far finer than the RDP simplification
-// (which can eat up to ~555m near the border), so the shipped mask is slightly
+// many meters. The official border is far finer than the simplification (which
+// can eat up to ~555m near the border), so the shipped mask is slightly
 // smaller than the real coverage and border buildings get unclickable. Buffering
 // one simplification-tolerance's worth (~1km) past the border recovers them;
 // the downstream "no data" check rejects the rare overshoot.
@@ -48,112 +61,65 @@ const COORD_DECIMALS = 5
 
 const roundCoord = (v) => Number(v.toFixed(COORD_DECIMALS))
 
-// Ramer–Douglas–Peucker over a closed ring (the closing point is kept). Kept
-// as plain recursion per segment, not the iterative stack, to stay readable;
-// rings here are at most ~52k points so stack depth is fine.
-function simplifyRing(ring, tolSq) {
-  const keep = new Array(ring.length).fill(false)
-  simplifySegment(ring, 0, ring.length - 1, tolSq, keep)
-  keep[0] = true
-  keep[ring.length - 1] = true
-  const out = []
-  for (let i = 0; i < ring.length; i++) if (keep[i]) out.push(ring[i])
-  return out
-}
-
-function simplifySegment(ring, start, end, tolSq, keep) {
-  if (end - start < 2) return
-  let maxDistSq = 0
-  let index = -1
-  const [ax, ay] = ring[start]
-  const [bx, by] = ring[end]
-  const lenSq = (bx - ax) ** 2 + (by - ay) ** 2
-  for (let i = start + 1; i < end; i++) {
-    const [px, py] = ring[i]
-    // Distance of (p) from the line through (a)-(b), squared, in degree space.
-    let d
-    if (lenSq === 0) {
-      d = (px - ax) ** 2 + (py - ay) ** 2
-    } else {
-      const t = ((px - ax) * (bx - ax) + (py - ay) * (by - ay)) / lenSq
-      const x = ax + t * (bx - ax)
-      const y = ay + t * (by - ay)
-      d = (px - x) ** 2 + (py - y) ** 2
-    }
-    if (d > maxDistSq) {
-      maxDistSq = d
-      index = i
-    }
-  }
-  if (maxDistSq > tolSq) {
-    keep[index] = true
-    simplifySegment(ring, start, index, tolSq, keep)
-    simplifySegment(ring, index, end, tolSq, keep)
-  }
-}
-
 const WORLD = [
-  [-180, -90],
-  [-180, 90],
-  [180, 90],
-  [180, -90],
-  [-180, -90],
+  [
+    [-180, -90],
+    [-180, 90],
+    [180, 90],
+    [180, -90],
+    [-180, -90],
+  ],
 ]
 
-// Holes in the mask are counterclockwise (POS) against a clockwise world
-// shell (keeps winding consistent with the originally shipped file; maplibre
-// fills by ring order regardless). Source rings are already POS where
-// relevant, so only reverse NEG rings. Rings may or may not repeat their
-// closing point, so only re-add it if missing.
-function reorientAndClose(ring) {
-  let area = 0
-  for (let i = 0; i < ring.length - 1; i++) {
-    const [x1, y1] = ring[i]
-    const [x2, y2] = ring[i + 1]
-    area += x1 * y2 - x2 * y1
-  }
-  const ccw = area < 0 ? ring.slice().reverse() : ring // force counterclockwise (POS)
-  const closed = ccw.slice()
-  const first = ccw[0]
-  const last = ccw[ccw.length - 1]
-  if (!(first[0] === last[0] && first[1] === last[1])) closed.push(first)
-  return closed
+// GeoJSON → JTS geometry. The reader wraps the result; unwrap to the raw JTS
+// geometry the simplifier and validity checker expect.
+const toJts = (geojson) =>
+  geomReader.read(geojson).geometry || geomReader.read(geojson)
+
+const roundFeatureCoords = (geo) => {
+  const roundRing = (r) => r.map(([x, y]) => [roundCoord(x), roundCoord(y)])
+  if (geo.type === 'Polygon') geo.coordinates = geo.coordinates.map(roundRing)
+  else if (geo.type === 'MultiPolygon')
+    geo.coordinates = geo.coordinates.map((p) => p.map(roundRing))
+  return geo
 }
 
-function featureRings(feature) {
-  // Every exterior ring of a feature as a flat list of rings.
-  const g = feature.geometry
-  if (!g) return []
-  if (g.type === 'Polygon') return g.coordinates
-  if (g.type === 'MultiPolygon') return g.coordinates.flat()
-  return []
-}
+// The world shell as a JTS polygon, for the world-minus-covered subtraction.
+const worldJts = toJts({
+  type: 'Feature',
+  properties: {},
+  geometry: { type: 'Polygon', coordinates: WORLD },
+})
 
-const holes = []
-let holeCount = 0
-const tolSq = SIMPLIFY_TOLERANCE ** 2
+// Subtract every covered (buffered) region from the world shell. We compute
+// the mask as `world ∖ covered` with JTS geometry subtraction rather than
+// hand-assembling "shell + exterior-ring holes": the 500m buffer inflates the
+// full-detail border on both sides of sub-1km inlets until the banks touch,
+// which makes naive hole rings overlap/nest (invalid). `difference` nodes all
+// of that into a single valid, well-formed mask (verified: mask ∪ Germany
+// tiles the world with zero gap/overlap).
+let maskJts = worldJts
 for (const { name, file } of COVERED) {
   let data = JSON.parse(
     readFileSync(path.join(ROOT, 'scripts/data/coverage', file), 'utf8'),
   )
   // Inflate the covered region so the mask hole is larger than the true border
-  // (handles RDP simplification shrinking the hole; see BUFFER_METERS).
-  // Turf returns a FeatureCollection; take its single feature's rings.
+  // (handles simplification shrinking the hole; see BUFFER_METERS).
+  // Turf returns a FeatureCollection; take its single feature's geometry.
   data = turfBuffer(data, BUFFER_METERS, { units: 'meters' })
-  const buffered = data.type === 'FeatureCollection' ? data.features[0] : data
-  for (const ring of featureRings(buffered)) {
-    const rounded = ring.map(([x, y]) => [roundCoord(x), roundCoord(y)])
-    const simplified = simplifyRing(ring, tolSq)
-    // A ring that collapses below 4 points (tiny islet) is kept whole: it adds
-    // ~no size and must stay a valid closed polygon.
-    const chosen = simplified.length >= 4 ? simplified : rounded
-    holes.push(
-      reorientAndClose(chosen.map(([x, y]) => [roundCoord(x), roundCoord(y)])),
-    )
-    holeCount++
-  }
-  console.log(`  ${name}: buffered → ${holeCount} hole(s) so far`)
+  data = data.type === 'FeatureCollection' ? data.features[0] : data
+  const geo = roundFeatureCoords(data.geometry)
+  maskJts = maskJts.difference(toJts({ type: 'Feature', geometry: geo }))
+  console.log(`  ${name}: buffered, subtracted from world mask`)
 }
+
+// Simplify the whole mask with a topology-preserving simplifier. Unlike a
+// plain RDP drop-points loop (which shipped an invalid mask by letting long
+// chords cross back over a ring), this never introduces self-intersections.
+maskJts = topologySimplify.simplify(maskJts, SIMPLIFY_TOLERANCE)
+
+// The mask geometry as GeoJSON.
+const maskGeo = geomWriter.write(maskJts)
 
 const geojson = {
   type: 'FeatureCollection',
@@ -161,32 +127,29 @@ const geojson = {
     type: 'name',
     properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' },
   },
-  features: [
-    {
-      type: 'Feature',
-      properties: {},
-      geometry: {
-        type: 'Polygon',
-        coordinates: [WORLD, ...holes],
-      },
-    },
-  ],
+  features: [{ type: 'Feature', properties: {}, geometry: maskGeo }],
 }
 
-// Self-check: one shell + at least one hole, all rings flat and closed.
-const rings = geojson.features[0].geometry.coordinates
-const flat = rings.every(
+// Self-check: the mask must be geometrically valid (no self-intersecting or
+// nested rings) so it never ships a mask that MapLibre renders as moving
+// shards while zooming, and its rings must be flat and closed.
+const coordinates =
+  maskGeo.type === 'Polygon' ? maskGeo.coordinates : maskGeo.coordinates.flat()
+const flat = coordinates.every(
   (r) => Array.isArray(r[0]) && typeof r[0][0] === 'number',
 )
-const closed = rings.every(
+const closed = coordinates.every(
   (r) =>
     r.length >= 4 &&
     r[0][0] === r[r.length - 1][0] &&
     r[0][1] === r[r.length - 1][1],
 )
-if (rings.length < 2 || !flat || !closed) {
+const validationError = new IsValidOp(maskJts).getValidationError()
+if (!flat || !closed || validationError) {
   console.error(
-    'Generated mask is invalid: expected shell + holes, all rings flat and closed.',
+    'Generated mask is invalid:',
+    validationError ? validationError.toString() : '',
+    flat && closed ? '' : 'rings must be flat and closed',
   )
   process.exit(1)
 }
@@ -207,7 +170,8 @@ if (serialized.length > 2 * 1024 * 1024) {
 writeFileSync(out, serialized)
 console.log(`Wrote ${out}`)
 const names = COVERED.map((c) => c.name).join(', ')
-const holeVerts = rings.slice(1).reduce((n, r) => n + r.length, 0)
+const maskRings = coordinates.length
+const maskVerts = coordinates.reduce((n, r) => n + r.length, 0)
 console.log(
-  `Covered: ${names} → ${rings.length - 1} hole(s), ${holeVerts} mask vertices`,
+  `Covered: ${names} → mask with ${maskRings} ring(s), ${maskVerts} mask vertices`,
 )
