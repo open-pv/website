@@ -125,11 +125,7 @@ function Index() {
             attributionControl={false}
             maxBounds={[-10, 35, 30, 65]}
           >
-            <Source
-              id='nodata'
-              type='geojson'
-              data='./nodata.geojson'
-            >
+            <Source id='nodata' type='geojson' data='./nodata.geojson'>
               <Layer
                 id='nodata'
                 type='fill'
