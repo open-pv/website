@@ -93,9 +93,9 @@ function Index() {
   const mapClick = useCallback((evt) => {
     const features = mapRef.current
       .getMap()
-      .queryRenderedFeatures(evt.point, { layers: ['nodata'] })
+      .queryRenderedFeatures(evt.point, { layers: ['coverage-mask'] })
     if (features.length > 0) {
-      // Nodata mask was clicked -> unset click point
+      // Coverage mask was clicked -> unset click point
       setClickPoint(null)
     } else {
       const { lng, lat } = evt.lngLat
@@ -125,9 +125,13 @@ function Index() {
             attributionControl={false}
             maxBounds={[-10, 35, 30, 65]}
           >
-            <Source id='nodata' type='geojson' data='./nodata.geojson'>
+            <Source
+              id='coverage-mask'
+              type='geojson'
+              data='./coverage-mask.geojson'
+            >
               <Layer
-                id='nodata'
+                id='coverage-mask'
                 type='fill'
                 paint={{
                   'fill-color': '#000',
@@ -179,6 +183,22 @@ function Index() {
                 rel='noopener noreferrer'
               >
                 OpenMapTiles
+              </a>
+              ) | Abdeckungsgrenze:&nbsp;
+              <a
+                href='https://www.govdata.de/dl-de/by-2-0'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                &copy;&nbsp;GeoBasis-DE&nbsp;/&nbsp;BKG
+              </a>
+              &nbsp;(
+              <a
+                href='https://www.govdata.de/dl-de/by-2-0'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                dl-de/by-2-0
               </a>
               ) | Geländemodell:&nbsp;
               <a
