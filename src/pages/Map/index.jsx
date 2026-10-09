@@ -119,7 +119,10 @@ function Index() {
               height: '100%',
               backgroundColor: '#d3d3d3',
             }}
-            mapStyle='./mapstyle-bright-localname.json'
+            mapStyle={
+              'https://tiles.versatiles.org/assets/styles/colorful/style.json'
+            }
+            projection='mercator'
             onMove={(evt) => setViewState(evt.viewState)}
             onClick={mapClick}
             attributionControl={false}
@@ -170,19 +173,11 @@ function Index() {
               </a>{' '}
               (&copy;{' '}
               <a
-                href='https://openfreemap.org'
+                href='https://versatiles.org'
                 target='_blank'
                 rel='noopener noreferrer'
               >
-                OpenFreeMap
-              </a>
-              , &copy;{' '}
-              <a
-                href='https://openmaptiles.org'
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                OpenMapTiles
+                VersaTiles
               </a>
               ) | Abdeckungsgrenze:&nbsp;
               <a
