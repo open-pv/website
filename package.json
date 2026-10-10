@@ -14,7 +14,7 @@
     "@chakra-ui/react": "^3.36.0",
     "@emotion/react": "^11.14.0",
     "@openpv/simshady": "^0.2.6",
-    "@react-three/drei": "^10.7.7",
+    "@react-three/drei": "^10.7.9",
     "geotiff": "^3.0.5",
     "i18next": "^26.3.3",
     "i18next-http-backend": "^3.0.5",
