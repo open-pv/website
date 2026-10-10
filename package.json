@@ -34,7 +34,7 @@
     "@testing-library/react": "^16.3.2",
     "@turf/buffer": "^7.4.0",
     "@types/three": "^0.185.0",
-    "@vitejs/plugin-react": "^5.2.0",
+    "@vitejs/plugin-react": "^6.1.2",
     "gh-pages": "^6.3.0",
     "jsdom": "^27.3.0",
     "prettier": "3.5.3",
