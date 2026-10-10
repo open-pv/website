@@ -7,12 +7,13 @@
     "format": "prettier --write .",
     "test": "vitest",
     "test:run": "vitest run",
-    "deploy": "gh-pages -d dist -b build"
+    "deploy": "gh-pages -d dist -b build",
+    "update-mask": "node scripts/update-mask.mjs && prettier --write public/coverage-mask.geojson"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.36.0",
     "@emotion/react": "^11.14.0",
-    "@openpv/simshady": "^0.2.2",
+    "@openpv/simshady": "^0.2.6",
     "@react-three/drei": "^10.7.7",
     "geotiff": "^3.0.5",
     "i18next": "^26.3.3",
@@ -31,6 +32,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@turf/buffer": "^7.4.0",
     "@types/three": "^0.185.0",
     "@vitejs/plugin-react": "^5.2.0",
     "gh-pages": "^6.3.0",

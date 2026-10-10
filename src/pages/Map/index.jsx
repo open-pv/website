@@ -9,7 +9,7 @@ import MapPopup from '@/features/map/components/MapPopup'
 import SearchField from '@/features/map/components/SearchField'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { useTranslation } from 'react-i18next'
-import { Map, NavigationControl } from 'react-map-gl/maplibre'
+import { Layer, Map, NavigationControl, Source } from 'react-map-gl/maplibre'
 import { useSearchParams } from 'react-router-dom'
 
 function Index() {
@@ -91,9 +91,16 @@ function Index() {
   // Handling map click for manual location selection
   const [clickPoint, setClickPoint] = useState(null)
   const mapClick = useCallback((evt) => {
-    console.log(evt)
-    const { lng, lat } = evt.lngLat
-    setClickPoint([lat, lng])
+    const features = mapRef.current
+      .getMap()
+      .queryRenderedFeatures(evt.point, { layers: ['coverage-mask'] })
+    if (features.length > 0) {
+      // Coverage mask was clicked -> unset click point
+      setClickPoint(null)
+    } else {
+      const { lng, lat } = evt.lngLat
+      setClickPoint([lat, lng])
+    }
   })
 
   return (
@@ -112,12 +119,37 @@ function Index() {
               height: '100%',
               backgroundColor: '#d3d3d3',
             }}
-            mapStyle='https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json'
+            mapStyle={
+              'https://tiles.versatiles.org/assets/styles/colorful/style.json'
+            }
+            projection='mercator'
             onMove={(evt) => setViewState(evt.viewState)}
             onClick={mapClick}
             attributionControl={false}
             maxBounds={[-10, 35, 30, 65]}
           >
+            <Source
+              id='coverage-mask'
+              type='geojson'
+              data='./coverage-mask.geojson'
+            >
+              <Layer
+                id='coverage-mask'
+                type='fill'
+                paint={{
+                  'fill-color': '#000',
+                  'fill-opacity': [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    8,
+                    0.5,
+                    9,
+                    0,
+                  ],
+                }}
+              />
+            </Source>
             <>{mapMarkers}</>
             {clickPoint && (
               <MapPopup
@@ -131,13 +163,29 @@ function Index() {
           </Map>
           <div className='map-attribution'>
             <p className='copyright'>
-              Basiskarte &copy;{' '}
+              Karte &copy;{' '}
               <a
-                href='https://www.bkg.bund.de'
+                href='https://www.openstreetmap.org/copyright'
                 target='_blank'
                 rel='noopener noreferrer'
               >
-                BKG
+                OpenStreetMap contributors
+              </a>{' '}
+              (&copy;{' '}
+              <a
+                href='https://versatiles.org'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                VersaTiles
+              </a>
+              ) | Abdeckungsgrenze:&nbsp;
+              <a
+                href='https://www.govdata.de/dl-de/by-2-0'
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                &copy;&nbsp;GeoBasis-DE&nbsp;/&nbsp;BKG
               </a>
               &nbsp;(
               <a
