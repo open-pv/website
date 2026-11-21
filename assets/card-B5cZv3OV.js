@@ -1,0 +1,1 @@
+import{A as e}from"./App-Ge4jGjZ7.js";var{withProvider:t,withContext:n,useStyles:r,PropsProvider:i}=e({key:`card`}),a=t(`div`,`root`),o=n(`div`,`body`),s=n(`div`,`header`);n(`div`,`footer`);var c=n(`h3`,`title`),l=n(`p`,`description`);export{c as a,a as i,l as n,s as r,o as t};

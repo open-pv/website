@@ -1,0 +1,1 @@
+import{bn as e}from"./App-Ge4jGjZ7.js";var{withContext:t,PropsProvider:n}=e({key:`text`}),r=t(`p`);export{r as t};

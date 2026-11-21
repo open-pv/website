@@ -1,0 +1,1 @@
+import{r as e}from"./rolldown-runtime-XKyaHtl9.js";import{Fn as t,Pn as n,kn as r,wn as i}from"./App-Ge4jGjZ7.js";var a=t(),o=(0,e(n(),1).forwardRef)(function(e,t){let{align:n,fit:o=`cover`,...s}=e;return(0,a.jsx)(i.img,{ref:t,objectFit:o,objectPosition:n,className:r(`chakra-image`,e.className),...s})});o.displayName=`Image`;export{o as t};
